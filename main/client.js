@@ -8,7 +8,6 @@ let spawnScreenCamPosition = new Vec3(138.17, -909.90, 28.16);
 let spawnScreenCamLookAtPosition = new Vec3(139.54, -903.00, 26.16);
 
 let inSpawnScreen = false;
-let spawnCivilian = false;
 
 // ----------------------------------------------------------------------------
 
@@ -19,43 +18,6 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 				if(!inSpawnScreen) {
 					triggerNetworkEvent("v.respawn");
 				}
-			}
-			break;
-			
-		case SDLK_2:
-			if(localPlayer != null) {
-				speedKey(null, 2);
-			}
-			break;
-			
-		case SDLK_3:
-			if(localPlayer != null) {
-				speedKey(null, 0);
-			}
-			break;
-			
-		case SDLK_5:
-			if(localPlayer != null) {
-				speedKey(null, -1);
-			}
-			break;		
-			
-		case SDLK_6:
-			if(localPlayer != null) {
-				localPlayer.health = 100;
-				let vehicle = localPlayer.vehicle;
-				if(vehicle != null && vehicle.isSyncer) {
-					if(vehicle.isType(ELEMENT_TRAIN)) {
-						vehicle.speed = 0;
-						vehicle.derailed = false;
-					}
-					vehicle.fix();
-				}
-			}
-			break;
-		case SDLK_7:
-			if(localPlayer != null) {
-				vehicleJump();
 			}
 			break;
 			
@@ -108,6 +70,8 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 	}
 });
 
+// ----------------------------------------------------------------------------
+
 addEventHandler("OnStartMission", function(event, mission) {
 	switch (game.game) {
 		case GAME_GTA_III:
@@ -143,6 +107,8 @@ addEventHandler("OnStartMission", function(event, mission) {
 	}
 });
 
+// ----------------------------------------------------------------------------
+
 function getTargetPhysical() {
 	let vehicle = localPlayer.vehicle;
 	if(vehicle != null) {
@@ -151,51 +117,7 @@ function getTargetPhysical() {
 	return localPlayer;
 }
 
-function speedKey(physical, multiplier) {
-	if(physical == null) {
-		physical = getTargetPhysical();
-	}
-
-	if(physical.isSyncer) {
-		// set train speed
-		if(physical.isType(ELEMENT_TRAIN)) {
-			physical.speed *= multiplier;
-		}
-
-		let velocity = physical.velocity;
-		velocity[0] *= multiplier;
-		velocity[1] *= multiplier;
-		velocity[2] *= multiplier;
-		physical.velocity = velocity;
-
-		let turnVelocity = physical.turnVelocity;
-		turnVelocity[0] *= multiplier;
-		turnVelocity[1] *= multiplier;
-		turnVelocity[2] *= multiplier;
-		physical.turnVelocity = turnVelocity;
-	}
-}
-
-function vehicleJump(physical) {
-	if(physical == null) {
-		physical = getTargetPhysical();
-	}
-
-	if(physical.isSyncer){
-		if(physical.isType(ELEMENT_TRAIN)) {
-			physical.derailed = true;
-		}
-
-		let mat = physical.matrix;
-
-		let velocity = physical.velocity;
-		velocity[0] += mat.getElement(1*4+0)*0.3;
-		velocity[1] += mat.getElement(1*4+1)*0.3;
-		velocity[2] += mat.getElement(1*4+2)*0.3;
-		velocity[2] += 0.25;
-		physical.velocity = velocity;
-	}
-}
+// ----------------------------------------------------------------------------
 
 addEventHandler("OnResourceStart", function(event, resource) {
 	if(resource == thisResource) {
@@ -203,10 +125,14 @@ addEventHandler("OnResourceStart", function(event, resource) {
 	}
 });
 
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("v.ss.start", function() {
 	inSpawnScreen = true;
 	setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);
 });
+
+// ----------------------------------------------------------------------------
 
 addEventHandler("OnPedSpawn", function(event, ped) {
 	if(ped == localPlayer) {
@@ -217,6 +143,8 @@ addEventHandler("OnPedSpawn", function(event, ped) {
 	}
 });
 
+// ----------------------------------------------------------------------------
+
 function showSkinSelect() {
 	localPlayer.position = spawnScreenPedPosition;
 	localPlayer.heading = spawnScreenPedHeading;			
@@ -226,3 +154,5 @@ function showSkinSelect() {
 	setHUDEnabled(false);
 	inSpawnScreen = true;
 }
+
+// ----------------------------------------------------------------------------
