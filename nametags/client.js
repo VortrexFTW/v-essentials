@@ -19,11 +19,25 @@ let nametagColour = [
 
 // ----------------------------------------------------------------------------
 
+let playerColours = [
+	toColour(51, 153, 255, 255),
+	COLOUR_WHITE,
+	COLOUR_ORANGE,
+	toColour(186, 85, 211, 255),
+	toColour(144, 255, 96, 255),
+	COLOUR_YELLOW,
+	COLOUR_AQUA,
+	COLOUR_LIME,
+	toColour(237, 67, 55, 255),
+];
+
+// ----------------------------------------------------------------------------
+
 addEventHandler("OnResourceReady", function(event, resource) {
 	if (resource == thisResource) {
 		let fontFile = openFile("pricedown.ttf", false);
-		//nametagFont = lucasFont.createDefaultFont(16.0, "Arial", "Medium");
-		nametagFont = lucasFont.createFont(fontFile, 16.0);
+		nametagFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
+		//nametagFont = lucasFont.createFont(fontFile, 16.0);
 		//pingFont = lucasFont.createFont(fontFile, 32.0);
 		fontFile.close();
 	}
@@ -46,7 +60,7 @@ function getDistance(pos1, pos2) {
 
 // ----------------------------------------------------------------------------
 
-function drawNametag(x, y, health, armour, text, ping, alpha, distance) {
+function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) {
 	if(nametagFont == null) {
 		return false;
 	}
@@ -59,6 +73,7 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance) {
     // Starts at bottom and works it's way up
     // -------------------------------------------
     // Health Bar
+	y -= 5;
 	if(health > 0.0) {
 		let hx = x-width/2;
 		let hy = y-10/2;
@@ -83,13 +98,13 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance) {
 	}
     
     // Go up another 30 pixels for the next part
-    y -= 30;
+    y -= 10;
     
     // Nametag
 	if(nametagFont != null) {
 		let size = nametagFont.measure(text, game.width, 0.0, 0.0, nametagFont.size, false, false);
 		let colourT = createColour(Math.floor(255.0*alpha), 255, 255, 255);
-		nametagFont.render(text, [x-size[0]/2, y-size[1]/2], game.width, 0.0, 0.0, nametagFont.size, colourT, false, false, false, true);
+		nametagFont.render(text, [x-size[0]/2, y-size[1]/2], game.width, 0.0, 0.0, nametagFont.size, colour, false, false, false, true);
 	}
 	
 	// Go up another 50 pixels for the next part
@@ -130,9 +145,13 @@ function updateNametags(element) {
         let distance = getDistance(playerPos,elementPos);
         if(distance < nametagDistance) {
 			if(element.type == ELEMENT_PLAYER) {
-				drawNametag(screenPos[0], screenPos[1], health, armour, element.name.toUpperCase(), 0, 1.0-distance/nametagDistance, distance);
+				let colour = COLOUR_WHITE
+				if(element.getData("colour")) {
+					colour = element.getData("colour");
+				}
+				drawNametag(screenPos[0], screenPos[1], health, armour, element.name, 0, 1.0-distance/nametagDistance, distance, colour);
 			} else {
-				drawNametag(screenPos[0], screenPos[1], health, armour, skinNames[game.game][element.modelIndex], -1, 1.0-distance/nametagDistance, distance);
+				drawNametag(screenPos[0], screenPos[1], health, armour, skinNames[game.game][element.modelIndex], -1, 1.0-distance/nametagDistance, distance, COLOUR_SILVER);
 			}
 		}
 	}

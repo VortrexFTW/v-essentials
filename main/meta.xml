@@ -1,4 +1,5 @@
 <meta>
 	<script src="server.js" type="server" language="javascript" />
 	<script src="client.js" type="client" language="javascript" />
+	<file src="pricedown.ttf" type="client" />
 </meta>
