@@ -12,9 +12,11 @@ let blipGameColours = [
 	//COLOUR_SILVER					// GTA IV (EFLC)	 
 ];
 
+// ----------------------------------------------------------------------------
+
 let playerColours = [
 	toColour(51, 153, 255, 255),
-	COLOUR_WHITE,
+	toColour(255, 255, 255, 255),
 	COLOUR_ORANGE,
 	toColour(186, 85, 211, 255),
 	toColour(144, 255, 96, 255),
@@ -38,18 +40,22 @@ let blipGameSizes = [
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnResourceStart", function(event, resource) {
-	if(resource == thisResource) {
+bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+	//if(resource == thisResource) {
 		let clients = getClients();
 		for(let i in clients) {	
-			if(clients[i].player.getData("colour") != null) {
-				let tempBlip = createBlipAttachedTo(clients[i].player, 0, 2, clients[i].player.getData("colour"));
-				clients[i].player.setData("playerBlip", tempBlip, true);		
+			if(clients[i].player != null) {
+				let colour = COLOUR_WHITE;
+				if(clients[i].getData("v.colour") != null) {
+					colour = clients[i].player.getData("v.colour");
+				}
+				
+				let tempBlip = createBlipAttachedTo(0, clients[i].player, 2, colour);
+				clients[i].setData("blip", tempBlip, true);		
 				addToWorld(tempBlip);
-//				
 			}
 		}
-	}
+	//}
 });
 
 // ----------------------------------------------------------------------------
@@ -63,10 +69,10 @@ addEventHandler("OnPedSpawn", function(event, ped) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPlayerQuit", function(event, client, reason) {
-	let tempBlip = client.player.getData("playerBlip");
+	let tempBlip = client.getData("blip");
 	if(tempBlip != null) {
 		destroyElement(tempBlip);
-		client.player.removeData("playerBlip");
+		client.removeData("blip");
 	}
 });
 
@@ -76,11 +82,11 @@ addEventHandler("OnElementStreamIn", function(event, element, client) {
 	if(element.type == ELEMENT_BLIP) {
 		// Prevent player's blip from being streamed to themselves.
 		// Make sure the blip is attached to something, and that something is the player.
-		//if(element.parent != null) {
-		//	if(element.parent == client.player) {
-		//		event.preventDefault();
-		//	}
-		//}
+		if(element.parent != null) {
+			if(element.parent == client.player) {
+				event.preventDefault();
+			}
+		}
 	}
 });
 
@@ -97,10 +103,15 @@ function getClientFromPed(ped) {
 	return false;
 }
 
+// ----------------------------------------------------------------------------
+
 function setPlayerBlip(player) {
-	if(player.getData("colour") != null) {
-		let tempBlip = createBlipAttachedTo(player, 0, 2, player.getData("colour"));
-		player.setData("playerBlip", tempBlip, true);		
-		addToWorld(tempBlip);				
+	let client = getClientFromPed(ped);
+	let colour = COLOUR_WHITE;
+	if(client.player.getData("v.colour") != null) {
+		colour = client.getData("colour")
 	}
+	let tempBlip = createBlipAttachedTo(0, player, 2, colour);
+	client.setData("blip", tempBlip, true);		
+	addToWorld(tempBlip);				
 }

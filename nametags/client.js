@@ -4,6 +4,7 @@
 
 // Configuration
 let nametagFont = null;
+let afkStatusFont = null;
 let pingFont = null;
 let nametagDistance = 50.0;
 let nametagWidth = 70;
@@ -35,11 +36,12 @@ let playerColours = [
 
 addEventHandler("OnResourceReady", function(event, resource) {
 	if (resource == thisResource) {
-		let fontFile = openFile("pricedown.ttf", false);
+		//let fontFile = openFile("pricedown.ttf", false);
 		nametagFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
+		afkStatusFont = lucasFont.createDefaultFont(18.0, "Roboto", "Light");
 		//nametagFont = lucasFont.createFont(fontFile, 16.0);
 		//pingFont = lucasFont.createFont(fontFile, 32.0);
-		fontFile.close();
+		//fontFile.close();
 	}
 });
 
@@ -60,7 +62,7 @@ function getDistance(pos1, pos2) {
 
 // ----------------------------------------------------------------------------
 
-function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) {
+function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, afk, skin) {
 	if(nametagFont == null) {
 		return false;
 	}
@@ -73,7 +75,13 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) 
     // Starts at bottom and works it's way up
     // -------------------------------------------
     // Health Bar
-	y -= 5;
+	
+	if(skin == 109) {
+		y -= 20;
+	} else {
+		y -= 5;
+	}	
+	
 	if(health > 0.0) {
 		let hx = x-width/2;
 		let hy = y-10/2;
@@ -83,12 +91,11 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) 
 		drawing.drawRectangle(null, [hx+2, hy+2], [(width-4)*health, 10-6], colour, colour, colour, colour);
 	}
     
-    // Go up 10 pixels to draw the next part
-    y -= 10;
-    
     // Armour Bar
 	if (armour > 0.0)
 	{
+		// Go up 10 pixels to draw the next part
+		y -= 10;		
 		let hx = x-width/2;
 		let hy = y-10/2;
 		let colourB = createColour(Math.floor(255.0*alpha), 0, 0, 0); // Background colour (black)
@@ -97,8 +104,7 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) 
 		drawing.drawRectangle(null, [hx+2, hy+2], [(width-4)*armour, 10-6], colour, colour, colour, colour);
 	}
     
-    // Go up another 30 pixels for the next part
-    y -= 10;
+	y -= 20;
     
     // Nametag
 	if(nametagFont != null) {
@@ -106,6 +112,17 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) 
 		let colourT = createColour(Math.floor(255.0*alpha), 255, 255, 255);
 		nametagFont.render(text, [x-size[0]/2, y-size[1]/2], game.width, 0.0, 0.0, nametagFont.size, colour, false, false, false, true);
 	}
+	
+    // Go up another 10 pixels for the next part
+    y -= 20;	
+	
+    // AFK Status
+	if(afkStatusFont != null) {
+		if(afk) {
+			let size = afkStatusFont.measure("PAUSED", game.width, 0.0, 0.0, afkStatusFont.size, false, false);
+			afkStatusFont.render("PAUSED", [x-size[0]/2, y-size[1]/2], game.width, 0.0, 0.0, afkStatusFont.size, toColour(255, 0, 0, 255), false, false, false, true);
+		}
+	}	
 	
 	// Go up another 50 pixels for the next part
     //y -= 30;
@@ -122,39 +139,46 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour) 
 // ----------------------------------------------------------------------------
 
 function updateNametags(element) {
-	let playerPos = localPlayer.position;
-	let elementPos = element.position;
-    
-	elementPos[2] += 0.9;
-    
-	let screenPos = getScreenFromWorldPosition(elementPos);
-	if (screenPos[2] >= 0.0) {
+	//if(element.player != null) {
+		let playerPos = localPlayer.position;
+		let elementPos = element.position;
+		
+		elementPos[2] += 0.9;
+		
+		let screenPos = getScreenFromWorldPosition(elementPos);
+		if (screenPos[2] >= 0.0) {
 
-		
-        let health = element.health/100.0;
-		if(health > 1.0) {
-			health = 1.0;
-		}
-        
-        let armour = element.armour/100.0;
-		if(armour > 1.0) {
-			armour = 1.0; 
-		}
-		
-		
-        let distance = getDistance(playerPos,elementPos);
-        if(distance < nametagDistance) {
-			if(element.type == ELEMENT_PLAYER) {
-				let colour = COLOUR_WHITE
-				if(element.getData("colour")) {
-					colour = element.getData("colour");
+			
+			let health = element.health/100.0;
+			if(health > 1.0) {
+				health = 1.0;
+			}
+			
+			let armour = element.armour/100.0;
+			if(armour > 1.0) {
+				armour = 1.0; 
+			}
+			
+			let distance = getDistance(playerPos, elementPos);
+			if(distance < nametagDistance) {
+				if(element.type == ELEMENT_PLAYER) {
+					
+					let colour = COLOUR_WHITE;
+					if(element.getData("v.colour")) {
+						colour = element.getData("v.colour");
+					}
+					let afk = false;
+					if(element.getData("v.afk")) {
+						afk = true;
+					}
+					drawNametag(screenPos[0], screenPos[1], health, armour, element.name, 0, 1.0-distance/nametagDistance, distance, colour, afk, element.skin);
 				}
-				drawNametag(screenPos[0], screenPos[1], health, armour, element.name, 0, 1.0-distance/nametagDistance, distance, colour);
-			} else {
-				drawNametag(screenPos[0], screenPos[1], health, armour, skinNames[game.game][element.modelIndex], -1, 1.0-distance/nametagDistance, distance, COLOUR_SILVER);
+				// else {
+				//	drawNametag(screenPos[0], screenPos[1], health, armour, skinNames[game.game][element.modelIndex], -1, 1.0-distance/nametagDistance, distance, COLOUR_SILVER);
+				//}
 			}
 		}
-	}
+	//}
 }
 
 // ----------------------------------------------------------------------------
@@ -162,12 +186,11 @@ function updateNametags(element) {
 addEventHandler("OnDrawnHUD", function(event) {
 	let peds = getPeds();
 	for(let i in peds) {
-		if (peds[i] != localPlayer) {
+		if(peds[i] != localPlayer) {
 			updateNametags(peds[i]);
         }
 	}
 });
-//
 
 // ----------------------------------------------------------------------------
 
@@ -463,3 +486,12 @@ var skinNames = [
 	// GTA San Andreas - Names coming soon!
 	new Array(300, "Unknown"),
 ];
+
+function getClientFromPlayer(player) {
+	let clients = getClients();
+	for(let i in clients) {
+		if(clients[i].player == player) {
+			return clients[i];
+		}
+	}
+}

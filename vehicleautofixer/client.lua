@@ -1,6 +1,8 @@
 addEventHandler('onResourceStart', function(event, resource)
     if resource ~= thisResource then return end
+	
     setInterval(function()
+		if not localPlayer then return end
         if not localPlayer.vehicle then return end
         localPlayer.vehicle:fix()
         if not localPlayer.vehicle.flipped then return end
