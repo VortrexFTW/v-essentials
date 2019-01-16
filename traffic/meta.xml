@@ -1,5 +1,0 @@
-<meta>
-	<script src="client.js" type="client" language="javascript" />
-	<script src="server-old.js" type="server" language="javascript" />
-	<script src="xml.js" type="server" language="javascript" />
-</meta>
