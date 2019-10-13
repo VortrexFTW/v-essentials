@@ -1,0 +1,39 @@
+<meta>
+	<info author="Vortrex" version="1.0" description="Commands and utilities to test every feature of GTA:C" />
+
+	<!-- Config -->
+	<script src="config.js" type="client" language="javascript" />
+	<script src="config.js" type="server" language="javascript" />
+	
+	<!-- Shared -->
+	<script src="shared/util.js" type="client" language="javascript" />
+	<script src="shared/util.js" type="server" language="javascript" />
+	
+	<!-- Client -->
+	<script src="client/main.js" type="client" language="javascript" />
+	<script src="client/vehicle.js" type="client" language="javascript" />
+	<script src="client/world.js" type="client" language="javascript" />
+	<script src="client/civilian.js" type="client" language="javascript" />
+	<script src="client/player.js" type="client" language="javascript" />
+	<script src="client/effect.js" type="client" language="javascript" />
+	<script src="client/cutscene.js" type="client" language="javascript" />
+	<script src="client/cvar.js" type="client" language="javascript" />
+	<script src="client/train.js" type="client" language="javascript" />
+	<!--<script src="client/exec.js" type="client" language="javascript" />-->
+	<script src="client/pickup.js" type="client" language="javascript" />
+	<script src="client/sphere.js" type="client" language="javascript" />
+	<script src="client/object.js" type="client" language="javascript" />
+	
+	<!-- Server -->
+	<script src="server/main.js" type="server" language="javascript" />
+	<script src="server/vehicle.js" type="server" language="javascript" />
+	<script src="server/world.js" type="server" language="javascript" />
+	<script src="server/train.js" type="server" language="javascript" />
+	<!--<script src="server/exec.js" type="server" language="javascript" />-->
+	<script src="server/civilian.js" type="server" language="javascript" />
+	<script src="server/effect.js" type="server" language="javascript" />
+	<script src="server/pickup.js" type="server" language="javascript" />
+	<script src="server/sphere.js" type="server" language="javascript" />	
+	<script src="server/object.js" type="server" language="javascript" />	
+	<script src="server/player.js" type="server" language="javascript" />	
+</meta>
