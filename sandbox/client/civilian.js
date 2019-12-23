@@ -28,7 +28,7 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 function updateCivilianMovement(civilian) {
 	if(!civiliansEnabled[gta.game]) {
 		return false;			
-	}	
+	}
 	
 	if(civilianFollowEnabled) {
 		if(civilian.getData("followingPlayer") != null) {
@@ -79,26 +79,26 @@ function updateCivilianMovement(civilian) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+		//if(!civiliansEnabled[gta.game]) {
+		//	message("Civilians are disabled on this server!", errorMessageColour);
+		//	return false;			
+		//}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ <skin id>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <skin id>", syntaxMessageColour);
 		return false;
 	}
 	
-	let skinID = (Number(params) || 0);
+	let skinId = (Number(params) || 0);
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
 	let heading = localPlayer.heading;
 	
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.add", skinID, position.x, position.y, position.z, heading, true);
+		triggerNetworkEvent("sb.c.add", skinId, position.x, position.y, position.z, heading, true);
 	} else {
-		let tempCiv = createCivilian(skinID);
+		let tempCiv = createCivilian(skinId);
 
 		if(!tempCiv) {
 			message("The civilian could not be added!", errorMessageColour);
@@ -117,22 +117,22 @@ addCommandHandler("civ", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civline", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civline <skin id> <amount> [gap]", syntaxMessageColour);
+		message("/" + String(cmdName) + " <skin id> <amount> [gap]", syntaxMessageColour);
 		return false;
 	}
 	
 	let group = [ ];
 	let splitParams = params.split(" ");
 	
-	let skinID = (Number(splitParams[0]) || 0);
+	let skinId = (Number(splitParams[0]) || 0);
 	let amount = (Number(splitParams[1]) || 8);
 	let gap = (Number(splitParams[2]) || 2);
 	let tempCiv = null;
@@ -141,13 +141,13 @@ addCommandHandler("civline", function(cmdName, params) {
 		for(let i=1;i<=amount;i++){
 			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i*gap);
 			let heading = localPlayer.heading;
-			triggerNetworkEvent("sb.c.add", skinID, position.x, position.y, position.z, heading, false);
+			triggerNetworkEvent("sb.c.add", skinId, position.x, position.y, position.z, heading, false);
 		}
 	} else {
 		for(let i=1;i<=amount;i++) {
 			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i*gap);
 			let heading = localPlayer.heading;			
-			tempCiv = createCivilian(skinID);
+			tempCiv = createCivilian(skinId);
 			tempCiv.position = position;
 			tempCiv.heading = position;
 		}
@@ -161,22 +161,22 @@ addCommandHandler("civline", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civgrid", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civgrid <skin id> <columns> <rows> [column gap] [row gap]", syntaxMessageColour);
+		message("/" + String(cmdName) + " <skin id> <columns> <rows> [column gap] [row gap]", syntaxMessageColour);
 		return false;
 	}
 	
 	let group = [ ];
 	let splitParams = params.split(" ");
 	
-	let skinID = (Number(splitParams[0]) || 0);
+	let skinId = (Number(splitParams[0]) || 0);
 	let cols = (Number(splitParams[1]) || 4);
 	let rows = (Number(splitParams[2]) || 2);
 	let colGap = (Number(splitParams[3]) || 2);
@@ -184,26 +184,24 @@ addCommandHandler("civgrid", function(cmdName, params) {
 	let tempCiv = null;
 	
 	if(isConnected) {
-		for(let k=1;k<=cols;k++) {
-			for(let i=1;i<=rows;i++) {
-				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading,k*rowGap), localPlayer.heading, i*colGap);
-				let heading = localPlayer.heading;
-				triggerNetworkEvent("sb.c.add", skinID, position.x, position.y, position.z, heading, false);
-			}
-		}
+		triggerNetworkEvent("sb.c.add.grid", skinId, cols, rows, colGap, rowGap);
 	} else {
 		for(let k=1;k<=cols;k++) {
 			for(let i=1;i<=rows;i++) {
 				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading,k*rowGap), localPlayer.heading, i*colGap);
 				let heading = localPlayer.heading;			
-				tempCiv = createCivilian(skinID);
+				tempCiv = createCivilian(skinId);
 				tempCiv.position = position;
 				tempCiv.heading = position;
 			}
 		}		
 	}
 	
-	message("Civilian grid added!", gameAnnounceColour);
+	if(vehicles.length > 1) {
+		message(String(vehicles.length) + " , gameAnnounceColour);
+	} else {
+		message(getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s siren is now " + String((!!sirenState) ? "on" : "off"), gameAnnounceColour);
+	}
 	
 	return true;
 });
@@ -211,15 +209,15 @@ addCommandHandler("civgrid", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_wander", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_wander <civilian> <wander path>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <wander path>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -234,32 +232,33 @@ addCommandHandler("civ_wander", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.wander", civilians[i].id, wanderPath);
-		}		
-		
+		triggerNetworkEvent("sb.c.wander", civilians, wanderPath);	
 	} else {
 		for(let i in civilians){
 			makeCivilianWander(civilians[i], wanderPath);
 		}
 	}
 	
-	message("The civilians(s) will wander on path " + String(wanderPath), gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will now wander on path " + String(wanderPath), gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " will now wander on path " + String(wanderPath), gameAnnounceColour);
+	}
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_delete", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_delete <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -274,32 +273,33 @@ addCommandHandler("civ_delete", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.del", civilians[i].id);
-		}		
-		
+		triggerNetworkEvent("sb.c.del", civilians);
 	} else {
 		for(let i in civilians){
 			deleteCivilian(civilians[i]);
 		}
 	}
 	
-	message("The civilians(s) have been deleted", gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians have been deleted.", gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " has been deleted " + String(wanderPath), gameAnnounceColour);
+	}
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_stay", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_stay <civilian> <state>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <state>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -314,27 +314,28 @@ addCommandHandler("civ_stay", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.stay", civilians[i].id, (stayState == 1) ? true : false);
-		}		
-		
+		triggerNetworkEvent("sb.c.stay", civilians, !!stayState);
 	} else {
 		for(let i in civilians){
-			setCivilianStayInSamePlace(civilians[i], (stayState == 1) ? true : false);
+			setCivilianStayInSamePlace(civilians[i], !!stayState);
 		}
 	}
 	
-	message("The civilians(s) will " + String((stayState) ? "now" : "no longer") + " stay in the same place", gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will " + String((!!stayState) ? "now" : "no longer") + " stay in the same place", gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " will " + String((!!stayState) ? "now" : "no longer") + " stay in the same place", gameAnnounceColour);
+	}	
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_stamina", function(cmdName, params) {
-	if(gta.game == GAME_GTA_III) {
-		message("Ped stamina does not work on GTA 3!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_III) {
+	//	message("Ped stamina does not work on GTA 3!", errorMessageColour);
+	//	return false;
+	//}
 	
 	if(isConnected) {
 		if(!civiliansEnabled[gta.game]) {
@@ -344,7 +345,7 @@ addCommandHandler("civ_stamina", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_stamina <civilian> <stamina>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <stamina>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -359,32 +360,33 @@ addCommandHandler("civ_stamina", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.stamina", civilians[i].id, stamina);
-		}		
-		
+		triggerNetworkEvent("sb.c.stamina", civilians, stamina);
 	} else {
 		for(let i in civilians){
 			setCivilianStamina(civilians[i], stamina);
 		}
 	}
 	
-	message("The civilians(s) stamina is now " + String(stamina), gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians's stamina has been set to " + String(stamina), gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " stamina has been set to " + String(stamina), gameAnnounceColour);
+	}		
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_enterveh", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_enterveh <civilian> <vehicle> [driver 0/1]", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <vehicle> [driver 0/1]", syntaxMessageColour);
 		return false;
 	}
 	
@@ -405,32 +407,33 @@ addCommandHandler("civ_enterveh", function(cmdName, params) {
 	}	
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.enterveh", civilians[i].id, vehicles[0].id, (driver == 1) ? true : false);
-		}		
-		
+		triggerNetworkEvent("sb.c.enterveh", civilians, vehicles[0].id, !!driver);
 	} else {
 		for(let i in civilians){
-			civilians[i].enterVehicle(vehicles[0]);
+			civilians[i].enterVehicle(vehicles[0], !!driver);
 		}
 	}
 	
-	message("The civilians(s) will now enter the specified vehicle(s)", gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will now enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex), gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + "  will now enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex), gameAnnounceColour);
+	}		
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_lookatveh", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_lookatveh <civilian> <vehicle>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <vehicle>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -451,32 +454,33 @@ addCommandHandler("civ_lookatveh", function(cmdName, params) {
 	}	
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.lookat", civilians[i].id, vehicles[0].position.x, vehicles[0].position.y, vehicles[0].position.z, duration);
-		}		
-		
+		triggerNetworkEvent("sb.c.lookat", civilians, vehicles[0].position.x, vehicles[0].position.y, vehicles[0].position.z, duration);
 	} else {
 		for(let i in civilians){
 			civilians[i].lookAt(vehicles[0].position, duration);
 		}
 	}
 	
-	message("The civilians(s) will now look at the vehicle.", gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will now look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex), gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " will now look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex), gameAnnounceColour);
+	}		
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_exitveh", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_exitveh <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -490,17 +494,18 @@ addCommandHandler("civ_exitveh", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.exitveh", civilians[i].id);
-		}		
-		
+		triggerNetworkEvent("sb.c.exitveh", civilians);
 	} else {
 		for(let i in civilians){
 			setCivilianStamina(civilians[i], stamina);
 		}
 	}
 	
-	message("The civilians(s) will now exit their vehicle", gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will now exit their vehicle", gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " will now exit their vehicle", gameAnnounceColour);
+	}
 	return true;
 });
 
@@ -520,7 +525,7 @@ addCommandHandler("civ_staminadur", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_staminadur <civilian> <duration>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <duration>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -535,17 +540,18 @@ addCommandHandler("civ_staminadur", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.stamina", civilians[i].id, staminaDuration);
-		}		
-		
+		triggerNetworkEvent("sb.c.stamina", civilians, staminaDuration);
 	} else {
 		for(let i in civilians){
 			civilians[i].staminaDuration = staminaDuration;
 		}
 	}
 	
-	message("The civilians(s) stamina duration is now " + String(staminaDuration), gameAnnounceColour);
+	if(civilians.length > 1) {
+		message(String(civilians.length) + " civilians will now exit their vehicle", gameAnnounceColour);
+	} else {
+		message(getProperCivilianPossessionText(splitParams[0]) + " " + getCivilianName(civilians[0].skin) + " will now exit their vehicle", gameAnnounceColour);
+	}
 	return true;
 });
 
@@ -565,7 +571,7 @@ addCommandHandler("civ_torsorot", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_torsorot <civilian> <rotation>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <rotation>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -580,10 +586,7 @@ addCommandHandler("civ_torsorot", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.torsorot", civilians[i].id, rotation);
-		}		
-		
+		triggerNetworkEvent("sb.c.torsorot", civilians, rotation);
 	} else {
 		for(let i in civilians){
 			civilians[i].torsoRotation = rotation;
@@ -597,15 +600,15 @@ addCommandHandler("civ_torsorot", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_walkstyle", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_walkstyle <civilian> <rotation>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <rotation>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -620,10 +623,7 @@ addCommandHandler("civ_walkstyle", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.walkstyle", civilians[i].id, walkStyle);
-		}		
-		
+		triggerNetworkEvent("sb.c.walkstyle", civilians, walkStyle);
 	} else {
 		for(let i in civilians){
 			civilians[i].walkStyle = walkStyle;
@@ -637,15 +637,15 @@ addCommandHandler("civ_walkstyle", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_armour", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_armour <civilian> <rotation>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <rotation>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -660,10 +660,7 @@ addCommandHandler("civ_armour", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.armour", civilians[i].id, armour);
-		}		
-		
+		triggerNetworkEvent("sb.c.armour", civilians, armour);
 	} else {
 		for(let i in civilians){
 			civilians[i].armour = armour;
@@ -677,15 +674,15 @@ addCommandHandler("civ_armour", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_warpinveh", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_warpinveh <civilian> <vehicle>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <vehicle>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -693,7 +690,7 @@ addCommandHandler("civ_warpinveh", function(cmdName, params) {
 	
 	let civilians = getCiviliansFromParams(splitParams[0]);
 	let vehicles = getVehiclesFromParams(splitParams[1]);
-	let seatID = Number(splitParams[2]) || 0;
+	let seatId = Number(splitParams[2]) || 0;
 	
 	if(civilians.length == 0) {
 		message("No civilians found!", errorMessageColour);
@@ -706,17 +703,14 @@ addCommandHandler("civ_warpinveh", function(cmdName, params) {
 	}	
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.warpintoveh", civilians[i].id, vehicles[0].id, seatID);
-		}		
-		
+		triggerNetworkEvent("sb.c.warpintoveh", civilians, vehicles[0].id, seatId);
 	} else {
 		for(let i in civilians){
-			civilians[i].warpIntoVehicle(civilians[i], vehicles[0], seatID);
+			civilians[i].warpIntoVehicle(civilians[i], vehicles[0], seatId);
 		}
 	}
 	
-	message("The civilians(s) have been warped into the specified vehicle(s) in seat " + seatID, gameAnnounceColour);
+	message("The civilians(s) have been warped into the specified vehicle(s) in seat " + seatId, gameAnnounceColour);
 	return true;
 });
 
@@ -724,17 +718,17 @@ addCommandHandler("civ_warpinveh", function(cmdName, params) {
 
 addCommandHandler("civ_syncer", function(cmdName, params) {	
 	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
 	} else {
 		message("This command cannot be used offline!", errorMessageColour);
 		return false;
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_syncer <civilian> <client>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <client>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -749,9 +743,7 @@ addCommandHandler("civ_syncer", function(cmdName, params) {
 	}	
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.syncer", civilians[i].id, clientName);
-		}		
+		triggerNetworkEvent("sb.c.syncer", civilians, clientName);
 	}
 	
 	return true;
@@ -760,15 +752,15 @@ addCommandHandler("civ_syncer", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_health", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_health <civilian> <rotation>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <rotation>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -783,10 +775,7 @@ addCommandHandler("civ_health", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians){
-			triggerNetworkEvent("sb.c.armour", civilians[i].id, armour);
-		}		
-		
+		triggerNetworkEvent("sb.c.armour", civilians, armour);
 	} else {
 		for(let i in civilians){
 			civilians[i].armour = armour;
@@ -800,15 +789,15 @@ addCommandHandler("civ_health", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_jump", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_jump <civilian> <distance>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <distance>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -822,9 +811,7 @@ addCommandHandler("civ_jump", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.jump", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.jump", civilians);
 	} else {
 		for(let i in civilians){
 			civilians[i].jumping = true;
@@ -836,15 +823,15 @@ addCommandHandler("civ_jump", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_walkfwd", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_walkfwd <civilian> <distance>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <distance>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -859,14 +846,11 @@ addCommandHandler("civ_walkfwd", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.walkfwd", civilians, distance);
+	} else {
 		for(let i in civilians) {
 			let position = getPosInFrontOfPos(civilians[i].position, civilians[i].heading, distance);
-			triggerNetworkEvent("sb.c.walkto", civilians[i].id, position.x, position.y, position.z);
-		}		
-		
-	} else {
-		for(let i in civilians){
-			makeCivilianWalkTo(civilians[i], x, y, z)
+			makeCivilianWalkTo(civilians[i], position.x, position.y, position.z);
 		}
 	}
 	
@@ -878,15 +862,15 @@ addCommandHandler("civ_walkfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_runfwd", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_runfwd <civilian> <distance>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <distance>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -902,13 +886,11 @@ addCommandHandler("civ_runfwd", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.runfwd", civilians, distance);
+	} else {
 		for(let i in civilians) {
 			let position = getPosInFrontOfPos(civilians[i].position, civilians[i].heading, distance);
-			triggerNetworkEvent("sb.c.runto", civilians[i].id, position.x, position.y, position.z);
-		}		
-	} else {
-		for(let i in civilians){
-			makeCivilianRunTo(civilians[i], x, y, z)
+			makeCivilianRunTo(civilians[i], position.x, position.y, position.z);
 		}
 	}
 	
@@ -932,7 +914,7 @@ addCommandHandler("civ_sprintfwd", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_runfwd <civilian> <distance>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <distance>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -948,13 +930,11 @@ addCommandHandler("civ_sprintfwd", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			let position = getPosInFrontOfPos(civilians[i].position, civilians[i].heading, distance);
-			triggerNetworkEvent("sb.c.sprintto", civilians[i].id, position.x, position.y, position.z);
-		}		
+		triggerNetworkEvent("sb.c.sprintfwd", civilians, distance);
 	} else {
-		for(let i in civilians){
-			makeCivilianRunTo(civilians[i], x, y, z)
+		for(let i in civilians) {
+			let position = getPosInFrontOfPos(civilians[i].position, civilians[i].heading, distance);		
+			makeCivilianSprintTo(civilians[i], position.x, position.y, position.z)
 		}
 	}
 	
@@ -964,23 +944,23 @@ addCommandHandler("civ_sprintfwd", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("civ_followme", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+addCommandHandler("civ_follow", function(cmdName, params) {
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_followme <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <player name/id>", syntaxMessageColour);
 		return false;
 	}
 	
 	let splitParams = params.split(" ");
 	
 	let civilians = getCiviliansFromParams(splitParams[0]);
-	let playerID = splitParams[1];
+	let playerId = splitParams[1];
 	
 	if(civilians.length == 0) {
 		message("No civilians found!", errorMessageColour);
@@ -988,12 +968,10 @@ addCommandHandler("civ_followme", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.followme", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.follow", civilians, playerId);	
 	} else {
-		for(let i in civilians){
-			civilians[i].setData("followingPlayer", true);
+		for(let i in civilians) {
+			civilians[i].setData("followingPlayer", 0);
 		}
 	}
 	message("The civilians(s) will now follow you", gameAnnounceColour);
@@ -1003,22 +981,22 @@ addCommandHandler("civ_followme", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_defendme", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_defendme <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
 	let splitParams = params.split(" ");
 	
 	let civilians = getCiviliansFromParams(splitParams[0]);
-	let playerID = splitParams[1];
+	let playerId = splitParams[1];
 	
 	if(civilians.length == 0) {
 		message("No civilians found!", errorMessageColour);
@@ -1027,7 +1005,7 @@ addCommandHandler("civ_defendme", function(cmdName, params) {
 	
 	if(isConnected) {
 		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.defendme", civilians[i].id);
+			triggerNetworkEvent("sb.c.defend", civilians, playerId);
 		}		
 	} else {
 		for(let i in civilians){
@@ -1041,22 +1019,22 @@ addCommandHandler("civ_defendme", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_gun", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_gun <civilian> <weapon> [ammo] [hold]", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <weapon> [ammo] [hold]", syntaxMessageColour);
 		return false;
 	}
 	
 	let splitParams = params.split(" ");
 	
 	let civilians = getCiviliansFromParams(splitParams[0]);
-	let weaponID = Number(splitParams[1]) || 1;
+	let weaponId = Number(splitParams[1]) || 1;
 	let ammo = Number(splitParams[2]) || 100;
 	let holdGun = Number(splitParams[3]) || 1;
 	
@@ -1067,30 +1045,30 @@ addCommandHandler("civ_gun", function(cmdName, params) {
 	
 	if(isConnected) {
 		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.gun", civilians[i].id, weaponID, ammo, !!holdGun);
+			triggerNetworkEvent("sb.c.gun", civilians[i].id, weaponId, ammo, !!holdGun);
 		}
 	} else {
 		for(let i in civilians){
-			civilians[i].giveWeapon(weaponID, ammo, !!holdGun);
+			civilians[i].giveWeapon(weaponId, ammo, !!holdGun);
 		}
 	}
 	
-	message("The civilians(s) have been given a " + String(weaponNames[game.game][weaponID]) + " with " + String(ammo) + " ammo", gameAnnounceColour);
+	message("The civilians(s) have been given a " + String(weaponNames[game.game][weaponId]) + " with " + String(ammo) + " ammo", gameAnnounceColour);
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_scale", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_scale <civilian> <scale>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <scale>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1124,15 +1102,15 @@ addCommandHandler("civ_scale", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_stats", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_stats <civ group> <stat>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civ group> <stat>", syntaxMessageColour);
 		return false;
 	}	
 	
@@ -1140,7 +1118,7 @@ addCommandHandler("civ_stats", function(cmdName, params) {
 	
 	let civilians = getCiviliansFromParams(splitParams[0]);
 	let statName = splitParams[1] || "player";
-	let statID = STAT_PLAYER;
+	let statId = STAT_PLAYER;
 	let statInfo = "normal people";
 	
 	if(civilians.length == 0) {
@@ -1150,183 +1128,181 @@ addCommandHandler("civ_stats", function(cmdName, params) {
 	
 	switch(statName.toLowerCase()) {
 		case "cop":
-			statID = STAT_COP;
+			statId = STAT_COP;
 			statInfo = "cops";
 			break;
 			
 		case "medic":
-			statID = STAT_MEDIC;
+			statId = STAT_MEDIC;
 			statInfo = "paramedics";
 			break;	
 
 		case "fireman":
-			statID = STAT_MEDIC;
+			statId = STAT_MEDIC;
 			statInfo = "firefighters";
 			break;		
 
 		case "gang1":
-			statID = STAT_GANG1;
+			statId = STAT_GANG1;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang2":
-			statID = STAT_GANG2;
+			statId = STAT_GANG2;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang3":
-			statID = STAT_GANG3;
+			statId = STAT_GANG3;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang4":
-			statID = STAT_GANG4;
+			statId = STAT_GANG4;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang5":
-			statID = STAT_GANG5;
+			statId = STAT_GANG5;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang6":
-			statID = STAT_GANG6;
+			statId = STAT_GANG6;
 			statInfo = "gang members";
 			break;		
 			
 		case "gang7":
-			statID = STAT_GANG7;
+			statId = STAT_GANG7;
 			statInfo = "gang members";
 			break;		
 			
 		case "mstreet":
-			statID = STAT_STREET_GUY;
+			statId = STAT_STREET_GUY;
 			statInfo = "street men";
 			break;		
 			
 		case "msuit":
-			statID = STAT_SUIT_GUY;
+			statId = STAT_SUIT_GUY;
 			statInfo = "business men";
 			break;		
 			
 		case "msensible":
-			statID = STAT_SENSIBLE_GUY;
+			statId = STAT_SENSIBLE_GUY;
 			statInfo = "sensible men";
 			break;		
 			
 		case "mgeek":
-			statID = STAT_GEEK_GUY;
+			statId = STAT_GEEK_GUY;
 			statInfo = "geeky men";
 			break;		
 			
 		case "mold":
-			statID = STAT_OLD_GUY;
+			statId = STAT_OLD_GUY;
 			statInfo = "old men";
 			break;		
 			
 		case "mtough":
-			statID = STAT_TOUGH_GUY;
+			statId = STAT_TOUGH_GUY;
 			statInfo = "tough men";
 			break;		
 			
 		case "fstreet":
-			statID = STAT_STREET_GIRL;
+			statId = STAT_STREET_GIRL;
 			statInfo = "street women";
 			break;		
 			
 		case "fsuit":
-			statID = STAT_SUIT_GIRL;
+			statId = STAT_SUIT_GIRL;
 			statInfo = "business women";
 			break;		
 			
 		case "fsensible":
-			statID = STAT_SENSIBLE_GIRL;
+			statId = STAT_SENSIBLE_GIRL;
 			statInfo = "sensible women";
 			break;		
 			
 		case "fgeek":
-			statID = STAT_GEEK_GIRL;
+			statId = STAT_GEEK_GIRL;
 			statInfo = "geeky women";
 			break;		
 			
 		case "fold":
-			statID = STAT_OLD_GIRL;
+			statId = STAT_OLD_GIRL;
 			statInfo = "old women";
 			break;		
 			
 		case "ftough":
-			statID = STAT_TOUGH_GIRL;
+			statId = STAT_TOUGH_GIRL;
 			statInfo = "tough women";
 			break;		
 			
 		case "mtramp":
-			statID = STAT_TRAMP_MALE;
+			statId = STAT_TRAMP_MALE;
 			statInfo = "male tramps";
 			break;		
 			
 		case "ftramp":
-			statID = STAT_TRAMP_FEMALE;
+			statId = STAT_TRAMP_FEMALE;
 			statInfo = "female tramps";
 			break;		
 			
 		case "tourist":
-			statID = STAT_TOURIST;
+			statId = STAT_TOURIST;
 			statInfo = "tourists";
 			break;		
 			
 		case "hooker":
-			statID = STAT_PROSTITUTE;
+			statId = STAT_PROSTITUTE;
 			statInfo = "hookers";
 			break;		
 			
 		case "busker":
-			statID = STAT_BUSKER;
+			statId = STAT_BUSKER;
 			statInfo = "buskers";
 			break;		
 			
 		case "taxidriver":
-			statID = STAT_TAXIDRIVER;
+			statId = STAT_TAXIdRIVER;
 			statInfo = "taxi drivers";
 			break;		
 			
 		case "psycho":
-			statID = STAT_PSYCHO;
+			statId = STAT_PSYCHO;
 			statInfo = "psychos";
 			break;		
 			
 		case "steward":
-			statID = STAT_STEWARD;
+			statId = STAT_STEWARD;
 			statInfo = "stewards";
 			break;		
 			
 		case "sportsfan":
-			statID = STAT_SPORTSFAN;
+			statId = STAT_SPORTSFAN;
 			statInfo = "sports fans";
 			break;		
 			
 		case "shopper":
-			statID = STAT_SHOPPER;
+			statId = STAT_SHOPPER;
 			statInfo = "shoppers";
 			break;		
 			
 		case "oldshopper":
-			statID = STAT_OLDSHOPPER;		
+			statId = STAT_OLDSHOPPER;		
 			statInfo = "old shoppers";			
 			break;		
 			
 		default:
-			statID = STAT_PLAYER;
+			statId = STAT_PLAYER;
 			statInfo = "normal people";
 			break;	
 	}	
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.stats", civilians[i].id, statID);
-		}
+		triggerNetworkEvent("sb.c.stats", civilians, statId);
 	} else {
 		for(let i in civilians){
-			civilians[i].setPedStats(civilians[i], statID);
+			civilians[i].setPedStats(civilians[i], statId);
 		}
 	}	
 	
@@ -1337,15 +1313,15 @@ addCommandHandler("civ_stats", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_nogun", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nogun <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1359,9 +1335,7 @@ addCommandHandler("civ_nogun", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.nogun", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.nogun", civilians);	
 	} else {
 		for(let i in civilians){
 			civilians[i].clearWeapons();
@@ -1374,15 +1348,15 @@ addCommandHandler("civ_nogun", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_god", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_god <civilian> <state 0/1>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <state 0/1>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1397,9 +1371,7 @@ addCommandHandler("civ_god", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.god", civilians[i].id, !!godMode);
-		}		
+		triggerNetworkEvent("sb.c.god", civilians, !!godMode);
 	} else {
 		for(let i in civilians){
 			civilians[i].invincible = !!godMode;
@@ -1413,15 +1385,15 @@ addCommandHandler("civ_god", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_crouch", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nogun <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1436,12 +1408,10 @@ addCommandHandler("civ_crouch", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.crouch", civilians[i].id, (crouchState == 1) ? true : false);
-		}		
+		triggerNetworkEvent("sb.c.crouch", civilians, !!crouchState);
 	} else {
 		for(let i in civilians){
-			civilians[i].crouching = (crouchState == 1) ? true : false;
+			civilians[i].duck();
 		}
 	}
 	return true;
@@ -1450,15 +1420,15 @@ addCommandHandler("civ_crouch", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_threat", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nogun <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1472,123 +1442,123 @@ addCommandHandler("civ_threat", function(cmdName, params) {
 		return false;
 	}
 	
-	var threatID = THREAT_PLAYER1;
+	var threatId = THREAT_PLAYER1;
 	var threatInfo = "you";
 	
 	switch(threatText.toLowerCase()) {
 		case "cop":
-			threatID = THREAT_COP;
+			threatId = THREAT_COP;
 			threatInfo = "cops";
 			break;
 		
 		case "p1":
-			threatID = THREAT_PLAYER1;
+			threatId = THREAT_PLAYER1;
 			threatInfo = "cops";
 			break;
 			
 		case "p2":
-			threatID = THREAT_PLAYER2;
+			threatId = THREAT_PLAYER2;
 			threatInfo = "you";
 			break;
 
 		case "p3":
-			threatID = THREAT_PLAYER3;
+			threatId = THREAT_PLAYER3;
 			threatInfo = "you";
 			break;
 
 		case "p4":
-			threatID = THREAT_PLAYER4;
+			threatId = THREAT_PLAYER4;
 			threatInfo = "you";
 			break;			
 			
 		case "male":
-			threatID = THREAT_CIVMALE;
+			threatId = THREAT_CIVMALE;
 			threatInfo = "male civs";
 			break;
 
 		case "female":
-			threatID = THREAT_CIVFEMALE;
+			threatId = THREAT_CIVFEMALE;
 			threatInfo = "female civs";
 			break;	
 
 		case "mafia":
-			threatID = THREAT_GANG_MAFIA;
+			threatId = THREAT_GANG_MAFIA;
 			threatInfo = "mafia members";
 			break;	
 			
 		case "triad":
-			threatID = THREAT_GANG_TRIAD;
+			threatId = THREAT_GANG_TRIAD;
 			threatInfo = "triads";
 			break;	
 			
 		case "diablo":
-			threatID = THREAT_GANG_DIABLO;
+			threatId = THREAT_GANG_DIABLO;
 			threatInfo = "diablo thugs";
 			break;	
 			
 		case "yakuza":
-			threatID = THREAT_GANG_YAKUZA;
+			threatId = THREAT_GANG_YAKUZA;
 			threatInfo = "yakuza members";
 			break;		
 
 		case "yardie":
-			threatID = THREAT_GANG_YARDIE;
-			threatInfo = "yardie bois";
+			threatId = THREAT_GANG_YARDIE;
+			threatInfo = "yardies";
 			break;	
 
 		case "cartel":
-			threatID = THREAT_GANG_CARTEL;
-			threatInfo = "border jumpers";
+			threatId = THREAT_GANG_CARTEL;
+			threatInfo = "cartel members";
 			break;
 
 		case "hood":
-			threatID = THREAT_HOOD;
+			threatId = THREAT_HOOD;
 			threatInfo = "street gangs";
 			break;
 
 		case "medic":
-			threatID = THREAT_EMERGENCY;
+			threatId = THREAT_EMERGENCY;
 			threatInfo = "medics";
 			break;	
 			
 		case "hooker":
-			threatID = THREAT_PROSTITUTE;
+			threatId = THREAT_PROSTITUTE;
 			threatInfo = "hookers";
 			break;	
 			
 		case "gun":
-			threatID = THREAT_GUN;
+			threatId = THREAT_GUN;
 			threatInfo = "anybody who shoots a gun";
 			break;	
 			
 		case "copcar":
-			threatID = THREAT_COPCAR;
-			threatInfo = "fuzzmobiles";			
+			threatId = THREAT_COPCAR;
+			threatInfo = "police cars";			
 			break;				
 		
 		case "fastcar":
-			threatID = THREAT_FASTCAR;	
-			threatInfo = "rich people cars";			
+			threatId = THREAT_FASTCAR;	
+			threatInfo = "fast cars";			
 			break;	
 			
 		case "fireman":
-			threatID = THREAT_FIREMAN;	
+			threatId = THREAT_FIREMAN;	
 			threatInfo = "firefighters";			
 			break;	
 
 		case "dead":
-			threatID = THREAT_DEADPEDS;
+			threatId = THREAT_DEADPEDS;
 			threatInfo = "dead people";			
 			break;	
 
 		default:
-			threatID = THREAT_PLAYER1;
+			threatId = THREAT_PLAYER1;
 			threatInfo = "you";			
 			break;	
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_threat <civilian> <threat name>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <threat name>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1598,12 +1568,10 @@ addCommandHandler("civ_threat", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.threat.add", civilians[i].id, threatID);
-		}		
+		triggerNetworkEvent("sb.c.threat.add", civilians, threatId);
 	} else {
 		for(let i in civilians){
-			civilians[i].setThreatSearch(threatID);
+			civilians[i].setThreatSearch(threatId);
 		}
 	}
 	return true;
@@ -1612,15 +1580,15 @@ addCommandHandler("civ_threat", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civ_nothreat", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Civilians are disabled on this server!", errorMessageColour);
-			return false;			
-		}
-	}
+	//if(isConnected) {
+	//	if(!civiliansEnabled[gta.game]) {
+	//		message("Civilians are disabled on this server!", errorMessageColour);
+	//		return false;			
+	//	}
+	//}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nothreat <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1633,9 +1601,7 @@ addCommandHandler("civ_nothreat", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.threat.clr", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.threat.clr", civilians);	
 	} else {
 		for(let i in civilians){
 			civilians[i].clearThreatSearch();
@@ -1656,7 +1622,7 @@ addCommandHandler("civ_aimatme", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nogun <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " " + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1670,9 +1636,7 @@ addCommandHandler("civ_aimatme", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.aimat", civilians[i].id, localPlayer.id);
-		}		
+		triggerNetworkEvent("sb.c.aimat", civilians, localPlayer.id);
 	} else {
 		for(let i in civilians){
 			civilians[i].pointGunAt(localPlayer);
@@ -1692,7 +1656,7 @@ addCommandHandler("civ_aimatciv", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_aimatplr <civilian> <player>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <player>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1713,9 +1677,7 @@ addCommandHandler("civ_aimatciv", function(cmdName, params) {
 	
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.aimat", civilians[i].id, civilians2[0].id);
-		}		
+		triggerNetworkEvent("sb.c.aimat", civilians, civilians2[0].id);		
 	} else {
 		for(let i in civilians) {
 			civilians[i].pointGunAt(civilians2[0]);
@@ -1735,7 +1697,7 @@ addCommandHandler("civ_aimatveh", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_aimatplr <civilian> <vehicle>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian> <vehicle>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1756,9 +1718,7 @@ addCommandHandler("civ_aimatveh", function(cmdName, params) {
 	
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.aimat", civilians[i].id, vehicles[0].id);
-		}		
+		triggerNetworkEvent("sb.c.aimat", civilians, vehicles[0].id);	
 	} else {
 		for(let i in civilians) {
 			civilians[i].pointGunAt(vehicles[0]);
@@ -1778,7 +1738,7 @@ addCommandHandler("civ_aimatplr", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_nogun <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1793,9 +1753,7 @@ addCommandHandler("civ_aimatplr", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.aimatplr", civilians[i].id, playerName);
-		}		
+		triggerNetworkEvent("sb.c.aimatplr", civilians, playerName);
 	} else {
 		message("This command can't be used offline!", errorMessageColour);
 	}
@@ -1813,7 +1771,7 @@ addCommandHandler("civ_hailtaxi", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_hailtaxi <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1827,9 +1785,7 @@ addCommandHandler("civ_hailtaxi", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.hailtaxi", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.hailtaxi", civilians);
 	} else {
 		for(let i in civilians){
 			civilians[i].hailTaxi();
@@ -1849,7 +1805,7 @@ addCommandHandler("civ_resurrect", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_resurrect <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1863,9 +1819,7 @@ addCommandHandler("civ_resurrect", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.resurrect", civilians[i].id);
-		}		
+		triggerNetworkEvent("sb.c.resurrect", civilians);
 	} else {
 		for(let i in civilians){
 			civilians[i].resurrect();
@@ -1885,7 +1839,7 @@ addCommandHandler("civ_coll", function(cmdName, params) {
 	}
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_coll <civilian>", syntaxMessageColour);
+		message("/" + String(cmdName) + " <civilian>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -1900,9 +1854,7 @@ addCommandHandler("civ_coll", function(cmdName, params) {
 	}
 	
 	if(isConnected) {
-		for(let i in civilians) {
-			triggerNetworkEvent("sb.c.coll", civilians[i].id, (collisionsEnabled == 1) ? true : false);
-		}		
+		triggerNetworkEvent("sb.c.coll", civilians, !!collisionsEnabled);	
 	} else {
 		for(let i in civilians){
 			civilians[i].collisionsEnabled = (collisionsEnabled == 1) ? true : false;
@@ -1970,86 +1922,86 @@ function getCivilians() {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.wander", function(civilianID, wanderPath) {
-	makeCivilianWander(getElementFromId(civilianID), wanderPath);
+addNetworkHandler("sb.c.wander", function(civilianId, wanderPath) {
+	makeCivilianWander(getElementFromId(civilianId), wanderPath);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stay", function(civilianID, stayState) {
-	setCivilianStayInSamePlace(getElementFromId(civilianID), stayState);
+addNetworkHandler("sb.c.stay", function(civilianId, stayState) {
+	setCivilianStayInSamePlace(getElementFromId(civilianId), stayState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkto", function(civilianID, x, y, z) {
-	makeCivilianWalkTo(getElementFromId(civilianID), x, y, z)
+addNetworkHandler("sb.c.walkto", function(civilianId, x, y, z) {
+	makeCivilianWalkTo(getElementFromId(civilianId), x, y, z)
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.runto", function(civilianID, x, y, z) {
-	makeCivilianRunTo(getElementFromId(civilianID), x, y, z)
+addNetworkHandler("sb.c.runto", function(civilianId, x, y, z) {
+	makeCivilianRunTo(getElementFromId(civilianId), x, y, z)
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.crouch", function(civilianID, crouchState) {
-	getElementFromId(civilianID).crouching = crouchState;
+addNetworkHandler("sb.c.crouch", function(civilianId, crouchState) {
+	getElementFromId(civilianId).crouching = crouchState;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.add", function(civilianID, threatID) {
-	getElementFromId(civilianID).setThreatSearch(threatID);
+addNetworkHandler("sb.c.threat.add", function(civilianId, threatId) {
+	getElementFromId(civilianId).setThreatSearch(threatId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.heed", function(civilianID, heedThreatState) {
-	getElementFromId(civilianID).heedThreats = heedThreatState;
+addNetworkHandler("sb.c.threat.heed", function(civilianId, heedThreatState) {
+	getElementFromId(civilianId).heedThreats = heedThreatState;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stat", function(civilianID, pedStat) {
-	getElementFromId(civilianID).setPedStats(pedStat);
+addNetworkHandler("sb.c.stat", function(civilianId, pedStat) {
+	getElementFromId(civilianId).setPedStats(pedStat);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.skin", function(civilianID, skinID) {
-	getElementFromId(civilianID).skin = skinID;
+addNetworkHandler("sb.c.skin", function(civilianId, skinId) {
+	getElementFromId(civilianId).skin = skinId;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.pos", function(civilianID, x, y, z) {
-	getElementFromId(civilianID).position = new Vec3(x, y, z);
+addNetworkHandler("sb.c.pos", function(civilianId, x, y, z) {
+	getElementFromId(civilianId).position = new Vec3(x, y, z);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.lookat", function(civilianID, x, y, z, duration) {
-	getElementFromId(civilianID).lookat(new Vec3(x, y, z), duration);
+addNetworkHandler("sb.c.lookat", function(civilianId, x, y, z, duration) {
+	getElementFromId(civilianId).lookat(new Vec3(x, y, z), duration);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.aimat", function(civilianID, elementID) {
-	getElementFromId(civilianID).pointGunAt(getElementFromId(elementID));
+addNetworkHandler("sb.c.aimat", function(civilianId, elementId) {
+	getElementFromId(civilianId).pointGunAt(getElementFromId(elementId));
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkstyle", function(civilianID, walkStyle) {
-	getElementFromId(civilianID).walkStyle = walkStyle;
+addNetworkHandler("sb.c.walkstyle", function(civilianId, walkStyle) {
+	getElementFromId(civilianId).walkStyle = walkStyle;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.scale", function(civilianID, scaleFactor) {
-	let civilian = getElementFromId(civilianID);
+addNetworkHandler("sb.c.scale", function(civilianId, scaleFactor) {
+	let civilian = getElementFromId(civilianId);
 	
 	scaleFactor = Number(scaleFactor);
 	let civilianMatrix = civilian.matrix;
@@ -2061,51 +2013,51 @@ addNetworkHandler("sb.c.scale", function(civilianID, scaleFactor) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.warpintoveh", function(civilianID, vehicleID, seatID) {
-	getElementFromId(civilianID).warpIntoVehicle(getElementFromId(vehicleID), seatID);
+addNetworkHandler("sb.c.warpintoveh", function(civilianId, vehicleId, seatId) {
+	getElementFromId(civilianId).warpIntoVehicle(getElementFromId(vehicleId), seatId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.enterveh", function(civilianID, vehicleID, driver) {
-	getElementFromId(civilianID).enterVehicle(getElementFromId(vehicleID), driver);
+addNetworkHandler("sb.c.enterveh", function(civilianId, vehicleId, driver) {
+	getElementFromId(civilianId).enterVehicle(getElementFromId(vehicleId), driver);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.exitveh", function(civilianID) {
-	getElementFromId(civilianID).exitVehicle();
+addNetworkHandler("sb.c.exitveh", function(civilianId) {
+	getElementFromId(civilianId).exitVehicle();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.god", function(civilianID, godMode) {
-	getElementFromId(civilianID).invincible = godMode;
-	getElementFromId(civilianID).setProofs(godMode, godMode, godMode, godMode, godMode);
+addNetworkHandler("sb.c.god", function(civilianId, godMode) {
+	getElementFromId(civilianId).invincible = godMode;
+	getElementFromId(civilianId).setProofs(godMode, godMode, godMode, godMode, godMode);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.hailtaxi", function(civilianID) {
-	getElementFromId(civilianID).hailTaxi();
+addNetworkHandler("sb.c.hailtaxi", function(civilianId) {
+	getElementFromId(civilianId).hailTaxi();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.gun", function(civilianID, weaponID, ammo, holdGun) {
-	getElementFromId(civilianID).giveWeapon(weaponID, ammo, holdGun);
+addNetworkHandler("sb.c.gun", function(civilianId, weaponId, ammo, holdGun) {
+	getElementFromId(civilianId).giveWeapon(weaponId, ammo, holdGun);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.resurrect", function(civilianID) {
-	getElementFromId(civilianID).resurrect();
+addNetworkHandler("sb.c.resurrect", function(civilianId) {
+	getElementFromId(civilianId).resurrect();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.jump", function(civilianID) {
-	getElementFromId(civilianID).jumping = true;
+addNetworkHandler("sb.c.jump", function(civilianId) {
+	getElementFromId(civilianId).jumping = true;
 });
 
 // ----------------------------------------------------------------------------
