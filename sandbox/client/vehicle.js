@@ -150,14 +150,14 @@ function spawnVehicleCommand(cmdName, params) {
 		triggerNetworkEvent("sb.v.add", modelId, position.x, position.y, position.z, heading);
 		return true;
 	} else {
-		let thisVeh = createVehicle(modelId, position);
+		let thisVeh = gta.createVehicle(modelId, position);
 		if(!thisVeh) {
 			message("The vehicle could not be added!", errorMessageColour);
 			return false;
 		}
 		thisVeh.heading = heading;
 		modelId = thisVeh.modelIndex;
-		createDefaultVehicleData(thisVeh);
+		//createDefaultVehicleData(thisVeh);
 		
 		message("You have spawned a " + getVehicleNameFromModelId(modelId, gta.game), gameAnnounceColour);			
 	}
