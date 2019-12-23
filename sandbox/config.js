@@ -9,16 +9,16 @@ let timeLockMinute = [null, 0, 0, 0, 0, 0, 0];
 let timeMinuteDuration = [null, 60000, 60000, 60000, 60000, 60000, 60000];
 
 // Ambient Game Stuff
-let trainsEnabled = [null, true, false, true, true, true, true];
-let planesEnabled = [null, true, true, true, true, true, true];
-let civiliansEnabled = [null, true, true, true, false, false, false];
+let trainsEnabled = [null, true, true, false, true, true, true];
+let planesEnabled = [null, true, true, false, true, true, true];
+let civiliansEnabled = [null, true, true, false, false, false, false];
 let trafficEnabled = [null, true, true, true, false, false, false];
 let ssvBridgeEnabled = true;
 
 // Weather and Snow
 let currentWeather = [null, 0, 0, 10, 10, 0, 0];
-let isSnowing = [null, false, false, false, false, false, false];
-let isWinter = [null, false, false, false, false, false, false];
+let isSnowing = [null, true, false, false, false, false, false];
+let isWinter = [null, true, false, false, false, false, false];
 let windSpeed = [null, 0, 0, 0, 0, 0, 0];
 
 // Civilian Stuff
