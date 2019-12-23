@@ -5,10 +5,10 @@
 addNetworkHandler("sb.w.weather", function(client, weather, force) {
 	currentWeather[server.game] = weather;
 	if(force) {
-		world.forceWeather(weather);
+		gta.forceWeather(weather);
 		message(client.name + " forced the weather to " + weatherNames[server.game][weather], gameAnnounceColours[serverGame]);
 	} else {
-		world.weather = weather;
+		gta.weather = weather;
 		message(client.name + " set the weather to " + weatherNames[server.game][weather], gameAnnounceColours[serverGame]);
 	}
 });
@@ -17,7 +17,7 @@ addNetworkHandler("sb.w.weather", function(client, weather, force) {
 
 addNetworkHandler("sb.w.winter", function(client, winter) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}
 	
@@ -30,7 +30,7 @@ addNetworkHandler("sb.w.winter", function(client, winter) {
 
 addNetworkHandler("sb.w.snow", function(client, snow) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}	
 	
@@ -43,14 +43,14 @@ addNetworkHandler("sb.w.snow", function(client, snow) {
 
 addNetworkHandler("sb.w.time", function(client, hour, minute) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}	
 	
 	timeLockHour[server.game] = hour;
 	timeLockMinute[server.game] = minute;
-	world.hour = hour;
-	world.minute = minute;	
+	gta.hour = hour;
+	gta.minute = minute;	
 	message(client.name + " set the time to " + makeReadableTime(hour, minute), gameAnnounceColours[server.game]);
 });
 
@@ -58,7 +58,7 @@ addNetworkHandler("sb.w.time", function(client, hour, minute) {
 
 addNetworkHandler("sb.w.timelock", function(client, state) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}	
 	
@@ -70,12 +70,12 @@ addNetworkHandler("sb.w.timelock", function(client, state) {
 
 addNetworkHandler("sb.w.trains", function(client, state) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}	
 	
 	trainsEnabled[server.game] = state;
-	world.trainsEnabled = state;
+	gta.trainsEnabled = state;
 	message(client.name + " has " + String((state==true) ? "enabled" : "disabled") + " trains", gameAnnounceColours[server.game]);
 });
 
@@ -83,12 +83,12 @@ addNetworkHandler("sb.w.trains", function(client, state) {
 
 addNetworkHandler("sb.w.planes", function(client, state) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}	
 	
 	planesEnabled[server.game] = state;
-	world.planesEnabled = state;
+	gta.planesEnabled = state;
 	message(client.name + " has " + String((state==true) ? "enabled" : "disabled") + " airplanes", gameAnnounceColours[server.game]);
 });
 
@@ -96,13 +96,37 @@ addNetworkHandler("sb.w.planes", function(client, state) {
 
 addNetworkHandler("sb.w.ssvbridge", function(client, state) {
 	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", errorMessageColour);
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
 		return false;
 	}		
 	
 	ssvBridgeEnabled = state;
-	world.ssvBridgeEnabled = state;
+	gta.ssvBridgeEnabled = state;
 	message(client.name + " has " + String((state==true) ? "enabled" : "disabled") + " the Shoreside Vale bridge", gameAnnounceColours[server.game]);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.w.civilians", function(client, state) {
+	if(!client.administrator) {
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
+		return false;
+	}	
+	
+	civiliansEnabled[server.game] = state;
+	message(client.name + " has " + String((state==true) ? "enabled" : "disabled") + " civilians", gameAnnounceColours[server.game]);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.w.traffic", function(client, state) {
+	if(!client.administrator) {
+		messageClient("You must be an administrator to change this!", client, errorMessageColour);
+		return false;
+	}	
+	
+	civiliansEnabled[server.game] = state;
+	message(client.name + " has " + String((state==true) ? "enabled" : "disabled") + " traffic", gameAnnounceColours[server.game]);
 });
 
 // ----------------------------------------------------------------------------
