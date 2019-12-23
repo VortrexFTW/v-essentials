@@ -6,7 +6,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 	for(let i in vehicles) {
 		if(vehicles[i].getData("sb") == null) {
-			createDefaultVehicleData(vehicles[i]);
+			//createDefaultVehicleData(vehicles[i]);
 		}
 	}
 });
@@ -21,10 +21,10 @@ addNetworkHandler("sb.v.add", function(client, modelID, x, y, z, heading) {
 	//}
 	
 	let position = new Vec3(x, y, z);
-	let tempVehicle = createVehicle(Number(modelID), position);
+	let tempVehicle = gta.createVehicle(Number(modelID), position);
 	tempVehicle.position = new Vec3(x, y, z);
 	tempVehicle.heading = heading;
-	createDefaultVehicleData(tempVehicle);
+	//createDefaultVehicleData(tempVehicle);
 	addToWorld(tempVehicle);
 	
 	let modelName = getVehicleNameFromModelId(tempVehicle.modelIndex);
