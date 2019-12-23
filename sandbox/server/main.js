@@ -26,22 +26,34 @@ addNetworkHandler("sb.e.syncer", function(client, element) {
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	if(serverGame != GAME_GTA_IV && serverGame != GAME_GTA_IV_EFLC) {
-		world.forceWeather(currentWeather[serverGame]);
-		world.hour = timeLockHour[serverGame];
-		world.minute = timeLockMinute[serverGame];
+		gta.forceWeather(currentWeather[serverGame]);
+		gta.hour = timeLockHour[serverGame];
+		gta.minute = timeLockMinute[serverGame];
 		if(serverGame != GAME_GTA_VC) {
-			world.trainsEnabled = trainsEnabled[serverGame];
+			gta.trainsEnabled = trainsEnabled[serverGame];
 		}
-		world.planesEnabled = planesEnabled[serverGame];
+		gta.planesEnabled = planesEnabled[serverGame];
 	}
 });
 
 // ----------------------------------------------------------------------------
 
+//addEventHandler("OnResourceStart", function(event, resource) {
+//	console.log("[Sandbox] Resource '" + resource.name + "' started!");
+//});
+
+// ----------------------------------------------------------------------------
+
+//addEventHandler("OnResourceStop", function(event, resource) {
+//	console.log("[Sandbox] Resource '" + resource.name + "' stopped!");
+//});
+
+// ----------------------------------------------------------------------------
+
 addEventHandler("OnProcess", function(event, deltaTime) {
 	if(timeLocked) {
-		world.hour = timeLockHour[serverGame];
-		world.minute = timeLockMinute[serverGame];
+		gta.time.hour = timeLockHour[serverGame];
+		gta.time.minute = timeLockMinute[serverGame];
 	}
 });
 
