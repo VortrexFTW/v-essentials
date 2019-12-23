@@ -250,6 +250,87 @@ addCommandHandler("trains", function(command, params) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("traffic", function(command, params) {
+	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		message("The /" + command + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+	
+	if(isParamsInvalid(params)) {
+		message("Traffic is currently turned " + getOnOffText(trafficEnabled[gta.game]), gameAnnounceColour);
+		message("To turn traffic on or off, use /" + command + " <state 1/0>", syntaxMessageColour);
+		return false;
+	}	
+	
+	let splitParams = params.split(" ");
+	let trafficState = Number(splitParams[0]) || 0;
+	
+	if(isConnected) {
+		triggerNetworkEvent("sb.w.traffic", trafficEnabled[gta.game]);
+	} else {
+		trafficEnabled[gta.game] = !!trafficState;
+		gta.setTrafficEnabled(trafficEnabled[gta.game]);
+		message("Traffic has been turned " + getOnOffText(trafficEnabled[gta.game]), gameAnnounceColour);
+	}
+	return true;	
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("civilians", function(command, params) {
+	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		message("The /" + command + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+	
+	if(isParamsInvalid(params)) {
+		message("Civilians are currently turned " + getOnOffText(civiliansEnabled[gta.game]), gameAnnounceColour);
+		message("To turn traffic on or off, use /" + command + " <state 1/0>", syntaxMessageColour);
+		return false;
+	}	
+	
+	let splitParams = params.split(" ");
+	let civiliansState = Number(splitParams[0]) || 0;
+	
+	if(isConnected) {
+		triggerNetworkEvent("sb.w.civilians", civiliansEnabled[gta.game]);
+	} else {
+		civiliansEnabled[gta.game] = !!civiliansState;
+		gta.setCiviliansEnabled(civiliansEnabled[gta.game]);
+		message("Civilians have been turned " + getOnOffText(civiliansEnabled[gta.game]), gameAnnounceColour);
+	}
+	return true;	
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("minutedur", function(command, params) {
+	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		message("The /" + command + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+	
+	if(isParamsInvalid(params)) {
+		message("Minute duration is currently " + String(timeMinuteDuration[gta.game]), gameAnnounceColour);
+		message("To set the minute duration, use /" + command + " <time>", syntaxMessageColour);
+		return false;
+	}	
+	
+	let splitParams = params.split(" ");
+	let minuteDuration = Number(splitParams[0]) || 0;
+	
+	if(isConnected) {
+		triggerNetworkEvent("sb.w.minutedur", timeMinuteDuration[gta.game]);
+	} else {
+		timeMinuteDuration[gta.game] = minuteDuration;
+		gta.time.minuteDuration = minuteDuration;
+		message("Minute duration has been set to " + String(timeMinuteDuration[gta.game]), gameAnnounceColour);
+	}
+	return true;	
+});
+
+// ----------------------------------------------------------------------------
+
 bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
 	if(isConnected) {
 		triggerNetworkEvent("sb.w.sync");
@@ -281,7 +362,7 @@ function resyncWorld() {
 	if(gta.game < GAME_GTA_SA) {
 		forceSnowing(isWinter[gta.game]);
 		snowing = isSnowing[gta.game];					
-	}	
+	}
 	
 	if(gta.game < GAME_GTA_IV) {
 		for(let i in gameGarages[gta.game]) {
@@ -334,6 +415,17 @@ addNetworkHandler("sb.w.snow", function(snow) {
 	
 	isSnowing[gta.game] = snow;
 	snowing = snow;
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.w.minutedur", function(minuteDuration) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		return false;
+	}
+	
+	timeMinuteDuration[gta.game] = minuteDuration;
+	gta.time.minuteDuration = minuteDuration
 });
 
 // ----------------------------------------------------------------------------
