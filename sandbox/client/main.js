@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-let isServer = false;
-
-// ----------------------------------------------------------------------------
-
 let gameAnnounceColour = gameAnnounceColours[game.game];
 let gameName = gameNames[game.game];
 
@@ -26,5 +22,18 @@ addCommandHandler("clear", function(cmdName, params, client) {
 		global.message("", COLOUR_BLACK);
 	}
 });
+
+// ----------------------------------------------------------------------------
+
+function outputSandboxMessage(messageText) {
+	let name = (isConnected) ? localClient.name : "You";
+	let outputMessage = String(name) + " " + messageText;
+	if(isConnected) {
+		triggerNetworkEvent("sb.msg", outputMessage);
+	} else {
+		message(outputMessage, gameAnnounceColour);
+		console.log(outputMessage);
+	}
+}
 
 // ----------------------------------------------------------------------------

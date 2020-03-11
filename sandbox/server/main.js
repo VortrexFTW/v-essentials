@@ -2,13 +2,12 @@
 
 // ----------------------------------------------------------------------------
 
-let isServer = true;
 let serverGame = server.game;
 
 // ----------------------------------------------------------------------------
 
-let gameAnnounceColour = gameAnnounceColours[serverGame];
-let gameName = gameNames[serverGame];
+let gameAnnounceColour = gameAnnounceColours[server.game];
+let gameName = gameNames[server.game];
 
 // ----------------------------------------------------------------------------
 
@@ -51,7 +50,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function(event, deltaTime) {
-	if(timeLocked) {
+	if(timeLocked[serverGame]) {
 		gta.time.hour = timeLockHour[serverGame];
 		gta.time.minute = timeLockMinute[serverGame];
 	}
@@ -62,11 +61,11 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 addNetworkHandler("sb.clientready", function(client) {
 	triggerNetworkEvent("sb.w.winter", client, isSnowing[serverGame], isWinter[serverGame]);
 	
-	for(let i in effects) {
-		if(effects[i].exists) {
-			triggerNetworkEvent("sb.ef.add", client, effects[i].effectID, effects[i].effectType, effects[i].position.x, effects[i].position.y, effects[i].position.z);
-		}
-	}
+	//customEffects.forEach(function(customEffect) {
+	//	if(customEffect.exists) {
+	//		triggerNetworkEvent("sb.ef.add", client, customEffect.effectID, customEffect.effectType, customEffect.position.x, customEffect.position.y, customEffect.position.z);
+	//	}
+	//});
 });
 
 // ----------------------------------------------------------------------------
@@ -79,3 +78,44 @@ function getSyncerFromID(syncerID) {
 		}
 	}
 }
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.msg", function(client, messageText) {
+	outputSandboxMessage(messageText);
+});
+
+// ----------------------------------------------------------------------------
+
+function outputSandboxMessage(messageText) {
+	console.log(messageText);
+	message(messageText, gameAnnounceColour);
+}
+
+// ----------------------------------------------------------------------------
+
+addEventHandler("OnPlayerQuit", function(event, client, disconnectReason) {
+	setTimeout(beginSandboxCleanup, 5000);
+});
+
+// ----------------------------------------------------------------------------
+
+function beginSandboxCleanup() {
+	if(getClients().length == 0) {
+		console.log("[Sandbox] Performing cleanup. Removing all player spawned vehicles.");
+		let vehicles = getElementsByType(ELEMENT_VEHICLE).filter(vehicle => vehicle.getData("sb.v.addedby") != null);
+		vehicles.forEach(function(vehicle2) { 
+			destroyElement(vehicle2);
+		});
+		console.log("[Sandbox] Removed " + String(vehicles.length) + " player spawned vehicles");
+		
+		if(findResourceByName("v-parkedcars") != null) {
+			if(findResourceByName("v-parkedcars").isStarted) {
+				findResourceByName("v-parkedcars").restart();
+			}
+		}
+		console.log("[Sandbox] Removed " + String(vehicles.length) + " player spawned vehicles");
+	}
+}
+
+// ----------------------------------------------------------------------------
