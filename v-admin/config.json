@@ -1,3 +1,10 @@
 {
-	"adminPassword": "ChangeMe"
+	"adminPassword": "CHANGEME",
+
+	"admins": [
+		{
+			"name": "TestName",
+			"ip": "127.0.0.1"
+		},
+	]
 }
