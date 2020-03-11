@@ -2,202 +2,283 @@
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.add", function(client, modelID, x, y, z, heading, announce) {
+addNetworkHandler("sb.c.add", function(client, modelId, x, y, z, heading, announce) {
 	let position = new Vec3(x, y, z);
-	let civilian = createCivilian(modelID, position);
-	//civilian.game = serverGame;
-	//civilian.position = position;
+	let civilian = gta.createCivilian(modelId, position);
 	civilian.heading = heading;
-	civilian.syncer = client.index;
 	addToWorld(civilian);
-	if(announce) {
-		message(client.name + " spawned a " + skinNames[serverGame][modelID] + " ped.", gameAnnounceColours[serverGame]);
-	}
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.wander", function(client, civilianID, wanderPath) {
-	triggerNetworkEvent("sb.c.wander", null, civilianID, wanderPath);
-	getElementFromId(civilianID).setData("wander", wanderPath, false);
+addNetworkHandler("sb.c.wander", function(client, civilians, wanderPath) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.wander", getClients()[civilian.syncer], civilian, wanderPath);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stay", function(client, civilianID, stayState) {
-	triggerNetworkEvent("sb.c.stay", null, civilianID, stayState);
-	getElementFromId(civilianID).setData("stay", stayState, false);
+addNetworkHandler("sb.c.stay", function(client, civilians, stayState) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.stay", getClients()[civilian.syncer], civilian, stayState);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.followme", function(client, civilianID) {
-	getElementFromId(civilianID).setData("followingPlayer", client.player.id, true);
+addNetworkHandler("sb.c.follow", function(client, civilians, entity) {
+	civilians.forEach((civilian) => {
+		civilian.setData("sb.c.following", entity, true);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.defendme", function(client, civilianID) {
-	getElementFromId(civilianID).setData("defendingPlayer", client.player.id);
-	//triggerNetworkEvent("sb.c.defendplr", null, civilianID, client.player.id);
+addNetworkHandler("sb.c.defend", function(client, civilians, entity) {
+	civilians.forEach((civilian) => {
+		civilian.setData("sb.c.defending", entity, true);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.faceme", function(client, civilianID) {
-	getElementFromId(civilianID).setData("facingPlayer", client.player.id);
-	//triggerNetworkEvent("sb.c.faceplr", null, civilianID, client.player.id);
+addNetworkHandler("sb.c.facing", function(client, civilians, entity) {
+	civilians.forEach((civilian) => {
+		civilian.setData("sb.c.facing", entity, true);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkto", function(client, civilianID, x, y, z) {
-	triggerNetworkEvent("sb.c.walkto", null, civilianID, x, y, z);
+addNetworkHandler("sb.c.walkfwd", function(client, civilians, distance) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.walkfwd", getClients()[civilian.syncer], civilian, distance);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.runto", function(client, civilianID, x, y, z) {
-	triggerNetworkEvent("sb.c.runto", null, civilianID, x, y, z);
+addNetworkHandler("sb.c.runfwd", function(client, civilians, distance) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.runfwd", getClients()[civilian.syncer], civilian, distance);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.sprintto", function(client, civilianID, x, y, z) {
-	triggerNetworkEvent("sb.c.sprintto", null, civilianID, x, y, z);
+addNetworkHandler("sb.c.sprintfwd", function(client, civilians, distance) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.sprintfwd", getClients()[civilian.syncer], civilian, distance);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.crouch", function(client, civilianID, crouchState) {
-	triggerNetworkEvent("sb.c.crouch", null, civilianID, crouchState);
+addNetworkHandler("sb.c.walkto", function(client, civilians, x, y, z) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.walkto", getClients()[civilian.syncer], civilian, x, y, z);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.add", function(client, civilianID, threatID) {
-	triggerNetworkEvent("sb.c.threat.add", null, civilianID, threatID);
+addNetworkHandler("sb.c.runto", function(client, civilians, x, y, z) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.runto", getClients()[civilian.syncer], civilian, x, y, z);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.heed", function(client, civilianID, heedThreatState) {
-	triggerNetworkEvent("sb.c.threat.heed", null, civilianID, heedThreatState);
+addNetworkHandler("sb.c.sprintto", function(client, civilians, x, y, z) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.sprintto", getClients()[civilian.syncer], civilian, x, y, z);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stat", function(client, civilianID, pedStat) {
-	triggerNetworkEvent("sb.c.stat", null, civilianID, pedStat);
+addNetworkHandler("sb.c.crouch", function(client, civilians, crouchState) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.crouch", getClients()[civilian.syncer], civilian, crouchState);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.skin", function(client, civilianID, skinID) {
-	triggerNetworkEvent("sb.c.skin", null, civilianID, skinID);
+addNetworkHandler("sb.c.threat.add", function(client, civilians, threatId) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.threat.add", getClients()[civilian.syncer], civilian, threatId);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.pos", function(client, civilianID, x, y, z) {
-	triggerNetworkEvent("sb.c.pos", null, civilianID, x, y, z);
+addNetworkHandler("sb.c.threat.heed", function(client, civilians, heedThreatState) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.threat.heed", getClients()[civilian.syncer], civilian, heedThreatState);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.aimat", function(client, civilianID, elementID) {
-	triggerNetworkEvent("sb.c.aimat", null, civilianID, elementID);
+addNetworkHandler("sb.c.stat", function(client, civilians, pedStat) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.stat", getClients()[civilian.syncer], civilian, pedStat);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.warpintoveh", function(client, civilianID, vehicleID, seatID) {
-	triggerNetworkEvent("sb.c.warpintoveh", null, civilianID, vehicleID, seatID);
+addNetworkHandler("sb.c.skin", function(client, civilians, skinId) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.skin", getClients()[civilian.syncer], civilian, skinId);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.enterveh", function(client, civilianID, vehicleID, driver) {
-	triggerNetworkEvent("sb.c.enterveh", null, civilianID, vehicleID, driver);
+addNetworkHandler("sb.c.pos", function(client, civilians, x, y, z) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.pos", getClients()[civilian.syncer], civilian, x, y, z);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.exitveh", function(client, civilianID) {
-	triggerNetworkEvent("sb.c.exitveh", null, civilianID);
+addNetworkHandler("sb.c.aimat", function(client, civilians, element) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.aimat", getClients()[civilian.syncer], civilian, element);
+	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.god", function(client, civilianID, godMode) {
-	triggerNetworkEvent("sb.c.exitveh", null, civilianID, godMode);
+addNetworkHandler("sb.c.warpintoveh", function(client, civilians, vehicle, seatID) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.warpintoveh", getClients()[civilian.syncer], civilian, vehicle, seatID);
+	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.hailtaxi", function(client, civilianID) {
-	triggerNetworkEvent("sb.c.hailtaxi", null, civilianID);
+addNetworkHandler("sb.c.enterveh", function(client, civilians, vehicle, driver) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.enterveh", getClients()[civilian.syncer], civilian, vehicle, driver);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.resurrect", function(client, civilianID) {
-	triggerNetworkEvent("sb.c.resurrect", null, civilianID);
+addNetworkHandler("sb.c.exitveh", function(client, civilians) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.exitveh", getClients()[civilian.syncer], civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.del", function(client, civilianID) {
-	destroyElement(getElementFromId(civilianID));
+addNetworkHandler("sb.c.god", function(client, civilians, godMode) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.god", getClients()[civilian.syncer], civilian, godMode);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.gun", function(client, civilianID, weaponID, ammo, holdGun) {
-	triggerNetworkEvent("sb.c.gun", null, civilianID, weaponID, ammo, holdGun);
+addNetworkHandler("sb.c.hailtaxi", function(client, civilians) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.hailtaxi", getClients()[civilian.syncer], civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkstyle", function(client, civilianID, walkStyleID) {
-	triggerNetworkEvent("sb.c.walkstyle", null, civilianID, walkStyleID);
+addNetworkHandler("sb.c.resurrect", function(client, civilians) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.resurrect", getClients()[civilian.syncer], civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.jump", function(client, civilianID) {
-	triggerNetworkEvent("sb.c.jump", null, civilianID);
+addNetworkHandler("sb.c.del", function(client, civilians) {
+	civilians.forEach(function(civilian) {
+		destroyElement(civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stamina", function(client, civilianID, stamina) {
-	triggerNetworkEvent("sb.c.stamina", null, civilianID, stamina);
+addNetworkHandler("sb.c.gun", function(client, civilians, weaponId, ammo, holdGun) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.gun", getClients()[civilian.syncer], civilian, weaponId, ammo, holdGun);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.staminadur", function(client, civilianID, staminaDuration) {
-	triggerNetworkEvent("sb.c.staminadur", null, civilianID, staminaDuration);
+addNetworkHandler("sb.c.nogun", function(client, civilians) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.gun", getClients()[civilian.syncer], civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.torsorot", function(client, civilianID, rotation) {
-	triggerNetworkEvent("sb.c.torsorot", null, civilianID, rotation);
+addNetworkHandler("sb.c.walkstyle", function(client, civilians, walkStyle) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.walkstyle", getClients()[civilian.syncer], civilian, walkStyle);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.scale", function(client, civilianID, scale) {
-	triggerNetworkEvent("sb.c.scale", null, civilianID, scale);
+addNetworkHandler("sb.c.jump", function(client, civilians) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.jump", getClients()[civilian.syncer], civilian);
+	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.syncer", function(client, civilianID, clientName) {
-	getElementFromId(civilianID).syncer = getClientFromName(clientName).index;
-	message(getClientFromName(clientName).name + " is now the syncer for civ " + String(civilianID), gameAnnounceColours[serverGame]);
+addNetworkHandler("sb.c.stamina", function(client, civilians, stamina) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.stamina", getClients()[civilian.syncer], civilian, stamina);
+	});
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.c.staminadur", function(client, civilians, staminaDuration) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.staminadur", getClients()[civilian.syncer], civilian, staminaDuration);
+	});
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.c.torsorot", function(client, civilians, rotation) {
+	civilians.forEach((civilian) => {
+		triggerNetworkEvent("sb.c.torsorot", getClients()[civilian.syncer], civilian, rotation);
+	});
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.c.scale", function(client, civilians, scale) {
+	civilians.forEach(function(civilian) {
+		civilian.setData("sb.scale", scale, true);
+	});
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.c.syncer", function(client, civilians, clientName) {
+	civilians.forEach(function(civilian) {
+		civilian.syncer = getClientFromName(clientName).index;
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -207,3 +288,5 @@ addEventHandler("OnPedWasted", function(event, ped) {
 		setTimeout(destroyElement, 7500, ped);
 	}
 });
+
+// ----------------------------------------------------------------------------
