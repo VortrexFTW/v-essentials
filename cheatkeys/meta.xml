@@ -1,0 +1,5 @@
+<meta>
+	<info title="cheatkeys" author="jack9267" version="1.0" description="Keybinds to rapidly move around and do stuff" />
+
+	<script src="client.js" type="client" language="javascript" />
+</meta>
