@@ -1,7 +1,11 @@
 "use strict";
 setErrorMode(RESOURCEERRORMODE_STRICT);
 
-//let isServer = (typeof server != "undefined") ? true : false;
+// ----------------------------------------------------------------------------
+
+// DONT TOUCH THIS
+let thisGame = (typeof server == "undefined") ? gta.game : server.game;
+let isServer = (typeof server == "undefined") ? false : true;
 
 // ----------------------------------------------------------------------------
 
@@ -13,254 +17,255 @@ exportFunction("getVehicleModelName", getVehicleNameFromModelId);
 
 let gameLocations = [
 	[],
-	
+
 	[ // GTA III
 		// Police Stations
-		["Portland Police Station", [1143.875, -675.1875, 14.97], 0.0],
-		["Staunton Island Police Station", [340.25, -1123.375, 25.98], 0.0],
-		["Shoreside Vale Police Station", [-1253.0, -138.1875, 58.75], 0.0],
-		
+		["Portland Police Station", [1143.875, -675.1875, 14.97], 0.0, [1127.95, -666.06, 14.413]],
+		["Staunton Island Police Station", [340.25, -1123.375, 25.98], 0.0, null],
+		["Shoreside Vale Police Station", [-1253.0, -138.1875, 58.75], 0.0, null],
+
 		// Hospitals
-		["Portland Hospital", [1144.25, -596.875, 14.97], 0.0],
-		["Staunton Island Hospital", [183.5, -17.75, 16.21], 0.0],
-		["Shoreside Vale Hospital", [-1259.5, -44.5, 58.89], 0.0],
-		
+		["Portland Hospital", [1144.25, -596.875, 14.97], 0.0, [1127.64, -586.84, 14.414]],
+		["Staunton Island Hospital", [183.5, -17.75, 16.21], 0.0, null],
+		["Shoreside Vale Hospital", [-1259.5, -44.5, 58.89], 0.0, null],
+
 		// Fire Stations
-		["Portland Fire Station", [1103.70, -52.45, 7.49], 0.0],
-		["Staunton Island Fire Station", [-78.48, -436.80, 16.17], 0.0],
-		["Shoreside Vale Fire Station", [-1202.10, -14.67, 53.20], 0.0],		
-		
+		["Portland Fire Station", [1103.70, -52.45, 7.49], 0.0, null],
+		["Staunton Island Fire Station", [-78.48, -436.80, 16.17], 0.0, null],
+		["Shoreside Vale Fire Station", [-1202.10, -14.67, 53.20], 0.0, null],
+
 		// Pay and Sprays
-		["Portland Pay and Spray", [925.4, -360.3, 10.83], 0.0],		
-		["Staunton Island Pay and Spray", [381.8, -493.8, 25.95], 0.0],		
-		["Shoreside Vale Pay and Spray", [-1142.4, 35.01, 58.61], 0.0],	
+		["Portland Pay and Spray", [925.4, -360.3, 10.83], 0.0, [928.35, -335.53, 9.413]],
+		["Staunton Island Pay and Spray", [381.8, -493.8, 25.95], 0.0, null],
+		["Shoreside Vale Pay and Spray", [-1142.4, 35.01, 58.61], 0.0, null],
 
 		// Ammunations
-		["Portland Ammunation", [1068.3, -400.9, 15.24], 0.0],		
-		["Staunton Island Ammunation", [348.2, -717.9, 26.43], 0.0],	
-		
+		["Portland Ammunation", [1068.3, -400.9, 15.24], 0.0, null],
+		["Staunton Island Ammunation", [348.2, -717.9, 26.43], 0.0, null],
+
 		// Train Stations
-		["Bedford Point Train Station", [178.52, -1551.40, 26.162], -3.105],
-		["Francis International Airport Train Station", [-633.42, -760.06, 18.919], 1.586],
-		["Rockford Train Station", [225.66, -69.07, 20.998], -3.115],
-		["Saint Marks Train Station", [1306.69, -512.38, 40.078], -2.458],
-		["Hepburn Heights Train Station", [1029.07, -164.18, 4.972], 0.005],
-		["Chinatown Train Station", [775.27, -622.28, 14.747], 0.006],		
-		
+		["Bedford Point Train Station (Subway)", [178.52, -1551.40, 26.162], -3.105, [188.24, -1603.86, 25.700]],
+		["Francis International Airport Train Station (Subway)", [-633.42, -760.06, 18.919], 1.586, [-693.17, -725.14, 8.313]],
+		["Rockford Train Station (Subway)", [225.66, -69.07, 20.998], -3.115, [227.01, -59.56, 20.697]],
+		["Saint Marks Train Station (Portland EL)", [1306.69, -512.38, 40.078], -2.458, [1312.85, -506.36, 40.641]],
+		["Hepburn Heights Train Station (Portland EL)", [1029.07, -164.18, 4.972], 0.005, [1020.75, -166.69, 4.412]],
+		["Chinatown Train Station (Portland EL)", [775.27, -622.28, 14.747], 0.006, [812.43, -630.49, 14.413]],
+
 		// Safehouses
-		["Portland Safehouse", [885.52, -308.47, 8.615], -1.532],
+		["Portland Safehouse", [885.52, -308.47, 8.615], -1.532, [839.16, -298.12, 4.717]],
 
 		// Other
-		["St Mathias College", [201.59, -281.42, 15.779], -0.005],
-		["Newport Parking Garage", [294.22, -547.87, 25.780], 3.119],
-		["City Hall", [96.60, -951.61, 26.168], 3.138],
-		["Belleville Park East", [109.15, -695.76, 26.168], 1.594],
-		["Belleville Park Bathroom", [38.69, -724.96, 22.756], -3.104],
-		["Belleville Park West", [0.40, -773.05, 26.056], -1.476],
-		["Stadium Entrance", [-18.65, -231.80, 29.861], 0.002],
-		["Kenji's Casino", [454.10, -1421.26, 26.124], -0.769],
-		["Saint Marks Bistro", [1345.48, -457.41, 49.549], 1.537],
-		["Leone Mansion", [1417.94, -194.18, 49.905], -1.570],
-		["Ciprianis Ristorante", [1202.50, -320.78, 24.973], -1.553],
-		["Luigi's Club", [904.82, -425.37, 14.929], 1.602],
-		["Portland Fuel Station", [1157.34, -75.45, 7.065], -0.027],
-		["Easy Credit Autos", [1217.81, -113.87, 14.973], -3.051],
-		["Head Radio Headquarters", [986.40, -46.40, 7.473], -1.615],
-		["Borgnine Taxi Headquarters", [929.36, -48.59, 7.473], -2.935],
-		["Fuzz Ball", [1000.03, -877.82, 14.547], -3.136],
-		["Portland Docks Entrance", [1360.55, -818.08, 14.415], -1.574],
-		["Punk Noodle Diner", [1040.10, -653.10, 14.973], 1.551],
-		["Greasy Joe's Diner", [864.45, -999.86, 4.646], -0.020],		
+		["St Mathias College", [201.59, -281.42, 15.779], -0.005, null],
+		["Newport Parking Garage", [294.22, -547.87, 25.780], 3.119, null],
+		["City Hall", [96.60, -951.61, 26.168], 3.138, null],
+		["Belleville Park East", [109.15, -695.76, 26.168], 1.594, null],
+		["Belleville Park Bathroom", [38.69, -724.96, 22.756], -3.104, null],
+		["Belleville Park West", [0.40, -773.05, 26.056], -1.476, null],
+		["Stadium Entrance", [-18.65, -231.80, 29.861], 0.002, null],
+		["Kenji's Casino", [454.10, -1421.26, 26.124], -0.769, null],
+		["Saint Marks Bistro", [1345.48, -457.41, 49.549], 1.537, null],
+		["Leone Mansion", [1417.94, -194.18, 49.905], -1.570, [1378.31, -296.16, 49.414]],
+		["Ciprianis Ristorante", [1202.50, -320.78, 24.973], -1.553, [1199.28, -321.10, 24.413]],
+		["Luigi's Club", [904.82, -425.37, 14.929], 1.602, [907.36, -423.80, 14.413]],
+		["Portland Fuel Station", [1157.34, -75.45, 7.065], -0.027, null],
+		["Easy Credit Autos", [1217.81, -113.87, 14.973], -3.051, null],
+		["Head Radio Headquarters", [986.40, -46.40, 7.473], -1.615, null],
+		["Borgnine Taxi Headquarters", [929.36, -48.59, 7.473], -2.935, null],
+		["Fuzz Ball", [1000.03, -877.82, 14.547], -3.136, null],
+		["Portland Docks", [1360.55, -818.08, 14.415], -1.574, [1356.94, -816.28, 14.413]],
+		["Punk Noodle Diner", [1040.10, -653.10, 14.973], 1.551, [1042.29, -656.87, 14.413]],
+		["Greasy Joe's Diner", [864.45, -999.86, 4.646], -0.020, null],
+		["Hepburn Heights Projects", [913.98, -227.83, 4.413], 0.001, null],
 	],
-	
+
 	[ // GTA VC
 		// Police Stations
-		["Washington Beach Police Station", [399.77, -468.90, 11.73], 0.0],
-		["Vice Point Police Station", [508.96, 512.07, 12.10], 0.0],
-		["Downtown Police Station", [-657.43, 762.31, 11.59], 0.0],
-		["Little Havana Police Station", [-885.08, -470.44, 13.11], 0.0],
-		
-		// Hospitals	
-		["Downtown Hospital", [-822.57, 1152.82, 12.41], 0.0],
-		["Little Havana Medical Center", [-885.08, -470.44, 13.11], 0.0],
-		["Ocean Beach Hospital", [-133.19, -980.76, 10.46], 0.0],
+		["Washington Beach Police Station", [399.77, -468.90, 11.73], 0.0, null],
+		["Vice Point Police Station", [508.96, 512.07, 12.10], 0.0, null],
+		["Downtown Police Station", [-657.43, 762.31, 11.59], 0.0, null],
+		["Little Havana Police Station", [-885.08, -470.44, 13.11], 0.0, null],
+
+		// Hospitals
+		["Downtown Hospital", [-822.57, 1152.82, 12.41], 0.0, null],
+		["Little Havana Medical Center", [-885.08, -470.44, 13.11], 0.0, null],
+		["Ocean Beach Hospital", [-133.19, -980.76, 10.46], 0.0, null],
 	],
-	
+
 	[ // GTA SA
 		// Police Stations
-		["Los Santos Police Department", [1545.53, -1675.64, 13.561], -1.575],
+		["Los Santos Police Department", [1545.53, -1675.64, 13.561], -1.575, null],
 
 		// Ammunations
-		["Market Ammunation", [1364.84, -1283.79, 13.547], -0.541],
+		["Market Ammunation", [1364.84, -1283.79, 13.547], -0.541, null],
 
 		// Hospitals
-		["All Saints General Hospital", [1182.67, -1323.81, 13.579], 1.543],
-		["County General Hospital", [2034.7567,-1403.1083,17.2931], 0.0],
+		["All Saints General Hospital", [1182.67, -1323.81, 13.579], 1.543, null],
+		["County General Hospital", [2034.7567,-1403.1083,17.2931], 0.0, null],
 
 		// Strip Clubs
-		["Pig Pen Strip Club", [2420.906982,-1222.321777,25.348423], 0.0],
+		["Pig Pen Strip Club", [2420.906982,-1222.321777,25.348423], 0.0, null],
 
 		// Night/Dance Clubs
-		["Club Tableau", [551.877502, -1506.095581, 14.550004], 1.0],
-		["Club Alhambra", [1832.55, -1681.91, 13.510], -1.561],
+		["Club Tableau", [551.877502, -1506.095581, 14.550004], 1.0, null],
+		["Club Alhambra", [1832.55, -1681.91, 13.510], -1.561, null],
 
 		// Bars
-		["Ten Green Bottles Bar", [2305.922363,-1646.797241,14.461124], 1.0],
+		["Ten Green Bottles Bar", [2305.922363,-1646.797241,14.461124], 1.0, null],
 
 		// Restaurants and Food
-		["Market Donut Shop", [1040.932006,-1336.229492,13.550251], 1.0],
-		["Idlewood Pizza Stack", [2099.827636,-1806.375610,13.554687], 0.0],
-		["Temple Burger Shot", [1212.020019,-924.311462,42.930198], 1.0],
+		["Market Donut Shop", [1040.932006,-1336.229492,13.550251], 1.0, null],
+		["Idlewood Pizza Stack", [2099.827636,-1806.375610,13.554687], 0.0, null],
+		["Temple Burger Shot", [1212.020019,-924.311462,42.930198], 1.0, null],
 
 		// Clothes Shops
-		["Ganton Binco", [2244.837402,-1664.232299,15.476562], 1.0],
+		["Ganton Binco", [2244.837402,-1664.232299,15.476562], 1.0, null],
 
 		// Airports
-		["Los Santos International Airport", [1958.201049,-2182.789794,13.546875], 1.0],
-		["Los Santos Stadium", [2694.261474,-1703.194335,11.506717], 1.0],
+		["Los Santos International Airport", [1958.201049,-2182.789794,13.546875], 1.0, null],
+		["Los Santos Stadium", [2694.261474,-1703.194335,11.506717], 1.0, null],
 
 		// Sex Shops
-		["El Corona Sex Shop", [1944.994873,-2116.641113,13.550632], 1.0],
-		["Temple Sex Shop", [1090.181884,-927.265869,43.182197], 1.0],
-		["Market Sex Shop", [1090.181884,-927.265869,43.182197], 1.0]
+		["El Corona Sex Shop", [1944.994873,-2116.641113,13.550632], 1.0, null],
+		["Temple Sex Shop", [1090.181884,-927.265869,43.182197], 1.0, null],
+		["Market Sex Shop", [1090.181884,-927.265869,43.182197], 1.0, null]
 
 		// Misc/Other
-		["Grotti Dealership", [540.6011,-1291.2489,17.2422], 0.0],
-		["Santa Maria Beach", [302.994567,-1900.099121,1.938840], 0.0],
-		
+		["Grotti Dealership", [540.6011,-1291.2489,17.2422], 0.0, null],
+		["Santa Maria Beach", [302.994567,-1900.099121,1.938840], 0.0, null],
+
 		// Train Stations
-		["Unity Station", [1742.60, -1859.98, 13.414], -3.112],
+		["Unity Station", [1742.60, -1859.98, 13.414], -3.112, null],
 
 
-	],	
-	
+	],
+
 	[ // GTA UG
 		// Coming Soon!
-	],	
-	
+	],
+
 	[ // GTA IV
 		// Police Stations
-		["Broker Police Station", [894.99, -357.39, 18.185], 2.923],
-		["South Bohan Police Station", [435.40, 1592.29, 17.353], 3.087],
-		["Northern Gardens Police Station", [974.93, 1870.45, 23.073], -1.621],	
-		["South Slopes Police Station", [1233.25, -89.13, 28.034], 1.568],
-		["Middle Part East Police Station", [50.12, 679.88, 15.316], 1.569],
-		["East Holland Police Station", [85.21, 1189.82, 14.755], 3.127],	
-		["Francis International Airport Police Station", [2170.87, 448.87, 6.085], 1.501],
-		["Chinatown Police Station", [213.12, -211.70, 10.752], 0.200],
-		["Acter Police Station", [-1714.95, 276.31, 22.134], 1.127],
-		["Port Tudor Police Station", [-1220.73, -231.53, 3.024], 2.210],
-		["Leftwood Police Station", [-927.66, 1263.63, 24.587], -0.913],	
-		
+		["Broker Police Station", [894.99, -357.39, 18.185], 2.923, null],
+		["South Bohan Police Station", [435.40, 1592.29, 17.353], 3.087, null],
+		["Northern Gardens Police Station", [974.93, 1870.45, 23.073], -1.621, null],
+		["South Slopes Police Station", [1233.25, -89.13, 28.034], 1.568, null],
+		["Middle Part East Police Station", [50.12, 679.88, 15.316], 1.569, null],
+		["East Holland Police Station", [85.21, 1189.82, 14.755], 3.127, null],
+		["Francis International Airport Police Station", [2170.87, 448.87, 6.085], 1.501, null],
+		["Chinatown Police Station", [213.12, -211.70, 10.752], 0.200, null],
+		["Acter Police Station", [-1714.95, 276.31, 22.134], 1.127, null],
+		["Port Tudor Police Station", [-1220.73, -231.53, 3.024], 2.210, null],
+		["Leftwood Police Station", [-927.66, 1263.63, 24.587], -0.913, null],
+
 		// Fire Stations
-		["Broker Fire Station", [953.13, 95.90, 35.004], 1.595],
-		["Northwood Fire Station", [-271.02, 1542.15, 20.420], -1.160],
-		["Northern Gardens Fire Station", [1120.47, 1712.36, 10.534], -0.682],
-		["Francis International Airport Fire Station", [2364.87, 166.83, 5.813], 0.156],
-		["Chinatown Fire Station", [295.40, -336.88, 4.963], 2.887],
-		["Berchem Fire Station", [-1574.90, 546.54, 25.449], -0.509],
-		["Tudor Fire Station", [-2144.97, 164.15, 12.051], -2.149],
-		
+		["Broker Fire Station", [953.13, 95.90, 35.004], 1.595, null],
+		["Northwood Fire Station", [-271.02, 1542.15, 20.420], -1.160, null],
+		["Northern Gardens Fire Station", [1120.47, 1712.36, 10.534], -0.682, null],
+		["Francis International Airport Fire Station", [2364.87, 166.83, 5.813], 0.156, null],
+		["Chinatown Fire Station", [295.40, -336.88, 4.963], 2.887, null],
+		["Berchem Fire Station", [-1574.90, 546.54, 25.449], -0.509, null],
+		["Tudor Fire Station", [-2144.97, 164.15, 12.051], -2.149, null],
+
 		// Safehouses
-		["Hove Beach Safehouse Parking", [904.27, -498.00, 14.522], 3.127],
-		["South Bohan Safehouse", [589.42, 1402.15, 10.364], 0.007],
-		
+		["Hove Beach Safehouse Parking", [904.27, -498.00, 14.522], 3.127, null],
+		["South Bohan Safehouse", [589.42, 1402.15, 10.364], 0.007, null],
+
 		// Hospitals
-		["Schottler Medical Center", [1199.59, 196.78, 33.554], 1.633],
-		["Northern Gardens Medical Center", [980.71, 1831.61, 23.898], -0.049],
-		["Leftwood Hospital", [-1317.27, 1277.20, 22.370], 2.246],
-		["Acter Medical Center", [-1538.43, 344.58, 20.943], -0.156],	
-		
+		["Schottler Medical Center", [1199.59, 196.78, 33.554], 1.633, null],
+		["Northern Gardens Medical Center", [980.71, 1831.61, 23.898], -0.049, null],
+		["Leftwood Hospital", [-1317.27, 1277.20, 22.370], 2.246, null],
+		["Acter Medical Center", [-1538.43, 344.58, 20.943], -0.156, null],
+
 		// Fuel Stations
-		["Hove Beach Fuel Station", [1128.51, -359.55, 18.441], -0.052],
-		["Lancaster Fuel Station", [108.37, 1135.13, 13.975], 0.007],
-		["The Meat Quarter Fuel Station", [-434.30, -19.47, 9.864], 1.469],	
-		["Cerveza Heights Fuel Station", [1123.50, 328.84, 29.245], -0.154],
-		["Tudor Fuel Station", [-1389.91, 29.19, 6.875], 0.982],	
-		
+		["Hove Beach Fuel Station", [1128.51, -359.55, 18.441], -0.052, null],
+		["Lancaster Fuel Station", [108.37, 1135.13, 13.975], 0.007, null],
+		["The Meat Quarter Fuel Station", [-434.30, -19.47, 9.864], 1.469, null],
+		["Cerveza Heights Fuel Station", [1123.50, 328.84, 29.245], -0.154, null],
+		["Tudor Fuel Station", [-1389.91, 29.19, 6.875], 0.982, null],
+
 		// Restaurants
-		["Star Junction Burger Shot", [-174.00, 276.96, 14.818], -0.029],
-		["South Bohan Burger Shot", [441.95, 1516.64, 16.289], -2.682],
-		["Industrial Burger Shot", [1096.93, 1598.33, 16.721], -2.289],
-		
+		["Star Junction Burger Shot", [-174.00, 276.96, 14.818], -0.029, null],
+		["South Bohan Burger Shot", [441.95, 1516.64, 16.289], -2.682, null],
+		["Industrial Burger Shot", [1096.93, 1598.33, 16.721], -2.289, null],
+
 		// Night Clubs/Strip Clubs/Bars
-		["Perestroika Club", [957.58, -292.58, 19.644], -0.009],
-		["Triangle Club", [1210.90, 1718.18, 16.667], 1.819],
-		
+		["Perestroika Club", [957.58, -292.58, 19.644], -0.009, null],
+		["Triangle Club", [1210.90, 1718.18, 16.667], 1.819, null],
+
 		// TW@ Cafes
-		["Outlook Internet Cafe", [977.42, -169.11, 24.013], 1.844],
-		["Berchem Internet Cafe", [-1584.46, 466.05, 25.398], -2.441],
-		
+		["Outlook Internet Cafe", [977.42, -169.11, 24.013], 1.844, null],
+		["Berchem Internet Cafe", [-1584.46, 466.05, 25.398], -2.441, null],
+
 		// Pay-n-Sprays
-		["Hove Beach Pay-n-Spray", [1058.57, -282.58, 20.760], -3.135],
-		["Leftwood Pay-n-Spray", [-1148.69, 1171.52, 16.457], -0.059],
-		
+		["Hove Beach Pay-n-Spray", [1058.57, -282.58, 20.760], -3.135, null],
+		["Leftwood Pay-n-Spray", [-1148.69, 1171.52, 16.457], -0.059, null],
+
 		// Clothes Shops
-		["Hove Beach Russian Clothes Shop", [896.31, -442.59, 15.888], 1.500],
-		
+		["Hove Beach Russian Clothes Shop", [896.31, -442.59, 15.888], 1.500, null],
+
 		// Car Wash
-		["Willis Car Wash", [1831.02, 360.20, 22.061], -1.515],
-		["Tudor Car Wash", [-1371.68, 35.13, 7.028], 1.029],
-		
+		["Willis Car Wash", [1831.02, 360.20, 22.061], -1.515, null],
+		["Tudor Car Wash", [-1371.68, 35.13, 7.028], 1.029, null],
+
 		// Gun Shops
-		["Downtown Broker Gun Shop", [1054.11, 86.84, 33.408], -1.574],
-		["Chinatown Gun Shop", [65.43, -342.36, 14.767], -1.589],
-		["Port Tudor Gun Shop", [-1338.77, 307.61, 13.378], -1.530],	
-		
+		["Downtown Broker Gun Shop", [1054.11, 86.84, 33.408], -1.574, null],
+		["Chinatown Gun Shop", [65.43, -342.36, 14.767], -1.589, null],
+		["Port Tudor Gun Shop", [-1338.77, 307.61, 13.378], -1.530, null],
+
 		// Train Stations
-		["Hove Beach Train Station", [1000.41, -544.82, 14.854], -1.576],
-		["Schottler Train Station", [1303.93, -37.75, 28.377], 3.065],
-		["Cerveza Heights Train Station", [1386.87, 374.13, 23.063], 3.111],
-		["Lynch Street Train Station", [1594.73, 364.80, 25.226], -0.965],
-		["East Park Train Station", [-35.78, 634.79, 14.663], -0.050],
-		["West Park Train Station", [-377.13, 677.05, 14.679], -0.069],
-		["North Park Train Station", [-135.08, 1153.95, 14.773], -1.567],
-		["Vespucci Circus Train Station", [-85.11, 1427.04, 20.421], 1.501],
-		["Frankfort Low Train Station", [-331.94, 1427.05, 12.617], 1.541],
-		["Frankfort High Train Station", [-343.79, 1433.12, 12.283], 0.113],
-		["Vauxite Train Station", [-483.38, 1333.91, 17.481], 1.509],
-		["Quartz Street West Train Station", [-545.54, 926.22, 9.945], -1.524],
-		["Manganese West Train Station", [-461.60, 530.56, 9.857], 3.091],
-		["Frankfort Ave Train Station", [-377.52, 371.91, 14.762], -3.125],
-		["Suffolk Train Station", [-252.77, -171.83, 14.447], 1.594],
-		["Feldspar Train Station", [-350.62, -335.35, 4.909], -2.287],
-		["City Hall Train Station", [-115.31, -501.22, 14.755], -1.365],
-		["Castle Gardens Train Station", [82.95, -757.81, 4.965], -1.006],
-		["Emerald Train Station", [116.57, -318.15, 14.768], 1.499],
-		["Easton Train Station", [-35.76, -18.50, 14.769], 3.137],
-		["Manganese East Train Station", [131.46, 522.74, 14.661], 0.005],
-		["Quartz Street East Train Station", [134.35, 910.15, 14.717], -0.112],
-		["San Quentin Ave Train Station", [373.12, 1625.93, 16.347], -2.249],
-		["Windmill Street Train Station", [749.97, 1447.44, 14.252], -0.120],
-		["Francis International Airport Train Station", [2297.57, 474.62, 6.086], 0.066],
-		
+		["Hove Beach Train Station", [1000.41, -544.82, 14.854], -1.576, null],
+		["Schottler Train Station", [1303.93, -37.75, 28.377], 3.065, null],
+		["Cerveza Heights Train Station", [1386.87, 374.13, 23.063], 3.111, null],
+		["Lynch Street Train Station", [1594.73, 364.80, 25.226], -0.965, null],
+		["East Park Train Station", [-35.78, 634.79, 14.663], -0.050, null],
+		["West Park Train Station", [-377.13, 677.05, 14.679], -0.069, null],
+		["North Park Train Station", [-135.08, 1153.95, 14.773], -1.567, null],
+		["Vespucci Circus Train Station", [-85.11, 1427.04, 20.421], 1.501, null],
+		["Frankfort Low Train Station", [-331.94, 1427.05, 12.617], 1.541, null],
+		["Frankfort High Train Station", [-343.79, 1433.12, 12.283], 0.113, null],
+		["Vauxite Train Station", [-483.38, 1333.91, 17.481], 1.509, null],
+		["Quartz Street West Train Station", [-545.54, 926.22, 9.945], -1.524, null],
+		["Manganese West Train Station", [-461.60, 530.56, 9.857], 3.091, null],
+		["Frankfort Ave Train Station", [-377.52, 371.91, 14.762], -3.125, null],
+		["Suffolk Train Station", [-252.77, -171.83, 14.447], 1.594, null],
+		["Feldspar Train Station", [-350.62, -335.35, 4.909], -2.287, null],
+		["City Hall Train Station", [-115.31, -501.22, 14.755], -1.365, null],
+		["Castle Gardens Train Station", [82.95, -757.81, 4.965], -1.006, null],
+		["Emerald Train Station", [116.57, -318.15, 14.768], 1.499, null],
+		["Easton Train Station", [-35.76, -18.50, 14.769], 3.137, null],
+		["Manganese East Train Station", [131.46, 522.74, 14.661], 0.005, null],
+		["Quartz Street East Train Station", [134.35, 910.15, 14.717], -0.112, null],
+		["San Quentin Ave Train Station", [373.12, 1625.93, 16.347], -2.249, null],
+		["Windmill Street Train Station", [749.97, 1447.44, 14.252], -0.120, null],
+		["Francis International Airport Train Station", [2297.57, 474.62, 6.086], 0.066, null],
+
 		// Misc
-		["Hove Beach Laundromat", [1011.74, -325.33, 20.339], -1.402],
-		["The Exchange Docks", [-354.68, -661.62, 4.791], 2.066],
-		["Firefly Island Bowling", [1198.99, -681.49, 16.445], -0.017],
-		["Broker Bus Depot", [1004.15, 279.19, 31.512], -2.193],
-		["The Lost MC Clubhouse", [-1713.29, 358.25, 25.449], 2.566],
-		["Alderney State Correctional Facility", [-1155.21, -374.34, 2.885], -1.680],
-		["Chinatown Bank of Liberty", [-34.92, -466.80, 14.75], -1.52],
+		["Hove Beach Laundromat", [1011.74, -325.33, 20.339], -1.402, null],
+		["The Exchange Docks", [-354.68, -661.62, 4.791], 2.066, null],
+		["Firefly Island Bowling", [1198.99, -681.49, 16.445], -0.017, null],
+		["Broker Bus Depot", [1004.15, 279.19, 31.512], -2.193, null],
+		["The Lost MC Clubhouse", [-1713.29, 358.25, 25.449], 2.566, null],
+		["Alderney State Correctional Facility", [-1155.21, -374.34, 2.885], -1.680, null],
+		["Chinatown Bank of Liberty", [-34.92, -466.80, 14.75], -1.52, null],
 		["Suffolk Church", [-274.30, -281.63, 14.36], 1.56],
-		
+
 		// More will be added soon!
-	], 
-	
+	],
+
 	[ // GTA EFLC
 		// Police Stations
 		["Broker Police Station", [894.99, -357.39, 18.185], 2.923],
 		["South Bohan Police Station", [435.40, 1592.29, 17.353], 3.087],
-		["Northern Gardens Police Station", [974.93, 1870.45, 23.073], -1.621],	
+		["Northern Gardens Police Station", [974.93, 1870.45, 23.073], -1.621],
 		["South Slopes Police Station", [1233.25, -89.13, 28.034], 1.568],
 		["Middle Part East Police Station", [50.12, 679.88, 15.316], 1.569],
-		["East Holland Police Station", [85.21, 1189.82, 14.755], 3.127],	
+		["East Holland Police Station", [85.21, 1189.82, 14.755], 3.127],
 		["Francis International Airport Police Station", [2170.87, 448.87, 6.085], 1.501],
 		["Chinatown Police Station", [213.12, -211.70, 10.752], 0.200],
 		["Acter Police Station", [-1714.95, 276.31, 22.134], 1.127],
 		["Port Tudor Police Station", [-1220.73, -231.53, 3.024], 2.210],
-		["Leftwood Police Station", [-927.66, 1263.63, 24.587], -0.913],	
-		
+		["Leftwood Police Station", [-927.66, 1263.63, 24.587], -0.913],
+
 		// Fire Stations
 		["Broker Fire Station", [953.13, 95.90, 35.004], 1.595],
 		["Northwood Fire Station", [-271.02, 1542.15, 20.420], -1.160],
@@ -269,53 +274,53 @@ let gameLocations = [
 		["Chinatown Fire Station", [295.40, -336.88, 4.963], 2.887],
 		["Berchem Fire Station", [-1574.90, 546.54, 25.449], -0.509],
 		["Tudor Fire Station", [-2144.97, 164.15, 12.051], -2.149],
-		
+
 		// Safehouses
 		["Hove Beach Safehouse Parking", [904.27, -498.00, 14.522], 3.127],
 		["South Bohan Safehouse", [589.42, 1402.15, 10.364], 0.007],
-		
+
 		// Hospitals
 		["Schottler Medical Center", [1199.59, 196.78, 33.554], 1.633],
 		["Northern Gardens Medical Center", [980.71, 1831.61, 23.898], -0.049],
 		["Leftwood Hospital", [-1317.27, 1277.20, 22.370], 2.246],
-		["Acter Medical Center", [-1538.43, 344.58, 20.943], -0.156],	
-		
+		["Acter Medical Center", [-1538.43, 344.58, 20.943], -0.156],
+
 		// Fuel Stations
 		["Hove Beach Fuel Station", [1128.51, -359.55, 18.441], -0.052],
 		["Lancaster Fuel Station", [108.37, 1135.13, 13.975], 0.007],
-		["The Meat Quarter Fuel Station", [-434.30, -19.47, 9.864], 1.469],	
+		["The Meat Quarter Fuel Station", [-434.30, -19.47, 9.864], 1.469],
 		["Cerveza Heights Fuel Station", [1123.50, 328.84, 29.245], -0.154],
-		["Tudor Fuel Station", [-1389.91, 29.19, 6.875], 0.982],	
-		
+		["Tudor Fuel Station", [-1389.91, 29.19, 6.875], 0.982],
+
 		// Restaurants
 		["Star Junction Burger Shot", [-174.00, 276.96, 14.818], -0.029],
 		["South Bohan Burger Shot", [441.95, 1516.64, 16.289], -2.682],
 		["Industrial Burger Shot", [1096.93, 1598.33, 16.721], -2.289],
-		
+
 		// Night Clubs/Strip Clubs/Bars
 		["Perestroika Club", [957.58, -292.58, 19.644], -0.009],
 		["Triangle Club", [1210.90, 1718.18, 16.667], 1.819],
-		
+
 		// TW@ Cafes
 		["Outlook Internet Cafe", [977.42, -169.11, 24.013], 1.844],
 		["Berchem Internet Cafe", [-1584.46, 466.05, 25.398], -2.441],
-		
+
 		// Pay-n-Sprays
 		["Hove Beach Pay-n-Spray", [1058.57, -282.58, 20.760], -3.135],
 		["Leftwood Pay-n-Spray", [-1148.69, 1171.52, 16.457], -0.059],
-		
+
 		// Clothes Shops
 		["Hove Beach Russian Clothes Shop", [896.31, -442.59, 15.888], 1.500],
-		
+
 		// Car Wash
 		["Willis Car Wash", [1831.02, 360.20, 22.061], -1.515],
 		["Tudor Car Wash", [-1371.68, 35.13, 7.028], 1.029],
-		
+
 		// Gun Shops
 		["Downtown Broker Gun Shop", [1054.11, 86.84, 33.408], -1.574],
 		["Chinatown Gun Shop", [65.43, -342.36, 14.767], -1.589],
-		["Port Tudor Gun Shop", [-1338.77, 307.61, 13.378], -1.530],	
-		
+		["Port Tudor Gun Shop", [-1338.77, 307.61, 13.378], -1.530],
+
 		// Train Stations
 		["Hove Beach Train Station", [1000.41, -544.82, 14.854], -1.576],
 		["Schottler Train Station", [1303.93, -37.75, 28.377], 3.065],
@@ -342,7 +347,7 @@ let gameLocations = [
 		["San Quentin Ave Train Station", [373.12, 1625.93, 16.347], -2.249],
 		["Windmill Street Train Station", [749.97, 1447.44, 14.252], -0.120],
 		["Francis International Airport Train Station", [2297.57, 474.62, 6.086], 0.066],
-		
+
 		// Misc
 		["Hove Beach Laundromat", [1011.74, -325.33, 20.339], -1.402],
 		["The Exchange Docks", [-354.68, -661.62, 4.791], 2.066],
@@ -352,16 +357,16 @@ let gameLocations = [
 		["Alderney State Correctional Facility", [-1155.21, -374.34, 2.885], -1.680],
 		["Chinatown Bank of Liberty", [-34.92, -466.80, 14.75], -1.52],
 		["Suffolk Church", [-274.30, -281.63, 14.36], 1.56],
-		
+
 		// More will be added soon!
-	], 	
+	],
 ];
 
 // ----------------------------------------------------------------------------
 
 let weaponNames = [
 	["Unknown"], // Game 0 is invalid (GTA 3 is the first game, and is ID 1)
-	
+
 	[ // GTA III
 		"Fist",
 		"Bat",
@@ -376,7 +381,7 @@ let weaponNames = [
 		"Molotov",
 		"Grenade"
 	],
-	
+
 	[ // GTA VC
 		"Fist",
 		"Brass Knuckles",
@@ -413,7 +418,7 @@ let weaponNames = [
 		"M60",
 		"Minigun"
 	],
-	
+
 	[ // GTA San Andreas
 		"Fist",
 		"Brass Knuckles",
@@ -466,7 +471,7 @@ let weaponNames = [
 		"Jetpack",
 		"Skateboard"
 	],
-	
+
 	[ // GTA Underground
 		"Fist",
 		"Brass Knuckles",
@@ -518,8 +523,8 @@ let weaponNames = [
 		"Cellphone",
 		"Jetpack",
 		"Skateboard",
-	],	
-	
+	],
+
 	[ // GTA IV
 		"Fist",
 		"Bat",
@@ -527,10 +532,10 @@ let weaponNames = [
 		"Knife",
 		"Grenade",
 		"Molotov",
-		"Pistol",
 		"UNUSED",
+		"Pistol",
 		"Desert Eagle",
-		"Shotgun",
+		"Stubby Shotgun",
 		"Baretta Shotgun",
 		"Shotgun",
 		"Micro Uzi",
@@ -576,10 +581,10 @@ let weaponNames = [
 		"Knife",
 		"Grenade",
 		"Molotov",
-		"Pistol",
 		"UNUSED",
+		"Pistol",
 		"Desert Eagle",
-		"Shotgun",
+		"Stubby Shotgun",
 		"Baretta Shotgun",
 		"Shotgun",
 		"Micro Uzi",
@@ -616,19 +621,19 @@ let weaponNames = [
 		"EFLC Weapon 23",
 		"EFLC Weapon 24",
 		"Camera",
-	],	
+	],
 ];
 
 // ----------------------------------------------------------------------------
 
 let gameAnnounceColours = [
 	COLOUR_BLACK,					// Invalid
-	COLOUR_WHITE,					// GTA III
+	COLOUR_SILVER,					// GTA III
 	COLOUR_AQUA,					// GTA Vice City
 	COLOUR_ORANGE,					// GTA San Andreas
 	COLOUR_ORANGE,					// GTA Underground
 	COLOUR_SILVER,					// GTA IV
-	COLOUR_SILVER					// GTA IV (EFLC)		
+	COLOUR_SILVER					// GTA IV (EFLC)
 ];
 
 // ----------------------------------------------------------------------------
@@ -663,13 +668,13 @@ let gameGarages = [
 		["Import/Export Garage", 				"Pike Creek, Shoreside Vale",  			[],								true],
 		["Hoodz's Bomb Defusal Garage", 		"Saint Mark's, Portland",  				[],								true],
 		["Platinum Dropoff Garage", 			"Pike Creek, Shoreside Vale",  			[],								true],
-		["Donald Love's Stash Garage", 			"Pike Creek, Shoreside Vale",  			[],								true],	
+		["Donald Love's Stash Garage", 			"Pike Creek, Shoreside Vale",  			[],								true],
 	],
-	
+
 	[ // GTA Vice City
-	
+
 	],
-	
+
 	[ // GTA San Andreas
 		// Name									Location Name							Position						Opened
 		["Life's a Beach Mission Garage",		"Commerce, Los Santos",					[1643.43, -1521.95, 13.56],		true],
@@ -718,7 +723,7 @@ let gameGarages = [
 		["Player Garage",						"Palomino Creek, Red County",			[2231.22, 167.27, 27.48],		true],
 		["Player Garage",						"Dillimore, Red County",				[785.95, -494.23, 17.34],		true],
 	],
-	
+
 	[ // GTA Underground
 		["Life's a Beach Mission Garage",		"Commerce, Los Santos",					[1643.43, -1521.95, 13.56],		true],
 		["Los Desperados Mission Garage",		"El Corona, Los Santos",				[1877.30, -2097.85, 13.53],		true],
@@ -766,13 +771,13 @@ let gameGarages = [
 		["Player Garage",						"Palomino Creek, Red County",			[2231.22, 167.27, 27.48],		true],
 		["Player Garage",						"Dillimore, Red County",				[785.95, -494.23, 17.34],		true],
 	],
-	
+
 	[ // GTA IV
-	
+
 	],
-	
+
 	[ // GTA IV (EFLC)
-	
+
 	]
 ];
 
@@ -793,7 +798,7 @@ let weatherNames = [
 		"Overcast/Cloudy",
 		"Grey/Cloudy"
 	],
-	
+
 	[ // GTA Vice City
 		"Clear",
 		"Overcast",
@@ -806,7 +811,7 @@ let weatherNames = [
 		"Overcast/Cloudy",
 		"Grey/Cloudy"
 	],
-	
+
 	[ // GTA San Andreas
 		"Blue Skies",
 		"Blue Skies",
@@ -830,7 +835,7 @@ let weatherNames = [
 		"Sandstorm",
 		"Greenish/Foggy"
 	],
-	
+
 	[ // GTA Underground
 		"Blue Skies",
 		"Blue Skies",
@@ -854,7 +859,7 @@ let weatherNames = [
 		"Sandstorm",
 		"Greenish/Foggy"
 	],
-	
+
 	[ // GTA IV
 		"Extra Sunny",
 		"Sunny",
@@ -865,9 +870,9 @@ let weatherNames = [
 		"Foggy",
 		"Thunderstorm",
 		"Extra Sunny",
-		"Sunny/Windy",		
+		"Sunny/Windy",
 	],
-	
+
 	[ // GTA IV (EFLC)
 		"Extra Sunny",
 		"Sunny",
@@ -878,8 +883,8 @@ let weatherNames = [
 		"Foggy",
 		"Thunderstorm",
 		"Extra Sunny",
-		"Sunny/Windy",		
-	]	
+		"Sunny/Windy",
+	]
 ];
 
 // ----------------------------------------------------------------------------
@@ -1731,7 +1736,7 @@ let emojiReplaceString = [
 	[":water_buffalo:", "🐃"],
 	[":neutral_face:", "😐"],
 	[":clock1230:", "🕧"],
-	[":P", "😛" ],	
+	[":P", "😛" ],
 	[":)", "🙂" ],
 	[":D", "😃" ],
 	[":o", "😮" ],
@@ -1743,10 +1748,10 @@ let emojiReplaceString = [
 // ----------------------------------------------------------------------------
 
 let gameNames = [
-	"Unknown", 
-	"GTA III", 
-	"GTA Vice City", 
-	"GTA San Andreas", 
+	"Unknown",
+	"GTA III",
+	"GTA Vice City",
+	"GTA San Andreas",
 	"GTA Underground",
 	"GTA IV",
 	"GTA IV: Episodes from Liberty City",
@@ -1755,18 +1760,35 @@ let gameNames = [
 // ----------------------------------------------------------------------------
 
 let vehicleWheelStateNames = [
-	"normal", 
-	"flat", 
+	"normal",
+	"flat",
 	"gone"
 ];
 
 // ----------------------------------------------------------------------------
 
+let vehicleWheelStateActionNames = [
+	"repaired",
+	"flattened",
+	"destroyed"
+];
+
+// ----------------------------------------------------------------------------
+
 let vehicleDoorStateNames = [
-	"closed", 
 	"closed",
-	"swinging", 
+	"closed",
+	"swinging",
 	"open"
+];
+
+// ----------------------------------------------------------------------------
+
+let vehicleDoorStateActionNames = [
+	"closed",
+	"closed",
+	"opened",
+	"opened"
 ];
 
 // ----------------------------------------------------------------------------
@@ -1795,18 +1817,18 @@ let vehicleRadioStationNames = [
 		"Head Radio",
 		"Double Cleff FM",
 		"Jah Radio",
-		"Rise FM", 
+		"Rise FM",
 		"Lips 106",
 		"Flashback FM",
 		"Chatterbox 109",
 		"MP3 Player"
 	],
-	
+
 	[ // GTA Vice City
 		"Wildstyle",
 		"Flash FM",
 		"K CHAT",
-		"Fever 105", 
+		"Fever 105",
 		"VROCK",
 		"VCPR",
 		"Espantoso",
@@ -1814,12 +1836,12 @@ let vehicleRadioStationNames = [
 		"Wave 103",
 		"MP3 Player"
 	],
-	
+
 	[ // GTA San Andreas
 		"KROSE",
 		"KDST",
 		"Bounce FM",
-		"SFUR", 
+		"SFUR",
 		"Radio Los Santos",
 		"Radio X",
 		"CSR Radio",
@@ -1828,9 +1850,9 @@ let vehicleRadioStationNames = [
 		"WCTR",
 		"User Track Player"
 	],
-	
+
 	[ // GTA IV
-		"The Vibe 98.9",	
+		"The Vibe 98.9",
 		"97.8 Liberty Rock Radio",
 		"JAZZ NATION RADIO 108.5",
 		"Massive B",
@@ -1851,9 +1873,9 @@ let vehicleRadioStationNames = [
 		"Independence FM",
 		"Integrity 2.0",
 	],
-	
+
 	[ // GTA IV (EFLC)
-		"The Vibe 98.9",	
+		"The Vibe 98.9",
 		"97.8 Liberty Rock Radio",
 		"JAZZ NATION RADIO 108.5",
 		"Massive B",
@@ -1879,7 +1901,7 @@ let vehicleRadioStationNames = [
 // ----------------------------------------------------------------------------
 
 let vehicleModelIDStart = [
-	0, 
+	0,
 	90, 	// GTA III
 	130, 	// GTA Vice City
 	400, 	// GTA San Andreas
@@ -1953,9 +1975,9 @@ let vehicleNames = [
 		"Escape",
 		"Borgnine Taxi",
 		"Toyz Van",
-		"Ghost"	
+		"Ghost"
 	],
-	
+
 	[ // GTA Vice City
 		"Landstalker",
 		"Idaho",
@@ -2063,9 +2085,9 @@ let vehicleNames = [
 		"Hotring Racer 3",
 		"Bloodring Banger 1",
 		"Bloodring Banger 2",
-		"VCPD Cheetah"		
-	],	
-	
+		"VCPD Cheetah"
+	],
+
 	[ // GTA San Andreas
 		"Landstalker",
 		"Bravura",
@@ -2280,7 +2302,7 @@ let vehicleNames = [
 		"Farm Plow",
 		"Utility Trailer"
 	],
-	
+
 	[ // GTA Underground
 		"Landstalker",
 		"Bravura",
@@ -2494,7 +2516,7 @@ let vehicleNames = [
 		"Boxville",
 		"Farm Plow",
 		"Utility Trailer"
-	],	
+	],
 	[ // GTA IV
 		"Admiral",
 		"Airtug",
@@ -2752,7 +2774,7 @@ let vehicleNames = [
 		"Cablecar",
 		"Subway",
 		"El Train",
-	],	
+	],
 ];
 
 // ----------------------------------------------------------------------------
@@ -2856,7 +2878,7 @@ let vehicleColourHex = [
 		"#4E5960",
 		"#41454C"
 	],
-	
+
 	[ // GTA Vice City
 		"#050505",
 		"#F5F5F5",
@@ -2954,7 +2976,7 @@ let vehicleColourHex = [
 		"#4E5960",
 		"#41454C"
 	],
-	
+
 	[ // GTA San Andreas
 		"#000000",
 		"#F5F5F5",
@@ -3084,8 +3106,8 @@ let vehicleColourHex = [
 		"#1B376D",
 		"#EC6AAE",
 		"#000000"
-	],	
-	
+	],
+
 	[ // GTA Underground
 		"#000000",
 		"#F5F5F5",
@@ -3224,7 +3246,7 @@ let vehicleColourHex = [
 
 let skinNames = [
 	["Unknown"], // Invalid Game
-	
+
 	[ // GTA III
 		"Claude",
 		"Police Officer",
@@ -3459,6 +3481,7 @@ let skinNames = [
 		"Bodyguard",
 		"Prostitute",
 		"Prostitute",
+		"Ricardo Diaz",
 		"Love Fist Guy",
 		"Ken Rosenburg",
 		"Candy Suxx",
@@ -3468,16 +3491,16 @@ let skinNames = [
 		"Rockstar Guy",
 		"Sonny",
 		"Lance",
-		"Mercades",
+		"Mercedes",
 		"Love Fist",
 		"Alex Scrub",
+		"Officer Lance Vance",
 		"Lance Vance",
-		"Lance Vance",
-		"Cpt. Cortez",
-		"Love Fist",
+		"Cortez",
+		"SWAT 2",
 		"Columbian",
 		"Hilary",
-		"Mercades",
+		"Mercedes",
 		"Cam",
 		"Cam",
 		"Phil",
@@ -3493,7 +3516,7 @@ let skinNames = [
 		"Criminal",
 		"French Guy",
 		"Worker",
-		"Hatian",
+		"Haitian",
 		"Waitress",
 		"Forelli Member",
 		"Forelli Member",
@@ -3513,7 +3536,7 @@ let skinNames = [
 		"Stripper",
 		"Store Clerk"
 	],
-	
+
 	[ // GTA San Andreas
 		"Carl 'CJ' Johnson",
 		"The Truth",
@@ -3589,6 +3612,7 @@ let skinNames = [
 		"Security Guard",
 		"Hippy",
 		"Hippy",
+		"INVALID",
 		"Prostitute",
 		"Stewardess",
 		"Homeless",
@@ -3813,9 +3837,23 @@ let skinNames = [
 		"Jizzy B.",
 		"Madd Dogg",
 		"Catalina",
-		"Claude Speed"
+		"Claude Speed",
+		"Lance 'Ryder' Wilson",
+		"Lance 'Ryder' Wilson (robbery mask)",
+		"Emmet",
+		"Unknown",
+		"Denise",
+		"Jethro",
+		"Zero",
+		"T-Bone Mendez",
+		"Forelli",
+		"Mechanic",
+		"Barry 'Big Bear' Thorne (Skinny)",
+		"Melvin 'Big Smoke' Harris (Vest)",
+		"Army Guy",
+		"Barry 'Big Bear' Thorne (Fat)"
 	],
-	
+
 	[ // GTA Underground
 		"Carl 'CJ' Johnson",
 		"The Truth",
@@ -4114,9 +4152,23 @@ let skinNames = [
 		"Jizzy B.",
 		"Madd Dogg",
 		"Catalina",
-		"Claude Speed"
+		"Claude Speed",
+		"Lance 'Ryder' Wilson",
+		"Lance 'Ryder' Wilson (robbery mask)",
+		"Emmet",
+		"Unknown",
+		"Denise",
+		"Jethro",
+		"Zero",
+		"T-Bone Mendez",
+		"Forelli",
+		"Mechanic",
+		"Barry 'Big Bear' Thorne (Skinny)",
+		"Melvin 'Big Smoke' Harris (Vest)",
+		"Army Guy",
+		"Barry 'Big Bear' Thorne (Fat)"
 	],
-	
+
 	[ // GTA IV
 		"Nico Bellic",
 		"Male Multiplayer",
@@ -4463,9 +4515,9 @@ let skinNames = [
 		"MODEL_M_Y_STREETPUNK_04",
 		"MODEL_M_Y_STREETPUNK_05",
 		"MODEL_M_Y_TOUGH_05",
-		"MODEL_M_Y_TOURIST_02",	
+		"MODEL_M_Y_TOURIST_02",
 	],
-	
+
 	[ // GTA IV (EFLC)
 		"Nico Bellic",
 		"Male Multiplayer",
@@ -4812,8 +4864,8 @@ let skinNames = [
 		"MODEL_M_Y_STREETPUNK_04",
 		"MODEL_M_Y_STREETPUNK_05",
 		"MODEL_M_Y_TOUGH_05",
-		"MODEL_M_Y_TOURIST_02",	
-	],	
+		"MODEL_M_Y_TOURIST_02",
+	],
 ];
 
 // ----------------------------------------------------------------------------
@@ -4900,9 +4952,9 @@ let missionNames = [
 		"Rigged To Blow",
 		"Bullion Run",
 		"Rumble",
-		"The Exchange",		
-	], 
-	
+		"The Exchange",
+	],
+
 	[ // GTA Vice City
 		"Initial",
 		"Intro",
@@ -5000,9 +5052,9 @@ let missionNames = [
 		"RC Raider Pickup",
 		"RC Bandit Race",
 		"RC Baron Race",
-		"Checkpoint Charlie",	
+		"Checkpoint Charlie",
 	],
-	
+
 	[ // GTA San Andreas
 		"Initial 1",
 		"Initial 2",
@@ -5154,20 +5206,20 @@ let missionNames = [
 		"Run-around (2player)",
 		"Run-around (2player)",
 		"Run-around (2player)",
-		"Run-around (2player)",	
+		"Run-around (2player)",
 	],
-	
+
 	[ // GTA Underground
-	
+
 	],
-	
+
 	[ // GTA IV
-		
+
 	],
-	
+
 	[ // GTA IV: Episodes from Liberty City
-		
-	],	
+
+	],
 ];
 
 // ----------------------------------------------------------------------------
@@ -5188,7 +5240,7 @@ let weaponModels = [
 		174,			// Molotov Cocktail
 		170				// Grenade
 	],
-	
+
 	[ // GTA Vice City
 		0,
 		259,
@@ -5228,9 +5280,9 @@ let weaponModels = [
 		-1,
 		292
 	],
-	
+
 	[ // GTA San Andreas
-		
+
 	]
 ];
 
@@ -5720,29 +5772,29 @@ let gtaivSkinModels = [
 // ----------------------------------------------------------------------------
 
 let weekDays = [
-	"Sunday", 
-	"Monday", 
-	"Tuesday", 
-	"Wednesday", 
-	"Thursday", 
-	"Friday", 
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
 	"Saturday"
 ];
 
 // ----------------------------------------------------------------------------
 
 let months = [
-	"January", 
-	"February", 
-	"March", 
-	"April", 
-	"May", 
-	"June", 
-	"July", 
-	"August", 
-	"September", 
-	"October", 
-	"November", 
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
 	"December"
 ];
 
@@ -5750,13 +5802,13 @@ let months = [
 
 let cardinalDirections = [
 	"North",
-	"Northeast", 
-	"East", 
-	"Southeast", 
-	"South", 
-	"Southwest", 
-	"West", 
-	"Northwest", 
+	"Northeast",
+	"East",
+	"Southeast",
+	"South",
+	"Southwest",
+	"West",
+	"Northwest",
 	"Unknown"
 ];
 
@@ -5764,28 +5816,28 @@ let cardinalDirections = [
 
 let policeStations = [
 	[],
-	
+
 	[ // GTA III
 		[1143.875, -675.1875, 14.97], 	// Portland
 		[340.25, -1123.375, 25.98],		// Staunton Island
 		[-1253.0, -138.1875, 58.75],	// Shoreside Vale
 	],
-	
+
 	[ // GTA Vice City
 		[399.77, -468.90, 11.73],		// Washington Beach
 		[508.96, 512.07, 12.10],		// Vice Point
-		[-657.43, 762.31, 11.59],		// Downtown	
+		[-657.43, 762.31, 11.59],		// Downtown
 		[-885.08, -470.44, 13.11],		// Little Havana
 	],
-	
+
 	[ // GTA San Andreas
 		// Coming soon!
 	],
-	
+
 	[ // GTA Underground
 		// Coming soon!
 	],
-	
+
 	[ // GTA IV
 		[894.99, -357.39, 18.185], 		// Broker
 		[435.40, 1592.29, 17.353], 		// South Bohan
@@ -5799,7 +5851,7 @@ let policeStations = [
 		[-1220.73, -231.53, 3.024], 	// Port Tudor
 		[-927.66, 1263.63, 24.587], 	// Leftwood
 	],
-	
+
 	[ // GTA IV (EFLC)
 		[894.99, -357.39, 18.185], 		// Broker
 		[435.40, 1592.29, 17.353], 		// South Bohan
@@ -5812,32 +5864,32 @@ let policeStations = [
 		[-1714.95, 276.31, 22.134], 	// Acter
 		[-1220.73, -231.53, 3.024], 	// Port Tudor
 		[-927.66, 1263.63, 24.587], 	// Leftwood
-	],	
+	],
 ];
 
 // ----------------------------------------------------------------------------
 
 let fireStations = [
 	[],
-	
+
 	[ // GTA III
 		[1103.70, -52.45, 7.49], 		// Portland
 		[-78.48, -436.80, 16.17], 		// Staunton Island
 		[-1202.10, -14.67, 53.20],		// Shoreside Vale
 	],
-	
+
 	[ // GTA Vice City
 		[-695.15, 912.58, 11.08],		// Downtown
 	],
-	
+
 	[ // GTA San Andreas
 		// Coming soon!
 	],
 
 	[ // GTA Underground
 		// Coming soon!
-	],	
-	
+	],
+
 	[ // GTA IV
 		[953.13, 95.90, 35.004], 		// Broker
 		[-271.02, 1542.15, 20.420], 	// Northwood
@@ -5845,7 +5897,7 @@ let fireStations = [
 		[2364.87, 166.83, 5.813], 		// Francis International Airport
 		[295.40, -336.88, 4.963], 		// Chinatown
 		[-1574.90, 546.54, 25.449], 	// Berchem
-	],	
+	],
 
 	[ // GTA IV (EFLC)
 		[953.13, 95.90, 35.004], 		// Broker
@@ -5853,48 +5905,48 @@ let fireStations = [
 		[1120.47, 1712.36, 10.534], 	// Northern Gardens
 		[2364.87, 166.83, 5.813], 		// Francis International Airport
 		[295.40, -336.88, 4.963], 		// Chinatown
-		[-1574.90, 546.54, 25.449], 	// Berchem	
-	],		
+		[-1574.90, 546.54, 25.449], 	// Berchem
+	],
 ];
 
 // ----------------------------------------------------------------------------
 
 let hospitals = [
 	[],
-	
+
 	[ // GTA III
 		[1144.25, -596.875, 14.97],		// Portland
 		[183.50, -17.75, 16.21],		// Staunton Island
 		[-1259.5, -44.5, 58.89],		// Shoreside Vale
 	],
-	
+
 	[ // GTA Vice City
 		[-822.57, 1152.82, 12.41],		// Downtown (Shuman Health Care Center)
 		[-885.08, -470.44, 13.11],		// Little Havana (West Haven Community Health Care Center)
 		[-133.19, -980.76, 10.46], 		// Ocean Beach (Ocean View Hospital)
 	],
-	
+
 	[ // GTA San Andreas
 		// Coming soon!
 	],
-	
+
 	[ // GTA Underground
 		// Coming soon!
 	],
-	
+
 	[ // GTA IV
 		[1199.59, 196.78, 33.554], 		// Schottler
 		[980.71, 1831.61, 23.898], 		// Northern Gardens
 		[-1317.27, 1277.20, 22.370], 	// Leftwood
 		[-1538.43, 344.58, 20.943], 	// Acter
 	],
-	
+
 	[ // GTA IV (EFLC)
 		[1199.59, 196.78, 33.554], 		// Schottler
 		[980.71, 1831.61, 23.898], 		// Northern Gardens
 		[-1317.27, 1277.20, 22.370],	// Leftwood
 		[-1538.43, 344.58, 20.943], 	// Acter
-	],	
+	],
 ]
 
 // ----------------------------------------------------------------------------
@@ -5906,24 +5958,24 @@ let payAndSprays = [
 		[381.8, -493.8, 25.95],			// Staunton Island
 		[-1142.4, 35.01, 58.61],		// Shoreside Vale
 	],
-	
+
 	[ // GTA Vice City
 		[-869.95, -119.06, 10.63],		// Little Haiti
 		[-910.82, -1265.96, 11.79],		// Viceport
 	],
-	
+
 	[ // GTA San Andreas
 		// Coming soon!
 	],
-	
+
 	[ // GTA Underground
 		// Coming soon!
 	],
-	
+
 	[ // GTA IV
 		[1058.57, -282.58, 20.760], 	// Hove Beach
 		[-1148.69, 1171.52, 16.457], 	// Leftwood
-	],	
+	],
 ];
 
 // ----------------------------------------------------------------------------
@@ -5934,7 +5986,7 @@ let ammuNations = [
 		[1068.3, -400.9, 15.24], 		// Portland
 		[348.2, -717.9, 26.43], 		// Staunton Island
 	],
-	
+
 	[ // GTA Vice City
 		[-676.32, 1204.98, 11.10],		// Downtown
 	],
@@ -5945,27 +5997,27 @@ let ammuNations = [
 let hiddenPackages = [
 	[],
 	[ // GTA III
-		[1105.25, -1020, 25.0625], 
-		[877.562, -788, 27.5625],  
-		[1254, -611.188, 22.75],   
-		[1045.75, -967.062, 16],   
+		[1105.25, -1020, 25.0625],
+		[877.562, -788, 27.5625],
+		[1254, -611.188, 22.75],
+		[1045.75, -967.062, 16],
 		[942.062, -793.375, 14.875],
-		[934, -718.875, 14.75],    
-		[898.062, -414.688, 26.5], 
+		[934, -718.875, 14.75],
+		[898.062, -414.688, 26.5],
 		[846.875, -442.5, 23.1875],
 		[927.062, -404.375, 29.0625],
-		[864.25, -171.5, 3.5],     
+		[864.25, -171.5, 3.5],
 		[1538.25, -174.375, 19.1875],
 		[1213.06, -127.062, 15.0625],
-		[753.562, 137, 3.5],       
-		[1162, -101.75, 12],       
-		[1155.56, -191.5, 14.375], 
-		[1285.5, -247.5, 42.375],  
+		[753.562, 137, 3.5],
+		[1162, -101.75, 12],
+		[1155.56, -191.5, 14.375],
+		[1285.5, -247.5, 42.375],
 		[1007.19, -219.562, 6.6875],
-		[1138.19, -250, 24.25],    
+		[1138.19, -250, 24.25],
 		[1023.56, -423.688, 14.875],
 		[1237.5, -854.062, 20.5625],
-		[1478.25, -1150.69, 12],   
+		[1478.25, -1150.69, 12],
 		[1018.88, -56.75, 21],
 		[1465.69, -166.5, 55.5],
 		[1120.19, -926.188, 16],
@@ -6046,7 +6098,7 @@ let hiddenPackages = [
 		[-1494.69, -1097.25, 3.375],
 		[-837.75, -469.188, 10.75],
 	],
-	
+
 	[],
 	[],
 	[],
@@ -6069,7 +6121,7 @@ let vehicleDataArray = [
 	//'colour',
 	'suspensionHeight',
 	'mission',
-	'cruiseSpeed', 
+	'cruiseSpeed',
 	'driveTo',
 	'drivingStyle',
 	'panelStatus',
@@ -6078,7 +6130,7 @@ let vehicleDataArray = [
 	'wheelStatus',
 	'doorsState',
 	'lightsState',
-	'wheelsState',	
+	'wheelsState',
 	'radioStation',
 	'handlingIndex',
 	'scale',
@@ -6098,7 +6150,7 @@ let vehicleDataStructure = Enum(vehicleDataArray);
 
 function createDefaultVehicleData(vehicle) {
 	let vehicleData = new Array(vehicleDataStructure.length);
-	
+
 	vehicleData[vehicleDataStructure.health] = 1000;
 	vehicleData[vehicleDataStructure.engineState] = false;
 	vehicleData[vehicleDataStructure.lightState] = false;
@@ -6108,7 +6160,7 @@ function createDefaultVehicleData(vehicle) {
 	vehicleData[vehicleDataStructure.lockState] = false;
 	vehicleData[vehicleDataStructure.suspensionHeight] = -1;
 	vehicleData[vehicleDataStructure.mission] = -1;
-	vehicleData[vehicleDataStructure.cruiseSpeed] = 15.0; 
+	vehicleData[vehicleDataStructure.cruiseSpeed] = 15.0;
 	vehicleData[vehicleDataStructure.driveTo] = [-1, -1, -1, -1];
 	vehicleData[vehicleDataStructure.drivingStyle] = 1;
 	vehicleData[vehicleDataStructure.panelStatus] = -1;
@@ -6129,8 +6181,8 @@ function createDefaultVehicleData(vehicle) {
 	vehicleData[vehicleDataStructure.gpsEnabled] = false;
 	vehicleData[vehicleDataStructure.upgrades] = [];
 	vehicleData[vehicleDataStructure.paintJob] = -1;
-	
-	
+
+
 
 	if(isServer) {
 		vehicle.setData("sb", vehicleData, true);
@@ -6141,7 +6193,7 @@ function createDefaultVehicleData(vehicle) {
 			vehicle.setData("sb", vehicleData, true);
 			resyncVehicle(vehicle);
 		}
-		
+
 	}
 }
 
@@ -6181,7 +6233,7 @@ function createDefaultPedData(ped) {
 		false,
 		false,
 		false,
-	]);	
+	]);
 }
 
 // ----------------------------------------------------------------------------
@@ -6204,7 +6256,7 @@ function makeReadableTime(hour, minute) {
 	let hourStr = String(hour);
 	let minuteStr = String(minute);
 	let meridianStr = "AM";
-	
+
 	if(hour < 10) {
 		hourStr = "0" + String(hour);
 		if(hour == 0) {
@@ -6212,7 +6264,7 @@ function makeReadableTime(hour, minute) {
 		}
 		meridianStr = "AM";
 	}
-	
+
 	if(hour > 12) {
 		let actualHour = hour-12;
 		if(actualHour < 10) {
@@ -6222,11 +6274,11 @@ function makeReadableTime(hour, minute) {
 		}
 		meridianStr = "PM";
 	}
-	
+
 	if(minute < 10) {
 		minuteStr = "0" + String(minute);
 	}
-	
+
 	return hourStr + ":" + minuteStr + " " + meridianStr;
 }
 
@@ -6235,9 +6287,9 @@ function makeReadableTime(hour, minute) {
 function getPosToRightOfPos(pos, angle, distance) {
 	let x = (pos.x+((Math.cos((-angle+1.57)+(Math.PI/2)))*distance));
 	let y = (pos.y+((Math.sin((-angle+1.57)+(Math.PI/2)))*distance));
-	
+
 	let rightPos = new Vec3(x, y, pos.z);
-	
+
 	return rightPos;
 }
 
@@ -6246,9 +6298,9 @@ function getPosToRightOfPos(pos, angle, distance) {
 function getPosToLeftOfPos(pos, angle, distance) {
 	let x = (pos.x+((Math.cos((angle+1.57)+(Math.PI/2)))*distance));
 	let y = (pos.y+((Math.sin((angle+1.57)+(Math.PI/2)))*distance));
-	
+
 	let leftPos = new Vec3(x, y, pos.z);
-	
+
 	return leftPos;
 }
 
@@ -6258,7 +6310,7 @@ function getPosInFrontOfPos(pos, angle, distance) {
 	let x = (pos.x+((Math.cos(angle+(Math.PI/2)))*distance));
 	let y = (pos.y+((Math.sin(angle+(Math.PI/2)))*distance));
 	let z = pos.z;
-	
+
 	return new Vec3(x, y, z);
 }
 
@@ -6268,7 +6320,7 @@ function getPosBehindPos(pos, angle, distance) {
 	let x = (pos.x+((Math.cos(angle-(Math.PI/2)))*distance));
 	let y = (pos.y+((Math.sin(angle-(Math.PI/2)))*distance));
 	let z = pos.z;
-	
+
 	return new Vec3(x,y,z);
 }
 
@@ -6276,7 +6328,7 @@ function getPosBehindPos(pos, angle, distance) {
 
 function getPosAbovePos(pos, distance) {
 	let z = pos.z+distance;
-	
+
 	return new Vec3(pos.x, pos.y, z);
 }
 
@@ -6284,14 +6336,14 @@ function getPosAbovePos(pos, distance) {
 
 function getPosBelowPos(pos, distance) {
 	let z = pos.z-distance;
-	
+
 	return new Vec3(pos.x, pos.y, z);
 }
 
 // ----------------------------------------------------------------------------
 
 function getHeadingFromPosToPos(pos1, pos2) {
-	
+
 	let x = pos2.x-pos1.x;
 	let y = pos2.y-pos1.y;
 	let rad = Math.atan2(y, x);
@@ -6318,7 +6370,7 @@ function radToDeg(rad) {
 function getDistance(pos1, pos2) {
 	let a = Math.pow(pos1.x-pos2.x, 2);
 	let b = Math.pow(pos1.y-pos2.y, 2);
-	
+
 	return Math.sqrt(a+b);
 }
 
@@ -6327,7 +6379,7 @@ function getDistance(pos1, pos2) {
 function getAngleInCircleFromCenter(center, total, current) {
 	let gap = 360 / total;
 	let deg = Math.floor(gap*current);
-	
+
 	if(deg <= 0) {
 		deg = 1;
 	} else {
@@ -6335,7 +6387,7 @@ function getAngleInCircleFromCenter(center, total, current) {
 			deg = 359;
 		}
 	}
-	
+
 	return degToRad(deg);
 }
 
@@ -6349,22 +6401,15 @@ function getClosestVehicle(pos) {
 			closestVeh = vehs[i];
 		}
 	}
-	
+
 	return closestVeh;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClosestCivilian(pos) {
-	let civs = getPeds();
-	let closestCiv = civs[0];
-	for(let i in civs) {
-		if(getDistance(pos, civs[i].position) <= getDistance(pos, closestCiv.position)) {
-			closestCiv = civs[i];
-		}
-	}
-	
-	return closestCiv;
+    let civilians = getCivilians();
+	return civilians.reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
@@ -6377,7 +6422,7 @@ function getVehiclesInRange(pos, range) {
 			inRangeVehs.push(vehs[i]);
 		}
 	}
-	
+
 	return inRangeVehs;
 }
 
@@ -6399,15 +6444,15 @@ function isParamsInvalid(params) {
 	if(params == null) {
 		return true;
 	}
-	
+
 	if(params == "") {
 		return true;
 	}
-	
+
 	if(params.length == 0) {
-		return true;	
+		return true;
 	}
-	
+
 	return false;
 }
 
@@ -6418,18 +6463,18 @@ function isValidVehicleModel(modelID) {
 		if(modelID < 90 || modelID > 150) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	if(game.game == GAME_GTA_VC) {
 		if(modelID < 130 || modelID > 236) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	if(game.game >= GAME_GTA_SA) {
 		return true;
 	}
@@ -6441,28 +6486,28 @@ function isValidVehicleModel(modelID) {
 function getVehicleModelIdFromParams(params, gameId = thisGame) {
 	if(isNaN(params)) {
 		let modelID = getVehicleModelIDFromName(params);
-		
+
 		if(!modelID) {
 			return vehicleModelIDStart[gameId];
 		}
-		
+
 		if(isValidVehicleModel(Number(modelID))) {
 			return Number(modelID);
 		}
-		
-		return getVehicleModelIDFromName(params, gameId);	
+
+		return getVehicleModelIDFromName(params, gameId);
 	} else {
 		//if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 		//	params = Number(params);
 		//	return gtaivVehicleModels[params][1];
 		//}
-		
+
 		if(isValidVehicleModel(Number(params))) {
 			return Number(params);
 		}
 		return vehicleModelIDStart[gameId];
 	}
-	
+
 	return false;
 }
 
@@ -6470,7 +6515,7 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 
 function getSkinIdFromParams(params, gameId = thisGame) {
 	if(isNaN(params)) {
-		return getSkinIdFromName(params);
+		return getSkinIdFromName(params, gameId);
 	} else {
 		params = Number(params);
 		if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
@@ -6479,7 +6524,7 @@ function getSkinIdFromParams(params, gameId = thisGame) {
 			return params;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6493,7 +6538,7 @@ function getVehicleUpgradeIdFromParams(params) {
 			return Number(params);
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6509,7 +6554,7 @@ function getVehicleModelIDFromName(params, gameId = thisGame) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6521,7 +6566,7 @@ function getVehicleUpgradeIdFromName(params, gameId = thisGame) {
 			return i;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6535,13 +6580,13 @@ function getSkinIdFromName(params, gameId = thisGame) {
 			}
 		}
 	} else {
-		for(let i in skinNames[gameId]) {
-			if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return skinNames[gameId][i];
-			}
-		}		
+		let skinName = skinNames[gameId].filter(skinName => skinName.indexOf(params.toLowerCase()) != -1);
+		console.log(params);
+		console.log(gameId);
+		console.log(skinName);
+		return
 	}
-	
+
 	return false;
 }
 
@@ -6555,11 +6600,11 @@ function doesWordStartWithVowel(word) {
 		case "o":
 		case "u":
 			return true;
-		
+
 		default:
 			return false;
 	}
-	
+
 	return false;
 }
 
@@ -6621,7 +6666,7 @@ function getClientFromName(clientName) {
 			return clients[i];
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6634,37 +6679,25 @@ function getClientFromPlayer(player) {
 			return clients[i];
 		}
 	}
-	
+
 	return false;
 }
 
 // ----------------------------------------------------------------------------
 
-function getPlayerFromParams(params, isServer) {
-	if(!isServer) {
-		let peds = getPeds();
-		for(let i in peds) {
-			if(peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return peds[i];
+function getPlayerFromParams(params) {
+	if(isNaN(params)) {
+		getPeds().forEach(function(ped) {
+			if(ped.name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				return ped;
 			}
-		}
+		});
 	} else {
-		let clients = getClients();
-		if(isNaN(params)) {
-			for(let i in clients) {
-				if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-					return clients[i].player;
-				}			
-			}
-		} else {
-			let playerID = Number(params) || 0;
-			if(typeof clients[playerID] != "undefined") {
-				return clients[playerID].player;
-			}			
+		let client = getClients()[Number(params)];
+		if(client != null) {
+			return client.player;
 		}
 	}
-	
-	return false;
 }
 
 
@@ -6684,16 +6717,16 @@ function getClientFromParams(params) {
 			for(let i in clients) {
 				if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 					return clients[i];
-				}			
+				}
 			}
 		} else {
 			let clientID = Number(params) || 0;
 			if(typeof clients[clientID] != "undefined") {
 				return clients[clientID];
-			}			
+			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6707,7 +6740,7 @@ function getFirstEmptyEffectSlot(isServer = false) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -6748,7 +6781,7 @@ function createBitwiseTable(tableKeys) {
 	let bitVal = 0;
 	let bitTable = {};
 	let incVal = 1;
-	
+
 	for(let i in tableKeys) {
 		let key = tableKeys[i];
 		bitTable[key] = bitVal;
@@ -6782,11 +6815,11 @@ function getCardinalDirection ( pos1 , pos2 ) {
 	let a = pos1.x - pos2.x;
 	let b = pos1.y - pos2.y;
 	let c = pos1.z - pos2.z;
-	
+
 	let x = Math.abs(a);
 	let y = Math.abs(b);
 	let z = Math.abs(c);
-	
+
 	let no = 0;
 	let ne = 1;
 	let ea = 2;
@@ -6796,7 +6829,7 @@ function getCardinalDirection ( pos1 , pos2 ) {
 	let we = 6;
 	let nw = 7;
 	let na = 8;
-	
+
 	if(b < 0 && a < 0){
 		if(x < (y/2)){
 			return no;
@@ -6843,19 +6876,19 @@ function getTimeDifferenceDisplay(unixTimeOne, unixTimeTwo) {
     let minutes = Math.floor(timeDifference/60);
     let hourString = "";
 	let minuteString = "";
-	
+
     if(hours == 1) {
         hourString = "1 hour";
     } else {
         hourString = String(hours) + " hours";
     }
-    
+
     if(minutes == 1) {
         minuteString = "1 minute";
     } else {
         minuteString = String(minutes) + " minute";
     }
-    
+
     return hourString + " and " + minuteString;
 }
 
@@ -6952,7 +6985,7 @@ function setFileData(filePath, fileData)
 // Requires MarkNote!
 function getXMLItems(filePath) {
 	let data = getFileData(filePath);
-	
+
 	let parser = new marknote.Parser;
 	let xml = parser.parse(data);
 	let root = xml.getRootElement();
@@ -6974,11 +7007,11 @@ function saveXMLItems(filePath, rootNode, itemNode, root) {
 function updateXMLItem(filePath, rootNode, itemNode, itemAttrName, itemAttrValue, newData, attributeNames) {
 	let data = getXMLItems(filePath);
 	let item = getXMLItemsByAttribute(data.root, itemAttrName, itemAttrValue);
-	
+
 	if(!item) {
 		return;
 	}
-	
+
 	for(let k in newData) {
 		item.setAttribute(k, newData[k] + '');
 	}
@@ -7007,16 +7040,16 @@ function getRandomRGB() {
 function breakText(text, maxLength) {
 	let lines = [];
 	let j = Math.floor(text.length / maxLength);
-	
+
 	for(let i = 0; i < j; i++) {
 		lines.push(text.substr(i*maxLength,maxLength));
 	}
-	
+
 	let line = text.substr(j*maxLength, text.length % maxLength);
 	if(line.length > 0) {
 		lines.push(line);
 	}
-	
+
 	return lines;
 }
 
@@ -7039,7 +7072,7 @@ function getArrayOfElementID(elements) {
 	for(let i in elements) {
 		tempArray.push(elements[i].id);
 	}
-	
+
 	return tempArray;
 }
 
@@ -7062,7 +7095,7 @@ function isValidSkin(skin, game = GAME_GTA_III) {
 		switch(skin) {
 			case 111:
 				return false;
-			
+
 			default:
 				return true;
 		}
@@ -7073,11 +7106,64 @@ function isValidSkin(skin, game = GAME_GTA_III) {
 
 function getProperVehiclePossessionText(params = "") {
 	switch(params.toLowerCase()) {
-		case "m":			
-		case "me":			
+		case "m":
+		case "me":
 		case "mine":
-			return "Your";
-			
+			return getGenderPossessivePronoun(getGenderForSkin(localPlayer.skin));
+
+		case "last":
+		case "new":
+		case "newest":
+		case "l":
+			return "the recently spawned";
+
+		case "n":
+		case "c":
+		case "closest":
+		case "nearest":
+			return "the closest";
+
+		case "r":
+		case "range":
+		case "near":
+		case "within":
+			return "all nearby";
+
+		case "a":
+		case "all":
+			return "all";
+
+		case "r":
+		case "random":
+		case "any":
+			return "a random";
+
+		default:
+			if(isNaN(params)) {
+				let peds = getPeds();
+				for(let i in peds) {
+					if(peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+						return peds[i].name + "'s";
+					}
+				}
+			} else {
+				if(typeof vehicles[Number(params)] != "undefined") {
+					return "The ID " + params;
+				}
+			}
+			return [];
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function getProperCivilianPossessionText(params = "") {
+	switch(params.toLowerCase()) {
+		case "m":
+		case "me":
+		case "mine":
+			return "His";
+
 		case "last":
 		case "new":
 		case "newest":
@@ -7089,22 +7175,22 @@ function getProperVehiclePossessionText(params = "") {
 		case "closest":
 		case "nearest":
 			return "The closest";
-			
+
 		case "r":
 		case "range":
 		case "near":
 		case "within":
-			return "All nearby";		
+			return "All nearby";
 
 		case "a":
 		case "all":
 			return "All";
-			
+
 		case "r":
 		case "random":
 		case "any":
-			return "The random";						
-			
+			return "The random";
+
 		default:
 			if(isNaN(params)) {
 				let peds = getPeds();
@@ -7301,7 +7387,7 @@ let gameStats = [
 		[200, 0],		//PEDSTAT_MEALS_EATEN
 		[225, 999999],	//PEDSTAT_UNDERWATER_STAMINA
 		[229, 999999],	//PEDSTAT_BIKE_SKILL
-		[230, 999999],	//PEDSTAT_CYCLE_SKILL	
+		[230, 999999],	//PEDSTAT_CYCLE_SKILL
 	],
 	[
 		[0, 999999],	//PEDSTAT_PROGRESS_MADE
@@ -7457,7 +7543,7 @@ let gameStats = [
 		[200, 0],		//PEDSTAT_MEALS_EATEN
 		[225, 999999],	//PEDSTAT_UNDERWATER_STAMINA
 		[229, 999999],	//PEDSTAT_BIKE_SKILL
-		[230, 999999],	//PEDSTAT_CYCLE_SKILL	
+		[230, 999999],	//PEDSTAT_CYCLE_SKILL
 	],
 	[],
 	[],
@@ -7658,4 +7744,205 @@ let vehicleUpgradeNames = {
 	1191: "Chrome Front Bumper",
 	1192: "Chrome Rear Bumper",
 	1193: "Slamin Rear Bumper"
+}
+
+// ----------------------------------------------------------------------------
+
+let genderPossessivePronouns = [
+	"his",
+	"her",
+	"their",
+];
+
+// ----------------------------------------------------------------------------
+
+let genderObjectivePronouns = [
+	"him",
+	"her",
+	"them",
+];
+
+// ----------------------------------------------------------------------------
+
+function getGenderForSkin(skinId) {
+	return 0;
+}
+
+// ----------------------------------------------------------------------------
+
+function getGenderPossessivePronoun(genderId) {
+	return genderPossessivePronouns[genderId];
+}
+
+// ----------------------------------------------------------------------------
+
+function getGenderObjectivePronoun(genderId) {
+	return genderObjectivePronouns[genderId];
+}
+
+// ----------------------------------------------------------------------------
+
+let pedObjectiveNames = [
+	false,
+	[
+		"No objective",
+		"Wait on foot",
+		"Flee on foot until safe",
+		"Guard spot",
+		"Guard area",
+		"Wait in car",
+		"Wait in car then get out",
+		"Kill char on foot",
+		"Kill char using any Means",
+		"Flee from char on foot until safe",
+		"Flee from char on foot",
+		"Go to char on foot",
+		"Follow char in formation",
+		"Leave car",
+		"Enter car as passenger",
+		"Enter car as driver",
+		"Follow car in car",
+		"Fire at object from vehicle",
+		"Destroy object",
+		"Destroy car",
+		"Go to area by any means",
+		"Go to area on foot",
+		"Run to area",
+		"Go to area in car",
+		"Follow car on foot with offset",
+		"Guard attack",
+		"Set leader",
+		"Follow route",
+		"Solicit",
+		"Take taxi",
+		"Catch train",
+		"Buy ice cream",
+		"Steal any car",
+		"Mug char",
+	]
+];
+
+let pedStateNames = [
+	false,
+	[
+		"None",
+		"Idle",
+		"Look Entity",
+		"Look Heading",
+		"Wander Range",
+		"Wander Path",
+		"Seek Pos",
+		"Seek Entity",
+		"Flee Pos",
+		"Flee Entity",
+		"Pursue",
+		"Follow Path",
+		"Sniper Mode",
+		"Rocket Mode",
+		"Dummy",
+		"Pause",
+		"Attack",
+		"Fight",
+		"Face Phone",
+		"Make Call",
+		"Chat",
+		"Mug",
+		"AimGun",
+		"AI Control",
+		"Seek Car",
+		"Seek InBoat",
+		"Follow Route",
+		"C.P.R.",
+		"Solicit",
+		"Buy IceCream",
+		"Investigate",
+		"Step away",
+		"On Fire",
+		"Unknown",
+		"STATES_NO_AI",
+		"Jump",
+		"Fall",
+		"GetUp",
+		"Stagger",
+		"Dive away",
+		"STATES_NO_ST",
+		"Enter Train",
+		"Exit Train",
+		"Arrest Plyr",
+		"Driving",
+		"Passenger",
+		"Taxi Passngr",
+		"Open Door",
+		"Die",
+		"Dead",
+		"CarJack",
+		"Drag fm Car",
+		"Enter Car",
+		"Steal Car",
+		"Exit Car",
+		"Hands Up",
+		"Arrested",
+	],
+];
+
+let pedWaitStateNames = [
+	false,
+	[
+		"No Wait",
+		"Traffic Lights",
+		"Pause CrossRoad",
+		"Look CrossRoad",
+		"Look Ped",
+		"Look Shop",
+		"Look Accident",
+		"FaceOff Gang",
+		"Double Back",
+		"Hit Wall",
+		"Turn 180deg",
+		"Surprised",
+		"Ped Stuck",
+		"Look About",
+		"Play Duck",
+		"Play Cower",
+		"Play Taxi",
+		"Play HandsUp",
+		"Play HandsCower",
+		"Play Chat",
+		"Finish Flee",
+	],
+];
+
+let seatNames = [
+	"Driver",
+	"Front Passenger",
+	"Rear Left Passenger",
+	"Rear Right Passenger",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+	"Extra",
+];
+
+function parseParams(params) {
+	let parsedParams = [];
+	let paramsEntries = params.split(",");
+	paramsEntries.forEach(function(paramsEntry) {
+		if(paramsEntry.indexOf("=") != -1) {
+			parsedParams.push(paramsEntry.split("="));
+		} else {
+			parsedParams.push(paramsEntry);
+		}
+	});
 }

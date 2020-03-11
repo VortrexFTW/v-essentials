@@ -1,5 +1,11 @@
 "use strict";
 
+// ----------------------------------------------------------------------------
+
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 let serverGame = server.game;
 let spawnScreenEnabled = false;
 
@@ -7,6 +13,18 @@ let spawnScreenEnabled = false;
 
 let spawnScreenPedPosition = new Vec3(0.0, 0.0, 0.0);
 let spawnScreenPedHeading = 0.0;
+
+// ----------------------------------------------------------------------------
+
+let gameAnnounceColours = [
+	COLOUR_BLACK,					// Invalid
+	COLOUR_SILVER,					// GTA III
+	COLOUR_AQUA,					// GTA Vice City
+	COLOUR_ORANGE,					// GTA San Andreas
+	COLOUR_ORANGE,					// GTA Underground
+	COLOUR_SILVER,					// GTA IV
+	COLOUR_SILVER					// GTA IV (EFLC)		
+];
 
 // ----------------------------------------------------------------------------
 
@@ -48,7 +66,7 @@ inSpawnScreen.fill(false);
 
 let spawnSkin = Array(128);
 if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-	spawnSkin.fill(1862763509);
+	spawnSkin.fill(0);
 } else {
 	spawnSkin.fill(0);
 }
@@ -117,10 +135,11 @@ addNetworkHandler("v.respawn", function(client) {
 // ----------------------------------------------------------------------------
 
 // Spawnscreen select this skin
-addNetworkHandler("v.ss.sel", function(client, skinID) {
+addNetworkHandler("v.ss.sel", function(client, skinId) {
 	inSpawnScreen[client.index] = false;
-	spawnSkin[client.index] = skinID;
-	setTimeout(respawnPlayer, 100, client, skinID);
+	spawnSkin[client.index] = skinId;
+	setTimeout(respawnPlayer, 100, client, skinId);
+	message(String(client.name) + " spawned as " + String(getSkinName(skinId)), gameAnnounceColours[server.game]);
 });
 
 // ----------------------------------------------------------------------------
@@ -155,5 +174,15 @@ addCommandHandler("spawnscreen", function(cmdName, params, client) {
 		}
 	}
 });
+
+// ----------------------------------------------------------------------------
+
+function getSkinName(skinId) {
+	let sandboxResource = findResourceByName("sandbox");
+	if(sandboxResource && sandboxResource.isStarted) {
+		return sandboxResource.exports.getSkinName(skinId);
+	}
+	return false;
+}
 
 // ----------------------------------------------------------------------------

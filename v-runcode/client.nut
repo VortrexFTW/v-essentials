@@ -1,5 +1,9 @@
 // ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("sce", function(szCommand, szParams) {
     if(!szParams || szParams == "") {
         message("Syntax: /sce <code>", findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game));

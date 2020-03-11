@@ -1,4 +1,5 @@
 <meta>
-	<info author="Vortrex" version="1.0" description="Vehicle passenger entry" />
+	<info author="Vortrex" version="1.0" description="Binds the G key to enter the closest vehicle as passenger" />
+	
 	<script src="client.js" type="client" language="javascript" />	
 </meta>

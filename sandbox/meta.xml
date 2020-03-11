@@ -17,7 +17,6 @@
 	<script src="client/player.js" type="client" language="javascript" />
 	<script src="client/effect.js" type="client" language="javascript" />
 	<script src="client/cutscene.js" type="client" language="javascript" />
-	<script src="client/cvar.js" type="client" language="javascript" />
 	<script src="client/train.js" type="client" language="javascript" />
 	<!--<script src="client/exec.js" type="client" language="javascript" />-->
 	<script src="client/pickup.js" type="client" language="javascript" />

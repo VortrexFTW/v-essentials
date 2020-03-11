@@ -1,5 +1,11 @@
 "use strict";
 
+// ----------------------------------------------------------------------------
+
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 // WARNING: This resource is VERY buggy on GTA 3 and Vice City. I haven't had a chance to finish tweaking it.
 // You will often find yourself unable to aim or punch. I'll try to fix this soon ;)
 
@@ -13,36 +19,37 @@
 // ----------------------------------------------------------------------------
 
 let aimObjects = new Array(256);
+let centerCameraPos = null;
+let lookAtPos = null;
+
+bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+	setInterval(sendHeadLook, 2500);
+});
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function(event, deltaTime) {
 	if(localPlayer != null) {
-		let centerCameraPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, 0));
-		let lookAtPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, centerCameraPos.distance(localPlayer.position)+20));
-		triggerNetworkEvent("v.p.lookat", lookAtPos.x, lookAtPos.y, lookAtPos.z);
+		centerCameraPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, 0));
+		lookAtPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, centerCameraPos.distance(localPlayer.position)+20));
+		localPlayer.lookAt(lookAtPos, 3000);
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.p.lookat", function(playerId, x, y, z) {
-	let player = getElementFromId(playerId);
-	if(player != null) {
-		if(gta.game == GAME_GTA_SA) {
-			player.lookAt(new Vec3(x, y, z), 1000);
-		} else if(gta.game == GAME_GTA_III || gta.game == GAME_GTA_VC) {
-			let position = new Vec3(x, y, z);
-			if(aimObjects[player.id] == null) {
-				aimObjects[player.id] = createObject((gta.game == GAME_GTA_III)?1361:365, position);
-				aimObjects[player.id].dimension = localPlayer.dimension + 1;
-			}
-			aimObjects[player.id].position = position;
-			if(gta.game == GAME_GTA_III) {
-				player.pointGunAt(aimObjects[player.id])
-			}
+addNetworkHandler("v.p.lookat", function(ped, position) {
+	if(ped != null) {
+		if(ped != localPlayer) {
+			ped.lookAt(position, 3000);
 		}
 	}
+	console.log("Received head position from ID " + ped.id);
 });
 
+// ----------------------------------------------------------------------------
+
+function sendHeadLook() {
+	triggerNetworkEvent("v.p.lookat", lookAtPos);
+}
 // ----------------------------------------------------------------------------

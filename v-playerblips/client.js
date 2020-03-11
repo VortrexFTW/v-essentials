@@ -2,6 +2,10 @@
 
 // ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	//if(resource == thisResource) {
 		let clients = getClients();

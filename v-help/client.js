@@ -2,6 +2,10 @@
 
 // ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("help", function(command, params) {
 	if(!params || params == "") {
 		showMainHelpList();
@@ -17,18 +21,19 @@ addCommandHandler("help", function(command, params) {
 				message("/veh_mission, /veh_rgba1, /veh_rgba2, /veh_colour1, /veh_colour2, /veh_colour3, /veh_colour4", COLOUR_WHITE);
 				message("/veh_collisions, /veh_cruisespeed, /veh_drivingstyle, /veh_handling, /veh_driveto, /veh_scale", COLOUR_WHITE);
 				break;
-				
+			
+			case "ped":			
 			case "civ":
 			case "c":
 			case "npc":
 			case "bot":
 			case "civilian":
-				message("[#666666]/civ <id/name>[#FFFFFF]to spawn a civilian.", COLOUR_WHITE);
-				message("[#666666]The following commands can be used on any civilian:", COLOUR_WHITE);
-				message("/civ_skin /civ_followme /civ_followplr /civ_crouch /civ_gun /civ_nogun /civ_aimatme", COLOUR_WHITE);
-				message("/civ_wander /civ_enterveh /civ_exitveh /civ_walkstyle /civ_armour /civ_health /civ_god", COLOUR_WHITE);
-				message("/civ_jump /civ_walkfwd /civ_runfwd /civ_stats /civ_threat /civ_nothreat /civ_resurrect", COLOUR_WHITE);
-				message("/civ_collision /civ_hailtaxi /civ_aimatplr /civ_aimatveh", COLOUR_WHITE);
+				message("[#666666]/ped <id/name>[#FFFFFF]to spawn a ped.", COLOUR_WHITE);
+				message("[#666666]The following commands can be used on any ped:", COLOUR_WHITE);
+				message("/ped_skin /ped_followme /ped_followplr /ped_crouch /ped_gun /ped_nogun /ped_aimatme", COLOUR_WHITE);
+				message("/ped_wander /ped_enterveh /ped_exitveh /ped_walkstyle /ped_armour /ped_health /ped_god", COLOUR_WHITE);
+				message("/ped_jump /ped_walkfwd /ped_runfwd /ped_stats /ped_threat /ped_nothreat /ped_resurrect", COLOUR_WHITE);
+				message("/ped_collision /ped_hailtaxi /ped_aimatplr /ped_aimatveh", COLOUR_WHITE);
 				break;		
 
 			case "plr":
@@ -36,7 +41,22 @@ addCommandHandler("help", function(command, params) {
 				message("[#666666]The following commands can be used on your player:", COLOUR_WHITE);
 				message("/skin /health /armour /gun /goto /god /input /clear /hud /collisions /interior /dimension", COLOUR_WHITE);
 				message("/warpinveh /stars /stamina", COLOUR_WHITE);
+				break;
+				
+			case "admin":
+				message("[#666666]The following commands can be used for admin access:", COLOUR_WHITE);
+				message("/admin " + String((localClient.administrator) ? "/makeadmin /removeadmin /goto /gethere" : ""), COLOUR_WHITE);
+				break;				
+
+			case "code":
+				message("[#666666]The following commands can be used for code execution:", COLOUR_WHITE);
+				message("/jce /sce /lce /jcr /scr /lcr " + String((localClient.administrator) ? "/jse /sse /lse /jsr /ssr /lsr " : ""), COLOUR_WHITE);
 				break;	
+				
+			case "afk":
+				message("[#666666]The following commands can be used for AFK status:", COLOUR_WHITE);
+				message("/autoafk /afk", COLOUR_WHITE);
+				break;					
 
 			default:
 				showMainHelpList();
@@ -55,35 +75,57 @@ function showMainHelpList() {
 	let enabledKeys = "";
 	if(findResourceByName("sandbox") != null) {
 		enabledCategories += " vehicle";
-		enabledCategories += " civilian";
+		enabledCategories += " ped";
 		enabledCategories += " player";
 		enabledCategories += " other";
 	}
 
 	if(findResourceByName("v-admin") != null) {
-		availableCategories += " admin"
+		enabledCategories += " admin"
 	}
 
 	if(findResourceByName("v-runcode") != null) {
-		availableCategories += " code"	
+		enabledCategories += " code"	
 	}	
+	
+	if(findResourceByName("v-afk") != null) {
+		enabledCategories += " afk"	
+	}		
 
 	if(findResourceByName("v-passenger") != null) {
-		availableKeys += " G: Passenger";
+		enabledKeys += "G: Passenger";
 	}
+	
+	if(findResourceByName("v-togglehud") != null) {
+		enabledKeys += " / F7: Toggle HUD";
+	}
+	
+	if(findResourceByName("cheatkeys") != null) {
+		enabledKeys += " / 2: Speed Boost / 3: Jump / 5: Reverse Direction / 6: Fix & Heal";
+	}	
 
-	message("Help Categories: " + availableCategories, toColour(200, 200, 200, 255));
+	message("Help Categories: " + enabledCategories, toColour(200, 200, 200, 255));
 	message("Use /help <category> for information", toColour(200, 200, 200, 255));
 	message("Example: /help vehicle", toColour(200, 200, 200, 255));
-	message("Available keys are: " + availableKeys, toColour(200, 200, 200, 255));
+	message("Available keys are: " + enabledKeys, toColour(200, 200, 200, 255));
 }
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPlayerChat", function(event, client, chatMessage) {
-	if(chatMessage.toLowerCase() == "nuttertools") {
-		message("Use /gun for a weapon!", COLOUR_YELLOW);
-	}
+	let gunCheats = ["gunsgunsguns", "thugstools", "nuttertools", "professionaltools", "lxgiwyl", "professionalskit", "uzumymw"];
+	gunCheats.forEach(function(gunCheat) {
+		if(chatMessage.toLowerCase().search(gunCheat.toLowerCase()) != -1) {
+			message("Use /gun for a weapon!", COLOUR_YELLOW);
+		}
+	});
+	
+	let vehicleCheats = ["AIWPRTON", "OLDSPEEDDEMON", "JQNTDMH", "VROCKPOKEY", "VPJTQWV", "WHERESTHEFUNERAL", "CELEBRITYSTATUS", "TRUEGRIME", "RZHSUEW", "JUMPJET", "KGGGDKP", "OHDUDE", "FOURWHEELFUN", "AMOMHRER", "ITSALLBULL", "FLYINGTOSTUNT", "MONSTERMASH"]	
+	vehicleCheats.forEach(function(vehicleCheat) {
+		if(chatMessage.toLowerCase().search(vehicleCheat.toLowerCase()) != -1) {
+			message("Use /veh for a vehicle!", COLOUR_YELLOW);
+		}
+	});	
 });
 
 // ----------------------------------------------------------------------------

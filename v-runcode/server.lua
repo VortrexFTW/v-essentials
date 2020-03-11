@@ -1,5 +1,9 @@
 -- ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT)
+
+-- ----------------------------------------------------------------------------
+
 addCommandHandler("lse", function(cmdName, params, client)
 	if client.administrator == false then
 		return false

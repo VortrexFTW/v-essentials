@@ -2,6 +2,10 @@
 
 // ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 let spawnScreenPedPosition = new Vec3(0.0, 0.0, 0.0);
 let spawnScreenPedHeading = 0.0;
 let spawnScreenCamPosition = new Vec3(0.0, 0.0, 0.0);
@@ -39,6 +43,7 @@ let skinSelectFont = null;
 let skinSelectExplainFont = null;
 let lastKeyPressTick = 0;
 let keyPressDelay = 75;
+let spawnScreenTextEnabled = true;
 
 // ----------------------------------------------------------------------------
 
@@ -151,9 +156,9 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 					triggerNetworkEvent("v.ss.sel", localPlayer.skin);
 					setHUDEnabled(true);
 					let skinName = getSkinName(localPlayer.skin);
-					if(skinName != false) {
-						message("You spawned as " + skinName, gameAnnounceColour);
-					}
+					//if(skinName != false) {
+					//	message("You spawned as " + skinName, gameAnnounceColour);
+					//}
 					lastKeyPressTick = sdl.ticks;
 					gta.setPlayerControl(true);
 					gui.showCursor(false, true);
@@ -200,21 +205,23 @@ function showSkinSelect() {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnDrawnHUD", function (event) {
-	if(inSpawnScreen) {
-		if(skinSelectFont != null && skinSelectExplainFont != null) {
-			// Skin Name
-			let text = getSkinName(localPlayer.skin);
-			let size = false;
-			
-			if(text != false) {
-				size = skinSelectFont.measure(text, 200, 0.0, 1.0, 28, false, false);
-				skinSelectFont.render(text, [96, game.height-128], 300, 0.0, 0.0, skinSelectFont.size, COLOUR_WHITE, false, false, false, true);
+	if(spawnScreenTextEnabled) {
+		if(inSpawnScreen) {
+			if(skinSelectFont != null && skinSelectExplainFont != null) {
+				// Skin Name
+				let text = getSkinName(localPlayer.skin);
+				let size = false;
+				
+				if(text != false) {
+					size = skinSelectFont.measure(text, 200, 0.0, 1.0, 28, false, false);
+					skinSelectFont.render(text, [96, game.height-128], 300, 0.0, 0.0, skinSelectFont.size, COLOUR_WHITE, false, false, false, true);
+				}
+				
+				// Help text
+				text = "Use LEFT/RIGHT to select a skin, and ENTER to spawn."
+				size = skinSelectExplainFont.measure(text, 200, 0.0, 1.0, 12, false, false);
+				skinSelectExplainFont.render(text, [96, game.height-78], 300, 0.0, 0.0, skinSelectExplainFont.size, COLOUR_WHITE, false, false, false, true);			
 			}
-			
-			// Help text
-			text = "Use LEFT/RIGHT to select a skin, and ENTER to spawn."
-			size = skinSelectExplainFont.measure(text, 200, 0.0, 1.0, 12, false, false);
-			skinSelectExplainFont.render(text, [96, game.height-78], 300, 0.0, 0.0, skinSelectExplainFont.size, COLOUR_WHITE, false, false, false, true);			
 		}
 	}
 });

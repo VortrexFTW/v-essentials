@@ -1,5 +1,9 @@
 // ----------------------------------------------------------------------------
 
+setErrorMode(RESOURCEERRORMODE_STRICT);
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("sse", function(szCommand, szParams, pClient) {
 	if(!pClient.administrator) {
 		return false;
