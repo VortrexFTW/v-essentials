@@ -2,7 +2,7 @@
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("OnPlayerJoin", function(event, client) {
+addEventHandler("OnPlayerJoin", function(event, client) {
 	client.setData("sb.p.connecttime", new Date().getTime());
 });
 
@@ -62,18 +62,20 @@ addCommandHandler("gotopos", function(cmdName, params, client) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.p.skin", function(client, clientID, skinId) {
-	/*
 	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
 		let position = client.player.position;
 		let heading = client.player.heading;
-		spawnPlayer(client, position, heading, skinId, 0, 0);
+		spawnPlayer(client, position, heading, gtaivSkinModels[skinId][1], 0, 0);
 	} else {
 		triggerNetworkEvent("sb.p.skin", null, clientID, skinId);
 	}
-	*/
+	
+	// Attempt at using a respawn to switch skins (it was supposed to be how to reset voices to proper one for skin)
+	/*
 	let position = client.player.position;
 	let heading = client.player.heading;
 	spawnPlayer(client, position, heading, skinId, 0, 0);
+	*/
 	message(client.name + " changed their skin to " + skinNames[server.game][skinId], gameAnnounceColours[serverGame]);
 });
 
@@ -148,3 +150,11 @@ addNetworkHandler("sb.p.walkstyle", function(client, walkStyle) {
 addNetworkHandler("sb.p.lookat", function(client, x, y, z) {
 	triggerNetworkEvent("sb.p.lookat", null, client.player.id, x, y, z);
 });
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.veh.enter", function(client, vehicleID, driver) {
+	triggerNetworkEvent("sb.p.veh.enter", null, client.player.id, vehicleID, driver);	
+});
+
+// ----------------------------------------------------------------------------

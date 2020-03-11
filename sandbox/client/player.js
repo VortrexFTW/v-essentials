@@ -14,38 +14,41 @@ addCommandHandler("skin", function(cmdName, params) {
 	}
 	
 	let splitParams = params.split(" ");
-	let skinID = (Number(splitParams[0])) || 0;
+	let skinId = getSkinIdFromParams(splitParams[0], gta.game);
+	
+	if(!skinId) {
+		skinId = 0;
+	}
 	
 	if(gta.game == GAME_GTA_III) {
-		if(skinID == 26 || skinID == 27 || skinID == 28 || skinID == 29) {
+		if(skinId == 26 || skinId == 27 || skinId == 28 || skinId == 29) {
 			message("That skin is invalid!", errorMessageColour);
 			return false;
 		}		
 	} else if(gta.game == GAME_GTA_VC) {
-		if(skinID == 8 || skinID == 141 || skinID == 140 || skinID > 100) {
+		if(skinId == 8 || skinId == 141 || skinId == 140) { // || skinID > 100) {
 			message("That skin is invalid!", errorMessageColour);
 			return false;
 		}
-	} else if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		skinID = gtaivSkinModels[skinID][1];
 	}
 	
 	if(isConnected) {
-		triggerNetworkEvent("sb.p.skin", localPlayer.id, skinID);
+		triggerNetworkEvent("sb.p.skin", localPlayer.id, skinId);
 	} else {
 		if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 			let position = localPlayer.position;
 			let heading = localPlayer.heading;
-			spawnPlayer(position, heading, skinNames[i][1]);
+			spawnPlayer(position, heading, gtaivSkinModels[skinId][1]);
 			
 			// spawnPlayer position and heading don't seem to work. Forcing it manually for now.
 			localPlayer.position = position;
 			localPlayer.heading = heading;
 		} else {
-			localPlayer.skin = skinID;
+			localPlayer.skin = skinId;
 		}
-		
-		message("You set your skin to " + skinNames[gta.game][skinID] + " (" + String(skinID) + ")" , gameAnnounceColour);
+
+		let outputText = "has set their skin to " + String(skinNames[gta.game][skinId]) + " (" + String(skinId) + ")";
+		outputSandboxMessage(outputText);
 	}
 	return true;
 });
@@ -69,6 +72,24 @@ addCommandHandler("scale", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("bikegod", function(cmdName, params) {
+	if(!params || params == "") {
+		message("Syntax: /bikegod <state 0/1>", syntaxMessageColour);
+		return false;
+	}
+	
+	let splitParams = params.split(" ");
+	let bikeGod = Number(splitParams[0]) || 0;
+	
+	localPlayer.canBeKnockedOffBike = !!bikeGod;
+	
+	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " their bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes";
+	outputSandboxMessage(outputText);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("mission", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
@@ -81,11 +102,13 @@ addCommandHandler("mission", function(cmdName, params) {
 	}
 	
 	let splitParams = params.split(" ");
-	let missionId = (Number(splitParams[0])) || 0;
+	let missionId = Number(splitParams[0]) || 0;
 	
 	gta.cancelMission(false);
 	gta.startMission(missionId);
-	message("Mission ID " + String(missionNames[gta.game][missionId]) + " started!" , gameAnnounceColour);
+	localClient.setData("sb.p.mission", missionId);
+	let outputText = "started mission " + String(missionNames[gta.game][missionId]) + " (ID: " + String(missionId) + ")";
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -95,10 +118,25 @@ addCommandHandler("endmission", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
-	}	
+	}
 	
-	gta.cancelMission(!!(Number(params) || 0));
-	message("Mission ended!" , gameAnnounceColour);
+	let splitParams = params.split(" ");
+	let failMission = Number(splitParams[0]) || 0;
+	
+	if(!gta.onMission) {
+		message("You are not doing a mission!", errorMessageColour);
+		return false;		
+	}
+	
+	let missionId = localClient.getData("sb.p.mission");
+	let outputText = "ended their mission (Status: " + String((!!failMission) ? "passed" : "failed") + ")";
+	if(missionId != null) {
+		outputText = "ended mission " + String(missionNames[gta.game][missionId]) + " (ID: " + String(missionId) + ", Status: " + String((!!failMission) ? "passed" : "failed") + ")";
+		localClient.removeData("sb.p.mission");
+	}
+	gta.cancelMission(!!failMission);
+	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -120,7 +158,9 @@ addCommandHandler("gun", function(cmdName, params) {
 	}
 
 	localPlayer.giveWeapon(wep, ammo, true);
-	message("You have been given a " + getWeaponName(wep, gta.game) + " with " + ammo + " ammo", gameAnnounceColour);
+	
+	let outputText = "has been given a " + getWeaponName(wep, gta.game) + " with " + ammo + " ammo";
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -136,8 +176,10 @@ addCommandHandler("stat", function(cmdName, params) {
 	let statId = Number(splitParams[0]) || 0;
 	let amount = Number(splitParams[1]) || 100;
 
-	gta.setGameStat( statId, amount);
-	message("Stat " + String(statId) + " is now " + String(amount) + " ammo", gameAnnounceColour);
+	gta.setGameStat(statId, amount);
+	
+	let outputText = "set their " + String(statId) + " stat to " + String(amount);
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -172,8 +214,9 @@ addCommandHandler("god", function(cmdName, params) {
 	localPlayer.invincible = godMode;
 	localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
 	triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
-	
-	message("You are " + String((godMode) ? "now" : "no longer") + " invincible" , gameAnnounceColour);
+
+	let outputText = "is " + String((godMode) ? "now" : "no longer") + " invincible";
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -199,15 +242,13 @@ addCommandHandler("collisions", function(cmdName, params) {
 		return false;
 	}		
 	
-	if(params == "0") {
-		localPlayer.collisionsEnabled = false;
-		message("Your collisions have been turned off.", gameAnnounceColour);
-	} else if (params == "1") {
-		localPlayer.collisionsEnabled = true;
-		message("Your collisions have been turned on.", gameAnnounceColour);
-	} else {
-		message("Please enter 1 or 0 for collision state!", errorMessageColour);
-	}
+	let splitParams = params.split(" ");
+	let collisionState = Number(splitParams[0]) || 0;	
+	
+	localPlayer.collisionsEnabled = !!collisionState;
+	
+	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " their player ped's collisions.";
+	outputSandboxMessage(outputText);	
 });
 
 // ----------------------------------------------------------------------------
@@ -218,7 +259,8 @@ addCommandHandler("health", function(cmdName, params) {
 	} else {
 		let health = Number(params) || 100;
 		triggerNetworkEvent("sb.p.hp", localPlayer.id, health);
-		message("Your health has been set to " + String(health), gameAnnounceColour);		
+		let outputText = "has set their health to " + String(localPlayer.health);
+		outputSandboxMessage(outputText);		
 	}
 
 	return true;
@@ -233,7 +275,8 @@ addCommandHandler("money", function(cmdName, params) {
 	} else {
 		let cash = Number(params) || 100;
 		localPlayer.money = cash;
-		message("Your cash has been set to $" + String(cash), gameAnnounceColour);		
+		let outputText = "has set their cash (money) to " + String(localPlayer.money);
+		outputSandboxMessage(outputText);	
 	}
 
 	return true;
@@ -253,9 +296,9 @@ addCommandHandler("interior", function(cmdName, params) {
 		let interior = Number(params) || 0;
 		localPlayer.interior = interior;
 		cameraInterior = interior;
-		message("Your interior has been set to " + String(cameraInterior), gameAnnounceColour);		
+		let outputText = "has set their interior to " + String(interior);
+		outputSandboxMessage(outputText);		
 	}
-	
 	
 	return true;
 });
@@ -273,7 +316,8 @@ addCommandHandler("armour", function(cmdName, params) {
 	} else {
 		let armour = Number(params) || 100;
 		triggerNetworkEvent("sb.p.ar", localPlayer.id, armour);
-		message("Your armour has been set to " + String(armour), gameAnnounceColour);		
+		let outputText = "has set their armour to " + String(armour);
+		outputSandboxMessage(outputText);			
 	}
 	
 	return true;
@@ -288,7 +332,35 @@ addCommandHandler("warpinveh", function(cmdName, params) {
 	}		
 	
 	if(isParamsInvalid(params)) {
-		message("Syntax: /civ_warpinveh <civilian> <vehicle>", syntaxMessageColour);
+		message("Syntax: /civ_warpinveh <vehicle> <seat id>", syntaxMessageColour);
+		return false;
+	}
+	
+	let splitParams = params.split(" ");
+	
+	let vehicles = getVehiclesFromParams(splitParams[0]);
+	let seatID = Number(splitParams[1]) || 0;
+	
+	if(vehicles.length == 0) {
+		message("No vehicles found!", errorMessageColour);
+		return false;
+	}	
+	
+	localPlayer.warpIntoVehicle(vehicles[0], seatID);
+	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("enterveh", function(cmdName, params) {
+	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		return false;
+	}		
+	
+	if(isParamsInvalid(params)) {
+		message("Syntax: /civ_warpinveh <vehicle> <seat id>", syntaxMessageColour);
 		return false;
 	}
 	
@@ -318,13 +390,16 @@ addCommandHandler("stars", function(cmdName, params) {
 	if(!params || params == "") {
 		message("Your wanted level is " + String(localPlayer.wantedLevel), gameAnnounceColour);
 	} else {
-		if(Number(params) == 0) {
-			localPlayer.wantedLevel = 0;
-		} else {
-			localPlayer.wantedLevel = Number(params) || localPlayer.wantedLevel + 1;
-		}
-		
-		message("Your wanted level has been set to " + String(localPlayer.wantedLevel), gameAnnounceColour);		
+		if(!isNaN(Number(params))) {
+			if(Number(params) == 0) {
+				localPlayer.wantedLevel = 0;
+			} else {
+				localPlayer.wantedLevel = Number(params) || localPlayer.wantedLevel + 1;
+			}
+			
+			let outputText = "has set their wanted level to " + String(params);
+			outputSandboxMessage(outputText);
+		}			
 	}
 	return true;
 });
@@ -349,7 +424,8 @@ addCommandHandler("walkstyle", function(cmdName, params) {
 			triggerNetworkEvent("sb.p.walkstyle", walkStyle);
 		}			
 		
-		message("Your walk style has been set to " + String(localPlayer.walkStyle), gameAnnounceColour);		
+		let outputText = "has set their walk style to " + String(walkStyle);
+		outputSandboxMessage(outputText);	
 	}
 	return true;
 });
@@ -367,7 +443,8 @@ addCommandHandler("stamina", function(cmdName, params) {
 	} else {
 		let stamina = Number(params) || 0;
 		localPlayer.stamina = stamina;	
-		message("Your stamina has been set to " + String(localPlayer.stamina), gameAnnounceColour);		
+		let outputText = "has set their stamina to " + String(stamina);
+		outputSandboxMessage(outputText);	
 	}
 
 	return true;
@@ -423,6 +500,20 @@ addCommandHandler("pos", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("vw", function(cmdName, params) {
+	message("Your dimension (virtual world): " + localPlayer.dimension, gameAnnounceColour);	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("int", function(cmdName, params) {
+	message("Your interior: " + localPlayer.interior, gameAnnounceColour);	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("gotoloc", function(cmdName, params){
 	for(let i in gameLocations[gta.game]) {
 		if(gameLocations[gta.game][i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
@@ -434,6 +525,20 @@ addCommandHandler("gotoloc", function(cmdName, params){
 			break;
 		}
 	}    
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("jail", function(cmdName, params){
+	if(localClient.getData("jailed")) {
+		localPlayer.position = new Vec3(340.64, -1130.53, 22.981);
+		gta.restoreCamera(false);
+		localClient.removeData("jailed");
+	} else {
+		localPlayer.position = new Vec3(326.53, -1093.04, 25.981);
+		gta.setCameraLookAtEntity(new Vec3(331.59, -1090.24, 28.981), localPlayer, false);
+		localClient.setData("jailed", 1);
+	}
 });
 
 // ----------------------------------------------------------------------------
@@ -458,6 +563,26 @@ addNetworkHandler("sb.p.goto", function(x, y, z, interior, dimension) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("gotopos", function(command, params) {
+	let splitParams = params.split(" ");
+	let positionX = Number(splitParams[0].replace(",", ""));
+	let positionY = Number(splitParams[1].replace(",", ""));
+	let positionZ = Number(splitParams[2].replace(",", ""));
+	
+	if(localPlayer.vehicle != null) {
+		localPlayer.vehicle.velocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.vehicle.turnVelocity = new Vec3(0.0, 0.0, 0.0);		
+		localPlayer.vehicle.position = new Vec3(positionX, positionY, positionZ);
+	} else {
+		localPlayer.velocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.turnVelocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.position = new Vec3(positionX, positionY, positionZ);
+	}
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.p.skin", function(playerID, skinID) {
 	getElementFromId(playerID).skin = Number(skinID);
 });
@@ -465,6 +590,7 @@ addNetworkHandler("sb.p.skin", function(playerID, skinID) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.p.scale", function(playerID, scaleFactor) {
+	/*
 	let player = getElementFromId(playerID);
 	scaleFactor = Number(scaleFactor);
 	let playerMatrix = player.matrix;
@@ -472,6 +598,7 @@ addNetworkHandler("sb.p.scale", function(playerID, scaleFactor) {
 	let playerPosition = player.position;
 	player.matrix = playerMatrix;
 	player.position = playerPosition;
+	*/
 });
 
 // ----------------------------------------------------------------------------
@@ -510,7 +637,6 @@ addNetworkHandler("sb.p.god", function(playerID, godMode) {
 addNetworkHandler("sb.p.warpintoveh", function(playerID, vehicleID, seatID) {
 	getElementFromId(playerID).warpIntoVehicle(getElementFromId(vehicleID), seatID);
 });
-
 
 // ----------------------------------------------------------------------------
 
