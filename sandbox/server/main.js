@@ -37,15 +37,17 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 
 // ----------------------------------------------------------------------------
 
-//addEventHandler("OnResourceStart", function(event, resource) {
-//	console.log("[Sandbox] Resource '" + resource.name + "' started!");
-//});
+addEventHandler("OnResourceStart", function(event, resource) {
+	console.warn("[Sandbox] Resource '" + resource.name + "' started!");
+});
 
 // ----------------------------------------------------------------------------
 
-//addEventHandler("OnResourceStop", function(event, resource) {
-//	console.log("[Sandbox] Resource '" + resource.name + "' stopped!");
-//});
+addEventHandler("OnResourceStop", function(event, resource) {
+	console.warn("[Sandbox] Resource '" + resource.name + "' stopping!!");
+	
+	collectAllGarbage();
+});
 
 // ----------------------------------------------------------------------------
 
@@ -82,14 +84,22 @@ function getSyncerFromID(syncerID) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.msg", function(client, messageText) {
-	outputSandboxMessage(messageText);
+	console.log("[Sandbox] " + String(client.name) + " " + messageText);
+	outputSandboxMessage(client, messageText);
 });
 
 // ----------------------------------------------------------------------------
 
-function outputSandboxMessage(messageText) {
-	console.log(messageText);
-	message(messageText, gameAnnounceColour);
+function outputSandboxMessage(client, messageText) {
+	//console.log(client.name + " " + messageText);
+	if(findResourceByName("v-chat").isStarted) {
+		if(typeof findResourceByName("v-chat").exports.translateSandboxMessage != "undefined") {
+			findResourceByName("v-chat").exports.translateSandboxMessage(client, messageText, gameAnnounceColour);
+			return true;
+		}
+	}
+	
+	message(String(client.name) + " " + messageText, gameAnnounceColour);
 }
 
 // ----------------------------------------------------------------------------
