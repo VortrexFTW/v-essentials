@@ -402,14 +402,12 @@ function resyncWorld() {
 		forceWeather(currentWeather[gta.game]);
 	}
 	
-	// Civilian/Traffic functions are not available in GTA SA or higher
 	setTrafficEnabled(trafficEnabled[gta.game]);
 	setCiviliansEnabled(civiliansEnabled[gta.game]);	
 	
 	if(gta.game <= GAME_GTA_SA) {	
 		gta.trafficDensity = trafficDensity[gta.game];
-		gta.civilianDensity = civilianDensity[gta.game];	
-
+		gta.civilianDensity = civilianDensity[gta.game];
 	}
 	
 	// Trains are not available in GTA VC
@@ -482,6 +480,12 @@ addNetworkHandler("sb.w.snow", function(snow) {
 		isSnowing[gta.game] = snow;
 		snowing = snow;
 	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.w.gamespeed", function(gameSpeed) {
+	gta.gameSpeed = gameSpeed;
 });
 
 // ----------------------------------------------------------------------------
