@@ -89,6 +89,20 @@ let gameLocations = [
 		["Downtown Hospital", [-822.57, 1152.82, 12.41], 0.0, null],
 		["Little Havana Medical Center", [-885.08, -470.44, 13.11], 0.0, null],
 		["Ocean Beach Hospital", [-133.19, -980.76, 10.46], 0.0, null],
+
+		// Misc/Other
+		["Paper Products", [-1085.83, -232.72, 11.446], -3.139],
+		["Little Haiti Slums", [-958.90, 116.41, 9.300], 0.031],
+		["Kaufman Cabs", [-1013.35, 198.70, 11.266], -1.680],
+		["Moist Palms Hotel", [-703.50, 545.30, 11.099], -3.105],
+
+		// Bar, Restaurants and Food
+		["Little Havana Donut Shop", [-856.28, -649.32, 11.047], 1.700],
+		["Robina's Cafe", [-1170.36, -604.25, 11.640], -2.973],
+		["Biker Bar", [-601.72, 654.60, 11.073], -1.463],
+
+		// Tool Shops
+		["Little Havana Tool Shop", [-969.01, -684.27, 11.456], -2.994],
 	],
 
 	[ // GTA SA
@@ -6182,8 +6196,6 @@ function createDefaultVehicleData(vehicle) {
 	vehicleData[vehicleDataStructure.upgrades] = [];
 	vehicleData[vehicleDataStructure.paintJob] = -1;
 
-
-
 	if(isServer) {
 		vehicle.setData("sb", vehicleData, true);
 		triggerNetworkEvent("sb.v.sync", null, vehicle.id);
@@ -6193,7 +6205,6 @@ function createDefaultVehicleData(vehicle) {
 			vehicle.setData("sb", vehicleData, true);
 			resyncVehicle(vehicle);
 		}
-
 	}
 }
 
@@ -6580,11 +6591,11 @@ function getSkinIdFromName(params, gameId = thisGame) {
 			}
 		}
 	} else {
-		let skinName = skinNames[gameId].filter(skinName => skinName.indexOf(params.toLowerCase()) != -1);
-		console.log(params);
-		console.log(gameId);
-		console.log(skinName);
-		return
+		for(let i in skinNames[gameId]) {
+			if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				return i;
+			}
+		}
 	}
 
 	return false;
@@ -6756,7 +6767,7 @@ function packData(...args) {
 				x = x * 100;
 				y = z * 100;
 				z = z * 100;
-				let result = combine(x, y, z)
+				let result = combine(x, y, z);
 				break;
 		}
 	}
@@ -7946,3 +7957,46 @@ function parseParams(params) {
 		}
 	});
 }
+
+function isAmmoWeapon(weaponId, game = thisGame) {
+	if(game == GAME_GTA_III) {
+		if(weaponId == 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+let pedComponents = [
+	null,
+	[
+		"Torso",
+		"Ass",
+		"Left Arm",
+		"Right Arm",
+		"Left leg",
+		"Right leg",
+		"Head",
+	],
+
+	[
+		"Torso",
+		"Ass",
+		"Left Arm",
+		"Right Arm",
+		"Left leg",
+		"Right leg",
+		"Head",
+	],
+
+	[
+		"Torso",
+		"Ass",
+		"Left Arm",
+		"Right Arm",
+		"Left leg",
+		"Right leg",
+		"Head",
+	]
+];
