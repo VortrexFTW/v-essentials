@@ -5,6 +5,34 @@
 let godMode = false;
 let hudEnabled = true;
 
+addEventHandler("OnMouseWheel", function(event, mouse, offset, flipped) {
+	//if(offset) {
+	//	gta.forceRadioChannel(
+	//}
+});
+
+// ----------------------------------------------------------------------------
+
+addEventHandler("OnProcess", function(event, deltaTime) {
+	if(gta.game > GAME_GTA_III) {
+		if(localPlayer != null) {
+			triggerNetworkEvent("sb.p.crouching", localPlayer, localPlayer.crouching);
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.crouching", function(player, state) {
+	if(gta.game > GAME_GTA_III) {
+		if(player) {
+			if(player != localPlayer) {
+				player.crouching = state;
+			}
+		}
+	}
+});
+
 // ----------------------------------------------------------------------------
 
 addCommandHandler("skin", function(cmdName, params) {
@@ -72,6 +100,21 @@ addCommandHandler("scale", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("radio", function(cmdName, params) {
+	if(!params || params == "") {
+		message("Syntax: /radio <station id>", syntaxMessageColour);
+		return false;
+	}
+	
+	let splitParams = params.split(" ");
+	let radioStationId = Number(splitParams[0]) || 0;
+	
+	gta.forceRadioChannel(radioStationId);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("bikegod", function(cmdName, params) {
 	if(!params || params == "") {
 		message("Syntax: /bikegod <state 0/1>", syntaxMessageColour);
@@ -109,6 +152,13 @@ addCommandHandler("mission", function(cmdName, params) {
 	localClient.setData("sb.p.mission", missionId);
 	let outputText = "started mission " + String(missionNames[gta.game][missionId]) + " (ID: " + String(missionId) + ")";
 	outputSandboxMessage(outputText);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("lastseen", function(cmdName, params) {
+	gta.playSuspectLastSeen(localPlayer.position);
 	return true;
 });
 
@@ -259,7 +309,7 @@ addCommandHandler("health", function(cmdName, params) {
 	} else {
 		let health = Number(params) || 100;
 		triggerNetworkEvent("sb.p.hp", localPlayer.id, health);
-		let outputText = "has set their health to " + String(localPlayer.health);
+		let outputText = "has set their health to " + String(health);
 		outputSandboxMessage(outputText);		
 	}
 
@@ -275,7 +325,7 @@ addCommandHandler("money", function(cmdName, params) {
 	} else {
 		let cash = Number(params) || 100;
 		localPlayer.money = cash;
-		let outputText = "has set their cash (money) to " + String(localPlayer.money);
+		let outputText = "has set their cash (money) to " + String(money);
 		outputSandboxMessage(outputText);	
 	}
 
@@ -406,13 +456,40 @@ addCommandHandler("stars", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("walkstyle", function(cmdName, params) {
+addCommandHandler("limb", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
+	}		
+	
+	if(isParamsInvalid(params)) {
+		message("Syntax: /civ_warpinveh <vehicle> <seat id>", syntaxMessageColour);
+		return false;
 	}
 	
+	let bodyPartId = Number(params.split(" ")[0]) || 0;
+	
+	if(!isNaN(Number(params))) {
+		if(bodyPartId < 0 || bodyPartId > pedComponents[gta.game][bodyPartId].length) {
+			message("That limb does not exist!", errorMessageColour);
+		}
+		
+		triggerNetworkEvent("sb.p.limb", bodyPartId);
+		
+		let outputText = "removed their " + String(pedComponents[gta.game][bodyPartId]);
+		outputSandboxMessage(outputText);
+	}	
+	return true;
+});
 
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("walkstyle", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
 	
 	if(!params || params == "") {
 		message("Your walk style is " + String(localPlayer.walkStyle), gameAnnounceColour);
@@ -502,6 +579,19 @@ addCommandHandler("pos", function(cmdName, params) {
 
 addCommandHandler("vw", function(cmdName, params) {
 	message("Your dimension (virtual world): " + localPlayer.dimension, gameAnnounceColour);	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.limb", function(client, bodyPartId) {
+	console.log(client);
+	console.log(bodyPartId);
+	if(client.player) {
+		client.player.removeBodyPart(bodyPartId);
+	} else {
+		console.warn("Could not remove " + client.name + "'s " + pedComponents[gta.game][bodyPartId] + "! Player object doesn't exist!");
+	}
 	return true;
 });
 
