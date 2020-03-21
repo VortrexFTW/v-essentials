@@ -1688,6 +1688,8 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 	return true;
 });
 
+// ----------------------------------------------------------------------------
+
 addCommandHandler("veh_driveto", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
@@ -1701,7 +1703,7 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let locationName = splitParams.slice(1, splitParams.length).join(" ") || gameLocations[gta.game][0][0];
+	let locationName = splitParams.slice(1, splitParams.length).join(" ");
 	console.log(locationName);
 	let outputText = "";
 
@@ -1710,12 +1712,18 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 		return false;
 	}
 	
-	let selectedLocation = gameLocations[gta.game][0];
-	gameLocations[gta.game].forEach(function(gameLocation) {
-		if(gameLocation[0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
-			selectedLocation = gameLocation;
+	console.log(gameLocations);
+	let selectedLocation = false;
+	for(let j in gameLocations[thisGame]) {
+		if(gameLocations[thisGame][j][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
+			selectedLocation = gameLocations[thisGame][j];
 		}
-	});
+	}
+	
+	if(!selectedLocation) {
+		message("Invalid location name!", errorMessageColour);
+		return false;
+	}	
 
 	if(isConnected) {
 		triggerNetworkEvent("sb.v.driveto", vehicles, selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
