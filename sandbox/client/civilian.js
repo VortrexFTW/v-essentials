@@ -4,9 +4,7 @@
 
 addEventHandler("OnProcess", function(event, deltaTime) {
 	getCivilians().forEach(function(civilian) {
-		if(!isConnected || civilian.isSyncer) {
-			updateCivilianMovement(civilian);
-		}
+		updateCivilianMovement(civilian);
 	});
 });
 
@@ -16,11 +14,10 @@ function updateCivilianMovement(civilian) {
 	if(!customCiviliansEnabled[gta.game]) {
 		return false;
 	}
-
+	
 	if(civilianFollowEnabled[gta.game]) {
-		if(civilian.getData("sb.c.following") != null) {
+		if(civilian.getData("sb.c.following")) {
 			let following = civilian.getData("sb.c.following");
-			console.log(following);
 			if(following != null) {
 				if(civilian.isInVehicle) {
 					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_CIVILIAN)) {
@@ -66,6 +63,7 @@ function updateCivilianMovement(civilian) {
 				}
 			} else {
 				console.error("Ped " + String(civilian.id) + "'s entity following data is set, but the entity could not be found. Removing data.");
+				triggerNetworkEvent("sb.c.stopfollowing", civilian);
 			}
 		}
 	}
@@ -77,6 +75,7 @@ function updateCivilianMovement(civilian) {
 				civilian.heading = getHeadingFromPosToPos(facingPlayer.position, facingPlayer.position);
 			} else {
 				console.error("Ped " + String(civilian.id) + "'s entity facing data is set, but the entity doesn't exist. Removing data.");
+				triggerNetworkEvent("sb.c.stopfacing", civilian);
 			}
 		}
 	}
@@ -841,6 +840,11 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_walkfwd", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+		message("Ped walk commands are not available in San Andreas!", errorMessageColour);
+		return false;
+	}
+
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
 		return false;
@@ -881,6 +885,11 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_runfwd", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+		message("Ped run commands are not available in San Andreas!", errorMessageColour);
+		return false;
+	}
+	
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
 		return false;
@@ -920,6 +929,11 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_sprintfwd", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+		message("Ped sprint commands are not available in San Andreas!", errorMessageColour);
+		return false;
+	}	
+	
 	if(gta.game == GAME_GTA_III) {
 		message("Civilian sprint is not supported in GTA 3!", errorMessageColour);
 		return false;
@@ -971,6 +985,11 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_follow", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+		message("This feature is not available in San Andreas!", errorMessageColour);
+		return false;
+	}	
+	
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <player name/id>", syntaxMessageColour);
 		return false;
@@ -1009,6 +1028,11 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_defendme", function(cmdName, params) {
+	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+		message("This feature is not available in San Andreas!", errorMessageColour);
+		return false;
+	}		
+	
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -1075,9 +1099,17 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "gave " + String(civilians.length) + " peds " + String(weaponNames[game.game][weaponId]) + "'s with " + String(ammo) + " ammo";
+		let weaponAmmoOutput = String(weaponNames[gta.game][weaponId]) + "'s with " + String(ammo) + " ammo";
+		if(!isAmmoWeapon(weaponId, gta.game)) {
+			weaponAmmoOutput = String(weaponNames[gta.game][weaponId]) + "s";
+		}
+		outputText = "gave " + String(civilians.length) + " peds " + weaponAmmoOutput;
 	} else {
-		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped a " + String(weaponNames[game.game][weaponId]) + " with " + String(ammo) + " ammo";
+		let weaponAmmoOutput = "a " + String(weaponNames[gta.game][weaponId]) + " with " + String(ammo) + " ammo";
+		if(!isAmmoWeapon(weaponId, gta.game)) {
+			weaponAmmoOutput = "a " + String(weaponNames[gta.game][weaponId]);
+		}		
+		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput;
 	}
 
 	outputSandboxMessage(outputText);
@@ -1518,22 +1550,22 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 
 		case "p1":
 			threatId = THREAT_PLAYER1;
-			threatInfo = "cops";
+			threatInfo = "players";
 			break;
 
 		case "p2":
 			threatId = THREAT_PLAYER2;
-			threatInfo = "you";
+			threatInfo = "players";
 			break;
 
 		case "p3":
 			threatId = THREAT_PLAYER3;
-			threatInfo = "you";
+			threatInfo = "players";
 			break;
 
 		case "p4":
 			threatId = THREAT_PLAYER4;
-			threatInfo = "you";
+			threatInfo = "players";
 			break;
 
 		case "male":
