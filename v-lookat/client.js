@@ -22,6 +22,8 @@ let aimObjects = new Array(256);
 let centerCameraPos = null;
 let lookAtPos = null;
 
+// ----------------------------------------------------------------------------
+
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	setInterval(sendHeadLook, 2500);
 });
@@ -44,7 +46,6 @@ addNetworkHandler("v.p.lookat", function(ped, position) {
 			ped.lookAt(position, 3000);
 		}
 	}
-	console.log("Received head position from ID " + ped.id);
 });
 
 // ----------------------------------------------------------------------------
