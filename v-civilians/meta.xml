@@ -1,9 +1,0 @@
-<meta>
-	<!--<script src="nodes.js" type="server" language="javascript" />
-	<script src="server.js" type="server" language="javascript" />
-	<script src="client.js" type="client" language="javascript" />-->
-	
-	<script src="nodes.nut" type="server" language="squirrel" />
-	<script src="server.nut" type="server" language="squirrel" />
-	<script src="client.nut" type="client" language="squirrel" />	
-</meta>
