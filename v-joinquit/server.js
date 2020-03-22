@@ -57,7 +57,7 @@ connectionID.fill(-1);
 
 addEventHandler("OnPlayerJoined", function(event, client) {
 	client.setData("connectTime", new Date().getTime());
-	messageClient("Welcome to Vortrex's Test Server!", client, welcomeMessageColour);
+	messageClient("Welcome to " + String(server.name), client, welcomeMessageColour);
 	
 	let messageText = client.name + " has joined the game.";
 	
