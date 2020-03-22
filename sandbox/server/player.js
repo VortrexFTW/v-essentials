@@ -101,9 +101,9 @@ addNetworkHandler("sb.p.skin", function(client, clientID, skinId) {
 		let heading = client.player.heading;
 		spawnPlayer(client, position, heading, gtaivSkinModels[skinId][1], 0, 0);
 	} else if(server.game == GAME_GTA_SA) {
-		destroyElement(client.player);
 		let position = client.player.position;
 		let heading = client.player.heading;
+		destroyElement(client.player);
 		spawnPlayer(client, position, heading, skinId, 0, 0);
 	} else {
 		triggerNetworkEvent("sb.p.skin", null, clientID, skinId);
