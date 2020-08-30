@@ -1,9 +1,4 @@
 {
-    "adminPassword":"ThisIsNotForYou",
-    "admins": [
-        {
-            "name":"Vortrex",
-            "ip":"107.220.15.21"
-        }
-    ]
+    "adminPassword":"ChangeMe",
+    "admins": []
 }
