@@ -14,7 +14,7 @@ let deathMessageColour = toColour(237, 67, 55, 255);
 addEventHandler("OnPedWasted", function(event, ped, attacker, weapon, pedPiece) {
 	if(ped.isType(ELEMENT_PLAYER)) {
 		if(attacker) {
-			if(attacker.name != "") {
+			if(attacker.isType(ELEMENT_PLAYER)) {
 				message(attacker.name + " killed " + ped.name + ".", deathMessageColour);
 			} else {
 				message("Something killed " + ped.name + ".", deathMessageColour);

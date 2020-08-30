@@ -21,11 +21,19 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 let aimObjects = new Array(256);
 let centerCameraPos = null;
 let lookAtPos = null;
+let syncTimer = null;
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	setInterval(sendHeadLook, 2500);
+bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
+	syncTimer = setInterval(sendHeadLook, 2000);
+});
+
+// ----------------------------------------------------------------------------
+
+bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+	clearInterval(syncTimer);
+	collectAllGarbage();
 });
 
 // ----------------------------------------------------------------------------
@@ -34,23 +42,24 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 	if(localPlayer != null) {
 		centerCameraPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, 0));
 		lookAtPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, centerCameraPos.distance(localPlayer.position)+20));
-		localPlayer.lookAt(lookAtPos, 3000);
+		//localPlayer.lookAt(lookAtPos, 3000);
 	}
 });
 
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("v.p.lookat", function(ped, position) {
-	if(ped != null) {
-		if(ped != localPlayer) {
+	if(typeof ped != "undefined") {
+		//if(ped != localPlayer) {
 			ped.lookAt(position, 3000);
-		}
+		//}
 	}
+	console.log("Received head position from ID " + ped.id);
 });
 
 // ----------------------------------------------------------------------------
 
 function sendHeadLook() {
-	triggerNetworkEvent("v.p.lookat", lookAtPos);
+	triggerNetworkEvent("v.p.lookat", localPlayer, lookAtPos);
 }
 // ----------------------------------------------------------------------------

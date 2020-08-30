@@ -56,57 +56,12 @@ let spawnPoints = [
 
 // ----------------------------------------------------------------------------
 
-let spawnStartDimension = 129;
+let spawnStartDimension = 0;
 let mainWorldDimension = 0;
 
 // ----------------------------------------------------------------------------
 
-let inSpawnScreen = Array(128);
-inSpawnScreen.fill(false);
-
-let spawnSkin = Array(128);
-if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-	spawnSkin.fill(0);
-} else {
-	spawnSkin.fill(0);
-}
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler("v.ss.ready", function(client) {
-	client.setData("v.ss.ready", true, true);
-	if(spawnScreenEnabled) {
-		respawnPlayer(client);
-	} else {
-		inSpawnScreen[client.index] = false;
-		respawnPlayer(client);
-	}
-	triggerNetworkEvent("v.ss.start", client);
-});
-
-// ----------------------------------------------------------------------------
-
-function respawnPlayer(client) {
-	if(client.player != null) {
-		destroyElement(client.player);
-	}
-	
-	spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[client.index], 0, 0);
-	if(spawnScreenEnabled) {
-		setTimeout(setUpSpawnScreen, 250, client);
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-function setUpSpawnScreen(client) {
-	if(inSpawnScreen[client.index]) {
-		triggerNetworkEvent("v.ss.start", client);
-		client.player.dimension = spawnStartDimension + client.index;
-	} else {
-		client.player.dimension = mainWorldDimension;
-	}
-}
+let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662];
 
 // ----------------------------------------------------------------------------
 
@@ -114,32 +69,24 @@ addEventHandler("OnPedWasted", function(event, ped, attacker, weapon, pedPiece) 
 	if(ped.type == ELEMENT_PLAYER) {
 		let client = getClientFromPed(ped);
 		if(client != null) {
-			if(spawnScreenEnabled) {
-				inSpawnScreen[client.index] = true;
-			}
-			setTimeout(respawnPlayer, 200, client);
+			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+			destroyElement(ped);
 		}
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-// F1 will trigger this...
-addNetworkHandler("v.respawn", function(client) {
-	if(spawnScreenEnabled) {
-		inSpawnScreen[client.index] = true;
+addEventHandler("OnPlayerJoined", function(event, client) {
+	if(server.game < GAME_GTA_IV) {
+		setTimeout(function() {
+			console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
+			fadeCamera(client, true);
+			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+		}, 1000);
+	} else {
+		triggerNetworkEvent("v.spawn", client, spawnPoints[server.game].x, spawnPoints[server.game].y, spawnPoints[server.game].z, 0.0,. spawnSkin[server.game]);
 	}
-	setTimeout(respawnPlayer, 100, client);
-});
-
-// ----------------------------------------------------------------------------
-
-// Spawnscreen select this skin
-addNetworkHandler("v.ss.sel", function(client, skinId) {
-	inSpawnScreen[client.index] = false;
-	spawnSkin[client.index] = skinId;
-	setTimeout(respawnPlayer, 100, client, skinId);
-	message(String(client.name) + " spawned as " + String(getSkinName(skinId)), gameAnnounceColours[server.game]);
 });
 
 // ----------------------------------------------------------------------------
@@ -157,26 +104,6 @@ function getClientFromPed(ped) {
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPlayerQuit", function(client, disconnectType) {
-	spawnSkin[client.index] = 0;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("spawnscreen", function(cmdName, params, client) {
-	if(client.administrator) {
-		if(spawnScreenEnabled) {
-			spawnScreenEnabled = false;
-			message("[SERVER]: Spawn screen has been turned OFF.", COLOUR_YELLOW);	
-		} else {
-			spawnScreenEnabled = true;
-			message("[SERVER]: Spawn screen has been turned ON.", COLOUR_YELLOW);	
-		}
-	}
-});
-
-// ----------------------------------------------------------------------------
-
 function getSkinName(skinId) {
 	let sandboxResource = findResourceByName("sandbox");
 	if(sandboxResource && sandboxResource.isStarted) {
@@ -184,5 +111,14 @@ function getSkinName(skinId) {
 	}
 	return false;
 }
+
+// ----------------------------------------------------------------------------
+
+bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
+		console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
+		thisResource.stop();
+	}
+});
 
 // ----------------------------------------------------------------------------

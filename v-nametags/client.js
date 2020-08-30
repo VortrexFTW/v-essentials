@@ -125,7 +125,7 @@ function drawNametag(x, y, health, armour, text, ping, alpha, distance, colour, 
 // ----------------------------------------------------------------------------
 
 function updateNametags(element) {
-	//if(element.player != null) {
+	if(localPlayer != null) {
 		let playerPos = localPlayer.position;
 		let elementPos = element.position;
 		let client = getClientFromPlayer(element);
@@ -134,13 +134,12 @@ function updateNametags(element) {
 		
 		let screenPos = getScreenFromWorldPosition(elementPos);
 		if (screenPos[2] >= 0.0) {
-
-			
 			let health = element.health/100.0;
 			if(health > 1.0) {
 				health = 1.0;
 			}
 			
+			//console.log("Armour: " + String(element.armour));
 			let armour = element.armour/100.0;
 			if(armour > 1.0) {
 				armour = 1.0; 
@@ -150,23 +149,18 @@ function updateNametags(element) {
 			if(distance < nametagDistance) {
 				if(element.type == ELEMENT_PLAYER) {
 					let colour = COLOUR_WHITE;
-					if(client.getData("v.colour")) {
-						colour = client.getData("v.colour");
-					}
 					let afk = false;
 					if(element.getData("v.afk") > 0) {
 						afk = true;
 					}
 					drawNametag(screenPos[0], screenPos[1], health, armour, element.name, 0, 1.0-distance/nametagDistance, distance, colour, afk, element.skin);
 				}
-				// else {
-				//	drawNametag(screenPos[0], screenPos[1], health, armour, skinNames[game.game][element.modelIndex], -1, 1.0-distance/nametagDistance, distance, COLOUR_SILVER);
-				//}
 			}
 		}
-	//}
+	}
 }
 
+// ----------------------------------------------------------------------------
 
 function getClientFromPlayer(player) {
 	let clients = getClients();
@@ -176,6 +170,14 @@ function getClientFromPlayer(player) {
 		}
 	}
 }
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("armour", function(client, ped, armour) {
+	if(ped != null) {
+		ped.armour = armour;
+	}
+});
 
 // ----------------------------------------------------------------------------
 
@@ -483,3 +485,4 @@ var skinNames = [
 	new Array(300, "Unknown"),
 ];
 
+// ----------------------------------------------------------------------------

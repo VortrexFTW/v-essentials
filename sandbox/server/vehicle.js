@@ -3,12 +3,12 @@
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	let vehicles = getElementsByType(ELEMENT_VEHICLE);
-	for(let i in vehicles) {
-		if(vehicles[i].getData("sb") == null) {
-			//createDefaultVehicleData(vehicles[i]);
-		}
-	}
+	//let vehicles = getElementsByType(ELEMENT_VEHICLE);
+	//for(let i in vehicles) {
+	//	if(vehicles[i].getData("sb") == null) {
+	//		//createDefaultVehicleData(vehicles[i]);
+	//	}
+	//}
 });
 
 // ----------------------------------------------------------------------------
@@ -22,7 +22,9 @@ addNetworkHandler("sb.v.add", function(client, modelID, x, y, z, heading) {
 	//let modelName = getVehicleNameFromModelId(tempVehicle.modelIndex);
 	//message(client.name + " spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + modelName, gameAnnounceColours[serverGame]);
 	
-	//tempVehicle.setData("sb.v.addedby", client, false);
+	setTimeout(function() {
+		tempVehicle.setData("sb.v.addedby", client, false);
+	}, 500);
 });
 
 // ----------------------------------------------------------------------------
@@ -220,6 +222,30 @@ addNetworkHandler("sb.v.cruisespeed", function(client, vehicles, cruiseSpeed) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.v.petroltankhealth", function(client, vehicles, patrolTankHealth) {
+	triggerNetworkEvent("sb.v.petroltankhealth", null, vehicles, patrolTankHealth);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.enginehealth", function(client, vehicles, engineHealth) {
+	triggerNetworkEvent("sb.v.enginehealth", null, vehicles, engineHealth);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.enablegps", function(client, vehicles) {
+	triggerNetworkEvent("sb.v.enablegps", null, vehicles);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.opentrunk", function(client, vehicles) {
+	triggerNetworkEvent("sb.v.opentrunk", null, vehicles);	
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.v.scale", function(client, vehicles, scale) {
 	vehicles.forEach(function(vehicle) {
 		vehicle.setData("sb.v.scale", scale, true);
@@ -230,6 +256,24 @@ addNetworkHandler("sb.v.scale", function(client, vehicles, scale) {
 
 addNetworkHandler("sb.v.drivingstyle", function(client, vehicles, drivingStyle) {
 	triggerNetworkEvent("sb.v.drivingstyle", null, vehicles, drivingStyle);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.livery", function(client, vehicles, livery) {
+	triggerNetworkEvent("sb.v.livery", null, vehicles, livery);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.dirtlevel", function(client, vehicles, dirtLevel) {
+	triggerNetworkEvent("sb.v.dirtlevel", null, vehicles, dirtLevel);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.hazardlights", function(client, vehicles, hazardLightState) {
+	triggerNetworkEvent("sb.v.hazardlights", null, vehicles, hazardLightState);	
 });
 
 // ----------------------------------------------------------------------------

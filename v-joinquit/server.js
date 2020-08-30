@@ -57,9 +57,16 @@ connectionID.fill(-1);
 
 addEventHandler("OnPlayerJoined", function(event, client) {
 	client.setData("connectTime", new Date().getTime());
-	messageClient("Welcome to " + String(server.name), client, welcomeMessageColour);
+	messageClient("Welcome to " + server.name + "!", client, welcomeMessageColour);
+	messageClient("Use /help for commands and info", client, welcomeMessageColour);
 	
 	let messageText = client.name + " has joined the game.";
+	if(typeof module.geoip != "undefined") {
+		let countryName = module.geoip.getCountryName("geoip-country.mmdb", client.ip) || "Unknown";
+		if(countryName != "Unknown") {
+			messageText = client.name + " has joined the game from " + String(countryName);
+		}
+	}
 	
 	message(messageText, gameAnnounceColour[server.game]);
 	console.log(messageText);

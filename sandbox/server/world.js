@@ -53,6 +53,16 @@ addNetworkHandler("sb.w.snow", function(client, snow) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.w.garage", function(client, garageId, state) {
+	let outputMessage = "";
+	
+	triggerNetworkEvent("sb.w.garage", null, state);
+	outputMessage = String((state) ? "opened" : "closed") + " '" + String(garageNames[server.game][garageId]);
+	outputSandboxMessage(client, outputMessage);
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.w.time", function(client, hour, minute) {
 	if(!client.administrator) {
 		messageClient("You must be an administrator to change this!", client, errorMessageColour);

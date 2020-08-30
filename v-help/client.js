@@ -56,7 +56,24 @@ addCommandHandler("help", function(command, params) {
 			case "afk":
 				message("[#666666]The following commands can be used for AFK status:", COLOUR_WHITE);
 				message("/autoafk /afk", COLOUR_WHITE);
-				break;					
+				break;	
+
+			case "keys":
+				let enabledKeys = "";
+				if(findResourceByName("v-passenger") != null) {
+					enabledKeys += "[#FFFFFF]G: [#AAAAAA]Passenger";
+				}
+				
+				if(findResourceByName("v-togglehud") != null) {
+					enabledKeys += " 🔹 [#FFFFFF]F7: [#AAAAAA]Toggle HUD";
+				}
+				
+				if(findResourceByName("cheatkeys") != null) {
+					enabledKeys += " 🔹 [#FFFFFF]2: [#AAAAAA]Speed Boost 🔹 [#FFFFFF]3: [#AAAAAA]Stop 🔹 [#FFFFFF]5: [#AAAAAA]Reverse 🔹 [#FFFFFF]6: [#AAAAAA]Fix & Heal 🔹 [#FFFFFF]7: [#AAAAAA]Jump";
+				}
+				
+				message("Keys: " + enabledKeys, COLOUR_WHITE);
+				break;
 
 			default:
 				showMainHelpList();
@@ -69,49 +86,51 @@ addCommandHandler("help", function(command, params) {
 // ----------------------------------------------------------------------------
 
 function showMainHelpList() {
-	message("-- HELP ------------------------------------------", COLOUR_YELLOW);
+	message("❓  [#0088FF]HELP [#FFFF00]=================================================", COLOUR_YELLOW);
 
 	let enabledCategories = "";
 	let enabledKeys = "";
 	if(findResourceByName("sandbox") != null) {
-		enabledCategories += " vehicle";
-		enabledCategories += " ped";
-		enabledCategories += " player";
-		enabledCategories += " other";
+		enabledCategories += " 🔹 vehicle";
+		enabledCategories += " 🔹 ped";
+		enabledCategories += " 🔹 player";
+		enabledCategories += " 🔹 other";
+		enabledCategories += " 🔹 keys";
 	}
 
 	if(findResourceByName("v-admin") != null) {
-		enabledCategories += " admin"
+		enabledCategories += " 🔹 admin"
 	}
 
 	if(findResourceByName("v-runcode") != null) {
-		enabledCategories += " code"	
+		enabledCategories += " 🔹 code"	
 	}	
 	
 	if(findResourceByName("v-afk") != null) {
-		enabledCategories += " afk"	
-	}		
+		enabledCategories += " 🔹 afk"	
+	}
 
-	if(findResourceByName("v-passenger") != null) {
-		enabledKeys += "G: Passenger";
+	message("Categories: [#FFFFFF]" + enabledCategories, toColour(200, 200, 200, 255));
+	message("Use /help <name> for information", toColour(220, 220, 220, 255));
+	message("Example: [#FFFFFF]/help vehicle", toColour(200, 200, 200, 255));
+}
+
+/*	if(findResourceByName("v-passenger") != null) {
+		enabledKeys += "[#FFFFFF]G: [#AAAAAA]Passenger";
 	}
 	
 	if(findResourceByName("v-togglehud") != null) {
-		enabledKeys += " / F7: Toggle HUD";
+		enabledKeys += " 🔹 [#FFFFFF]F7: [#AAAAAA]Toggle HUD";
 	}
 	
 	if(findResourceByName("cheatkeys") != null) {
-		enabledKeys += " / 2: Speed Boost / 3: Jump / 5: Reverse Direction / 6: Fix & Heal";
+		enabledKeys += " 🔹 [#FFFFFF]2: [#AAAAAA]Speed Boost 🔹 [#FFFFFF]3: [#AAAAAA]Stop 🔹 [#FFFFFF]5: [#AAAAAA]Reverse 🔹 [#FFFFFF]6: [#AAAAAA]Fix & Heal 🔹 [#FFFFFF]7: [#AAAAAA]Jump";
 	}	
-
-	message("Help Categories: " + enabledCategories, toColour(200, 200, 200, 255));
-	message("Use /help <category> for information", toColour(200, 200, 200, 255));
-	message("Example: /help vehicle", toColour(200, 200, 200, 255));
-	message("Available keys are: " + enabledKeys, toColour(200, 200, 200, 255));
-}
+*/
 
 // ----------------------------------------------------------------------------
 
+/*
 addEventHandler("OnPlayerChat", function(event, client, chatMessage) {
 	let gunCheats = ["gunsgunsguns", "thugstools", "nuttertools", "professionaltools", "lxgiwyl", "professionalskit", "uzumymw"];
 	gunCheats.forEach(function(gunCheat) {
@@ -127,5 +146,6 @@ addEventHandler("OnPlayerChat", function(event, client, chatMessage) {
 		}
 	});	
 });
+*/
 
 // ----------------------------------------------------------------------------

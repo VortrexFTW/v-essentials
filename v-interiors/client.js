@@ -7,9 +7,9 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	if(gta.game != GAME_GTA_VC) {
-		console.error("[Interiors] This resource is not available on this game!");
-		console.warn("[Interiors] This resource will now stop.");
+	if(gta.game == GAME_GTA_III) {
+		console.error("[Interiors] Interiors are not available on this game!");
+		console.log("[Interiors] This resource will now stop.");
 		thisResource.stop();
 	}
 });

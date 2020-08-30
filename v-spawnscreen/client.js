@@ -56,7 +56,7 @@ bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
 	
 	skinSelectExplainFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
 	
-	triggerNetworkEvent("v.ss.ready", true);
+	//setTimeout(showSkinSelect, 500);
 });
 
 // ----------------------------------------------------------------------------
@@ -171,25 +171,27 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPedWasted", function(event, ped) {
-	if(ped == localPlayer) {
-		setTimeout(showSkinSelect, 500);
+	if(gta.game < GAME_GTA_IV) {
+		if(ped == localPlayer) {
+			setTimeout(showSkinSelect, 500);
+		}
+	} else {
+		
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.ss.start", function() {
-	setTimeout(showSkinSelect, 500);
+addNetworkHandler("v.spawn", function(x, y, z, heading, skin) {
+	spawnPlayer(Vec3(x, y, z), heading, skin);
 });
 
 // ----------------------------------------------------------------------------
 
 function showSkinSelect() {
-	localPlayer.position = spawnScreenPedPosition;
-	localPlayer.heading = spawnScreenPedHeading;	
-	if(gta.game != GAME_GTA_IV && gta.game != GAME_GTA_IV_EFLC) {
+	if(gta.game < GAME_GTA_IV) {
 		localPlayer.collisionsEnabled = false;
-		localPlayer.stayInSamePlace = false;
+		localPlayer.stayInSamePlace = true;
 		localPlayer.skin = 0;
 
 		setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);

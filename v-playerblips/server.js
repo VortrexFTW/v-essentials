@@ -26,16 +26,16 @@ function attachBlipToPed(ped) {
 			colour = client.getData("v.colour");
 		}
 	}
-	return createBlipAttachedTo(ped, 0, 2, colour);
+	return gta.createBlipAttachedTo(ped, 0, 2, colour, true, false);
 }
 
 // ----------------------------------------------------------------------------
 
 // Add blips to existing players
 bindEventHandler("OnResourceStart", thisResource, (event,resource) => {
-	getClients().forEach(function(value, index, array) {
-		if(value.player != null) {
-			attachBlipToPed(value.player);
+	getClients().forEach(function(client) {
+		if(client.player != null) {
+			attachBlipToPed(client.player);
 		}
 	});
 });
@@ -44,8 +44,9 @@ bindEventHandler("OnResourceStart", thisResource, (event,resource) => {
 
 // Add blips to players when they spawn
 addEventHandler("OnPedSpawn", (event, ped) => {
-	if (ped.isType(ELEMENT_PLAYER))
+	if (ped.isType(ELEMENT_PLAYER)) {
 		attachBlipToPed(ped);
+	}
 });
 
 // ----------------------------------------------------------------------------

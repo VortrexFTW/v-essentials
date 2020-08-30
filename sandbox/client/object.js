@@ -16,11 +16,11 @@ addCommandHandler("obj", function(cmdName, params) {
 		return false;
 	}
 	
-	if(isConnected) {
+	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.o.add", modelID, position.x, position.y, position.z);
 		return true;
 	} else {
-		let tempObject = createObject(modelID);
+		let tempObject = gta.createObject(modelID);
 		tempObject.position = position;
 		
 		message("Object added!", gameAnnounceColour);			
@@ -63,7 +63,7 @@ addCommandHandler("obj_pos", function(cmdName, params) {
 		isAbsolute = true;
 	}
 	
-	if(isConnected) {
+	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.o.pos", objects, isAbsolute, newPosition.x, newPosition.y, newPosition.z);
 	} else {
 		objects.forEach(function(object) {

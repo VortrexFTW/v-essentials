@@ -13,7 +13,7 @@ addCommandHandler("sphere", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let radius = Number(splitParams[0]) || 0;
 	
-	if(isConnected) {
+	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.sph.add", position.x, position.y, position.z, radius);
 	} else {
 		createSphere(position, radius);

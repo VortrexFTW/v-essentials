@@ -92,12 +92,12 @@ addNetworkHandler("sb.msg", function(client, messageText) {
 
 function outputSandboxMessage(client, messageText) {
 	//console.log(client.name + " " + messageText);
-	if(findResourceByName("v-chat").isStarted) {
-		if(typeof findResourceByName("v-chat").exports.translateSandboxMessage != "undefined") {
-			findResourceByName("v-chat").exports.translateSandboxMessage(client, messageText, gameAnnounceColour);
-			return true;
-		}
-	}
+	//if(findResourceByName("v-chat").isStarted) {
+	//	if(typeof findResourceByName("v-chat").exports.translateSandboxMessage != "undefined") {
+	//		findResourceByName("v-chat").exports.translateSandboxMessage(client, messageText, gameAnnounceColour);
+	//		return true;
+	//	}
+	//}
 	
 	message(String(client.name) + " " + messageText, gameAnnounceColour);
 }
@@ -112,20 +112,19 @@ addEventHandler("OnPlayerQuit", function(event, client, disconnectReason) {
 
 function beginSandboxCleanup() {
 	if(getClients().length == 0) {
-		console.log("[Sandbox] Performing cleanup. Removing all player spawned vehicles.");
-		let vehicles = getElementsByType(ELEMENT_VEHICLE).filter(vehicle => vehicle.getData("sb.v.addedby") != null);
-		vehicles.forEach(function(vehicle2) { 
-			destroyElement(vehicle2);
+		console.log("[Sandbox] Server is empty. Performing cleanup.");
+		//let vehicles = getElementsByType(ELEMENT_VEHICLE).filter(vehicle => vehicle.getData("sb.v.addedby") != null);
+		getVehicles().forEach(function(vehicle) { 
+			destroyElement(vehicle);
 		});
-		console.log("[Sandbox] Removed " + String(vehicles.length) + " player spawned vehicles");
-		
-		if(findResourceByName("v-parkedcars") != null) {
-			if(findResourceByName("v-parkedcars").isStarted) {
-				findResourceByName("v-parkedcars").restart();
-			}
-		}
-		console.log("[Sandbox] Removed " + String(vehicles.length) + " player spawned vehicles");
+
+		//let civilians = getElementsByType(ELEMENT_CIVILIAN).filter(civilian => civilian.getData("sb.c.addedby") != null);
+		getCivilians().forEach(function(civilian) { 
+			destroyElement(civilian);
+		});		
 	}
+
+	collectAllGarbage();
 }
 
 // ----------------------------------------------------------------------------

@@ -9,9 +9,67 @@ let isServer = (typeof server == "undefined") ? false : true;
 
 // ----------------------------------------------------------------------------
 
-exportFunction("createDefaultVehicleData", createDefaultVehicleData);
-exportFunction("getSkinName", getSkinNameFromId);
-exportFunction("getVehicleModelName", getVehicleNameFromModelId);
+exportFunction("getGenderForSkin", getGenderForSkin);
+exportFunction("getGenderPossessivePronoun", getGenderPossessivePronoun);
+exportFunction("getGenderObjectivePronoun", getGenderObjectivePronoun);
+//exportFunction("getVehicleUpgradeName", getVehicleUpgradeName);
+exportFunction("getWeatherName", getWeatherName);
+exportFunction("getEnableDisableText", getEnableDisableText);
+exportFunction("getOnOffText", getOnOffText);
+exportFunction("getProperCivilianPossessionText", getProperCivilianPossessionText);
+exportFunction("getProperVehiclePossessionText", getProperVehiclePossessionText);
+exportFunction("isValidSkin", isValidSkin);
+exportFunction("getProperVehiclePossessionText", getProperVehiclePossessionText);
+exportFunction("isValidSkin", isValidSkin);
+exportFunction("createEnum", createEnum);
+exportFunction("getArrayOfElementID", getArrayOfElementID);
+exportFunction("getRandom", getRandom);
+exportFunction("getSpeedFromVelocity", getSpeedFromVelocity);
+exportFunction("breakText", breakText);
+exportFunction("getRandomRGB", getRandomRGB);
+exportFunction("is2DPositionOnScreen", is2DPositionOnScreen);
+exportFunction("setFileData", setFileData);
+exportFunction("getFileData", getFileData);
+exportFunction("isValidObjectModel", isValidObjectModel);
+exportFunction("createBitwiseTable", createBitwiseTable);
+exportFunction("hasBitFlag", hasBitFlag);
+exportFunction("combineVecToInteger", combineVecToInteger);
+exportFunction("toFixed", toFixed);
+exportFunction("packData", packData);
+exportFunction("getFirstEmptyEffectSlot", getFirstEmptyEffectSlot);
+exportFunction("getPlayerFromParams", getPlayerFromParams);
+exportFunction("getClientFromName", getClientFromName);
+exportFunction("getSyncerFromID", getSyncerFromID);
+exportFunction("replaceEmojiInString", replaceEmojiInString);
+exportFunction("getMissionNameFromId", getMissionNameFromId);
+exportFunction("getLocationPositionFromName", getLocationPositionFromName);
+exportFunction("getSkinNameFromId", getSkinNameFromId);
+exportFunction("getVehicleNameFromModelId", getVehicleNameFromModelId);
+exportFunction("doesWordStartWithVowel", doesWordStartWithVowel);
+exportFunction("getSkinIdFromName", getSkinIdFromName);
+exportFunction("getVehicleUpgradeIdFromName", getVehicleUpgradeIdFromName);
+exportFunction("getVehicleModelIDFromName", getVehicleModelIDFromName);
+exportFunction("getVehicleUpgradeIdFromParams", getVehicleUpgradeIdFromParams);
+exportFunction("getSkinIdFromParams", getSkinIdFromParams);
+exportFunction("getVehicleModelIdFromParams", getVehicleModelIdFromParams);
+exportFunction("isValidVehicleModel", isValidVehicleModel);
+exportFunction("isParamsInvalid", isParamsInvalid);
+exportFunction("vec3ToVec2", vec3ToVec2);
+exportFunction("getWeaponName", getWeaponName);
+exportFunction("getVehiclesInRange", getVehiclesInRange);
+exportFunction("getClosestCivilian", getClosestCivilian);
+exportFunction("getClosestVehicle", getClosestVehicle);
+exportFunction("getAngleInCircleFromCenter", getAngleInCircleFromCenter);
+exportFunction("radToDeg", radToDeg);
+exportFunction("degToRad", degToRad);
+exportFunction("getHeadingFromPosToPos", getHeadingFromPosToPos);
+exportFunction("getPosBelowPos", getPosBelowPos);
+exportFunction("getPosAbovePos", getPosAbovePos);
+exportFunction("getPosBehindPos", getPosBehindPos);
+exportFunction("getPosInFrontOfPos", getPosInFrontOfPos);
+exportFunction("getPosToLeftOfPos", getPosToLeftOfPos);
+exportFunction("getPosToRightOfPos", getPosToRightOfPos);
+exportFunction("makeReadableTime", makeReadableTime);
 
 // ----------------------------------------------------------------------------
 
@@ -636,18 +694,6 @@ let weaponNames = [
 		"EFLC Weapon 24",
 		"Camera",
 	],
-];
-
-// ----------------------------------------------------------------------------
-
-let gameAnnounceColours = [
-	COLOUR_BLACK,					// Invalid
-	COLOUR_SILVER,					// GTA III
-	COLOUR_AQUA,					// GTA Vice City
-	COLOUR_ORANGE,					// GTA San Andreas
-	COLOUR_ORANGE,					// GTA Underground
-	COLOUR_SILVER,					// GTA IV
-	COLOUR_SILVER					// GTA IV (EFLC)
 ];
 
 // ----------------------------------------------------------------------------
@@ -1914,7 +1960,7 @@ let vehicleRadioStationNames = [
 
 // ----------------------------------------------------------------------------
 
-let vehicleModelIdStart = [
+let vehicleModelIDStart = [
 	0,
 	90, 	// GTA III
 	130, 	// GTA Vice City
@@ -3548,34 +3594,7 @@ let skinNames = [
 		"Stripper",
 		"Stripper",
 		"Stripper",
-		"Store Clerk",
-		"Tommy Vercetti",
-		"Tommy Vercetti (Business Suit)",
-		"Tommy Vercetti (SpandEx Overalls)",
-		"Tommy Vercetti (Golfer)",
-		"Tommy Vercetti (Cuban)",
-		"Tommy Vercetti (Cop)",
-		"Tommy Vercetti (Robbery Suit)",
-		"Tommy Vercetti (T-Shirt and Jeans)",
-		"Tommy Vercetti (Striped Suit)",
-		"Tommy Vercetti (Black Tracksuit)",
-		"Tommy Vercetti (Red Tracksuit)",
-		"Club Bouncer",
-		"Club Bouncer",
-		"Stripclub Dancer",
-		"Random Guy",
-		"Stripclub Dancer",
-		"Stripclub Dancer",
-		"Stripclub Dancer",
-		"Gang Member",
-		"Tommy Vercetti (Endgame T-Shirt)",
-		"Forelli Thug",
-		"Forelli Thug",
-		"Random Lady",
-		"Gang Member",
-		"Party Waitress",
-		"Kent Paul",
-		"Big Head Taxi Driver",
+		"Store Clerk"
 	],
 
 	[ // GTA San Andreas
@@ -4489,45 +4508,45 @@ let skinNames = [
 		"MODEL_M_M_PLATIN_01",
 		"MODEL_M_M_PLATIN_02",
 		"MODEL_M_M_PLATIN_03",
-		"Tourist 1",
-		"Black Business Man 1",
-		"Asian Man 1",
-		"Rich Man 1",
-		"Old Slavic Man 1",
-		"Jewish Rabbi 1",
-		"Fat Mafia Guy 1",
-		"Old Slavic Man 2",
-		"Old Black Man 1",
-		"Old White Man 1",
-		"Old White Man 2",
-		"Old White Man 3",
-		"White Man 1",
-		"White Man 2",
-		"Black Man 1",
-		"Black Business Man 2",
-		"White Business Man 1",
-		"Asian Man 1",
-		"Chop Shop Mechanic 1",
-		"Chop Shop Mechanic 2",
-		"Suspicious White Man 1",
-		"Nerdy White Man 1",
-		"White Man 3",
-		"Asian Man 2",
-		"White Man 4",
-		"Gay Man 1",
+		"MODEL_M_M_PMANHAT_01",
+		"MODEL_M_M_PMANHAT_02",
+		"MODEL_M_M_PORIENT_01",
+		"MODEL_M_M_PRICH_01",
+		"MODEL_M_O_EASTEURO_01",
+		"MODEL_M_O_HASID_01",
+		"MODEL_M_O_MOBSTER",
+		"MODEL_M_O_PEASTEURO_02",
+		"MODEL_M_O_PHARBRON_01",
+		"MODEL_M_O_PJERSEY_01",
+		"MODEL_M_O_STREET_01",
+		"MODEL_M_O_SUITED",
+		"MODEL_M_Y_BOHO_01",
+		"MODEL_M_Y_BOHOGUY_01",
+		"MODEL_M_Y_BRONX_01",
+		"MODEL_M_Y_BUSINESS_01",
+		"MODEL_M_Y_BUSINESS_02",
+		"MODEL_M_Y_CHINATOWN_03",
+		"MODEL_M_Y_CHOPSHOP_01",
+		"MODEL_M_Y_CHOPSHOP_02",
+		"MODEL_M_Y_DODGY_01",
+		"MODEL_M_Y_DORK_02",
+		"MODEL_M_Y_DOWNTOWN_01",
+		"MODEL_M_Y_DOWNTOWN_02",
+		"MODEL_M_Y_DOWNTOWN_03",
+		"MODEL_M_Y_GAYYOUNG",
 		"MODEL_M_Y_GENSTREET_11",
 		"MODEL_M_Y_GENSTREET_16",
 		"MODEL_M_Y_GENSTREET_20",
 		"MODEL_M_Y_GENSTREET_34",
 		"MODEL_M_Y_HARDMAN_01",
-		"Black Gangster 1",
-		"Black Gangster 2",
-		"Latino Gangster 1",
-		"Jewish Man 1",
-		"Black Gangster 3",
-		"Black Man 2",
-		"White Man 5",
-		"Black Man 3",
+		"MODEL_M_Y_HARLEM_01",
+		"MODEL_M_Y_HARLEM_02",
+		"MODEL_M_Y_HARLEM_04",
+		"MODEL_M_Y_HASID_01",
+		"MODEL_M_Y_LEASTSIDE_01",
+		"MODEL_M_Y_PBRONX_01",
+		"MODEL_M_Y_PCOOL_01",
+		"MODEL_M_Y_PCOOL_02",
 		"MODEL_M_Y_PEASTEURO_01",
 		"MODEL_M_Y_PHARBRON_01",
 		"MODEL_M_Y_PHARLEM_01",
@@ -6149,133 +6168,6 @@ let hiddenPackages = [
 
 // ----------------------------------------------------------------------------
 
-let vehicleDataArray = [
-	'health',
-	'engineState',
-	'lightState',
-	'sirenState',
-	'alarmState',
-	'hornState',
-	'lockState',
-	//'rgbColour1',
-	//'rgbColour2',
-	//'colour',
-	'suspensionHeight',
-	'mission',
-	'cruiseSpeed',
-	'driveTo',
-	'drivingStyle',
-	'panelStatus',
-	'doorStatus',
-	'lightStatus',
-	'wheelStatus',
-	'doorsState',
-	'lightsState',
-	'wheelsState',
-	'radioStation',
-	'handlingIndex',
-	'scale',
-	'wanderRandomly',
-	'scale',
-	'taxiLightState',
-	'livery',
-	'hazardLightState',
-	'dirtLevel',
-	'gpsEnabled',
-	'upgrades',
-	'paintJob',
-];
-let vehicleDataStructure = Enum(vehicleDataArray);
-
-// ----------------------------------------------------------------------------
-
-function createDefaultVehicleData(vehicle) {
-	let vehicleData = new Array(vehicleDataStructure.length);
-
-	vehicleData[vehicleDataStructure.health] = 1000;
-	vehicleData[vehicleDataStructure.engineState] = false;
-	vehicleData[vehicleDataStructure.lightState] = false;
-	vehicleData[vehicleDataStructure.sirenState] = false;
-	vehicleData[vehicleDataStructure.alarmState] = false;
-	vehicleData[vehicleDataStructure.hornState] = false;
-	vehicleData[vehicleDataStructure.lockState] = false;
-	vehicleData[vehicleDataStructure.suspensionHeight] = -1;
-	vehicleData[vehicleDataStructure.mission] = -1;
-	vehicleData[vehicleDataStructure.cruiseSpeed] = 15.0;
-	vehicleData[vehicleDataStructure.driveTo] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.drivingStyle] = 1;
-	vehicleData[vehicleDataStructure.panelStatus] = -1;
-	vehicleData[vehicleDataStructure.doorStatus] = -1;
-	vehicleData[vehicleDataStructure.lightStatus] = -1;
-	vehicleData[vehicleDataStructure.wheelStatus] = -1;
-	vehicleData[vehicleDataStructure.doorsState] = [-1, -1, -1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.lightsState] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.wheelsState] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.radioStation] = 0;
-	vehicleData[vehicleDataStructure.handlingIndex] = -1;
-	vehicleData[vehicleDataStructure.wanderRandomly] = false;
-	vehicleData[vehicleDataStructure.scale] = 1.0;
-	vehicleData[vehicleDataStructure.taxiLightState] = false;
-	vehicleData[vehicleDataStructure.livery] = -1;
-	vehicleData[vehicleDataStructure.hazardLightState] = false;
-	vehicleData[vehicleDataStructure.dirtLevel] = -1;
-	vehicleData[vehicleDataStructure.gpsEnabled] = false;
-	vehicleData[vehicleDataStructure.upgrades] = [];
-	vehicleData[vehicleDataStructure.paintJob] = -1;
-
-	if(isServer) {
-		vehicle.setData("sb", vehicleData, true);
-		triggerNetworkEvent("sb.v.sync", null, vehicle.id);
-	} else {
-		// We only need to set the data and sync it if it's a client and not connected to the server.
-		if(!isConnected) {
-			vehicle.setData("sb", vehicleData, true);
-			resyncVehicle(vehicle);
-		}
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-let pedDataArray = [
-	'skin',
-	'health',
-	'armour',
-	'invincible',
-	'pedStats',
-	'threats',
-	'heedThreats',
-	'walkStyle',
-	'alpha',
-	'wanderPath',
-	'following',
-	'facing',
-	'defending',
-];
-let pedDataStructure = Enum(pedDataArray);
-
-// ----------------------------------------------------------------------------
-
-function createDefaultPedData(ped) {
-	vehicle.setData("sb", [
-		ped.skin,
-		100,
-		0,
-		false,
-		0,
-		0,
-		false,
-		0,
-		255,
-		-1,
-		false,
-		false,
-		false,
-	]);
-}
-
-// ----------------------------------------------------------------------------
-
 let errorMessageColour = toColour(237, 67, 55, 255);
 let syntaxMessageColour = toColour(200, 200, 200, 255);
 
@@ -6405,15 +6297,6 @@ function radToDeg(rad) {
 
 // ----------------------------------------------------------------------------
 
-function getDistance(pos1, pos2) {
-	let a = Math.pow(pos1.x-pos2.x, 2);
-	let b = Math.pow(pos1.y-pos2.y, 2);
-
-	return Math.sqrt(a+b);
-}
-
-// ----------------------------------------------------------------------------
-
 function getAngleInCircleFromCenter(center, total, current) {
 	let gap = 360 / total;
 	let deg = Math.floor(gap*current);
@@ -6496,9 +6379,9 @@ function isParamsInvalid(params) {
 
 // ----------------------------------------------------------------------------
 
-function isValidVehicleModel(modelId) {
+function isValidVehicleModel(modelID) {
 	if(game.game == GAME_GTA_III) {
-		if(modelId < 90 || modelId > 150) {
+		if(modelID < 90 || modelID > 150) {
 			return false;
 		}
 
@@ -6506,7 +6389,7 @@ function isValidVehicleModel(modelId) {
 	}
 
 	if(game.game == GAME_GTA_VC) {
-		if(modelId < 130 || modelId > 236) {
+		if(modelID < 130 || modelID > 236) {
 			return false;
 		}
 
@@ -6523,17 +6406,17 @@ function isValidVehicleModel(modelId) {
 
 function getVehicleModelIdFromParams(params, gameId = thisGame) {
 	if(isNaN(params)) {
-		let modelId = getVehicleModelIdFromName(params);
+		let modelID = getVehicleModelIDFromName(params);
 
-		if(!modelId) {
-			return vehicleModelIdStart[gameId];
+		if(!modelID) {
+			return vehicleModelIDStart[gameId];
 		}
 
-		if(isValidVehicleModel(Number(modelId))) {
-			return Number(modelId);
+		if(isValidVehicleModel(Number(modelID))) {
+			return Number(modelID);
 		}
 
-		return getVehicleModelIdFromName(params, gameId);
+		return getVehicleModelIDFromName(params, gameId);
 	} else {
 		//if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 		//	params = Number(params);
@@ -6543,7 +6426,7 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 		if(isValidVehicleModel(Number(params))) {
 			return Number(params);
 		}
-		return vehicleModelIdStart[gameId];
+		return vehicleModelIDStart[gameId];
 	}
 
 	return false;
@@ -6568,32 +6451,6 @@ function getSkinIdFromParams(params, gameId = thisGame) {
 
 // ----------------------------------------------------------------------------
 
-function getMissionIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
-		return getMissionIdFromName(params, gameId);
-	} else {
-		if(typeof missionNames[gameId][Number(params)] != undefined) {
-			return Number(params);
-		}
-	}
-
-	return false;
-}
-
-// ----------------------------------------------------------------------------
-
-function getMissionIdFromName(missionName, gameId = thisGame) {
-	for(let i in missionNames[gameId]) {
-		if(missionNames[gameId][i].toLowerCase().indexOf(missionName.toLowerCase()) != -1) {
-			return Number(i);
-		}
-	}
-
-	return false;
-}
-
-// ----------------------------------------------------------------------------
-
 function getVehicleUpgradeIdFromParams(params) {
 	if(isNaN(params)) {
 		return getVehicleUpgradeIdFromName(params);
@@ -6608,13 +6465,13 @@ function getVehicleUpgradeIdFromParams(params) {
 
 // ----------------------------------------------------------------------------
 
-function getVehicleModelIdFromName(params, gameId = thisGame) {
+function getVehicleModelIDFromName(params, gameId = thisGame) {
 	for(let i in vehicleNames[gameId]) {
 		if(vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			if(gameId >= GAME_GTA_IV) {
 				return gtaivVehicleModels[Number(i)][1];
 			} else {
-				return Number(i)+Number(vehicleModelIdStart[gameId]);
+				return Number(i)+Number(vehicleModelIDStart[gameId]);
 			}
 		}
 	}
@@ -6640,7 +6497,7 @@ function getSkinIdFromName(params, gameId = thisGame) {
 	if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 		for(let i in gtaivSkinModels) {
 			if(gtaivSkinModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return gtaivSkinModels[i][1];You 
+				return gtaivSkinModels[i][1];
 			}
 		}
 	} else {
@@ -6676,29 +6533,19 @@ function doesWordStartWithVowel(word) {
 
 function getVehicleNameFromModelId(modelId, gameId = thisGame) {
 	if(gameId >= GAME_GTA_IV) {
-		for(let i in gtaivVehicleModels) {
-			if(gtaivVehicleModels[i][1] == modelId) {
-				return gtaivVehicleModels[i][0];
-			}
-		}	
+		let modelIndex = modelId-84;
+		return vehicleNames[gameId][modelIndex];
+	} else {
+		let modelIndex = modelId-vehicleModelIDStart[gameId];
+		return vehicleNames[gameId][modelIndex];
 	}
-	let modelIndex = modelId-vehicleModelIdStart[gameId];
-	return vehicleNames[gameId][modelIndex];
 }
 
 // ----------------------------------------------------------------------------
 
 function getSkinNameFromId(modelId, gameId = thisGame) {
-	if(gameId >= GAME_GTA_IV) {
-		for(let i in gtaivSkinModels) {
-			if(gtaivSkinModels[i][1] == modelId) {
-				return gtaivSkinModels[i][0];
-			}
-		}
-	} else {
-		let modelIndex = modelId;
-		return skinNames[gameId][modelIndex];
-	}
+	let modelIndex = modelId;
+	return skinNames[gameId][modelIndex];
 }
 
 // ----------------------------------------------------------------------------
@@ -6726,9 +6573,8 @@ function replaceEmojiInString(message) {
 
 // ----------------------------------------------------------------------------
 
-function getSyncerFromId(syncerId) {
-	let clients = getClients();
-	return clients[syncerId];
+function getSyncerFromID(syncerID) {
+	return getClients()[syncerID];
 }
 
 // ----------------------------------------------------------------------------
@@ -6747,14 +6593,7 @@ function getClientFromName(clientName) {
 // ----------------------------------------------------------------------------
 
 function getClientFromPlayer(player) {
-	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].player == player) {
-			return clients[i];
-		}
-	}
-
-	return false;
+	return getClientFromPlayerElement(player);
 }
 
 // ----------------------------------------------------------------------------
@@ -6773,6 +6612,7 @@ function getPlayerFromParams(params) {
 		}
 	}
 }
+
 
 // ----------------------------------------------------------------------------
 
@@ -6793,9 +6633,9 @@ function getClientFromParams(params) {
 				}
 			}
 		} else {
-			let clientId = Number(params) || 0;
-			if(typeof clients[clientId] != "undefined") {
-				return clients[clientId];
+			let clientID = Number(params) || 0;
+			if(typeof clients[clientID] != "undefined") {
+				return clients[clientID];
 			}
 		}
 	}
@@ -6844,7 +6684,7 @@ function toFixed(num, fixed) {
 
 // ----------------------------------------------------------------------------
 
-function combine(a, b, c) {
+function combineVecToInteger(a, b, c) {
 	return Number((a << 20) | (b << 10) | c);
 }
 
@@ -6968,62 +6808,36 @@ function getTimeDifferenceDisplay(unixTimeOne, unixTimeTwo) {
 // ----------------------------------------------------------------------------
 
 function getVehiclesInRange(position, range) {
-	let vehicles = getVehicles();
-	let inRangeVehicles = [];
-	for(let i in vehicles) {
-		if(getDistance(position, vehicles[i].position) <= range) {
-			inRangeVehicles.push(vehicles[i]);
-		}
-	}
-	return inRangeVehicles;
+    return getElementsOfTypeInRange(ELEMENT_VEHICLE, position, range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getPlayersInRange(position, range) {
-	let peds = getPeds();
-	let inRangePlayers = [];
-	for(let i in peds) {
-		if(peds[i].isType(ELEMENT_PLAYER)) {
-			if(getDistance(position, peds[i].position) <= range) {
-				inRangePlayers.push(peds[i]);
-			}
-		}
-	}
-	return inRangePlayers;
+	return getElementsOfTypeInRange(ELEMENT_PLAYER, position, range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getCiviliansInRange(position, range) {
-	let peds = getPeds();
-	let inRangeCivilians = [];
-	for(let i in peds) {
-		if(peds[i].isType(ELEMENT_CIVILIAN)) {
-			if(getDistance(position, peds[i].position) <= range) {
-				inRangeCivilians.push(peds[i]);
-			}
-		}
-	}
-	return inRangeCivilians;
+	return getElementsOfTypeInRange(ELEMENT_CIVILIAN, position, range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getElementsOfTypeInRange(elementType, position, range) {
-	let elements = getElementsByType();
-	let inRangeElements = [];
-	for(let i in elements) {
-		if(getDistance(position, elements[i].position) <= range) {
-			inRangeElements.push(elements[i]);
-		}
-	}
-	return inRangeElements;
+    return getElementsByType(elementType).filter((e) => e.position.distance(position) <= range);
 }
 
 // ----------------------------------------------------------------------------
 
-function isValidObjectModel(modelId, gameId = gta.game) {
+function getClosestElementOfType(elementType, position) {
+    return getElementsByType(elementType).reduce((i, j) => (i.position.distance(position) < j.position.distance(position)) ? i : j);
+}
+
+// ----------------------------------------------------------------------------
+
+function isValidObjectModel(modelID, gameId = gta.game) {
 	// Will finish later
 	return true;
 }
@@ -7055,45 +6869,7 @@ function setFileData(filePath, fileData)
 
 // ----------------------------------------------------------------------------
 
-// Requires MarkNote!
-function getXMLItems(filePath) {
-	let data = getFileData(filePath);
-
-	let parser = new marknote.Parser;
-	let xml = parser.parse(data);
-	let root = xml.getRootElement();
-	let items = root.getChildElements();
-	return {root: root, items: items};
-}
-
-// ----------------------------------------------------------------------------
-
-// Requires MarkNote!
-function saveXMLItems(filePath, rootNode, itemNode, root) {
-	let fileData = root.toString().substr(1);
-	let result = setFileData(filePath, fileData);
-	return result;
-}
-
-// ----------------------------------------------------------------------------
-
-function updateXMLItem(filePath, rootNode, itemNode, itemAttrName, itemAttrValue, newData, attributeNames) {
-	let data = getXMLItems(filePath);
-	let item = getXMLItemsByAttribute(data.root, itemAttrName, itemAttrValue);
-
-	if(!item) {
-		return;
-	}
-
-	for(let k in newData) {
-		item.setAttribute(k, newData[k] + '');
-	}
-	saveXMLItems(filePath, rootNode, itemNode, data.root);
-}
-
-// ----------------------------------------------------------------------------
-
-function is2dPositionOnScreen(pos2d) {
+function is2DPositionOnScreen(pos2d) {
 	return pos2d.x >= 0 && pos2d.y >= 0 && pos2d.x <= game.width && pos2d.y <= game.height;
 }
 
@@ -7140,7 +6916,7 @@ function getRandom(min, max) {
 
 // ----------------------------------------------------------------------------
 
-function getArrayOfElementId(elements) {
+function getArrayOfElementID(elements) {
 	let tempArray = [];
 	for(let i in elements) {
 		tempArray.push(elements[i].id);
@@ -7151,7 +6927,7 @@ function getArrayOfElementId(elements) {
 
 // ----------------------------------------------------------------------------
 
-function Enum(constantsList) {
+function createEnum(constantsList) {
     let tempTable = {};
 	for(let i in constantsList) {
         tempTable[constantsList[i]] = i;
@@ -7161,7 +6937,7 @@ function Enum(constantsList) {
 
 // ----------------------------------------------------------------------------
 
-function isValidSkin(skin, game = GAME_GTA_III) {
+function isValidSkin(skin, game = thisGame) {
 	if(game == GAME_GTA_III) {
 		return true;
 	} else if(game == GAME_GTA_VC) {
@@ -7220,7 +6996,7 @@ function getProperVehiclePossessionText(params = "") {
 					}
 				}
 			} else {
-				if(typeof getVehicles()[Number(params)] != "undefined") {
+				if(typeof vehicles[Number(params)] != "undefined") {
 					return "The ID " + params;
 				}
 			}
@@ -7865,10 +7641,10 @@ let pedObjectiveNames = [
 		"Guard area",
 		"Wait in car",
 		"Wait in car then get out",
-		"Kill char on foot",
-		"Kill char using any Means",
-		"Flee from char on foot until safe",
-		"Flee from char on foot",
+		"Kill ped on foot",
+		"Kill ped using any means",
+		"Flee from ped on foot until safe",
+		"Flee from ped on foot",
 		"Go to char on foot",
 		"Follow char in formation",
 		"Leave car",
@@ -7892,98 +7668,104 @@ let pedObjectiveNames = [
 		"Buy ice cream",
 		"Steal any car",
 		"Mug char",
-	]
+	],
 ];
+
+// ----------------------------------------------------------------------------
 
 let pedStateNames = [
 	false,
 	[
 		"None",
 		"Idle",
-		"Look Entity",
-		"Look Heading",
-		"Wander Range",
-		"Wander Path",
-		"Seek Pos",
-		"Seek Entity",
-		"Flee Pos",
-		"Flee Entity",
+		"Look at entity",
+		"Look heading",
+		"Wander range",
+		"Wander path",
+		"Seek position",
+		"Seek entity",
+		"Flee from position",
+		"Flee from entity",
 		"Pursue",
-		"Follow Path",
-		"Sniper Mode",
-		"Rocket Mode",
+		"Follow path",
+		"Sniper mode",
+		"Rocket mode",
 		"Dummy",
 		"Pause",
 		"Attack",
 		"Fight",
-		"Face Phone",
-		"Make Call",
+		"Face phone",
+		"Make call",
 		"Chat",
 		"Mug",
-		"AimGun",
-		"AI Control",
-		"Seek Car",
-		"Seek InBoat",
-		"Follow Route",
+		"Aim gun",
+		"AI control",
+		"Seek car",
+		"Seek in boat",
+		"Follow route",
 		"C.P.R.",
 		"Solicit",
-		"Buy IceCream",
+		"Buy ice cream",
 		"Investigate",
 		"Step away",
-		"On Fire",
+		"On fire",
 		"Unknown",
 		"STATES_NO_AI",
 		"Jump",
 		"Fall",
-		"GetUp",
+		"Get up",
 		"Stagger",
 		"Dive away",
 		"STATES_NO_ST",
-		"Enter Train",
-		"Exit Train",
-		"Arrest Plyr",
+		"Enter train",
+		"Exit train",
+		"Arrest player",
 		"Driving",
 		"Passenger",
-		"Taxi Passngr",
-		"Open Door",
+		"Taxi passenger",
+		"Open door",
 		"Die",
 		"Dead",
-		"CarJack",
-		"Drag fm Car",
-		"Enter Car",
-		"Steal Car",
-		"Exit Car",
-		"Hands Up",
+		"Car jack",
+		"Drag from car",
+		"Enter car",
+		"Steal car",
+		"Exit car",
+		"Hands up",
 		"Arrested",
 	],
 ];
+
+// ----------------------------------------------------------------------------
 
 let pedWaitStateNames = [
 	false,
 	[
 		"No Wait",
-		"Traffic Lights",
-		"Pause CrossRoad",
-		"Look CrossRoad",
-		"Look Ped",
-		"Look Shop",
-		"Look Accident",
-		"FaceOff Gang",
-		"Double Back",
-		"Hit Wall",
-		"Turn 180deg",
+		"Traffic lights",
+		"Pause cross road",
+		"Look and cross road",
+		"Look at ped",
+		"Look at shop",
+		"Look at accident",
+		"Faceoff gang",
+		"Double back",
+		"Hit wall",
+		"Turn around",
 		"Surprised",
-		"Ped Stuck",
-		"Look About",
-		"Play Duck",
-		"Play Cower",
-		"Play Taxi",
-		"Play HandsUp",
-		"Play HandsCower",
-		"Play Chat",
-		"Finish Flee",
+		"Stuck",
+		"Look about",
+		"Duck",
+		"Cower",
+		"Taxi",
+		"Hands up",
+		"Hands cower",
+		"Chat",
+		"Finish Fleeing",
 	],
 ];
+
+// ----------------------------------------------------------------------------
 
 let seatNames = [
 	"Driver",
@@ -8008,6 +7790,8 @@ let seatNames = [
 	"Extra",
 ];
 
+// ----------------------------------------------------------------------------
+
 function parseParams(params) {
 	let parsedParams = [];
 	let paramsEntries = params.split(",");
@@ -8020,6 +7804,8 @@ function parseParams(params) {
 	});
 }
 
+// ----------------------------------------------------------------------------
+
 function isAmmoWeapon(weaponId, game = thisGame) {
 	if(game == GAME_GTA_III) {
 		if(weaponId == 1) {
@@ -8029,6 +7815,8 @@ function isAmmoWeapon(weaponId, game = thisGame) {
 
 	return true;
 }
+
+// ----------------------------------------------------------------------------
 
 let pedComponents = [
 	null,
@@ -8062,3 +7850,5 @@ let pedComponents = [
 		"Head",
 	]
 ];
+
+// ----------------------------------------------------------------------------

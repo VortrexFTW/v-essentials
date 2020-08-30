@@ -1,0 +1,4 @@
+<meta>
+	<info title="translate" author="Vortrex" version="1.0" description="Translation service for GTA Connected" />
+	<script src="server.js" type="server" language="javascript" />
+</meta>

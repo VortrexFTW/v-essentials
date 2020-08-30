@@ -57,7 +57,7 @@ addCommandHandler("get", function(cmdName, params, client) {
 		return false;
 	}
 	
-	if(client.administrator) {
+	if(!client.administrator) {
 		messageClient("You need to be an administrator to teleport people to you!", client, errorMessageColour);
 		return false;
 	}
@@ -95,11 +95,14 @@ addCommandHandler("gotopos", function(cmdName, params, client) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.skin", function(client, clientID, skinId) {
+addNetworkHandler("sb.p.skin", function(client, position, heading, skinId) {
 	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-		let position = client.player.position;
-		let heading = client.player.heading;
-		spawnPlayer(client, position, heading, gtaivSkinModels[skinId][1], 0, 0);
+		spawnPlayer(client, position, heading, skinId, 0, 0);
+		//getElementsByType(ELEMENT_PLAYER).forEach(p => {
+		//	if(getClientFromPlayerElement(p) == null) {
+		//		destroyElement(p);
+		//	}
+		//});
 	} else if(server.game == GAME_GTA_SA) {
 		let position = client.player.position;
 		let heading = client.player.heading;
@@ -115,25 +118,25 @@ addNetworkHandler("sb.p.skin", function(client, clientID, skinId) {
 	let heading = client.player.heading;
 	spawnPlayer(client, position, heading, skinId, 0, 0);
 	*/
-	message(client.name + " changed their skin to " + skinNames[server.game][skinId], gameAnnounceColours[serverGame]);
+	//message(client.name + " changed their skin to " + skinNames[server.game][skinId], gameAnnounceColours[serverGame]);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.hp", function(client, clientID, health) {
-	triggerNetworkEvent("sb.p.hp", null, clientID, health);
+addNetworkHandler("sb.p.hp", function(client, clientId, health) {
+	triggerNetworkEvent("sb.p.hp", null, clientId, health);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.scale", function(client, clientID, scaleFactor) {
-	triggerNetworkEvent("sb.p.scale", null, clientID, scaleFactor);
+addNetworkHandler("sb.p.scale", function(client, clientId, scaleFactor) {
+	triggerNetworkEvent("sb.p.scale", null, clientId, scaleFactor);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.ar", function(client, clientID, armour) {
-	triggerNetworkEvent("sb.p.ar", null, clientID, armour);
+addNetworkHandler("sb.p.ar", function(client, clientId, armour) {
+	triggerNetworkEvent("sb.p.ar", null, clientId, armour);
 });
 
 // ----------------------------------------------------------------------------
@@ -144,9 +147,9 @@ addNetworkHandler("sb.p.limb", function(client, bodyPartId) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.crouching", function(client, player, state) {
-	triggerNetworkEvent("sb.p.crouching", null, player, state);
-});
+//addNetworkHandler("sb.p.crouching", function(client, player, state) {
+//	triggerNetworkEvent("sb.p.crouching", null, player, state);
+//});
 
 // ----------------------------------------------------------------------------
 
@@ -192,6 +195,12 @@ addNetworkHandler("sb.p.walkstyle", function(client, walkStyle) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.p.helmet", function(client, helmetState) {
+	triggerNetworkEvent("sb.p.helmet", null, client.player.id, helmetState);
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.p.lookat", function(client, x, y, z) {
 	triggerNetworkEvent("sb.p.lookat", null, client.player.id, x, y, z);
 });
@@ -200,6 +209,12 @@ addNetworkHandler("sb.p.lookat", function(client, x, y, z) {
 
 addNetworkHandler("sb.p.veh.enter", function(client, vehicleID, driver) {
 	triggerNetworkEvent("sb.p.veh.enter", null, client.player.id, vehicleID, driver);	
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.fatness", function(client, player, fatness) {
+	triggerNetworkEvent("sb.p.fatness", null, player, fatness);	
 });
 
 // ----------------------------------------------------------------------------

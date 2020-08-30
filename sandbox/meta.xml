@@ -1,11 +1,13 @@
 <meta>
 	<info author="Vortrex" version="1.0" description="Commands and utilities to test every feature of GTA:C" />
 
+	<!--<dependency src="v-utils" />-->
+
 	<!-- Config -->
 	<script src="config.js" type="client" language="javascript" />
 	<script src="config.js" type="server" language="javascript" />
-	
-	<!-- Shared -->
+
+	<!-- Utils -->
 	<script src="shared/util.js" type="client" language="javascript" />
 	<script src="shared/util.js" type="server" language="javascript" />
 	

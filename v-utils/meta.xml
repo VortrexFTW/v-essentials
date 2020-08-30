@@ -1,0 +1,7 @@
+<meta>
+	<info author="Vortrex" version="1.0" description="Utils script for GTA Connected" />
+
+
+	<script src="utils.js" type="client" language="javascript" />
+    <script src="utils.js" type="server" language="javascript" />
+</meta>

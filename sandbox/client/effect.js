@@ -37,7 +37,7 @@ addCommandHandler("effect2", function(cmdName, params){
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 5);
 	
 	if(isConnected) {
-		triggerNetworkEvent("sb.ef.add", effectType, position.x, position.y, position.z);
+		triggerNetworkEvent("sb.ef.add2", effectType, scale, duration, position.x, position.y, position.z, strengthX, strengthY, strengthZ);
 	} else {
 		addMovingParticleEffect(effectType, position, new Vec3(strengthX, strengthY, strengthZ), scale, duration);
 	}
@@ -48,6 +48,13 @@ addCommandHandler("effect2", function(cmdName, params){
 addNetworkHandler("sb.ef.add", function(effectID, effectType, x, y, z) {
 	let position = new Vec3(x, y, z);
 	let effect = addParticleEffect(effectType, position);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.ef.add2", function(effectType, scale, duration, positionX, positionY, positionZ, strengthX, strengthY, strengthZ) {
+	let position = new Vec3(positionX, positionY, positionZ);
+	addMovingParticleEffect(effectType, position, new Vec3(strengthX, strengthY, strengthZ), scale, duration);
 });
 
 // ----------------------------------------------------------------------------

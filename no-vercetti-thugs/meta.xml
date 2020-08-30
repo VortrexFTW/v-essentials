@@ -1,0 +1,5 @@
+<meta>
+	<info author="Vortrex" version="1.0" description="Disables the Vercetti thugs in the mansion area" />
+
+	<script src="client.js" type="client" language="javascript" />
+</meta>

@@ -38,7 +38,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, client) {
 		return false;
 	}
 	
-	scriptConfig = JSON.parse(configFile.readBytes(configFile.length));
+	scriptConfig = JSON.parse(configFile.readBytes(configFile.length - configFile.position));
 	configFile.close();
 	if(!scriptConfig) {
 		console.log("[Chat] Could not load config.json. Resource stopping ...");
@@ -53,6 +53,8 @@ bindEventHandler("OnResourceStart", thisResource, function(event, client) {
 		let languageId = getPlayerLanguage(client.name);
 		client.setData("v.translate", languageId);
 	});
+	
+	exportFunction("translateSandboxMessage", translateSandboxMessage);
 	
 	console.log("[Chat] Resource started! (Translation " + String((scriptConfig.translateMessages) ? "enabled" : "disabled") + ", Emoji " + String((scriptConfig.enableEmoji) ? "enabled" : "disabled") + ")");
 });
@@ -74,11 +76,29 @@ addEventHandler("OnPlayerJoined", async function(event, client) {
 	let languageId = getPlayerLanguage(client.name);
 	client.setData("v.translate", languageId);
 	
+	let countryCode = module.geoip.getCountryISO("geoip-country.mmdb", client.ip);
+	let countryName = module.geoip.getCountryName("geoip-country.mmdb", client.ip);	
+	
 	if(languageId != 28) {
 		let outputString = "Your language has been set to " + translationLanguages[languageId][0];		
 		let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
 		messageClient(translatedMessage, client, COLOUR_YELLOW);
+	} else {
+		for(let i in translationLanguages) {
+			if(translationLanguages[i][1].toLowerCase() == countryCode.toLowerCase() || (translationLanguages[i].length == 3 && translationLanguages[i][2].indexOf(countryCode.toUpperCase()) != -1)) {
+				let outputString = "This server is available in " + String(translationLanguages[i][0]);
+				let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), getLanguageIdFromParams(translationLanguages[i][1]));
+				messageClient(translatedMessage + "( /lang " + String(translationLanguages[i][1].toLowerCase()) + " )", client, COLOUR_YELLOW);				
+				
+				let adminMessage = String(client.name) + " is from " + String(countryName) + " and possibly speaks " + String(translationLanguages[i][0]) + ". Showing them the lang command message";
+				findResourceByName("v-admin").exports.messageAdmins(adminMessage);
+				return;
+			}
+		}
 	}
+	
+	let adminMessage = String(client.name) + " is from " + String(countryName);
+	findResourceByName("v-admin").exports.messageAdmins(adminMessage);	
 });
 
 // ----------------------------------------------------------------------------
@@ -244,25 +264,72 @@ addEventHandler("OnPlayerChat", async function(event, client, messageText) {
 	let translateFrom = client.getData("v.translate") || 28;
 	
 	let clients = getClients();
+	
+	let replacedEmoji = [];
+	if(scriptConfig.enableEmoji) {
+		for(let i in emojiReplaceString) {
+			if(messageText.indexOf(emojiReplaceString[i][0]) != -1) {
+				replacedEmoji.push([String(emojiReplaceString[i][0]), String(emojiReplaceString[i][1])]);
+			}
+		}
+	}	
+	
 	for(let i in clients) {
 		let clientMessage = messageText;
+		let translateTo = clients[i].getData("v.translate");
+		
 		if(scriptConfig.translateMessages) {
-			let translateTo = clients[i].getData("v.translate");
 			if(translateTo != translateFrom) {
+				if(replacedEmoji.length > 0) {
+					for(let i in replacedEmoji) {
+						let replaceWith = "RPLC" + String(i);
+						clientMessage = clientMessage.replace(replacedEmoji[i][0], replaceWith);
+					}
+				}
+				
 				clientMessage = await translateMessage(clientMessage, translateFrom, translateTo);
+				
+				if(replacedEmoji.length > 0) {
+					for(let i in replacedEmoji) {
+						let replaceThis = "RPLC" + String(i);
+						clientMessage = clientMessage.replace(replaceThis, replacedEmoji[i][1]);
+					}
+				}					
+			} else {
+				if(scriptConfig.enableEmoji) {
+					clientMessage = replaceEmojiInString(clientMessage);
+				}
 			}
 		}
 		
-		if(scriptConfig.enableEmoji) {
-			clientMessage = replaceEmojiInString(clientMessage);
-		}
+
 		
 		//let flag = "[" + translationLanguages[translateFrom][1] + "]";
 		//if(translationLanguages[translateFrom].length == 3) {
 		//	flag = translationLanguages[translateFrom][2];
 		//}
 		
-		messageClient(String(client.name + ": [#FFFFFF]" + clientMessage), clients[i], colour);
+		let originalMessage = " [#999999](" + (messageText) + ")";
+		
+		if(scriptConfig.enableEmoji) {
+			originalMessage = replaceEmojiInString(originalMessage);
+		}	
+		
+		if(clients[i] == client) {
+			originalMessage = "";
+		}
+		
+	
+		
+		if(translateTo == translateFrom) {
+			originalMessage = "";
+		}
+		
+        clientMessage = clientMessage.replace(/&lt;/g, "<");
+        clientMessage = clientMessage.replace(/&gt;/g, ">");
+        clientMessage = clientMessage.replace(/&#39/g, "'");
+		
+		messageClient(String(client.name + ": [#FFFFFF]" + clientMessage + originalMessage), clients[i], colour);
 	}
 });
 
@@ -380,7 +447,9 @@ function translateMessage(messageText, translateFrom = defaultLanguageId, transl
 					console.error("[Chat] An invalid email was provided in config.json! Please fix and reload this resource!");
 					resolve(messageText);
 				}
-				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
+				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);				
+				//let adminMessage = "[Translator] (From " + String(translationLanguages[translateFrom][0]) + ") " + String(messageText) + " / (To " + String(translationLanguages[translateTo][0]) + ") " + String(translationData.responseData.translatedText);
+				//findResourceByName("v-admin").exports.messageAdmins(adminMessage);					
 				resolve(translationData.responseData.translatedText);
 			},
 			function(data) {
@@ -469,6 +538,42 @@ addCommandHandler("lang", async function(command, params, client) {
 	let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
 	messageClient(translatedMessage, client, COLOUR_YELLOW);
 });
+
+// ----------------------------------------------------------------------------
+
+function translateSandboxMessage(client, messageText, colour) {
+	let translateFrom = client.getData("v.translate") || 28;
+	
+	let clients = getClients();
+	for(let i in clients) {
+		translateSandboxMessageForClient(clients[i], client, messageText, colour);
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+async function translateSandboxMessageForClient(client, otherClient, messageText, colour) {
+	let clientMessage = messageText;
+	let translateTo = client.getData("v.translate");
+	if(translateTo != 28) {
+		clientMessage = await translateMessage(clientMessage, 28, translateTo);
+	}
+	
+	let originalMessage = " [#999999](" + (messageText) + ")";
+	if(otherClient == client) {
+		originalMessage = "";
+	}
+	
+	if(translateTo == 28) {
+		originalMessage = "";
+	}	
+	
+	clientMessage = clientMessage.replace(/&lt;/g, "<");
+	clientMessage = clientMessage.replace(/&gt;/g, ">");
+	clientMessage = clientMessage.replace(/&#39/g, "'");
+	
+	messageClient(String(otherClient.name + " " + clientMessage + originalMessage), client, colour);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -1333,7 +1438,7 @@ let emojiReplaceString = [
 let translationLanguages = [
 	["Abkhazian", "AB"], 
 	["Afar", "AA"], 
-	["Afrikaans", "AF", "🇿🇦"], 
+	["Afrikaans", "AF"], 
 	["Albanian", "SQ"], 
 	["Amharic", "AM"], 
 	["Arabic", "AR"], 
@@ -1358,8 +1463,8 @@ let translationLanguages = [
 	["Croatian", "HR"],
 	["Czech", "CS"],
 	["Danish", "DA"],
-	["Dutch", "NL", "🇳🇱"],
-	["English", "EN", "🇺🇸"],
+	["Dutch", "NL"],
+	["English", "EN"],
 	["Esperanto", "EO"],
 	["Estonian", "ET"],
 	["Faeroese", "FO"],
@@ -1370,7 +1475,7 @@ let translationLanguages = [
 	["Gaelic (Scots Gaelic)", "GD"],
 	["Galician", "GL"],
 	["Georgian", "KA"],
-	["German", "DE", "🇩🇪"],
+	["German", "DE", ["AT"]],
 	["Greek", "EL"],
 	["Greenlandic", "KL"],
 	["Guarani", "GN"],
@@ -1419,12 +1524,12 @@ let translationLanguages = [
 	["Pashto, Pushto", "PS"],
 	["Persian", "FA"],
 	["Polish", "PL", "🇵🇱"],
-	["Portuguese", "PT"],
+	["Portuguese", "PT", ["BR"]],
 	["Punjabi", "PA"],
 	["Quechua", "QU"],
 	["Rhaeto-Romance", "RM"],
 	["Romanian", "RO"],
-	["Russian", "RU", "🇷🇺"],
+	["Russian", "RU"],
 	["Samoan", "SM"],
 	["Sangro", "SG"],
 	["Sanskrit", "SA"],
@@ -1436,10 +1541,10 @@ let translationLanguages = [
 	["Sindhi", "SD"],
 	["Singhalese", "SI"],
 	["Siswati", "SS"],
-	["Slovak", "SK", "🇸🇰"],
-	["Slovenian", "SL", "🇸🇮"],
-	["Somali", "SO", "🇸🇴"],
-	["Spanish", "ES", "🇪🇸"],
+	["Slovak", "SK"],
+	["Slovenian", "SL"],
+	["Somali", "SO"],
+	["Spanish", "ES", ["MX"]],
 	["Sudanese", "SU"],
 	["Swahili", "SW"],
 	["Swedish", "SV"],

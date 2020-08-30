@@ -29,7 +29,7 @@ addCommandHandler("train", function(cmdName, params) {
 	let trainCount = (Number(splitParams[2]) || 1);
 
 	for(let i = 0; i < trainCount; i++) {
-		let thisTrain = createVehicle(124);
+		let thisTrain = gta.createVehicle(124);
 		thisTrain.track = trackID;
 		thisTrain.trackPosition = trackPosition + (i*singleTrainCarLength);		
 		trains.push(thisTrain);
