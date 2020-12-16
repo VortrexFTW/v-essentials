@@ -18,7 +18,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 	unbindKey(SDLK_F7);
 });
 
