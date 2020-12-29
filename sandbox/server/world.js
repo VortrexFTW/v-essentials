@@ -20,10 +20,10 @@ addNetworkHandler("sb.w.weather", function(client, weather, force) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.winter", function(client, winter) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}
 	
 	let outputMessage = "";
 	
@@ -36,11 +36,26 @@ addNetworkHandler("sb.w.winter", function(client, winter) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.w.garage", function(client, garageId, state) {
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}
+	
+	let outputMessage = "";
+	
+	gameGarages[server.game][garageId][3] = state;
+	
+	triggerNetworkEvent("sb.w.garage", null, garageId, gameGarages[server.game][garageId][3]);
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.w.snow", function(client, snow) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}	
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}	
 	
 	let outputMessage = "";
 	
@@ -64,10 +79,10 @@ addNetworkHandler("sb.w.garage", function(client, garageId, state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.time", function(client, hour, minute) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}	
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}	
 	
 	let outputMessage = "";
 	
@@ -100,10 +115,10 @@ addNetworkHandler("sb.w.minutedur", function(client, minuteDuration) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.timelock", function(client, state) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}	
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}	
 	
 	let outputMessage = "";
 	
@@ -125,6 +140,8 @@ addNetworkHandler("sb.w.trains", function(client, state) {
 
 	trainsEnabled[server.game] = state;
 	gta.trainsEnabled = state;
+
+	triggerNetworkEvent("sb.w.trains", null, state);
 	
 	outputMessage = String((trainsEnabled[server.game]) ? "enabled" : "disabled") + " trains";
 	outputSandboxMessage(client, outputMessage);
@@ -150,10 +167,10 @@ addNetworkHandler("sb.w.planes", function(client, state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.ssvbridge", function(client, state) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}
 
 	let outputMessage = "";	
 	
@@ -218,10 +235,10 @@ addNetworkHandler("sb.w.civiliandensity", function(client, density) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.gamespeed", function(client, gamespeed) {
-	if(!client.administrator) {
-		messageClient("You must be an administrator to change this!", client, errorMessageColour);
-		return false;
-	}
+	//if(!client.administrator) {
+	//	messageClient("You must be an administrator to change this!", client, errorMessageColour);
+	//	return false;
+	//}
 	
 	let outputMessage = "";
 	
@@ -276,7 +293,7 @@ addNetworkHandler("sb.w.sync", function(client) {
 			civiliansEnabled[server.game],
 			trafficEnabled[server.game],
 			civilianDensity[server.game],
-			trafficDensity[server.game],			
+			trafficDensity[server.game],	
 		],
 		garages,
 		gameStats[server.game],

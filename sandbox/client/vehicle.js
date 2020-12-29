@@ -57,13 +57,16 @@ function spawnVehicleCommand(cmdName, params) {
 	//let currentTimestamp = Math.round((new Date()).getTime() / 1000);
 	//let timeSinceLastSpawn = currentTimestamp-lastVehicleSpawn;
 	//console.log("[Sandbox] Time since last vehicle spawn: " + String(timeSinceLastSpawn));
-	if(!canSpawnVehicle) {
-		message("Please wait before spawning another vehicle!", errorMessageColour);
-		return false;
-	}
+
+	//if(!canSpawnVehicle) {
+	//	if(!localClient.administrator) {
+	//		message("Please wait before spawning another vehicle!", errorMessageColour);
+	//		return false;
+	//	}
+	//}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <model id/name>", syntaxMessageColour);
+		message("Command: /" + String(cmdName) + " <name or id>", syntaxMessageColour);
 		return false;
 	}
 
@@ -78,10 +81,10 @@ function spawnVehicleCommand(cmdName, params) {
 		}
 	}
 
-	if(game.game == GAME_GTA_III) {
+	if(gta.game == GAME_GTA_III) {
 		// Make sure boats only go in water!
 		if(modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_GHOST || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_SPEEDER) {
-			if(findGroundZForCoord(position.x, position.y) != 20) {
+			if(gta.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat!", errorMessageColour);
 				return false;
 			}
@@ -108,37 +111,45 @@ function spawnVehicleCommand(cmdName, params) {
 		}
 
 		// Make sure it isn't near the spawn point
-		if(getDistance(position, new Vec3(1449.19, -197.21, 55.62)) < 75) {
-			message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
-			return false;
+		if(position.distance(new Vec3(1449.19, -197.21, 55.62)) < 75) {
+			if(!localClient.administrator) {
+				message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
+				return false;
+			}
 		}
 
 		// Make sure there aren't too many other vehicles nearby
-		if(getVehiclesInRange(position, 50.0).length >= 15 && !client.administrator) {
-			message("There are too many vehicles in the area!", errorMessageColour);
-			return false;
+		if(getVehiclesInRange(position, 50.0).length >= 15) {
+			if(!localClient.administrator) {
+				message("There are too many vehicles in the area!", errorMessageColour);
+				return false;
+			}
 		}
-	} else if(game.game == GAME_GTA_VC) {
+	} else if(gta.game == GAME_GTA_VC) {
 		// Make sure boats only go in water!
 		if(modelId == MODELVEHICLE_BOAT_COASTG || modelId == MODELVEHICLE_BOAT_DINGHY || modelId == MODELVEHICLE_BOAT_JETMAX || modelId == MODELVEHICLE_BOAT_MARQUIS || modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_RIO || modelId == MODELVEHICLE_BOAT_SKIMMER || modelId == MODELVEHICLE_BOAT_SQUALO || modelId == MODELVEHICLE_BOAT_TROPIC) {
-			if(findGroundZForCoord(position.x, position.y) != 20) {
+			if(gta.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat or skimmer!", errorMessageColour);
 				return false;
 			}
 		}
 
 		// Make sure it isn't near the spawn point
-		if(getDistance(position, new Vec3(-379.16, -535.27, 17.28)) < 75) {
-			message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
-			return false;
+		if(position.distance(new Vec3(-379.16, -535.27, 17.28)) < 75) {
+			if(!localClient.administrator) {
+				message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
+				return false;
+			}
 		}
 
 		// Make sure there aren't too many other vehicles nearby
 		if(getVehiclesInRange(position, 50.0).length >= 10) {
-			message("There are too many vehicles in the area!", errorMessageColour);
-			return false;
+			if(!localClient.administrator) {
+				message("There are too many vehicles in the area!", errorMessageColour);
+				return false;
+			}
 		}
-	} else if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	} else if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		// Make sure it isn't a train
 		if(modelId == MODEL_SUBWAY_HI || modelId == MODEL_SUBWAY_LO || modelId == MODEL_CABLECAR) {
 			message("Use /train to spawn a train!", errorMessageColour);
@@ -147,13 +158,15 @@ function spawnVehicleCommand(cmdName, params) {
 
 		// Make sure there aren't too many other vehicles nearby
 		if(getVehiclesInRange(position, 50.0).length >= 25) {
-			message("There are too many vehicles in the area!", errorMessageColour);
-			return false;
+			if(!localClient.administrator) {
+				message("There are too many vehicles in the area!", errorMessageColour);
+				return false;
+			}
 		}
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.add", modelId, position.x, position.y, position.z, heading);
+		triggerNetworkEvent("sb.v.add", modelId, position, heading);
 	} else {
 		let thisVeh = createVehicle(modelId, position);
 		if(!thisVeh) {
@@ -161,11 +174,11 @@ function spawnVehicleCommand(cmdName, params) {
 			return false;
 		}
 		thisVeh.heading = heading;
-		modelId = thisVeh.modelIndex;
+		//modelId = thisVeh.modelIndex;
 	}
 	
 	let modelName = getVehicleNameFromModelId(modelId);
-	let outputText = "spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + modelName;
+	let outputText = "spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + String(modelName) + " (using /" + String(cmdName) + ")";
 	outputSandboxMessage(outputText);
 	
 	canSpawnVehicle = false;
@@ -195,7 +208,7 @@ addCommandHandler("veh_fix", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -208,9 +221,43 @@ addCommandHandler("veh_fix", function(cmdName, params) {
 	}
 
 	if(vehicles.length > 1) {
-		outputText = "repaired " + String(vehicles.length) + " vehicles";
+		outputText = "repaired " + String(vehicles.length) + " vehicles (using /veh_fix)";
 	} else {
-		outputText = "repaired " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "repaired " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_fix)";
+	}
+	
+	outputSandboxMessage(outputText);
+	return true;
+});
+
+addCommandHandler("veh_explode", function(cmdName, params) {
+	if(isParamsInvalid(params)) {
+		message("/veh_explode <vehicle>", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let vehicles = getVehiclesFromParams(splitParams[0]);
+	
+	let outputText = "";
+
+	if(vehicles.length == 0) {
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
+		return false;
+	}
+
+	if(isConnected && gta.game < GAME_GTA_IV) {
+		triggerNetworkEvent("sb.v.explode", vehicles);
+	} else {
+		vehicles.forEach(function(vehicle) {
+			vehicle.blow();
+		});
+	}
+
+	if(vehicles.length > 1) {
+		outputText = "exploded " + String(vehicles.length) + " vehicles (using /veh_explode)";
+	} else {
+		outputText = "exploded " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_explode)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -231,7 +278,7 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -239,7 +286,7 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "deleted " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "deleted " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "deleted " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_delete)";
 	}
 	
 	outputSandboxMessage(outputText);	
@@ -258,11 +305,6 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_siren", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	//	return false;
-	//}
-
 	if(isParamsInvalid(params)) {
 		message("Syntax: /veh_siren <vehicle> <0/1 siren state>", syntaxMessageColour);
 		return false;
@@ -275,7 +317,7 @@ addCommandHandler("veh_siren", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 	
@@ -290,7 +332,7 @@ addCommandHandler("veh_siren", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's sirens " + String((!!sirenState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s siren " + String((!!sirenState) ? "on" : "off");
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s siren " + String((!!sirenState) ? "on" : "off") + " (using /veh_siren)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -300,10 +342,6 @@ addCommandHandler("veh_siren", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_alarm", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Syntax: /veh_alarm <vehicle> <0/1 alarm state>", syntaxMessageColour);
 		return false;
@@ -316,7 +354,7 @@ addCommandHandler("veh_alarm", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -331,7 +369,7 @@ addCommandHandler("veh_alarm", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's alarms " + String((!!alarmState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s alarm " + String((!!alarmState) ? "on" : "off");
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s alarm " + String((!!alarmState) ? "on" : "off") + " (using /veh_alarm)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -341,10 +379,6 @@ addCommandHandler("veh_alarm", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_upgrade", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Syntax: /veh_upgrade <vehicle> <upgrade id/name>", syntaxMessageColour);
 		return false;
@@ -357,7 +391,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -377,7 +411,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_upgrade)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -387,10 +421,6 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_downgrade", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <upgrade id/name>", syntaxMessageColour);
 		return false;
@@ -403,7 +433,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -423,7 +453,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_downgrade)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -433,10 +463,6 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_paintjob", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <paintjob id>", syntaxMessageColour);
 		return false;
@@ -449,7 +475,7 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -464,7 +490,7 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's paintjobs to ID " + String(paintJobId);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s paintjob to ID " + String(paintJobId);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s paintjob to ID " + String(paintJobId) + " (using /veh_paintjob)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -474,10 +500,6 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_heading", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <heading>", syntaxMessageColour);
 		return false;
@@ -490,7 +512,7 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -505,7 +527,7 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's heading to " + String(heading);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s heading to " + String(heading);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s heading to " + String(heading) + " (using /veh_heading)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -515,10 +537,6 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_pos", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <x> <y> <z>", syntaxMessageColour);
 		return false;
@@ -533,7 +551,7 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -548,7 +566,7 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ) + " (using /veh_pos)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -558,11 +576,6 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_horn", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <0/1 horn state>", syntaxMessageColour);
 		return false;
@@ -575,7 +588,7 @@ addCommandHandler("veh_horn", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -590,7 +603,7 @@ addCommandHandler("veh_horn", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's horns " + String((!!hornState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s horn " + String((!!hornState) ? "on" : "off");
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s horn " + String((!!hornState) ? "on" : "off") + " (using /veh_horn)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -599,40 +612,30 @@ addCommandHandler("veh_horn", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("veh_locked", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-	//	return false;
-	//}
-
-	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <vehicle> <0/1 lock state>", syntaxMessageColour);
-		return false;
-	}
-
+addCommandHandler("veh_lock", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let lockState = Number(splitParams[1]) || 0;
+	let lockType = Number(splitParams[1]) || 0;
 	
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.locked", vehicles, !!lockState);
+		triggerNetworkEvent("sb.v.locked", vehicles, lockType);
 	} else {
 		vehicles.forEach(function(vehicle) {
-			vehicle.locked = !!lockState;
+			vehicle.carLock = lockType;
 		});
 	}
 
 	if(vehicles.length > 1) {
-		outputText = String((!!lockState) ? "locked" : "unlocked") + " " + String(vehicles.length) + " vehicle's doors";
+		outputText = "set " + String(vehicles.length) + " vehicle's door locks to " + String(lockType);
 	} else {
-		outputText = String((!!lockState) ? "locked" : "unlocked") + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s doors";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s door locks to " + String(lockType) + " (using /veh_lock)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -642,11 +645,6 @@ addCommandHandler("veh_locked", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_engine", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <vehicle> <0/1 engine state>", syntaxMessageColour);
-		return false;
-	}
-
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let engineState = Number(splitParams[1]) || 0;
@@ -654,7 +652,7 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -669,7 +667,7 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's engines " + String((!!engineState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s engine " + String((!!engineState) ? "on" : "off");
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s engine " + String((!!engineState) ? "on" : "off") + " (using /veh_engine)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -679,11 +677,6 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_light", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <light id> <light state>", syntaxMessageColour);
 		return false;
@@ -697,7 +690,7 @@ addCommandHandler("veh_light", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -712,7 +705,7 @@ addCommandHandler("veh_light", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's " + vehicleLightNames[lightId] + " lights " + String((!!lightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleLightNames[lightId] + " light " + String((!!lightState) ? "on" : "off");
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleLightNames[lightId] + " light " + String((!!lightState) ? "on" : "off") + " (using /veh_light)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -722,11 +715,6 @@ addCommandHandler("veh_light", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_panel", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <panel id> <state>", syntaxMessageColour);
 		return false;
@@ -740,7 +728,7 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -755,7 +743,7 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's " + vehiclePanelNames[panelId] + " panel states to " + String(panelState);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehiclePanelNames[panelId] + " panel state to " + String(panelState);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehiclePanelNames[panelId] + " panel state to " + String(panelState) + " (using /veh_panel)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -765,11 +753,6 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_door", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <door id> <state>", syntaxMessageColour);
 		return false;
@@ -783,7 +766,7 @@ addCommandHandler("veh_door", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 	
@@ -796,9 +779,9 @@ addCommandHandler("veh_door", function(cmdName, params) {
 	}	
 
 	if(vehicles.length > 1) {
-		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleDoorNames[doorId] + " doors";
+		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleDoorNames[doorId] + " door";
 	} else {
-		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleDoorNames[doorId] + " doors";
+		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleDoorNames[doorId] + " door (using /veh_door)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -808,11 +791,6 @@ addCommandHandler("veh_door", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_wheel", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <wheel id> <0/1/2 state>", syntaxMessageColour);
 		return false;
@@ -826,7 +804,7 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -841,7 +819,7 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleWheelNames[wheelId] + " wheels to " + vehicleWheelStateNames[wheelState].toLowerCase();
 	} else {
-		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleWheelNames[wheelId] + " wheel to " + vehicleWheelStateNames[wheelState].toLowerCase();
+		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleWheelNames[wheelId] + " wheel to " + vehicleWheelStateNames[wheelState].toLowerCase() + " (using /veh_wheel)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -851,11 +829,6 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_wheels", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <0/1/2 state>", syntaxMessageColour);
 		return false;
@@ -868,7 +841,7 @@ addCommandHandler("veh_wheels", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -885,7 +858,7 @@ addCommandHandler("veh_wheels", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + String(vehicles.length) + " vehicle's wheels";
 	} else {
-		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s wheels"
+		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s wheels (using /veh_wheels)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -912,7 +885,7 @@ addCommandHandler("veh_doors", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -929,7 +902,7 @@ addCommandHandler("veh_doors", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's doors";
 	} else {
-		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s doors";
+		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s doors (using /veh_doors)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -956,7 +929,7 @@ addCommandHandler("veh_god", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -972,7 +945,7 @@ addCommandHandler("veh_god", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "made " + String(vehicles.length) + " vehicle's " + String((!!godMode) ? "invincible" : "not invincible");
 	} else {
-		outputText = "made " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " " + String((!!godMode) ? "invincible" : "not invincible");
+		outputText = "made " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " " + String((!!godMode) ? "invincible" : "not invincible") + " (using /veh_god)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -998,7 +971,7 @@ addCommandHandler("veh_syncer", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1007,7 +980,7 @@ addCommandHandler("veh_syncer", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's syncer to " + String(getClientFromName(clientName).name);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " syncer to " + String(getClientFromName(clientName).name);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " syncer to " + String(getClientFromName(clientName).name) + " (using /veh_syncer)";
 	}	
 	
 	outputSandboxMessage(outputText);
@@ -1029,7 +1002,7 @@ addCommandHandler("veh_lights", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1044,7 +1017,7 @@ addCommandHandler("veh_lights", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's lights " + String((!!lightState) ? "on" : "off" );
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s lights " + String((!!lightState) ? "on" : "off" );
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s lights " + String((!!lightState) ? "on" : "off") + " (using /veh_lights)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1066,7 +1039,7 @@ addCommandHandler("veh_taxilight", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1081,7 +1054,7 @@ addCommandHandler("veh_taxilight", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's taxi lights " + String((!!taxiLightState) ? "on" : "off" );
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s taxi light " + String((!!taxiLightState)? "on" : "off" );
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s taxi light " + String((!!taxiLightState)? "on" : "off" ) + " (using /veh_taxilight)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1103,7 +1076,7 @@ addCommandHandler("veh_hazardlights", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 	
@@ -1118,7 +1091,7 @@ addCommandHandler("veh_hazardlights", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's hazard lights " + String((!!hazardLightState) ? "on" : "off" );
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s hazard light " + String((!!hazardLightState)? "on" : "off" );
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s hazard light " + String((!!hazardLightState)? "on" : "off") + " (using /veh_hazardlight)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1140,7 +1113,7 @@ addCommandHandler("veh_dirtlevel", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1155,7 +1128,7 @@ addCommandHandler("veh_dirtlevel", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's dirt levels to " + String(dirtLevel);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s dirt level to " + String(dirtLevel);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s dirt level to " + String(dirtLevel) + " (using /veh_dirtlevel)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1182,7 +1155,7 @@ addCommandHandler("veh_radio", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1195,9 +1168,9 @@ addCommandHandler("veh_radio", function(cmdName, params) {
 	}
 
 	if(vehicles.length > 1) {
-		outputText = "set " + String(vehicles.length) + " vehicle's radio stations to " + vehicleRadioStationNames[game.game][radioStation];
+		outputText = "set " + String(vehicles.length) + " vehicle's radio stations to " + vehicleRadioStationNames[gta.game][radioStation];
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[game.game][radioStation];
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[gta.game][radioStation] + " (using /veh_radio)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1224,7 +1197,7 @@ addCommandHandler("veh_mission", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1239,7 +1212,7 @@ addCommandHandler("veh_mission", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's missions to " + String(missionNames[gta.game][missionId]);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[gta.game][missionId]);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[gta.game][missionId]) + " (using /veh_mission)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1269,7 +1242,7 @@ addCommandHandler("veh_rgb", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1284,7 +1257,7 @@ addCommandHandler("veh_rgb", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha) +  + " (using /veh_rgb)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1308,7 +1281,7 @@ addCommandHandler("veh_colour1", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1323,7 +1296,7 @@ addCommandHandler("veh_colour1", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's primary colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s primary colour to " + String(colourId);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s primary colour to " + String(colourId) + " (using /veh_colour1)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1345,7 +1318,7 @@ addCommandHandler("veh_colour2", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1360,7 +1333,7 @@ addCommandHandler("veh_colour2", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's secondary colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s secondary colour to " + String(colourId);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s secondary colour to " + String(colourId) + " (using /veh_colour2)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1387,7 +1360,7 @@ addCommandHandler("veh_colour3", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1402,7 +1375,7 @@ addCommandHandler("veh_colour3", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's tertiary (third) colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s tertiary (third) colour to " + String(colourId);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s tertiary (third) colour to " + String(colourId) + " (using /veh_colour3)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1429,7 +1402,7 @@ addCommandHandler("veh_colour4", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1444,7 +1417,7 @@ addCommandHandler("veh_colour4", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's quaternary (fourth) colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s quaternary (fourth) colour to " + String(colourId);
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s quaternary (fourth) colour to " + String(colourId) + " (using /veh_colour4)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1471,7 +1444,7 @@ addCommandHandler("veh_collisions", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1486,7 +1459,7 @@ addCommandHandler("veh_collisions", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's collisions " + String((collisionState) ? "on" : "off" );
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s collisions " + String((collisionState) ? "on" : "off" );
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s collisions " + String((collisionState) ? "on" : "off") + " (using /veh_collisions)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1513,7 +1486,7 @@ addCommandHandler("veh_cruisespeed", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1528,7 +1501,7 @@ addCommandHandler("veh_cruisespeed", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's cruise speed to " + String(cruiseSpeed) + " mph";
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " cruise speed to  " + String(cruiseSpeed) + " mph";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " cruise speed to  " + String(cruiseSpeed) + " mph (using /veh_cruisespeed)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1555,7 +1528,7 @@ addCommandHandler("veh_drivingstyle", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1570,7 +1543,7 @@ addCommandHandler("veh_drivingstyle", function(cmdName, params) {
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's driving styles to " + String(drivingStyle);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s driving style to " + String(drivingStyle);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s driving style to " + String(drivingStyle) + " (using /veh_drivingstyle)";
 	}
 	
 	outputSandboxMessage(outputText);
@@ -1597,7 +1570,7 @@ addCommandHandler("veh_livery", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1639,7 +1612,7 @@ addCommandHandler("veh_handling", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1664,11 +1637,6 @@ addCommandHandler("veh_handling", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_drivetopos", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <x> <y> <z>", syntaxMessageColour);
 		return false;
@@ -1683,7 +1651,7 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1691,7 +1659,7 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 		triggerNetworkEvent("sb.v.driveto", vehicles, x, y, z);
 	} else {
 		vehicles.forEach(function(vehicle) {
-			vehicle.driveTo(x, y, z);
+			vehicle.driveTo(x, y, z, 20.0);
 		});
 	}
 
@@ -1708,11 +1676,6 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_driveto", function(cmdName, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <vehicle> <location name>", syntaxMessageColour);
 		return false;
@@ -1721,15 +1684,14 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let locationName = splitParams.slice(1, splitParams.length).join(" ");
-	console.log(locationName);
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 	
-	console.log(gameLocations);
 	let selectedLocation = false;
 	for(let j in gameLocations[thisGame]) {
 		if(gameLocations[thisGame][j][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
@@ -1746,7 +1708,7 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 		triggerNetworkEvent("sb.v.driveto", vehicles, selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
 	} else {
 		vehicles.forEach(function(vehicle) {
-			vehicle.driveTo(selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
+			vehicle.driveTo(selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2], 20.0);
 		});
 	}
 
@@ -1780,7 +1742,7 @@ addCommandHandler("veh_scale", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -1821,7 +1783,7 @@ addCommandHandler("veh_wander", function(cmdName, params) {
 	let outputText = "";
 
 	if(vehicles.length == 0) {
-		message("No vehicles found!", errorMessageColour);
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
 
@@ -2245,7 +2207,7 @@ addNetworkHandler("sb.v.taxilight", function(vehicles, taxiLightState) {
 
 addNetworkHandler("sb.v.wheels", function(vehicles, wheelState) {
 	vehicles.forEach(function(vehicle) {
-		for(let i = 0; i <= 4 ; i++) {
+		for(let i = 0; i <= 8 ; i++) {
 			vehicle.setWheelStatus(i, wheelState);
 		}
 	});
@@ -2366,7 +2328,7 @@ addNetworkHandler("sb.v.wander", function(vehicles) {
 
 addNetworkHandler("sb.v.driveto", function(vehicles, x, y, z) {
 	vehicles.forEach(function(vehicle) {
-		vehicle.driveTo(x, y, z);
+		vehicle.driveTo(x, y, z, 20.0);
 	});
 });
 
@@ -2382,8 +2344,9 @@ addNetworkHandler("sb.v.god", function(vehicles, godMode) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.v.upgrade.add", function(vehicles, upgradeId) {
+	console.log(vehicles);
 	vehicles.forEach(function(vehicle) {
-		vehicle.addUpgrade(paintJobId);
+		vehicle.addUpgrade(upgradeId);
 	});
 });
 
@@ -2391,7 +2354,7 @@ addNetworkHandler("sb.v.upgrade.add", function(vehicles, upgradeId) {
 
 addNetworkHandler("sb.v.upgrade.del", function(vehicles, upgradeId) {
 	vehicles.forEach(function(vehicle) {
-		vehicle.removeUpgrade(paintJobId);
+		vehicle.removeUpgrade(upgradeId);
 	});
 });
 

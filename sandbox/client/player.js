@@ -37,15 +37,19 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 
 addCommandHandler("skin", function(cmdName, params) {
 	if(!params || params == "") {
-		message("Syntax: /skin <skin id>", syntaxMessageColour);
+		message("Syntax: /skin <name or id>", syntaxMessageColour);
 		return false;
 	}
 
 	let splitParams = params.split(" ");
-	let skinId = getSkinIdFromParams(splitParams[0], gta.game);
+	let skinId = getSkinIdFromParams(params, gta.game);
 
 	if(!skinId) {
-		skinId = 0;
+		if(gta.game >= GAME_GTA_IV) {
+			skinId = getSkinIdFromParams("Generic Man", gta.game);
+		} else {
+			skinId = 0;
+		}
 	}
 
 	if(gta.game == GAME_GTA_III) {
@@ -60,38 +64,90 @@ addCommandHandler("skin", function(cmdName, params) {
 		}
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.p.skin", localPlayer.position, localPlayer.heading, skinId);
+	if(isConnected) {
+		triggerNetworkEvent("sb.p.skin", localPlayer.position, localPlayer.heading, skinId, localPlayer.invincible);
 	} else {
-		if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-			let position = localPlayer.position;
-			let heading = localPlayer.heading;
-			destroyElement(localPlayer);
-
-			console.log(skinId);
-			console.log(position.x);
-			console.log(heading);
-
-			let player = createPlayer(skinId);
-			console.log(player);
-			player.position = position;
-			player.heading = heading;
-			setLocalPlayer(player);
-
-			//destroyElement(oldPlayer);
-			
-			//spawnPlayer(position, heading, skinId);
-
-			// spawnPlayer position and heading don't seem to work. Forcing it manually for now.
-			//localPlayer.position = position;
-			//localPlayer.heading = heading;
-			//localPlayer.modelIndex = skinId;
-		} else {
-			localPlayer.skin = skinId;
-		}
+		localPlayer.skin = skinId;
 	}
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId));
+	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
+	outputSandboxMessage(outputText);	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("clothes", function(cmdName, params) {
+	if(!params || params == "") {
+		message("Syntax: /clothes <body part> <model> <texture>", syntaxMessageColour);
+		message("Bodyparts are: head, upper, lower", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let bodyPartName = splitParams[0] || "head";
+	let model = Number(splitParams[1]) || 0;
+	let texture = Number(splitParams[2]) || 0;
+	let bodyPartId = 0;
+	let bodyPartNames = ["head", "upper body", "lower body"];
+
+	switch(bodyPartName.toLowerCase()) {
+		case "head":
+			bodyPartId = 0;
+			break;
+
+		case "upper":
+			bodyPartId = 1;
+			break;
+
+		case "lower":
+			bodyPartId = 2;
+			break;
+			
+		default:
+			message("The body part must be: head, upper, or lower", errorMessageColour);
+			return false;
+	}
+
+	if(model < 0 || model > 2) {
+		message("The model must be between 0 and 2!", errorMessageColour);
+		return false;
+	}
+
+	if(texture < 0 || texture > 2) {
+		message("The texture must be between 0 and 2!", errorMessageColour);
+		return false;
+	}	
+
+	if(isConnected) {
+		localPlayer.changeBodyPart(bodyPartId, model, texture);
+	} else {
+		localPlayer.skin = skinId;
+	}
+
+	let outputText = `changed ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} his ${bodyPartNames[bodyPartId]} to model ${model} and texture ${texture} (using /clothes)`;
+	outputSandboxMessage(outputText);	
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("lookatveh", function(cmdName, params) {
+	if(!params || params == "") {
+		message("Syntax: /lookatveh <vehicle>", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let vehicles = getVehiclesFromParams(params);
+
+	if(isConnected) {
+		triggerNetworkEvent("sb.p.lookat", vehicles[0].position);
+	} else {t
+		localPlayer.lookAt(vehicles[0].position);
+	}
+
+	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
 	outputSandboxMessage(outputText);	
 	return true;
 });
@@ -141,13 +197,14 @@ addCommandHandler("bikegod", function(cmdName, params) {
 
 	localPlayer.canBeKnockedOffBike = !!bikeGod;
 
-	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes";
+	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes (using /bikegod)";
 	outputSandboxMessage(outputText);
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
+/*
 addCommandHandler("mission", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
@@ -174,6 +231,7 @@ addCommandHandler("mission", function(cmdName, params) {
 	outputSandboxMessage(outputText);
 	return true;
 });
+*/
 
 // ----------------------------------------------------------------------------
 
@@ -221,16 +279,16 @@ addCommandHandler("endmission", function(cmdName, params) {
 
 addCommandHandler("gun", function(cmdName, params) {
 	if(!params || params == "") {
-		message("Syntax: /gun <weapon> <ammo>", syntaxMessageColour);
+		message("Syntax: /gun <name or id> <ammo>", syntaxMessageColour);
 		return false;
 	}
 
 	let splitParams = params.split(" ");
-	let wep = Number(splitParams[0]) || 2;
+	let wep = getWeaponIdFromParams(splitParams[0]) || 1;
 	let ammo = Number(splitParams[1]) || 100;
 
 	if(wep > weaponNames[game.game].length-1 || wep < 0) {
-		message("Invalid weapon ID! Use /guns for weapon ID's" , errorMessageColour);
+		message("❗ Invalid weapon! Use /guns for weapon ID or use a name instead" , errorMessageColour);
 		return false;
 	}
 
@@ -240,7 +298,7 @@ addCommandHandler("gun", function(cmdName, params) {
 
 	localPlayer.giveWeapon(wep, ammo, true);
 
-	let outputText = "has been given a " + getWeaponName(wep, gta.game) + " with " + ammo + " ammo";
+	let outputText = "has been given a " + getWeaponName(wep, gta.game) + " with " + ammo + " ammo (using /gun)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -259,7 +317,7 @@ addCommandHandler("stat", function(cmdName, params) {
 
 	gta.setGameStat(statId, amount);
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " stat to " + String(amount);
+	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " stat to " + String(amount) + " (using /stat)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -281,7 +339,7 @@ addCommandHandler("fatness", function(cmdName, params) {
 		localPlayer.tommyFatness = amount;
 	}
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " fatness to " + String(localPlayer.tommyFatness);
+	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " fatness to " + String(localPlayer.tommyFatness) + " (using /tommyfatness)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -291,7 +349,7 @@ addCommandHandler("fatness", function(cmdName, params) {
 addCommandHandler("guns", function(cmdName, params) {
 	if(gta.game == GAME_GTA_III) {
 		message("1: Bat, 2: Pistol, 3: Uzi, 4: Shotgun, 5: AK-47, 6: M16", gameAnnounceColour);
-		message("7: Sniper Rifle8: Rocket Launcher, 9: Flame Thrower", gameAnnounceColour);
+		message("7: Sniper Rifle, 8: Rocket Launcher, 9: Flame Thrower", gameAnnounceColour);
 		message("10: Molotov Cocktail, 11: Grenade", gameAnnounceColour);
 	} else {
 		message("This command is only available on GTA III. Others games coming soon.", gameAnnounceColour);
@@ -315,10 +373,12 @@ addCommandHandler("clear", function(cmdName, params) {
 addCommandHandler("god", function(cmdName, params) {
 	godMode = !godMode;
 	localPlayer.invincible = godMode;
-	localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
+	if(gta.game < GAME_GTA_IV) {
+		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
+	}
 	triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
 
-	let outputText = "is " + String((godMode) ? "now" : "no longer") + " invincible";
+	let outputText = "is " + String((godMode) ? "now" : "no longer") + " invincible (using /god)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -350,7 +410,7 @@ addCommandHandler("collisions", function(cmdName, params) {
 
 	localPlayer.collisionsEnabled = !!collisionState;
 
-	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " player ped's collisions.";
+	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " player ped's collisions (using /collisions)";
 	outputSandboxMessage(outputText);
 });
 
@@ -366,8 +426,9 @@ addCommandHandler("health", function(cmdName, params) {
 			health = 100;
 		}
 
-		triggerNetworkEvent("sb.p.hp", localPlayer.id, health);
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " health to " + String(health);
+		localPlayer.health = health;
+		
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " health to " + String(health) + " (using /health)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -388,7 +449,7 @@ addCommandHandler("money", function(cmdName, params) {
 		}
 
 		localPlayer.money = cash;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " cash (money) to " + String(money);
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " cash (money) to " + String(cash) + " (using /money)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -398,10 +459,10 @@ addCommandHandler("money", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("interior", function(cmdName, params) {
-	if(gta.game == GAME_GTA_III || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_III || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	return false;
+	//}
 
 	if(!params || params == "") {
 		message("Your interior is " + String(cameraInterior), gameAnnounceColour);
@@ -409,7 +470,7 @@ addCommandHandler("interior", function(cmdName, params) {
 		let interior = Number(params) || 0;
 		localPlayer.interior = interior;
 		cameraInterior = interior;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " interior to " + String(interior);
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " interior to " + String(interior) + " (using /interior)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -433,8 +494,13 @@ addCommandHandler("armour", function(cmdName, params) {
 			armour = 100;
 		}
 
-		triggerNetworkEvent("sb.p.ar", localPlayer.id, armour);
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " armour to " + String(armour);
+		//if(isConnected) {
+		//	triggerNetworkEvent("sb.p.ar", localPlayer.id, armour);
+		//}
+
+		localPlayer.armour = armour;
+
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " armour to " + String(armour) + " (using /armour)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -548,7 +614,7 @@ addCommandHandler("stars", function(cmdName, params) {
 				}
 			}
 
-			let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " wanted level to " + String(params);
+			let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " wanted level to " + String(params) + " (using /stars)";
 			outputSandboxMessage(outputText);
 		}
 	}
@@ -577,7 +643,7 @@ addCommandHandler("limb", function(cmdName, params) {
 
 		triggerNetworkEvent("sb.p.limb", bodyPartId);
 
-		let outputText = "removed " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(pedComponents[gta.game][bodyPartId]);
+		let outputText = "removed " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(pedComponents[gta.game][bodyPartId]) + " (using /limb)";
 		outputSandboxMessage(outputText);
 	}
 	return true;
@@ -587,10 +653,10 @@ addCommandHandler("limb", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("walkstyle", function(cmdName, params) {
-	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	return false;
+	//}
 
 	if(!params || params == "") {
 		message("Your walk style is " + String(localPlayer.walkStyle), gameAnnounceColour);
@@ -602,7 +668,7 @@ addCommandHandler("walkstyle", function(cmdName, params) {
 			triggerNetworkEvent("sb.p.walkstyle", walkStyle);
 		}
 
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " walk style to " + String(walkStyle);
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " walk style to " + String(walkStyle) + " (using /walkstyle)";
 		outputSandboxMessage(outputText);
 	}
 	return true;
@@ -621,7 +687,7 @@ addCommandHandler("stamina", function(cmdName, params) {
 	} else {
 		let stamina = Number(params) || 0;
 		localPlayer.stamina = stamina;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " stamina to " + String(stamina);
+		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " stamina to " + String(stamina) + " (using /stamina)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -659,9 +725,9 @@ addCommandHandler("helmet", function(cmdName, params) {
 	let outputText = "";
 
 	if(!!helmetState) {
-		outputText = "put on " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet";
+		outputText = "put on " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet (using /helmet)";
 	} else {t
-		outputText = "took off " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet";
+		outputText = "took off " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet (using /helmet)";
 	}
 	outputSandboxMessage(outputText);	
 	return true;
@@ -670,28 +736,40 @@ addCommandHandler("helmet", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("fr", function(cmdName, params) {
-	localPlayer.position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, Number(params) || 5);
+	let distance = Number(params) || 5;
+	localPlayer.position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, distance);
+	let outputText = "teleported forward " + String(distance) + " meters (using /fr)";
+	outputSandboxMessage(outputText);
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ba", function(cmdName, params) {
-	localPlayer.position = getPosBehindPos(localPlayer.position, localPlayer.heading, Number(params) || 5);
+	let distance = Number(params) || 5;
+	localPlayer.position = getPosBehindPos(localPlayer.position, localPlayer.heading, distance);
+	let outputText = "teleported backward " + String(distance) + " meters (using /ba)";
+	outputSandboxMessage(outputText);	
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("up", function(cmdName, params) {
-	localPlayer.position = getPosAbovePos(localPlayer.position, localPlayer.heading, Number(params) || 2);
+	let distance = Number(params) || 5;
+	localPlayer.position = getPosAbovePos(localPlayer.position, localPlayer.heading, distance);
+	let outputText = "teleported up " + String(distance) + " meters (using /up)";
+	outputSandboxMessage(outputText);	
 	return true;
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("dn", function(cmdName, params) {
-	localPlayer.position = getPosBelowPos(localPlayer.position, localPlayer.heading, Number(params) || 2);
+	let distance = Number(params) || 5;
+	localPlayer.position = getPosBelowPos(localPlayer.position, localPlayer.heading, distance);
+	let outputText = "teleported down " + String(distance) + " meters (using /dn)";
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -744,6 +822,7 @@ addCommandHandler("gotoloc", function(cmdName, params){
 			} else {
 				localPlayer.position = gameLocations[gta.game][i][1];
 			}
+			outputSandboxMessage("teleported to " + String(gameLocations[gta.game][i][0]) + " (Using /gotoloc)");
 			break;
 		}
 	}
@@ -771,18 +850,38 @@ addCommandHandler("jail", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.goto", function(x, y, z, interior, dimension) {
+addNetworkHandler("sb.p.goto", function(position) {
 	if(localPlayer.vehicle != null) {
 		localPlayer.vehicle.velocity = new Vec3(0.0, 0.0, 0.0);
 		localPlayer.vehicle.turnVelocity = new Vec3(0.0, 0.0, 0.0);
-		localPlayer.vehicle.position = new Vec3(x, y, z);
+		localPlayer.vehicle.position = position;
 		//localPlayer.vehicle.interior = interior;
 		//localPlayer.vehicle.dimension = dimension;
 		//cameraInterior = interior;
 	} else {
 		localPlayer.velocity = new Vec3(0.0, 0.0, 0.0);
 		localPlayer.turnVelocity = new Vec3(0.0, 0.0, 0.0);
-		localPlayer.position = new Vec3(x, y, z);
+		localPlayer.position = position;
+		//localPlayer.interior = interior;
+		//localPlayer.dimension = dimension;
+		//cameraInterior = interior;
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.gotoiv", function(clientIndex) {
+	if(localPlayer.vehicle != null) {
+		localPlayer.vehicle.velocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.vehicle.turnVelocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.vehicle.position = getClients()[clientIndex].player.position;
+		//localPlayer.vehicle.interior = interior;
+		//localPlayer.vehicle.dimension = dimension;
+		//cameraInterior = interior;
+	} else {
+		localPlayer.velocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.turnVelocity = new Vec3(0.0, 0.0, 0.0);
+		localPlayer.position = getClients()[clientIndex].player.position;
 		//localPlayer.interior = interior;
 		//localPlayer.dimension = dimension;
 		//cameraInterior = interior;
@@ -811,8 +910,13 @@ addCommandHandler("gotopos", function(command, params) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.skin", function(playerId, skinId) {
-	getElementFromId(playerId).skin = Number(skinId);
+addNetworkHandler("sb.p.skin", function(playerId, skinId, invincible) {
+	if(gta.game >= GAME_GTA_IV) {
+		
+	} else {
+		getElementFromId(playerId).skin = Number(skinId);
+	}
+	
 });
 
 // ----------------------------------------------------------------------------
@@ -865,8 +969,21 @@ addNetworkHandler("sb.p.helmet", function(playerID, helmetState) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.p.god", function(playerID, godMode) {
-	getElementFromId(playerID).invincible = godMode;
-	getElementFromId(playerID).setProofs(godMode, godMode, godMode, godMode, godMode);
+	if(getElementFromId(playerID) != null) {
+		getElementFromId(playerID).invincible = godMode;
+	}
+	
+	if(gta.game < GAME_GTA_IV) {
+		getElementFromId(playerID).setProofs(godMode, godMode, godMode, godMode, godMode);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.nametag", function(playerID, name, colour) {
+	if(getElementFromId(playerID) != null) {
+		gta.setNameTag(getElementFromId(playerID), name, colour);
+	}
 });
 
 // ----------------------------------------------------------------------------
@@ -892,5 +1009,7 @@ addNetworkHandler("sb.p.delplayer", function(player) {
 addNetworkHandler("sb.p.fatness", function(player, fatness) {
 	gta.tommyFatness = fatness;
 });
+
+
 
 // ----------------------------------------------------------------------------

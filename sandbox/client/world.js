@@ -85,10 +85,10 @@ addCommandHandler("weather", function(command, params) {
 	} else {
 		currentWeather[gta.game] = weatherId;
 		if(!!weatherForce) {
-			forceWeather(weatherId);	
+			gta.forceWeather(weatherId);	
 			message("The weather has been forced to " + getWeatherName(currentWeather[gta.game]), gameAnnounceColour);
 		} else {
-			currentWeather = weatherId;	
+			gta.currentWeather = weatherId;	
 			message("The weather has been set to " + getWeatherName(currentWeather[gta.game]), gameAnnounceColour);			
 		}
 	}	
@@ -100,6 +100,29 @@ addCommandHandler("weather", function(command, params) {
 
 addCommandHandler("timestep", function(command, params) {
 	message("The time step is " + game.timeStep, gameAnnounceColour);
+	return true;	
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("garage", function(command, params) {
+	let outputText = "";
+
+	let garageId = getGarageIdFromParams(params);
+	if(!garageId) {
+		message("That garage doesn't exist!", errorMessageColour);	
+		return false;
+	}
+
+	if(isGarageClosed(garageId)) {
+		triggerNetworkEvent("sb.w.garage", garageId, true);
+		outputText = "opened the " + getGarageNameFromId(garageId, gta.game) + " garage in " + String(getGarageLocationFromId(garageId, gta.game));
+		outputSandboxMessage(outputText);		
+	} else {
+		triggerNetworkEvent("sb.w.garage", garageId, false);
+		outputText = "closed the " + getGarageNameFromId(garageId, gta.game) + " garage in " + String(getGarageLocationFromId(garageId, gta.game));
+		outputSandboxMessage(outputText);
+	}
 	return true;	
 });
 
@@ -222,10 +245,10 @@ addCommandHandler("planes", function(command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("trains", function(command, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + String(command) + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	//	message("The /" + String(command) + " command is not available on this game!", errorMessageColour);
+	//	return false;
+	//}
 	
 	if(isParamsInvalid(params)) {
 		message("Trains are currently turned " + getOnOffText(trainsEnabled[gta.game]), gameAnnounceColour);
@@ -253,10 +276,10 @@ addCommandHandler("trains", function(command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("traffic", function(command, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + String(command) + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	//	message("The /" + String(command) + " command is not available on this game!", errorMessageColour);
+	//	return false;
+	//}
 	
 	if(isParamsInvalid(params)) {
 		message("Traffic is currently turned " + getOnOffText(trafficEnabled[gta.game]), gameAnnounceColour);
@@ -280,14 +303,14 @@ addCommandHandler("traffic", function(command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civilians", function(command, params) {
-	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message("The /" + command + " command is not available on this game!", errorMessageColour);
-		return false;
-	}
+	//if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	//	message("The /" + command + " command is not available on this game!", errorMessageColour);
+	//	return false;
+	//}
 	
 	if(isParamsInvalid(params)) {
 		message("Civilians are currently turned " + getOnOffText(civiliansEnabled[gta.game]), gameAnnounceColour);
-		message("To turn traffic on or off, use /" + command + " <state 1/0>", syntaxMessageColour);
+		message("To turn civilians on or off, use /" + command + " <state 1/0>", syntaxMessageColour);
 		return false;
 	}	
 	
@@ -325,7 +348,7 @@ addCommandHandler("civdensity", function(command, params) {
 		triggerNetworkEvent("sb.w.civiliandensity", civilianDensity);
 	} else {
 		civilianDensity[gta.game] = civilianDensity;
-		gta.civilianDensity = civilianDensity;
+		gta.pedDensity = civilianDensity;
 		message("Civilian density has been set to " + String(civilianDensity), gameAnnounceColour);
 	}
 	return true;	
@@ -387,50 +410,45 @@ addCommandHandler("minutedur", function(command, params) {
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
-	if(isConnected) {
-		triggerNetworkEvent("sb.w.sync");
-	} else {
-		resyncWorld();
-	}
-});
-
-// ----------------------------------------------------------------------------
-
 function resyncWorld() {
+	if(gta.ivGamemode != 30) {
+		return false;
+	}
+
 	game.time.hour = timeLockHour[gta.game];
 	game.time.minute = timeLockMinute[gta.game];
 	game.time.minuteDuration = timeMinuteDuration[gta.game];
 	
-	if(typeof forceWeather != "undefined") {
-		forceWeather(currentWeather[gta.game]);
+	if(typeof gta.forceWeather != "undefined") {
+		gta.forceWeather(currentWeather[gta.game]);
 	}
 	
-	
-	
 	if(gta.game <= GAME_GTA_SA) {	
-		setTrafficEnabled(trafficEnabled[gta.game]);
-		setCiviliansEnabled(civiliansEnabled[gta.game]);
+		//if(!isConnected) {
+			gta.setTrafficEnabled(trafficEnabled[gta.game]);
+			gta.setCiviliansEnabled(civiliansEnabled[gta.game]);
+		//}
 
 		gta.trafficDensity = trafficDensity[gta.game];
-		gta.civilianDensity = civilianDensity[gta.game];
+		gta.pedDensity = civilianDensity[gta.game];
 	}
 	
 	// Trains are not available in GTA VC
-	if(gta.game != GAME_GTA_VC && gta.game != GAME_GTA_IV && gta.game != GAME_GTA_IV_EFLC) {
-		setTrainsEnabled(trainsEnabled[gta.game]);
+	if(gta.game != GAME_GTA_VC) {
+		gta.setTrainsEnabled(trainsEnabled[gta.game]);
 	}
-	
 	
 	// Winter is not available in > GTA SA
 	if(gta.game < GAME_GTA_SA) {
 		if(gta.game == GAME_GTA_III) {
-			for(let i = 0; i <= 25; i++) {
-				gta.setSurfaceTraction(i, gta.getSurfaceTraction(i)/2);
+			if(isSnowing[gta.game]) {
+				for(let i = 0; i <= 25; i++) {
+					gta.setSurfaceTraction(i, gta.getSurfaceTraction(i)/2);
+				}
 			}
 		}
-		forceSnowing(isWinter[gta.game]);
-		snowing = isSnowing[gta.game];					
+		snow.force(isWinter[gta.game]);
+		snow.enabled = isSnowing[gta.game];					
 	}
 	
 	if(gta.game < GAME_GTA_IV) {
@@ -475,7 +493,7 @@ addNetworkHandler("sb.w.winter", function(winter) {
 	
 	if(gta.game < GAME_GTA_SA) {
 		isWinter[gta.game] = winter;
-		forceSnowing(winter);
+		snow.force(winter);
 	}
 });
 
@@ -489,7 +507,7 @@ addNetworkHandler("sb.w.snow", function(snow) {
 	
 	if(gta.game < GAME_GTA_SA) {
 		isSnowing[gta.game] = snow;
-		snowing = snow;
+		snow.enabled(winter);
 	}
 });
 
@@ -504,12 +522,12 @@ addNetworkHandler("sb.w.gamespeed", function(gameSpeed) {
 addNetworkHandler("sb.w.civilians", function(state) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		return false;
-	}	
-	
-	if(gta.game < GAME_GTA_SA) {
-		civiliansEnabled[gta.game] = state;
-		gta.setCiviliansEnabled(state);
 	}
+	
+	//if(gta.game < GAME_GTA_SA) {
+	//	civiliansEnabled[gta.game] = state;
+	//	gta.setCiviliansEnabled(state);
+	//}
 	
 	if(!state) {
 		getPeds().forEach(function(ped) {
@@ -527,10 +545,10 @@ addNetworkHandler("sb.w.traffic", function(state) {
 		return false;
 	}
 	
-	if(gta.game < GAME_GTA_SA) {
-		trafficEnabled[gta.game] = state;
-		gta.setTrafficEnabled(state);
-	}
+	//if(gta.game < GAME_GTA_SA) {
+	//	trafficEnabled[gta.game] = state;
+	//	gta.setTrafficEnabled(state);
+	//}
 	
 	if(!state) {
 		getVehicles().forEach(function(vehicle) {
@@ -543,13 +561,29 @@ addNetworkHandler("sb.w.traffic", function(state) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.w.trains", function(state) {
+	gta.setTrainsEnabled(state);
+});
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("sb.w.minutedur", function(minuteDuration) {
-	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG || gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		return false;
 	}
 	
 	timeMinuteDuration[gta.game] = minuteDuration;
 	gta.time.minuteDuration = minuteDuration
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.w.garage", function(garageId, state) {
+	if(state) {
+		openGarage(garageId);
+	} else {
+		closeGarage(garageId);
+	}
 });
 
 // ----------------------------------------------------------------------------

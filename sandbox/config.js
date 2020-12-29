@@ -11,6 +11,7 @@
 // ----------------------------------------------------------------------------
 
 // TIME INFORMATION:
+
 // timeLockHour and timeLockMinute will force the time to stay in the specified
 // hour and minute, IF time lock is enabled! Otherwise, it will set that hour
 // and minute on server start and time will advance as normal
@@ -24,8 +25,8 @@
 // ----------------------------------------------------------------------------
 
 // Time
-let timeLocked = [null, true, false, false, false, false, false];						// Locks the time to a specific hour/minute
-let timeLockHour = [null, 19, 12, 12, 12, 12, 12];											// If time is locked, hour will be forever locked to this number.
+let timeLocked = [null, false, false, false, false, false, false];						// Locks the time to a specific hour/minute
+let timeLockHour = [null, 19, 12, 12, 12, 12, 12];										// If time is locked, hour will be forever locked to this number.
 let timeLockMinute = [null, 15, 0, 0, 0, 0, 0];											// If time is locked, the minute will be forever locked to this number.
 let timeMinuteDuration = [null, 1000, 1000, 1000, 1000, 1000, 1000];
 
@@ -44,9 +45,9 @@ let ssvBridgeEnabled = [null, true, false, false, true, false, false];
 // ----------------------------------------------------------------------------
 
 // Weather and Snow
-let currentWeather = [null, 0, 0, 10, 10, 0, 0];
-let isSnowing = [null, false, false, false, false, false, false];
-let isWinter = [null, false, false, false, false, false, false];
+let currentWeather = [null, 0, 0, 0, 0, 0, 0];
+let isSnowing = [null, true, true, true, true, true, true];
+let isWinter = [null, true, true, true, true, true, true];
 let windSpeed = [null, 0, 0, 0, 0, 0, 0];
 
 // ----------------------------------------------------------------------------

@@ -7,9 +7,11 @@ let gameName = gameNames[game.game];
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	if(isConnected) {
 		triggerNetworkEvent("sb.clientready");
+	} else {
+		resyncWorld();
 	}
 });
 
@@ -29,8 +31,9 @@ function outputSandboxMessage(messageText) {
 		console.log("[Sandbox] " + String(localClient.name) + " " + messageText);
 		triggerNetworkEvent("sb.msg", messageText);
 	} else {
-		message("You " + messageText, gameAnnounceColour);
 		console.log("[Sandbox] You " + messageText);
+		message("You " + messageText, gameAnnounceColour);
+		
 	}
 }
 

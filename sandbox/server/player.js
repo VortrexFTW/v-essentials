@@ -28,17 +28,24 @@ addCommandHandler("goto", function(cmdName, params, client) {
 		}
 	}
 	
-	if(tempClient.index == client.index) {
+	if(tempClient == client) {
 		messageClient("You can't teleport to yourself!", client, errorMessageColour);
 		return false;
 	}
 	
-	let position = getPosInFrontOfPos(tempClient.player.position, tempClient.player.heading, 2);
-	client.player.interior = tempClient.player.interior;
-	client.player.dimension = tempClient.player.dimension;
+	//client.player.interior = tempClient.player.interior;
+	//client.player.dimension = tempClient.player.dimension;
 	setTimeout(function() {
-		triggerNetworkEvent("sb.p.goto", client, position.x, position.y, position.z, tempClient.player.interior, tempClient.player.dimension);
+		//if(server.game == GAME_GTA_IV) {
+		//	triggerNetworkEvent("sb.p.goto", client, tempClient.player.position);
+		//} else {
+		//	let position = getPosInFrontOfPos(tempClient.player.position, tempClient.player.heading, 2);
+		//	triggerNetworkEvent("sb.p.goto", client, position);
+		//}
+		let position = getPosInFrontOfPos(tempClient.player.position, tempClient.player.heading, 2);
+		triggerNetworkEvent("sb.p.goto", client, position);
 	}, 500);
+	outputSandboxMessage(client, `teleported to ${tempClient.name} (Using /goto)`);
 	return true;
 });
 
@@ -71,8 +78,9 @@ addCommandHandler("get", function(cmdName, params, client) {
 	tempClient.player.interior = client.player.interior;
 	tempClient.player.dimension = client.player.dimension;
 	setTimeout(function() {
-		triggerNetworkEvent("sb.p.goto", tempClient, position.x, position.y, position.z, client.player.interior, client.player.dimension);
+		triggerNetworkEvent("sb.p.goto", tempClient, position, client.player.interior, client.player.dimension);
 	}, 500);
+		
 	return true;
 });
 
@@ -95,29 +103,24 @@ addCommandHandler("gotopos", function(cmdName, params, client) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.skin", function(client, position, heading, skinId) {
+addNetworkHandler("sb.p.skin", function(client, position, heading, skinId, invincible) {
 	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-		spawnPlayer(client, position, heading, skinId, 0, 0);
-		//getElementsByType(ELEMENT_PLAYER).forEach(p => {
-		//	if(getClientFromPlayerElement(p) == null) {
-		//		destroyElement(p);
-		//	}
-		//});
+		console.log("spawning player for " + client.name);
+		spawnPlayer(client, position, heading, skinId);
+		triggerNetworkEvent("sb.p.god", null, client.player.id, invincible);
 	} else if(server.game == GAME_GTA_SA) {
 		let position = client.player.position;
 		let heading = client.player.heading;
 		destroyElement(client.player);
 		spawnPlayer(client, position, heading, skinId, 0, 0);
+		setTimeout(function() {
+			triggerNetworkEvent("sb.p.god", null, client.player.id, invincible);
+			triggerNetworkEvent("sb.p.nametag", null, client.player.id, client.name, client.getData("v.colour"));
+		}, 1000);
+		
 	} else {
-		triggerNetworkEvent("sb.p.skin", null, clientID, skinId);
+		triggerNetworkEvent("sb.p.skin", null, client.player, skinId, invincible);
 	}
-	
-	// Attempt at using a respawn to switch skins (it was supposed to be how to reset voices to proper one for skin)
-	/*
-	let position = client.player.position;
-	let heading = client.player.heading;
-	spawnPlayer(client, position, heading, skinId, 0, 0);
-	*/
 	//message(client.name + " changed their skin to " + skinNames[server.game][skinId], gameAnnounceColours[serverGame]);
 });
 

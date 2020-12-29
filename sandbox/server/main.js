@@ -6,8 +6,8 @@ let serverGame = server.game;
 
 // ----------------------------------------------------------------------------
 
-let gameAnnounceColour = gameAnnounceColours[server.game];
-let gameName = gameNames[server.game];
+let gameAnnounceColour = gameAnnounceColours[serverGame];
+let gameName = gameNames[serverGame];
 
 // ----------------------------------------------------------------------------
 

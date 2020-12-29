@@ -124,13 +124,13 @@ addCommandHandler("ped", function(cmdName, params) {
 	let heading = localPlayer.heading;
 	
 	// Make sure there aren't too many other peds nearby
-	if(getCiviliansInRange(position, 50.0).length >= 25 && !client.administrator) {
+	if(getCiviliansInRange(position, 50.0).length >= 20) {
 		message("There are already enough peds in the area!", errorMessageColour);
 		return false;
 	}	
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.c.add", skinId, position.x, position.y, position.z, heading, true);
+		triggerNetworkEvent("sb.c.add", skinId, position, heading);
 	} else {
 		let tempCiv = gta.createCivilian(skinId);
 
@@ -924,11 +924,6 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_runfwd", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
-	//	message("This feature is not available in San Andreas!", errorMessageColour);
-	//	return false;
-	//}	
-	
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
 		return false;
@@ -968,11 +963,6 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_sprintfwd", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
-	//	message("This feature is not available in San Andreas!", errorMessageColour);
-	//	return false;
-	//}	
-	
 	if(gta.game == GAME_GTA_III) {
 		message("Civilian sprint is not supported in GTA 3!", errorMessageColour);
 		return false;
@@ -1024,11 +1014,6 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_follow", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
-	//	message("This feature is not available in San Andreas!", errorMessageColour);
-	//	return false;
-	//}	
-	
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <player name/id>", syntaxMessageColour);
 		return false;
@@ -1138,15 +1123,15 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		let weaponAmmoOutput = String(getWeaponNameFromId(weaponId, gta.game)) + "'s with " + String(ammo) + " ammo";
+		let weaponAmmoOutput = String(getWeaponName(weaponId, gta.game)) + "'s with " + String(ammo) + " ammo";
 		if(!isAmmoWeapon(weaponId, gta.game)) {
-			weaponAmmoOutput = String(getWeaponNameFromId(weaponId, gta.game)) + "s";
+			weaponAmmoOutput = String(getWeaponName(weaponId, gta.game)) + "s";
 		}
 		outputText = "gave " + String(civilians.length) + " peds " + weaponAmmoOutput;
 	} else {
-		let weaponAmmoOutput = "a " + String(getWeaponNameFromId(weaponId, gta.game)) + " with " + String(ammo) + " ammo";
+		let weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game)) + " with " + String(ammo) + " ammo";
 		if(!isAmmoWeapon(weaponId, gta.game)) {
-			weaponAmmoOutput = "a " + String(getWeaponNameFromId(weaponId, gta.game));
+			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game));
 		}		
 		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput;
 	}
@@ -1756,13 +1741,6 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_aimatme", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " " + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -1800,13 +1778,6 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_aimatciv", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <player>", syntaxMessageColour);
 		return false;
@@ -1850,13 +1821,6 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_aimatveh", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <vehicle>", syntaxMessageColour);
 		return false;
@@ -1900,15 +1864,7 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-/*
 addCommandHandler("ped_aimatplr", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -1935,18 +1891,10 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 	outputSandboxMessage(outputText);
 	return true;
 });
-*/
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_hailtaxi", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -1984,13 +1932,6 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_resurrect", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -2028,13 +1969,6 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_coll", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
-			message("Peds are disabled on this server!", errorMessageColour);
-			return false;
-		}
-	}
-
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -2122,7 +2056,7 @@ function getCiviliansFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function getCivilians() {
-	return getPeds().filter(ped => ped.isType(ELEMENT_CIVILIAN));
+	return getElementsByType(ELEMENT_CIVILIAN);
 }
 
 // ----------------------------------------------------------------------------
@@ -2145,29 +2079,29 @@ addNetworkHandler("sb.c.stay", function(civilian, stayState) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkto", function(civilian, x, y, z) {
-	makeCivilianWalkTo(civilian, x, y, z);
+addNetworkHandler("sb.c.walkto", function(civilian, position) {
+	makeCivilianWalkTo(civilian, position);
 });
 
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.c.walkfwd", function(civilian, distance) {
 	let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
-	makeCivilianWalkTo(civilian, position.x, position.y, position.z);
+	makeCivilianWalkTo(civilian, position);
 });
 
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.c.runfwd", function(civilian, distance) {
 	let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
-	makeCivilianRunTo(civilian, position.x, position.y, position.z);
+	makeCivilianRunTo(civilian, position);
 });
 
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.c.sprintfwd", function(civilian, distance) {
 	let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
-	makeCivilianSprintTo(civilian, position.x, position.y, position.z);
+	makeCivilianSprintTo(civilian, position);
 });
 
 // ----------------------------------------------------------------------------
@@ -2215,14 +2149,14 @@ addNetworkHandler("sb.c.skin", function(civilian, skinId) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.pos", function(civilian, x, y, z) {
-	civilian.position = new Vec3(x, y, z);
+addNetworkHandler("sb.c.pos", function(civilian, position) {
+	civilian.position = position;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.lookat", function(civilian, x, y, z, duration) {
-	civilian.lookat(new Vec3(x, y, z), duration);
+addNetworkHandler("sb.c.lookat", function(civilian, position, duration) {
+	civilian.lookat(position, duration);
 });
 
 // ----------------------------------------------------------------------------
@@ -2317,16 +2251,20 @@ function setCivilianStayInSamePlace(civilian, stayState) {
 
 // ----------------------------------------------------------------------------
 
-function makeCivilianWalkTo(civilian, x, y, z) {
-	let position = new Vec3(x, y, z);
+function makeCivilianWalkTo(civilian, position) {
 	civilian.walkTo(position);
 }
 
 // ----------------------------------------------------------------------------
 
-function makeCivilianRunTo(civilian, x, y, z) {
-	let position = new Vec3(x, y, z);
+function makeCivilianRunTo(civilian, position) {
 	civilian.runTo(position);
+}
+
+// ----------------------------------------------------------------------------
+
+function makeCivilianSprintTo(civilian, position) {
+	civilian.sprintTo(position);
 }
 
 // ----------------------------------------------------------------------------

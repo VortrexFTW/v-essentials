@@ -2,25 +2,10 @@
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	//let vehicles = getElementsByType(ELEMENT_VEHICLE);
-	//for(let i in vehicles) {
-	//	if(vehicles[i].getData("sb") == null) {
-	//		//createDefaultVehicleData(vehicles[i]);
-	//	}
-	//}
-});
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler("sb.v.add", function(client, modelID, x, y, z, heading) {
-	let position = new Vec3(x, y, z);
-	let tempVehicle = createVehicle(Number(modelID), position);
+addNetworkHandler("sb.v.add", function(client, modelID, position, heading) {
+	let tempVehicle = gta.createVehicle(Number(modelID), position);
 	tempVehicle.heading = heading;
 	addToWorld(tempVehicle);
-	
-	//let modelName = getVehicleNameFromModelId(tempVehicle.modelIndex);
-	//message(client.name + " spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + modelName, gameAnnounceColours[serverGame]);
 	
 	setTimeout(function() {
 		tempVehicle.setData("sb.v.addedby", client, false);
@@ -75,7 +60,7 @@ addNetworkHandler("sb.v.light", function(client, vehicles, lightID, lightState) 
 
 addNetworkHandler("sb.v.syncer", function(client, vehicles, targetClient) {
 	vehicles.forEach(function(vehicle) {
-		vehicle.syncer = targetClient.index;
+		vehicle.setSyncer(targetClient.index, true);
 	});
 });
 
@@ -88,6 +73,7 @@ addNetworkHandler("sb.v.wheels", function(client, vehicles, wheelState) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.v.upgrade.add", function(client, vehicles, upgradeId) {
+	console.log(vehicles);
 	triggerNetworkEvent("sb.v.upgrade.add", null, vehicles, upgradeId);
 });
 

@@ -259,9 +259,11 @@ let gameLocations = [
 		["Firefly Island Bowling", [1198.99, -681.49, 16.445], -0.017, null],
 		["Broker Bus Depot", [1004.15, 279.19, 31.512], -2.193, null],
 		["The Lost MC Clubhouse", [-1713.29, 358.25, 25.449], 2.566, null],
-		["Alderney State Correctional Facility", [-1155.21, -374.34, 2.885], -1.680, null],
+		["Alderney State Correctional Facility (Prison)", [-1155.21, -374.34, 2.885], -1.680, null],
 		["Chinatown Bank of Liberty", [-34.92, -466.80, 14.75], -1.52, null],
 		["Suffolk Church", [-274.30, -281.63, 14.36], 1.56],
+		["Francis International Airport Runway", [2610.75, 262.42, 5.875], 2.381],
+		["Happiness Island", [-621.81, -963.22, 4.843], -0.109],
 
 		// More will be added soon!
 	],
@@ -368,9 +370,10 @@ let gameLocations = [
 		["Firefly Island Bowling", [1198.99, -681.49, 16.445], -0.017],
 		["Broker Bus Depot", [1004.15, 279.19, 31.512], -2.193],
 		["The Lost MC Clubhouse", [-1713.29, 358.25, 25.449], 2.566],
-		["Alderney State Correctional Facility", [-1155.21, -374.34, 2.885], -1.680],
+		["Alderney State Correctional Facility (Prison)", [-1155.21, -374.34, 2.885], -1.680],
 		["Chinatown Bank of Liberty", [-34.92, -466.80, 14.75], -1.52],
 		["Suffolk Church", [-274.30, -281.63, 14.36], 1.56],
+		["Francis International Airport Runway", [2610.75, 262.42, 5.875], 2.381],
 
 		// More will be added soon!
 	],
@@ -546,12 +549,12 @@ let weaponNames = [
 		"Knife",
 		"Grenade",
 		"Molotov",
-		"UNUSED",
+		"Rocket",
 		"Pistol",
+		"UNUSED",
 		"Desert Eagle",
 		"Stubby Shotgun",
 		"Baretta Shotgun",
-		"Shotgun",
 		"Micro Uzi",
 		"MP5",
 		"AK-47",
@@ -686,7 +689,26 @@ let gameGarages = [
 	],
 
 	[ // GTA Vice City
-
+		["Vice Port Pay-n-spray", "Vice Port", [], false],
+		["Sunshine Autos", "Little Havana", [], false],
+		["Little Haiti Pay-n-spray", "Little Haiti", [], false],
+		["Vice Point Pay-n-spray", "Vice Point", [], false],
+		["Ocean Beach Pay-n-spray", "Ocean Beach", [], false],
+		["Sir yes sir mission", "Little Havana", [], false],
+		["Sir yes sir mission", "Vice Port", [], false],
+		["Sunshine Autos", "Little Haiti", [], false],
+		["Copland mission", "Vice Point", [], false],
+		["Bomb Shop", "Vice Port", [], false],
+		["Links View Apartment", "Vice Point", [], false],
+		["Hyman Condo 1", "Downtown", [], false],
+		["Hyman Condo 2", "Downtown", [], false],
+		["Ocean Heights Apartment", "Ocean Beach", [], false],
+		["El Swanko Casa", "Unknown", [], false],
+		["Sunshine Autos 1", "Unknown", [], false],
+		["Sunshine Autos 2", "Unknown", [], false],
+		["Sunshine Autos 3", "Unknown", [], false],
+		["Sunshine Autos 4", "Unknown", [], false],
+		["Vercetti Estate", "Starfish Island", [], false],
 	],
 
 	[ // GTA San Andreas
@@ -3384,7 +3406,12 @@ let skinNames = [
 		"Toni Cipriani",
 		"Darkel",
 		"Chuff Security Officer",
-		"Claude"
+		"Claude (Prison)",
+		"Busker",
+		"Busker 2",
+		"Busker 3",
+		"Busker 4",
+
 	],
 
 	[ // GTA Vice City
@@ -3582,9 +3609,9 @@ let skinNames = [
 		"Carl 'CJ' Johnson",
 		"The Truth",
 		"Maccer",
-		"Andre",
-		"Barry 'Big Bear' Thorne",
-		"Emmet",
+		"INVALID",
+		"INVALID",
+		"INVALID",
 		"Taxi Driver/Train Driver",
 		"Janitor",
 		"Unknown",
@@ -3621,7 +3648,7 @@ let skinNames = [
 		"Normal Ped",
 		"Normal Ped",
 		"Normal Ped",
-		"Jethro",
+		"INVALID",
 		"Normal Ped",
 		"Normal Ped",
 		"Beach Visitor",
@@ -3644,7 +3671,7 @@ let skinNames = [
 		"Colonel Fuhrberger",
 		"Prostitute",
 		"Prostitute",
-		"Kendl Johnson",
+		"INVALID",
 		"Pool Player",
 		"Pool Player",
 		"Priest/Preacher",
@@ -3698,7 +3725,7 @@ let skinNames = [
 		"Varios Los Aztecas Gang Member",
 		"Triad",
 		"Triad",
-		"Johhny Sindacco",
+		"INVALID",
 		"Triad Boss",
 		"Da Nang Boy",
 		"Da Nang Boy",
@@ -3787,7 +3814,7 @@ let skinNames = [
 		"Burger Shot Cashier",
 		"Cab Driver",
 		"Prostitute",
-		"Su Xi Mu (Suzie)",
+		"INVALID",
 		"Oriental Noodle Stand Vendor",
 		"Oriental Boating School Instructor",
 		"Clothes Shop Staff",
@@ -3852,7 +3879,7 @@ let skinNames = [
 		"Sean 'Sweet' Johnson",
 		"Lance 'Ryder' Wilson",
 		"Mafia Boss",
-		"T-Bone Mendez",
+		"INVALID",
 		"Paramedic",
 		"Paramedic",
 		"Paramedic",
@@ -3868,7 +3895,7 @@ let skinNames = [
 		"Federal Agent",
 		"Army Soldier",
 		"Desert Sheriff",
-		"Zero",
+		"INVALID",
 		"Ken Rosenberg",
 		"Kent Paul",
 		"Cesar Vialpando",
@@ -3879,336 +3906,26 @@ let skinNames = [
 		"Madd Dogg",
 		"Catalina",
 		"Claude Speed",
-		"Lance 'Ryder' Wilson",
+
+		// 300
+		"Lance 'Ryder' Wilson 2",
 		"Lance 'Ryder' Wilson (robbery mask)",
 		"Emmet",
-		"Unknown",
+		"Andre",
 		"Denise",
 		"Jethro",
 		"Zero",
 		"T-Bone Mendez",
-		"Forelli",
-		"Mechanic",
+		"Johnny Sindacco",
+		"Janitor",
 		"Barry 'Big Bear' Thorne (Skinny)",
 		"Melvin 'Big Smoke' Harris (Vest)",
-		"Army Guy",
-		"Barry 'Big Bear' Thorne (Fat)"
+		"Psycho",
+		"Barry 'Big Bear' Thorne (Fat)",
 	],
 
-	[ // GTA Underground
-		"Carl 'CJ' Johnson",
-		"The Truth",
-		"Maccer",
-		"Andre",
-		"Barry 'Big Bear' Thorne",
-		"Emmet",
-		"Taxi Driver/Train Driver",
-		"Janitor",
-		"Normal Ped",
-		"Old Woman",
-		"Casino Croupier",
-		"Rich Woman",
-		"Street Girl",
-		"Normal Ped",
-		"Mr.Whittaker (Rs Haul Owner)",
-		"Airport Ground Worker",
-		"Businessman",
-		"Beach Visitor",
-		"DJ",
-		"Rich Guy (Madd Dogg's Manager)",
-		"Normal Ped",
-		"Normal Ped",
-		"Bmxer",
-		"Madd Dogg Bodyguard",
-		"Madd Dogg Bodyguard",
-		"Backpacker",
-		"Construction Worker",
-		"Drug Dealer",
-		"Drug Dealer",
-		"Drug Dealer",
-		"Farm-Town Inhabitant",
-		"Farm-Town Inhabitant",
-		"Farm-Town Inhabitant",
-		"Farm-Town Inhabitant",
-		"Gardener",
-		"Golfer",
-		"Golfer",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Jethro",
-		"Normal Ped",
-		"Normal Ped",
-		"Beach Visitor",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Snakehead (Da Nang)",
-		"Mechanic",
-		"Mountain Biker",
-		"Mountain Biker",
-		"Unknown",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Oriental Ped",
-		"Oriental Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Pilot",
-		"Colonel Fuhrberger",
-		"Prostitute",
-		"Prostitute",
-		"Kendl Johnson",
-		"Pool Player",
-		"Pool Player",
-		"Priest/Preacher",
-		"Normal Ped",
-		"Scientist",
-		"Security Guard",
-		"Hippy",
-		"Hippy",
-		"Prostitute",
-		"Stewardess",
-		"Homeless",
-		"Homeless",
-		"Homeless",
-		"Boxer",
-		"Boxer",
-		"Black Elvis",
-		"White Elvis",
-		"Blue Elvis",
-		"Prostitute",
-		"Ryder With Robbery Mask",
-		"Stripper",
-		"Normal Ped",
-		"Normal Ped",
-		"Jogger",
-		"Rich Woman",
-		"Rollerskater",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Jogger",
-		"Lifeguard",
-		"Normal Ped",
-		"Rollerskater",
-		"Biker",
-		"Normal Ped",
-		"Balla",
-		"Balla",
-		"Balla",
-		"Grove Street Families",
-		"Grove Street Families",
-		"Grove Street Families",
-		"Los Santos Vagos",
-		"Los Santos Vagos",
-		"Los Santos Vagos",
-		"The Russian Mafia",
-		"The Russian Mafia",
-		"The Russian Mafia",
-		"Varios Los Aztecas",
-		"Varios Los Aztecas",
-		"Varios Los Aztecas",
-		"Triad",
-		"Triad",
-		"Johhny Sindacco",
-		"Triad Boss",
-		"Da Nang Boy",
-		"Da Nang Boy",
-		"Da Nang Boy",
-		"The Mafia",
-		"The Mafia",
-		"The Mafia",
-		"The Mafia",
-		"Farm Inhabitant",
-		"Farm Inhabitant",
-		"Farm Inhabitant",
-		"Farm Inhabitant",
-		"Farm Inhabitant",
-		"Farm Inhabitant",
-		"Homeless",
-		"Homeless",
-		"Normal Ped",
-		"Homeless",
-		"Beach Visitor",
-		"Beach Visitor",
-		"Beach Visitor",
-		"Businesswoman",
-		"Taxi Driver",
-		"Crack Maker",
-		"Crack Maker",
-		"Crack Maker",
-		"Crack Maker",
-		"Businessman",
-		"Businesswoman",
-		"Big Smoke Armored",
-		"Businesswoman",
-		"Normal Ped",
-		"Prostitute",
-		"Construction Worker",
-		"Beach Visitor",
-		"Well Stacked Pizza Worker",
-		"Barber",
-		"Hillbilly",
-		"Farmer",
-		"Hillbilly",
-		"Hillbilly",
-		"Farmer",
-		"Hillbilly",
-		"Black Bouncer",
-		"White Bouncer",
-		"White Mib Agent",
-		"Black Mib Agent",
-		"Cluckin' Bell Worker",
-		"Hotdog/Chilli Dog Vendor",
-		"Normal Ped",
-		"Normal Ped",
-		"Blackjack Dealer",
-		"Casino Croupier",
-		"San Fierro Rifa",
-		"San Fierro Rifa",
-		"San Fierro Rifa",
-		"Barber",
-		"Barber",
-		"Whore",
-		"Ammunation Salesman",
-		"Tattoo Artist",
-		"Punk",
-		"Cab Driver",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Businessman",
-		"Normal Ped",
-		"Valet",
-		"Barbara Schternvart",
-		"Helena Wankstein",
-		"Michelle Cannes",
-		"Katie Zhan",
-		"Millie Perkins",
-		"Denise Robinson",
-		"Farm-Town Inhabitant",
-		"Hillbilly",
-		"Farm-Town Inhabitant",
-		"Farm-Town Inhabitant",
-		"Hillbilly",
-		"Farmer",
-		"Farmer",
-		"Karate Teacher",
-		"Karate Teacher",
-		"Burger Shot Cashier",
-		"Cab Driver",
-		"Prostitute",
-		"Su Xi Mu (Suzie)",
-		"Oriental Noodle Stand Vendor",
-		"Oriental Boating School Instructor",
-		"Clothes Shop Staff",
-		"Homeless",
-		"Weird Old Man",
-		"Waitress (Maria Latore)",
-		"Normal Ped",
-		"Normal Ped",
-		"Clothes Shop Staff",
-		"Normal Ped",
-		"Rich Woman",
-		"Cab Driver",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Oriental Businessman",
-		"Oriental Ped",
-		"Oriental Ped",
-		"Homeless",
-		"Normal Ped",
-		"Normal Ped",
-		"Normal Ped",
-		"Cab Driver",
-		"Normal Ped",
-		"Normal Ped",
-		"Prostitute",
-		"Prostitute",
-		"Homeless",
-		"The D.A",
-		"Afro-American",
-		"Mexican",
-		"Prostitute",
-		"Stripper",
-		"Prostitute",
-		"Stripper",
-		"Biker",
-		"Biker",
-		"Pimp",
-		"Normal Ped",
-		"Lifeguard",
-		"Naked Valet",
-		"Bus Driver",
-		"Biker Drug Dealer",
-		"Chauffeur (Limo Driver)",
-		"Stripper",
-		"Stripper",
-		"Heckler",
-		"Heckler",
-		"Construction Worker",
-		"Cab Driver",
-		"Cab Driver",
-		"Normal Ped",
-		"Clown (Ice-Cream Van Driver)",
-		"Officer Frank Tenpenny",
-		"Officer Eddie Pulaski",
-		"Officer Jimmy Hernandez",
-		"Dwaine/Dwayne",
-		"Melvin 'Big Smoke' Harris (Mission)",
-		"Sean 'Sweet' Johnson",
-		"Lance 'Ryder' Wilson",
-		"Mafia Boss",
-		"T-Bone Mendez",
-		"Paramedic",
-		"Paramedic",
-		"Paramedic",
-		"Firefighter",
-		"Firefighter",
-		"Firefighter",
-		"Los Santos Police Officer",
-		"San Fierro Police Officer",
-		"Las Venturas Police Officer",
-		"County Sheriff",
-		"Motorbike Cop",
-		"S.W.A.T.",
-		"Federal Agent",
-		"Army Soldier",
-		"Desert Sheriff",
-		"Zero",
-		"Ken Rosenberg",
-		"Kent Paul",
-		"Cesar Vialpando",
-		"Jeffery 'Og Loc' Martin/Cross",
-		"Wu Zi Mu (Woozie)",
-		"Michael Toreno",
-		"Jizzy B.",
-		"Madd Dogg",
-		"Catalina",
-		"Claude Speed",
-		"Lance 'Ryder' Wilson",
-		"Lance 'Ryder' Wilson (robbery mask)",
-		"Emmet",
-		"Unknown",
-		"Denise",
-		"Jethro",
-		"Zero",
-		"T-Bone Mendez",
-		"Forelli",
-		"Mechanic",
-		"Barry 'Big Bear' Thorne (Skinny)",
-		"Melvin 'Big Smoke' Harris (Vest)",
-		"Army Guy",
-		"Barry 'Big Bear' Thorne (Fat)"
-	],
+	// GTA Underground
+	[],
 
 	[ // GTA IV
 		"Nico Bellic",
@@ -4559,6 +4276,7 @@ let skinNames = [
 		"MODEL_M_Y_TOURIST_02",
 	],
 
+	/*
 	[ // GTA IV (EFLC)
 		"Nico Bellic",
 		"Male Multiplayer",
@@ -4907,6 +4625,7 @@ let skinNames = [
 		"MODEL_M_Y_TOUGH_05",
 		"MODEL_M_Y_TOURIST_02",
 	],
+	*/
 ];
 
 // ----------------------------------------------------------------------------
@@ -5330,139 +5049,215 @@ let weaponModels = [
 // ----------------------------------------------------------------------------
 
 let gtaivVehicleModels = [
-	["Admiral", 1264341792],
-	["Airtug", 1560980623],
-	["Ambulance", 1171614426],
-	["Banshee", -1041692462],
-	["Benson", 2053223216],
-	["Biff", 850991848],
-	["Blista", -344943009],
-	["Bobcat", 1075851868],
-	["Boxville", -1987130134],
-	["Buccaneer", -682211828],
-	["Burrito", -1346687836],
-	["Burrito 2", -907477130],
-	["Bus", -713569950],
-	["Cabby", 1884962369],
-	["Cavalcade", 2006918058],
-	["Chavos", -67282078],
-	["Cognoscenti", -2030171296],
-	["Comet", 1063483177],
-	["Coquette", 108773431],
-	["DF8", 162883121],
-	["Dillettante", -1130810103],
-	["Dukes", 723973206],
-	["E109", -1971955454],
-	["Emperor", -685276541],
-	["Rusty Emperor", -1883002148],
-	["Esperanto", -276900515],
-	["Faction", -2119578145],
-	["FIB Car", 1127131465],
-	["Feltzer", -1097828879],
-	["Feroci", 974744810],
-	["Airport Feroci", 1026055242],
-	["Firetruck", 1938952078],
-	["Flatbed", 1353720154],
-	["Fortune", 627033353],
-	["Forklift", 1491375716],
-	["Futo", 2016857647],
-	["FXT", 675415136],
-	["Habanero", 884422927],
-	["Hakumai", -341892653],
-	["Huntley", 486987393],
-	["Infernus", 418536135],
-	["Ingot", -1289722222],
-	["Intruder", 886934177],
-	["Landstalker", 1269098716],
-	["Lokus", -37030056],
-	["Manana", -2124201592],
-	["Marbella", 1304597482],
-	["Merit", -1260881538],
-	["Minivan", -310465116],
-	["Moonbeam", 525509695],
-	["Mr. Tasty", 583100975],
-	["Mule", 904750859],
-	["Noose Patrol Car", 148777611],
-	["Noose Stockade", 1911513875],
-	["Oracle", 1348744438],
-	["Packer", 569305213],
-	["Patriot", -808457413],
-	["Perennial", -2077743597],
-	["Airport Perennial", -1590284256],
-	["Peyote", 1830407356],
-	["Phantom", -2137348917],
-	["Pinnacle", 131140572],
-	["PMP-600", 1376298265],
-	["Police Cruiser", 2046537925],
-	["Police Patrol", -1627000575],
-	["Police Patriot", -350085182],
-	["Pony", -119658072],
-	["Premier", -1883869285],
-	["Presidente", -1962071130],
-	["Primo", -1150599089],
-	["Police Stockade", -1900572838],
-	["Rancher", 1390084576],
-	["Rebla", 83136452],
-	["Reply", -845979911],
-	["Romero", 627094268],
-	["Roman's Taxi", -1932515764],
-	["Ruiner", -227741703],
-	["Sabre", -449022887],
-	["Sabre 2", 1264386590],
-	["Sabre GT", -1685021548],
-	["Schafter", -322343873],
-	["Sentinel", 1349725314],
-	["Solair", 1344573448],
-	["Speedo", -810318068],
-	["Stallion", 1923400478],
-	["Steed", 1677715180],
-	["Stockade", 1747439474],
-	["Stratum", 1723137093],
-	["Stretch", -1961627517],
-	["Sultan", 970598228],
-	["Sultan RS", -295689028],
-	["Super GT", 1821991593],
-	["Taxi", -956048545],
-	["Taxi 2", 1208856469],
-	["Trashmaster", 1917016601],
-	["Turismo", -1896659641],
-	["Uranus", 1534326199],
-	["Vigero", -825837129],
-	["Vigero 2", -1758379524],
-	["Vincent", -583281407],
-	["Virgo", -498054846],
-	["Voodoo", 2006667053],
-	["Washington", 1777363799],
-	["Willard", 1937616578],
-	["Yankee", -1099960214],
-	["Bobber", -1830458836],
-	["Faggio", -1842748181],
-	["Hellfury", 584879743],
-	["NRG-900", 1203311498],
-	["PCJ-600", -909201658],
-	["Sanchez", 788045382],
-	["Zombie", -570033273],
-	["Annihilator", 837858166],
-	["Maverick", -1660661558],
-	["Police Maverick", 353883353],
-	["Tour Maverick", 2027357303],
-	["Dinghy", 1033245328],
-	["Jetmax", 861409633],
-	["Marquis", -1043459709],
-	["Predator", -488123221],
-	["Reefer", 1759673526],
-	["Squalo", 400514754],
-	["Tuga", 1064455782],
-	["Tropic", 290013743],
-	["Cablecar", -960289747],
-	["Subway", 800869680],
-	["El Train", -1953988645],
+	["Admiral", 1264341792, 0],
+	["Airtug", 1560980623, 0],
+	["Ambulance", 1171614426, 0],
+	["Banshee", -1041692462, 0],
+	["Benson", 2053223216, 0],
+	["Biff", 850991848, 0],
+	["Blista", -344943009, 0],
+	["Bobcat", 1075851868, 0],
+	["Boxville", -1987130134, 0],
+	["Buccaneer", -682211828, 0],
+	["Burrito", -1346687836, 0],
+	["Burrito 2", -907477130, 0],
+	["Bus", -713569950, 0],
+	["Cabby", 1884962369, 0],
+	["Cavalcade", 2006918058, 0],
+	["Chavos", -67282078, 0],
+	["Cognoscenti", -2030171296, 0],
+	["Comet", 1063483177, 0],
+	["Coquette", 108773431, 0],
+	["DF8", 162883121, 0],
+	["Dillettante", -1130810103, 0],
+	["Dukes", 723973206, 0],
+	["E109", -1971955454, 0],
+	["Emperor", -685276541, 0],
+	["Rusty Emperor", -1883002148, 0],
+	["Esperanto", -276900515, 0],
+	["Faction", -2119578145, 0],
+	["FIB Car", 1127131465, 0],
+	["Feltzer", -1097828879, 0],
+	["Feroci", 974744810, 0],
+	["Airport Feroci", 1026055242, 0],
+	["Firetruck", 1938952078, 0],
+	["Flatbed", 1353720154, 0],
+	["Fortune", 627033353, 0],
+	["Forklift", 1491375716, 0],
+	["Futo", 2016857647, 0],
+	["FXT", 675415136, 0],
+	["Habanero", 884422927, 0],
+	["Hakumai", -341892653, 0],
+	["Huntley", 486987393, 0],
+	["Infernus", 418536135, 0],
+	["Ingot", -1289722222, 0],
+	["Intruder", 886934177, 0],
+	["Landstalker", 1269098716, 0],
+	["Lokus", -37030056, 0],
+	["Manana", -2124201592, 0],
+	["Marbella", 1304597482, 0],
+	["Merit", -1260881538, 0],
+	["Minivan", -310465116, 0],
+	["Moonbeam", 525509695, 0],
+	["Mr. Tasty", 583100975, 0],
+	["Mule", 904750859, 0],
+	["Noose Patrol Car", 148777611, 0],
+	["Noose Stockade", 1911513875, 0],
+	["Oracle", 1348744438, 0],
+	["Packer", 569305213, 0],
+	["Patriot", -808457413, 0],
+	["Perennial", -2077743597, 0],
+	["Airport Perennial", -1590284256, 0],
+	["Peyote", 1830407356, 0],
+	["Phantom", -2137348917, 0],
+	["Pinnacle", 131140572, 0],
+	["PMP-600", 1376298265, 0],
+	["Police Cruiser", 2046537925, 0],
+	["Police Patrol", -1627000575, 0],
+	["Police Patriot", -350085182, 0],
+	["Pony", -119658072, 0],
+	["Premier", -1883869285, 0],
+	["Presidente", -1962071130, 0],
+	["Primo", -1150599089, 0],
+	["Police Stockade", -1900572838, 0],
+	["Rancher", 1390084576, 0],
+	["Rebla", 83136452, 0],
+	["Reply", -845979911, 0],
+	["Romero", 627094268, 0],
+	["Roman's Taxi", -1932515764, 0],
+	["Ruiner", -227741703, 0],
+	["Sabre", -449022887, 0],
+	["Sabre 2", 1264386590, 0],
+	["Sabre GT", -1685021548, 0],
+	["Schafter", -322343873, 0],
+	["Sentinel", 1349725314, 0],
+	["Solair", 1344573448, 0],
+	["Speedo", -810318068, 0],
+	["Stallion", 1923400478, 0],
+	["Steed", 1677715180, 0],
+	["Stockade", 1747439474, 0],
+	["Stratum", 1723137093, 0],
+	["Stretch", -1961627517, 0],
+	["Sultan", 970598228, 0],
+	["Sultan RS", -295689028, 0],
+	["Super GT", 1821991593, 0],
+	["Taxi", -956048545, 0],
+	["Taxi 2", 1208856469, 0],
+	["Trashmaster", 1917016601, 0],
+	["Turismo", -1896659641, 0],
+	["Uranus", 1534326199, 0],
+	["Vigero", -825837129, 0],
+	["Vigero 2", -1758379524, 0],
+	["Vincent", -583281407, 0],
+	["Virgo", -498054846, 0],
+	["Voodoo", 2006667053, 0],
+	["Washington", 1777363799, 0],
+	["Willard", 1937616578, 0],
+	["Yankee", -1099960214, 0],
+	["Bobber", -1830458836, 0],
+	["Faggio", -1842748181, 0],
+	["Hellfury", 584879743, 0],
+	["NRG-900", 1203311498, 0],
+	["PCJ-600", -909201658, 0],
+	["Sanchez", 788045382, 0],
+	["Zombie", -570033273, 0],
+	["Annihilator", 837858166, 0],
+	["Maverick", -1660661558, 0],
+	["Police Maverick", 353883353, 0],
+	["Tour Maverick", 2027357303, 0],
+	["Dinghy", 1033245328, 0],
+	["Jetmax", 861409633, 0],
+	["Marquis", -1043459709, 0],
+	["Predator", -488123221, 0],
+	["Reefer", 1759673526, 0],
+	["Squalo", 400514754, 0],
+	["Tuga", 1064455782, 0],
+	["Tropic", 290013743, 0],
+	["Cablecar", -960289747, 0],
+	["Subway", 800869680, 0],
+	["El Train", -1953988645, 0],
+	
+	/*["Unknown 1", 0x7F1EFE34, 2],
+	["Unknown 2", 0x5796595E, 2],
+	["Unknown 3", 0x7F1EFE34, 2],
+	["Unknown 4", 0xCB8ECE1A, 2],
+	["Unknown 5", 0x1DAFD770, 2],
+	["Unknown 6", 0x1160ACEF, 2],
+	["Unknown 7", 0x7F1EFE34, 2],
+	["Unknown 8", 0xC96FA7CD, 2],
+	["Unknown 9", 0x7F1EFE34, 2],
+	["Unknown 10", 0xF991F9E6, 2],
+	["Unknown 11", 0xD0959211, 2],
+	["Unknown 12", 0xC492B410, 2],
+	["Unknown 13", 0xC438C055, 2],
+	["Unknown ", 0x676E2E17, 2],
+	["Unknown ", 0x7508E9B4, 2],
+	["Unknown ", 0x7F1EFE34, 2],
+	["Unknown ", 0x7F1EFE34, 2],
+	["Unknown ", 0x5E163909, 2],
+	["Unknown ", 0x908A36AC, 2],
+	["Unknown ", 0x37392F33, 2],
+	["Unknown ", 0xAD608783, 2],
+	["Unknown ", 0x3384D4E0, 2],
+	["Unknown ", 0xEEAF9D93, 2],
+	["Unknown ", 0x321D023E, 2],
+	["Unknown ", 0xBAC4A320, 2],
+	["Unknown ", 0x31683901, 2],
+	["Unknown ", 0xDB937DA5, 2],
+	["Unknown ", 0x759BC316, 2],
+	["Unknown ", 0xA35AE84B, 2],
+	["Unknown ", 0x05ABE6D5, 2],
+	["Unknown ", 0x8307C170, 2],
+	["Unknown ", 0x0C415802, 2],
+	["Unknown ", 0x3BB02DB7, 2],
+	["Unknown ", 0x8F7D807B, 2],
+	["Unknown ", 0x8543E9D9, 2],
+	["Unknown ", 0xA95F7168, 2],
+	["Unknown ", 0x2385D652, 2],
+	["Unknown ", 0xAB40F129, 2],
+	["Unknown ", 0xADD53BD4, 2],
+	["Unknown ", 0x81EC1EAC, 2],
+	["Unknown ", 0xF2D0E941, 2],
+	
+	["Unknown 51", 0x2BD928EE, 2],
+	["Unknown 52", 0x7F1EFE34, 2],
+	["Unknown 53", 0xACAF1BB9, 2],
+	["Unknown 54", 0x14D94C6C, 2],
+	["Unknown 55", 0x8DCC34F3, 2],
+	["Unknown 56", 0x052D99B3, 2],
+	["Unknown 57", 0xAC64ED89, 2],
+	["Unknown 58", 0x0D62B075, 2],
+	["Unknown 59", 0x8D2557D8, 2],
+	["Unknown 60", 0x4A115C65, 2],
+	
+	["Unknown 61", 0xD1734286, 2],
+	["Unknown 62", 0x7F1EFE34, 2],
+	["Unknown 63", 0x466B955D, 2],
+	["Unknown 64", 0x30C827D6, 2],
+	["Unknown 65", 0x72361452, 2],
+	
+	["Unknown 66", 0x6AB536C4, 2],
+	["Unknown 67", 0x7F1EFE34, 2],
+	["Unknown 68", 0xB92E635E, 2],
+	["Unknown 69", 0xEC8736D1, 2],
+	["Unknown 70", 0x2646E189, 2],
+	["Unknown 71", 0xB0C485D7, 2],
+	
+	["Unknown 72", 0x6BD27984, 2],
+	
+	["Unknown 73", 0x126DC304, 2],
+	["Unknown 74", 0x6B9B1605, 2],
+	["Unknown 75", 0x8D319316, 2],
+	["Unknown 76", 0x7767D97B, 2],
+	["Unknown 77", 0x19651FBF, 2],
+	["Unknown 78", 0x791A7F5A, 2],	
+	*/
 ];
 
 // ----------------------------------------------------------------------------
 
 let gtaivSkinModels = [
-	["Nico Bellic", 1862763509],
+	//["Nico Bellic", 1862763509],
 	["Male Multiplayer", -2020305438],
 	["Female Multiplayer", -641875910],
 	["MODEL_SUPERLOD", -1370810922],
@@ -5524,50 +5319,50 @@ let gtaivSkinModels = [
 	["Tuna", 1384833284],
 	["Vinny Spaz", -1014976873],
 	["Vlad", 896408642],
-	["MODEL_M_Y_GAFR_LO_01", -301223260],
-	["MODEL_M_Y_GAFR_LO_02", -1143910864],
-	["MODEL_M_Y_GAFR_HI_01", 869501081],
-	["MODEL_M_Y_GAFR_HI_02", 632613980],
-	["MODEL_M_Y_GALB_LO_01", -503930010],
-	["MODEL_M_Y_GALB_LO_02", -235584669],
-	["MODEL_M_Y_GALB_LO_03", 207714363],
-	["MODEL_M_Y_GALB_LO_04", 514268366],
-	["MODEL_M_M_GBIK_LO_03", 43005364],
-	["MODEL_M_Y_GBIK_HI_01", 1346668127],
-	["MODEL_M_Y_GBIK_HI_02", -1677255197],
-	["MODEL_M_Y_GBIK02_LO_02", -1461281345],
-	["MODEL_M_Y_GBIK_LO_01", 1574850459],
-	["MODEL_M_Y_GBIK_LO_02", -1953289472],
-	["MODEL_M_Y_GIRI_LO_01", 280474699],
-	["MODEL_M_Y_GIRI_LO_02", -19263344],
-	["MODEL_M_Y_GIRI_LO_03", 1844702918],
-	["MODEL_M_M_GJAM_HI_01", 1609755055],
-	["MODEL_M_M_GJAM_HI_02", -330497431],
-	["MODEL_M_M_GJAM_HI_03", 1117105909],
-	["MODEL_M_Y_GJAM_LO_01", -1500397869],
-	["MODEL_M_Y_GJAM_LO_02", -881358690],
-	["MODEL_M_Y_GKOR_LO_01", 1540383669],
-	["MODEL_M_Y_GKOR_LO_02", 764249904],
-	["MODEL_M_Y_GLAT_LO_01", 492147228],
-	["MODEL_M_Y_GLAT_LO_02", -1926041127],
-	["MODEL_M_Y_GLAT_HI_01", 1168388225],
-	["MODEL_M_Y_GLAT_HI_02", -1746774780],
-	["MODEL_M_Y_GMAF_HI_01", -302362397],
-	["MODEL_M_Y_GMAF_HI_02", -1616890832],
-	["MODEL_M_Y_GMAF_LO_01", 64730935],
-	["MODEL_M_Y_GMAF_LO_02", 510389335],
-	["MODEL_M_O_GRUS_HI_01", -1836006237],
-	["MODEL_M_Y_GRUS_LO_01", -2088164056],
-	["MODEL_M_Y_GRUS_LO_02", 1976502708],
-	["MODEL_M_Y_GRUS_HI_02", 1543404628],
-	["MODEL_M_M_GRU2_HI_01", 1865532596],
-	["MODEL_M_M_GRU2_HI_02", 431692232],
-	["MODEL_M_M_GRU2_LO_02", 1724587620],
-	["MODEL_M_Y_GRU2_LO_01", -1180674815],
-	["MODEL_M_M_GTRI_HI_01", 871281791],
-	["MODEL_M_M_GTRI_HI_02", 683712035],
-	["MODEL_M_Y_GTRI_LO_01", -1084007777],
-	["MODEL_M_Y_GTRI_LO_02", -164935626],
+	["Black Street Thug 1", -301223260],
+	["Black Street Thug 2", -1143910864],
+	["Black Street OG 1", 869501081],
+	["Black Street OG 1", 632613980],
+	["Albanian Thug 1", -503930010],
+	["Albanian Thug 2", -235584669],
+	["Albanian Thug 3", 207714363],
+	["Albanian Thug 4", 514268366],
+	["Biker 1", 43005364],
+	["Biker 2", 1346668127],
+	["Biker 3", -1677255197],
+	["Biker 4", -1461281345],
+	["Biker 5", 1574850459],
+	["Biker 6", -1953289472],
+	["Irish Man 1", 280474699],
+	["Irish Man 2", -19263344],
+	["Irish Man 3", 1844702918],
+	["Jamaican OG 1", 1609755055],
+	["Jamaican OG 2", -330497431],
+	["Jamaican OG 3", 1117105909],
+	["Jamaican Thug 1", -1500397869],
+	["Jamaican Thug 2", -881358690],
+	["Asian Man 1", 1540383669],
+	["Asian Man 2", 764249904],
+	["Hispanic Man 1", 492147228],
+	["Hispanic Man 2", -1926041127],
+	["Hispanic Man 3", 1168388225],
+	["Hispanic Man 4", -1746774780],
+	["Fat Italian Mafia Boss", -302362397],
+	["Italian Mafia Boss", -1616890832],
+	["Italian Mafia Associate", 64730935],
+	["Fat Italian Mafia Associate", 510389335],
+	["Russian Thug 1", -1836006237],
+	["Russian Thug 2", -2088164056],
+	["Russian Thug 3", 1976502708],
+	["Russian Thug 4", 1543404628],
+	["Russian Thug 5", 1865532596],
+	["Russian Thug 6", 431692232],
+	["Russian Thug 7", 1724587620],
+	["Russian Thug 8", -1180674815],
+	["Triad Boss 1", 871281791],
+	["Triad Boss 2", 683712035],
+	["Triad Member 3", -1084007777],
+	["Triad Member 4", -164935626],
 	["Female Maid", -751071255],
 	["Female Binco Worker", -109247258],
 	["Female Bank Teller", 1366257926],
@@ -5683,83 +5478,83 @@ let gtaivSkinModels = [
 	["Business Woman 3", -284229525],
 	["East European Woman 3", 677687516],
 	["Fat Black Woman", -1188238883],
-	["MODEL_F_M_PJERSEY_01", -2075220936],
-	["MODEL_F_M_PJERSEY_02", -1356924456],
-	["MODEL_F_M_PLATIN_01", 812112483],
-	["MODEL_F_M_PLATIN_02", -129242580],
-	["MODEL_F_M_PMANHAT_01", 852423121],
-	["MODEL_F_M_PMANHAT_02", 76551508],
-	["MODEL_F_M_PORIENT_01", -2118501976],
-	["MODEL_F_M_PRICH_01", 1616769823],
-	["MODEL_F_Y_BUSINESS_01", 453889158],
-	["MODEL_F_Y_CDRESS_01", 824245375],
-	["MODEL_F_Y_PBRONX_01", -1362442041],
-	["MODEL_F_Y_PCOOL_01", -1788328884],
-	["MODEL_F_Y_PCOOL_02", -1523915823],
-	["MODEL_F_Y_PEASTEURO_01", -949987237],
-	["MODEL_F_Y_PHARBRON_01", -1926577323],
-	["MODEL_F_Y_PHARLEM_01", 168065679],
-	["MODEL_F_Y_PJERSEY_02", 441464],
-	["MODEL_F_Y_PLATIN_01", 54114008],
-	["MODEL_F_Y_PLATIN_02", -292713088],
-	["MODEL_F_Y_PLATIN_03", 1743814728],
-	["MODEL_F_Y_PMANHAT_01", 1670568326],
-	["MODEL_F_Y_PMANHAT_02", 1354281938],
-	["MODEL_F_Y_PMANHAT_03", 1056837725],
-	["MODEL_F_Y_PORIENT_01", -1193633577],
-	["MODEL_F_Y_PQUEENS_01", 713691120],
-	["MODEL_F_Y_PRICH_01", -1780385799],
-	["MODEL_F_Y_PVILLBO_02", -952185135],
-	["MODEL_F_Y_SHOP_03", 1586287288],
-	["MODEL_F_Y_SHOP_04", 1848013291],
-	["MODEL_F_Y_SHOPPER_05", -1702036227],
-	["MODEL_F_Y_SOCIALITE", 1182843182],
-	["MODEL_F_Y_STREET_02", -900623157],
-	["MODEL_F_Y_STREET_05", 286007875],
-	["MODEL_F_Y_STREET_09", 1473654742],
-	["MODEL_F_Y_STREET_12", -1850743775],
-	["MODEL_F_Y_STREET_30", 1290755317],
-	["MODEL_F_Y_STREET_34", 1872110126],
-	["MODEL_F_Y_TOURIST_01", 1754440500],
+	["Jersey Woman 1", -2075220936],
+	["Jersey Woman 2", -1356924456],
+	["Fat Hispanic Woman 1", 812112483],
+	["Fat Hispanic Woman 2", -129242580],
+	["White Manhattan Woman", 852423121],
+	["Black Manhattan Woman", 76551508],
+	["Old Asian Woman", -2118501976],
+	["Old Rich Woman", 1616769823],
+	["Business Woman 4", 453889158],
+	["Asian Woman in Dress", 824245375],
+	["Fat Black Bronx Woman", -1362442041],
+	["Random White Woman", -1788328884],
+	["Random Hispanic Woman", -1523915823],
+	["Random Eastern European Woman", -949987237],
+	["Random Black Woman", -1926577323],
+	["Black Harlem Woman 1", 168065679],
+	["Fat Jersey Woman 1", 441464],
+	["Fat Hispanic Woman 3", 54114008],
+	["Hispanic Woman 1", -292713088],
+	["Hispanic Woman 2", 1743814728],
+	["Manhattan Woman 1", 1670568326],
+	["Manhattan Woman 2", 1354281938],
+	["Manhattan Woman 1", 1056837725],
+	["Asian Woman 1", -1193633577],
+	["Black Woman 2", 713691120],
+	["Rich White Woman 1", -1780385799],
+	["Asian Woman", -952185135],
+	["Female Shopper 1", 1586287288],
+	["Female Shopper 2", 1848013291],
+	["Female Shopper 3", -1702036227],
+	["Female Socialite 1", 1182843182],
+	["Street Woman 1", -900623157],
+	["Street Woman 2", 286007875],
+	["Street Woman 3", 1473654742],
+	["Street Woman 4", -1850743775],
+	["Street Woman 5", 1290755317],
+	["Street Woman 6", 1872110126],
+	["Tourist Woman 1", 1754440500],
 	["MODEL_F_Y_VILLBO_01", 761763258],
-	["MODEL_M_M_BUSINESS_02", -636579119],
-	["MODEL_M_M_BUSINESS_03", -1754526315],
-	["MODEL_M_M_EE_HEAVY_01", -1516474414],
-	["MODEL_M_M_EE_HEAVY_02", -1821258883],
-	["MODEL_M_M_FATMOB_01", 1952671026],
-	["MODEL_M_M_GAYMID", -1991603022],
-	["MODEL_M_M_GENBUM_01", -1080673049],
-	["MODEL_M_M_LOONYWHITE", 495499562],
+	["Business Man 1", -636579119],
+	["Business Man 2", -1754526315],
+	["Street Criminal 1", -1516474414],
+	["Street Criminal 2", -1821258883],
+	["Obese Mafia Thug", 1952671026],
+	["Gay Man 1", -1991603022],
+	["Homeless Bum 1", -1080673049],
+	["Loony White Man 1", 495499562],
 	["MODEL_M_M_MIDTOWN_01", -1984134881],
-	["MODEL_M_M_PBUSINESS_01", 1063816580],
-	["MODEL_M_M_PEASTEURO_01", 208763854],
-	["MODEL_M_M_PHARBRON_01", -1020237172],
+	["Business Man 2", 1063816580],
+	["Eastern European Man 1", 208763854],
+	["Fat Black Man 2", -1020237172],
 	["MODEL_M_M_PINDUS_02", 1782277836],
-	["MODEL_M_M_PITALIAN_01", -1402442039],
-	["MODEL_M_M_PITALIAN_02", -1628417063],
-	["MODEL_M_M_PLATIN_01", 1158569407],
-	["MODEL_M_M_PLATIN_02", 1969438324],
-	["MODEL_M_M_PLATIN_03", 1621955848],
-	["MODEL_M_M_PMANHAT_01", -657489059],
-	["MODEL_M_M_PMANHAT_02", -1307068958],
-	["MODEL_M_M_PORIENT_01", 734334931],
+	["Fat Italian Man 1", -1402442039],
+	["Italian Man 2", -1628417063],
+	["Hispanic Man 1", 1158569407],
+	["Hispanic Man 2", 1969438324],
+	["Hispanic Man 3", 1621955848],
+	["Tourist Man 1", -657489059],
+	["Black Business Man 1", -1307068958],
+	["Asian Man 3", 734334931],
 	["MODEL_M_M_PRICH_01", 1865082075],
 	["MODEL_M_O_EASTEURO_01", -432593815],
-	["MODEL_M_O_HASID_01", -1639359785],
-	["MODEL_M_O_MOBSTER", 1656087115],
+	["Hasidic Jewish Man 1", -1639359785],
+	["Old Man 1", 1656087115],
 	["MODEL_M_O_PEASTEURO_02", 2034185905],
 	["MODEL_M_O_PHARBRON_01", 1316404726],
 	["MODEL_M_O_PJERSEY_01", 980990533],
 	["MODEL_M_O_STREET_01", -1298691925],
-	["MODEL_M_O_SUITED", 243672348],
+	["Old Business Man", 243672348],
 	["MODEL_M_Y_BOHO_01", 2085884255],
 	["MODEL_M_Y_BOHOGUY_01", 221246143],
 	["MODEL_M_Y_BRONX_01", 52357603],
-	["MODEL_M_Y_BUSINESS_01", 1530937394],
-	["MODEL_M_Y_BUSINESS_02", 690281432],
-	["MODEL_M_Y_CHINATOWN_03", -1149743642],
-	["MODEL_M_Y_CHOPSHOP_01", -314369597],
-	["MODEL_M_Y_CHOPSHOP_02", -552829610],
+	["Black Business Man 2", 1530937394],
+	["Black Business Man 3", 690281432],
+	["Asian Man 4", -1149743642],
+	["Chopshop Mechanic 1", -314369597],
+	["Chopshop Mechanic 2", -552829610],
 	["MODEL_M_Y_DODGY_01", -1097188138],
 	["MODEL_M_Y_DORK_02", -1775659292],
 	["MODEL_M_Y_DOWNTOWN_01", 1207402441],
@@ -5774,7 +5569,7 @@ let gtaivSkinModels = [
 	["MODEL_M_Y_HARLEM_01", -1222963415],
 	["MODEL_M_Y_HARLEM_02", -1746153269],
 	["MODEL_M_Y_HARLEM_04", 2104499156],
-	["MODEL_M_Y_HASID_01", -1874580889],
+	["Hasidic Jewish Man 2", -1874580889],
 	["MODEL_M_Y_LEASTSIDE_01", -1055386282],
 	["MODEL_M_Y_PBRONX_01", 575808580],
 	["MODEL_M_Y_PCOOL_01", -71980543],
@@ -5803,11 +5598,11 @@ let gtaivSkinModels = [
 	["MODEL_M_Y_STREET_04", 813889395],
 	["MODEL_M_Y_STREETBLK_02", -1552214124],
 	["MODEL_M_Y_STREETBLK_03", -650575089],
-	["MODEL_M_Y_STREETPUNK_02", -740078918],
-	["MODEL_M_Y_STREETPUNK_04", -1927496394],
-	["MODEL_M_Y_STREETPUNK_05", 1374242512],
-	["MODEL_M_Y_TOUGH_05", -1139941790],
-	["MODEL_M_Y_TOURIST_02", 809067472],
+	["Street Punk 1", -740078918],
+	["Street Punk 2", -1927496394],
+	["Street Punk 3", 1374242512],
+	["Tough Guy", -1139941790],
+	["Male Tourist", 809067472],
 ];
 
 // ----------------------------------------------------------------------------
@@ -6405,15 +6200,6 @@ function radToDeg(rad) {
 
 // ----------------------------------------------------------------------------
 
-function getDistance(pos1, pos2) {
-	let a = Math.pow(pos1.x-pos2.x, 2);
-	let b = Math.pow(pos1.y-pos2.y, 2);
-
-	return Math.sqrt(a+b);
-}
-
-// ----------------------------------------------------------------------------
-
 function getAngleInCircleFromCenter(center, total, current) {
 	let gap = 360 / total;
 	let deg = Math.floor(gap*current);
@@ -6431,43 +6217,26 @@ function getAngleInCircleFromCenter(center, total, current) {
 
 // ----------------------------------------------------------------------------
 
-function getClosestVehicle(pos) {
-	let vehs = getElementsByType(ELEMENT_VEHICLE);
-	let closestVeh = vehs[0];
-	for(let i in vehs) {
-		if(getDistance(pos, vehs[i].position) <= getDistance(pos, closestVeh.position)) {
-			closestVeh = vehs[i];
-		}
-	}
+function getClosestPlayer(pos) {
+	return getPlayers().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+}
 
-	return closestVeh;
+// ----------------------------------------------------------------------------
+
+function getClosestVehicle(pos) {
+	return getVehicles().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
 
 function getClosestCivilian(pos) {
-    let civilians = getCivilians();
-	return civilians.reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
-}
-
-// ----------------------------------------------------------------------------
-
-function getVehiclesInRange(pos, range) {
-	let vehs = getElementsByType(ELEMENT_VEHICLE);
-	let inRangeVehs = [];
-	for(let i in vehs) {
-		if(getDistance(pos, vehs[i].position) <= range) {
-			inRangeVehs.push(vehs[i]);
-		}
-	}
-
-	return inRangeVehs;
+	return getCivilians().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
 
 function getWeaponName(weapon) {
-	return weaponNames[game.game][weapon];
+	return weaponNames[thisGame][weapon];
 }
 
 // ----------------------------------------------------------------------------
@@ -6497,7 +6266,7 @@ function isParamsInvalid(params) {
 // ----------------------------------------------------------------------------
 
 function isValidVehicleModel(modelId) {
-	if(game.game == GAME_GTA_III) {
+	if(thisGame == GAME_GTA_III) {
 		if(modelId < 90 || modelId > 150) {
 			return false;
 		}
@@ -6505,7 +6274,7 @@ function isValidVehicleModel(modelId) {
 		return true;
 	}
 
-	if(game.game == GAME_GTA_VC) {
+	if(thisGame == GAME_GTA_VC) {
 		if(modelId < 130 || modelId > 236) {
 			return false;
 		}
@@ -6513,7 +6282,7 @@ function isValidVehicleModel(modelId) {
 		return true;
 	}
 
-	if(game.game >= GAME_GTA_SA) {
+	if(thisGame >= GAME_GTA_SA) {
 		return true;
 	}
 	return false;
@@ -6533,7 +6302,7 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 			return Number(modelId);
 		}
 
-		return getVehicleModelIdFromName(params, gameId);
+		return modelId;
 	} else {
 		//if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 		//	params = Number(params);
@@ -6544,6 +6313,21 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 			return Number(params);
 		}
 		return vehicleModelIdStart[gameId];
+	}
+
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+
+function getGarageIdFromParams(params, gameId = thisGame) {
+	if(isNaN(params)) {
+		return getGarageIdFromName(params);
+	} else {
+		if(!isValidGarageId(Number(params))) {
+			return false;
+		}
+		return Number(params);
 	}
 
 	return false;
@@ -6582,6 +6366,20 @@ function getMissionIdFromParams(params, gameId = thisGame) {
 
 // ----------------------------------------------------------------------------
 
+function getWeaponIdFromParams(params, gameId = thisGame) {
+	if(isNaN(params)) {
+		return getWeaponIdFromName(params, gameId);
+	} else {
+		if(typeof weaponNames[gameId][Number(params)] != undefined) {
+			return Number(params);
+		}
+	}
+
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+
 function getMissionIdFromName(missionName, gameId = thisGame) {
 	for(let i in missionNames[gameId]) {
 		if(missionNames[gameId][i].toLowerCase().indexOf(missionName.toLowerCase()) != -1) {
@@ -6591,6 +6389,8 @@ function getMissionIdFromName(missionName, gameId = thisGame) {
 
 	return false;
 }
+
+
 
 // ----------------------------------------------------------------------------
 
@@ -6609,14 +6409,21 @@ function getVehicleUpgradeIdFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function getVehicleModelIdFromName(params, gameId = thisGame) {
-	for(let i in vehicleNames[gameId]) {
-		if(vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-			if(gameId >= GAME_GTA_IV) {
-				return gtaivVehicleModels[Number(i)][1];
-			} else {
-				return Number(i)+Number(vehicleModelIdStart[gameId]);
+	if(gameId >= GAME_GTA_IV) {
+		for(let i in gtaivVehicleModels) {
+			if(gtaivVehicleModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				if(gameId >= GAME_GTA_IV) {
+					return gtaivVehicleModels[Number(i)][1];
+				}
 			}
 		}
+		return gtaivVehicleModels[0][1];
+	} else {
+		for(let i in vehicleNames[gameId]) {
+			if(vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				return Number(i)+Number(vehicleModelIdStart[gameId]);
+			}
+		}		
 	}
 
 	return false;
@@ -6640,18 +6447,50 @@ function getSkinIdFromName(params, gameId = thisGame) {
 	if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 		for(let i in gtaivSkinModels) {
 			if(gtaivSkinModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return gtaivSkinModels[i][1];You 
+				return gtaivSkinModels[i][1];
 			}
 		}
 	} else {
 		for(let i in skinNames[gameId]) {
 			if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return i;
+				return Number(i);
 			}
 		}
 	}
 
 	return false;
+}
+
+// ----------------------------------------------------------------------------
+
+function getGarageIdFromName(params, gameId = thisGame) {
+	for(let i in gameGarages[gameId]) {
+		if(gameGarages[gameId][i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+			return Number(i);
+		}
+	}
+
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+
+function isValidGarageId(params, gameId = thisGame) {
+	if(gameGarages[gameId][Number(params)] != "undefined") {
+		return true;
+	}
+
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+
+function getWeaponIdFromName(params, gameId = thisGame) {
+	for(let i in weaponNames[gameId]) {
+		if(weaponNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+			return Number(i);
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -6674,16 +6513,29 @@ function doesWordStartWithVowel(word) {
 
 // ----------------------------------------------------------------------------
 
+function arrayBufferToString(arrayBuffer) {
+	return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer));
+}
+
+// ----------------------------------------------------------------------------
+
 function getVehicleNameFromModelId(modelId, gameId = thisGame) {
 	if(gameId >= GAME_GTA_IV) {
+		console.log(modelId);
 		for(let i in gtaivVehicleModels) {
 			if(gtaivVehicleModels[i][1] == modelId) {
 				return gtaivVehicleModels[i][0];
 			}
-		}	
+		}
+
+		return gtaivVehicleModels[0][0];
+	} else {
+		let modelIdToArraySlot = modelId-vehicleModelIdStart[gameId];
+		return vehicleNames[gameId][modelIdToArraySlot];
+
 	}
-	let modelIndex = modelId-vehicleModelIdStart[gameId];
-	return vehicleNames[gameId][modelIndex];
+
+	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -6699,6 +6551,18 @@ function getSkinNameFromId(modelId, gameId = thisGame) {
 		let modelIndex = modelId;
 		return skinNames[gameId][modelIndex];
 	}
+}
+
+// ----------------------------------------------------------------------------
+
+function getGarageNameFromId(garageId, gameId = thisGame) {
+	return gameGarages[gameId][garageId][0];
+}
+
+// ----------------------------------------------------------------------------
+
+function getGarageLocationFromId(garageId, gameId = thisGame) {
+	return gameGarages[gameId][garageId][1];
 }
 
 // ----------------------------------------------------------------------------
@@ -6736,41 +6600,25 @@ function getSyncerFromId(syncerId) {
 function getClientFromName(clientName) {
 	let clients = getClients();
 	for(let i in clients) {
-		if(clients[i].name.toLowerCase().indexOf(clientName.toLowerCase()) != -1) {
+		if(clients[i].name.indexOf(clientName)) {
 			return clients[i];
 		}
 	}
-
-	return false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClientFromPlayer(player) {
-	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].player == player) {
-			return clients[i];
-		}
-	}
-
-	return false;
+	return getClientFromPlayerElement(player) || false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getPlayerFromParams(params) {
 	if(isNaN(params)) {
-		getPeds().forEach(function(ped) {
-			if(ped.name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return ped;
-			}
-		});
+		return getClientFromName(params) || false;
 	} else {
-		let client = getClients()[Number(params)];
-		if(client != null) {
-			return client.player;
-		}
+		return getClients()[Number(params)] || false;
 	}
 }
 
@@ -6778,39 +6626,12 @@ function getPlayerFromParams(params) {
 
 function getClientFromParams(params) {
 	if(typeof server == "undefined") {
-		let clients = getClients();
-		for(let i in clients) {
-			if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return clients[i];
-			}
-		}
+		return getClientFromName(params) || false;
 	} else {
-		let clients = getClients();
 		if(isNaN(params)) {
-			for(let i in clients) {
-				if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-					return clients[i];
-				}
-			}
+			return getClientFromName(params) || false;
 		} else {
-			let clientId = Number(params) || 0;
-			if(typeof clients[clientId] != "undefined") {
-				return clients[clientId];
-			}
-		}
-	}
-
-	return false;
-}
-
-// ----------------------------------------------------------------------------
-
-function getFirstEmptyEffectSlot(isServer = false) {
-	if(isServer) {
-		for(let i in effects) {
-			if(!effects[i].exists) {
-				return i;
-			}
+			return getClients()[Number(params)] || false;
 		}
 	}
 
@@ -6968,62 +6789,30 @@ function getTimeDifferenceDisplay(unixTimeOne, unixTimeTwo) {
 // ----------------------------------------------------------------------------
 
 function getVehiclesInRange(position, range) {
-	let vehicles = getVehicles();
-	let inRangeVehicles = [];
-	for(let i in vehicles) {
-		if(getDistance(position, vehicles[i].position) <= range) {
-			inRangeVehicles.push(vehicles[i]);
-		}
-	}
-	return inRangeVehicles;
+	return getElementsByType(ELEMENT_VEHICLE).filter(vehicle => position.distance(vehicle.position) <= range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getPlayersInRange(position, range) {
-	let peds = getPeds();
-	let inRangePlayers = [];
-	for(let i in peds) {
-		if(peds[i].isType(ELEMENT_PLAYER)) {
-			if(getDistance(position, peds[i].position) <= range) {
-				inRangePlayers.push(peds[i]);
-			}
-		}
-	}
-	return inRangePlayers;
+	return getElementsByType(ELEMENT_PLAYER).filter(player => position.distance(player.position) <= range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getCiviliansInRange(position, range) {
-	let peds = getPeds();
-	let inRangeCivilians = [];
-	for(let i in peds) {
-		if(peds[i].isType(ELEMENT_CIVILIAN)) {
-			if(getDistance(position, peds[i].position) <= range) {
-				inRangeCivilians.push(peds[i]);
-			}
-		}
-	}
-	return inRangeCivilians;
+	return getElementsByType(ELEMENT_CIVILIAN).filter(civilian => position.distance(civilian.position) <= range);
 }
 
 // ----------------------------------------------------------------------------
 
 function getElementsOfTypeInRange(elementType, position, range) {
-	let elements = getElementsByType();
-	let inRangeElements = [];
-	for(let i in elements) {
-		if(getDistance(position, elements[i].position) <= range) {
-			inRangeElements.push(elements[i]);
-		}
-	}
-	return inRangeElements;
+	return getElementsByType(elementType).filter(element => position.distance(element.position) <= range);
 }
 
 // ----------------------------------------------------------------------------
 
-function isValidObjectModel(modelId, gameId = gta.game) {
+function isValidObjectModel(modelId, gameId = thisGame) {
 	// Will finish later
 	return true;
 }

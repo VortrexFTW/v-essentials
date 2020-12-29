@@ -2,8 +2,7 @@
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.add", function(client, modelId, x, y, z, heading, announce) {
-	let position = new Vec3(x, y, z);
+addNetworkHandler("sb.c.add", function(client, modelId, position, heading) {
 	let civilian = gta.createCivilian(modelId, position);
 	civilian.heading = heading;
 	addToWorld(civilian);
@@ -13,7 +12,7 @@ addNetworkHandler("sb.c.add", function(client, modelId, x, y, z, heading, announ
 
 addNetworkHandler("sb.c.wander", function(client, civilians, wanderPath) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.wander", getClients()[civilian.syncer], civilian, wanderPath);
+		triggerNetworkEvent("sb.c.wander", null, civilian, wanderPath);
 	});	
 });
 
@@ -21,7 +20,7 @@ addNetworkHandler("sb.c.wander", function(client, civilians, wanderPath) {
 
 addNetworkHandler("sb.c.stay", function(client, civilians, stayState) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.stay", getClients()[civilian.syncer], civilian, stayState);
+		triggerNetworkEvent("sb.c.stay", null, civilian, stayState);
 	});	
 });
 
@@ -53,7 +52,7 @@ addNetworkHandler("sb.c.facing", function(client, civilians, entity) {
 
 addNetworkHandler("sb.c.walkfwd", function(client, civilians, distance) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.walkfwd", getClients()[civilian.syncer], civilian, distance);
+		triggerNetworkEvent("sb.c.walkfwd", null, civilian, distance);
 	});		
 });
 
@@ -61,7 +60,7 @@ addNetworkHandler("sb.c.walkfwd", function(client, civilians, distance) {
 
 addNetworkHandler("sb.c.runfwd", function(client, civilians, distance) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.runfwd", getClients()[civilian.syncer], civilian, distance);
+		triggerNetworkEvent("sb.c.runfwd", null, civilian, distance);
 	});		
 });
 
@@ -69,31 +68,31 @@ addNetworkHandler("sb.c.runfwd", function(client, civilians, distance) {
 
 addNetworkHandler("sb.c.sprintfwd", function(client, civilians, distance) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.sprintfwd", getClients()[civilian.syncer], civilian, distance);
+		triggerNetworkEvent("sb.c.sprintfwd", null, civilian, distance);
 	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkto", function(client, civilians, x, y, z) {
+addNetworkHandler("sb.c.walkto", function(client, civilians, position) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.walkto", getClients()[civilian.syncer], civilian, x, y, z);
+		triggerNetworkEvent("sb.c.walkto", null, civilian, position);
 	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.runto", function(client, civilians, x, y, z) {
+addNetworkHandler("sb.c.runto", function(client, civilians, position) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.runto", getClients()[civilian.syncer], civilian, x, y, z);
+		triggerNetworkEvent("sb.c.runto", null, civilian, position);
 	});	
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.sprintto", function(client, civilians, x, y, z) {
+addNetworkHandler("sb.c.sprintto", function(client, civilians, position) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.sprintto", getClients()[civilian.syncer], civilian, x, y, z);
+		triggerNetworkEvent("sb.c.sprintto", null, civilian, position);
 	});	
 });
 
@@ -101,7 +100,7 @@ addNetworkHandler("sb.c.sprintto", function(client, civilians, x, y, z) {
 
 addNetworkHandler("sb.c.crouch", function(client, civilians, crouchState) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.crouch", getClients()[civilian.syncer], civilian, crouchState);
+		triggerNetworkEvent("sb.c.crouch", null, civilian, crouchState);
 	});	
 });
 
@@ -109,7 +108,7 @@ addNetworkHandler("sb.c.crouch", function(client, civilians, crouchState) {
 
 addNetworkHandler("sb.c.threat.add", function(client, civilians, threatId) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.threat.add", getClients()[civilian.syncer], civilian, threatId);
+		triggerNetworkEvent("sb.c.threat.add", null, civilian, threatId);
 	});	
 });
 
@@ -117,7 +116,7 @@ addNetworkHandler("sb.c.threat.add", function(client, civilians, threatId) {
 
 addNetworkHandler("sb.c.threat.heed", function(client, civilians, heedThreatState) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.threat.heed", getClients()[civilian.syncer], civilian, heedThreatState);
+		triggerNetworkEvent("sb.c.threat.heed", null, civilian, heedThreatState);
 	});	
 });
 
@@ -125,7 +124,7 @@ addNetworkHandler("sb.c.threat.heed", function(client, civilians, heedThreatStat
 
 addNetworkHandler("sb.c.stat", function(client, civilians, pedStat) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.stat", getClients()[civilian.syncer], civilian, pedStat);
+		triggerNetworkEvent("sb.c.stat", null, civilian, pedStat);
 	});	
 });
 
@@ -133,15 +132,15 @@ addNetworkHandler("sb.c.stat", function(client, civilians, pedStat) {
 
 addNetworkHandler("sb.c.skin", function(client, civilians, skinId) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.skin", getClients()[civilian.syncer], civilian, skinId);
+		triggerNetworkEvent("sb.c.skin", null, civilian, skinId);
 	});		
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.pos", function(client, civilians, x, y, z) {
+addNetworkHandler("sb.c.pos", function(client, civilians, position) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.pos", getClients()[civilian.syncer], civilian, x, y, z);
+		triggerNetworkEvent("sb.c.pos", null, civilian, position);
 	});		
 });
 
@@ -149,7 +148,7 @@ addNetworkHandler("sb.c.pos", function(client, civilians, x, y, z) {
 
 addNetworkHandler("sb.c.aimat", function(client, civilians, element) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.aimat", getClients()[civilian.syncer], civilian, element);
+		triggerNetworkEvent("sb.c.aimat", null, civilian, element);
 	});		
 });
 
@@ -157,7 +156,7 @@ addNetworkHandler("sb.c.aimat", function(client, civilians, element) {
 
 addNetworkHandler("sb.c.warpintoveh", function(client, civilians, vehicle, seatID) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.warpintoveh", getClients()[civilian.syncer], civilian, vehicle, seatID);
+		triggerNetworkEvent("sb.c.warpintoveh", null, civilian, vehicle, seatID);
 	});	
 });
 
@@ -165,7 +164,7 @@ addNetworkHandler("sb.c.warpintoveh", function(client, civilians, vehicle, seatI
 
 addNetworkHandler("sb.c.enterveh", function(client, civilians, vehicle, driver) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.enterveh", getClients()[civilian.syncer], civilian, vehicle, driver);
+		triggerNetworkEvent("sb.c.enterveh", null, civilian, vehicle, driver);
 	});
 });
 
@@ -173,7 +172,7 @@ addNetworkHandler("sb.c.enterveh", function(client, civilians, vehicle, driver) 
 
 addNetworkHandler("sb.c.exitveh", function(client, civilians) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.exitveh", getClients()[civilian.syncer], civilian);
+		triggerNetworkEvent("sb.c.exitveh", null, civilian);
 	});
 });
 
@@ -181,7 +180,7 @@ addNetworkHandler("sb.c.exitveh", function(client, civilians) {
 
 addNetworkHandler("sb.c.god", function(client, civilians, godMode) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.god", getClients()[civilian.syncer], civilian, godMode);
+		triggerNetworkEvent("sb.c.god", null, civilian, godMode);
 	});
 });
 
@@ -189,7 +188,7 @@ addNetworkHandler("sb.c.god", function(client, civilians, godMode) {
 
 addNetworkHandler("sb.c.hailtaxi", function(client, civilians) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.hailtaxi", getClients()[civilian.syncer], civilian);
+		triggerNetworkEvent("sb.c.hailtaxi", null, civilian);
 	});
 });
 
@@ -197,7 +196,7 @@ addNetworkHandler("sb.c.hailtaxi", function(client, civilians) {
 
 addNetworkHandler("sb.c.resurrect", function(client, civilians) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.resurrect", getClients()[civilian.syncer], civilian);
+		triggerNetworkEvent("sb.c.resurrect", null, civilian);
 	});
 });
 
@@ -213,7 +212,7 @@ addNetworkHandler("sb.c.del", function(client, civilians) {
 
 addNetworkHandler("sb.c.gun", function(client, civilians, weaponId, ammo, holdGun) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.gun", getClients()[civilian.syncer], civilian, weaponId, ammo, holdGun);
+		triggerNetworkEvent("sb.c.gun", null, civilian, weaponId, ammo, holdGun);
 	});
 });
 
@@ -221,7 +220,7 @@ addNetworkHandler("sb.c.gun", function(client, civilians, weaponId, ammo, holdGu
 
 addNetworkHandler("sb.c.nogun", function(client, civilians) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.gun", getClients()[civilian.syncer], civilian);
+		triggerNetworkEvent("sb.c.gun", null, civilian);
 	});
 });
 
@@ -229,7 +228,7 @@ addNetworkHandler("sb.c.nogun", function(client, civilians) {
 
 addNetworkHandler("sb.c.walkstyle", function(client, civilians, walkStyle) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.walkstyle", getClients()[civilian.syncer], civilian, walkStyle);
+		triggerNetworkEvent("sb.c.walkstyle", null, civilian, walkStyle);
 	});
 });
 
@@ -237,7 +236,7 @@ addNetworkHandler("sb.c.walkstyle", function(client, civilians, walkStyle) {
 
 addNetworkHandler("sb.c.jump", function(client, civilians) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.jump", getClients()[civilian.syncer], civilian);
+		triggerNetworkEvent("sb.c.jump", null, civilian);
 	});
 });
 
@@ -245,7 +244,7 @@ addNetworkHandler("sb.c.jump", function(client, civilians) {
 
 addNetworkHandler("sb.c.stamina", function(client, civilians, stamina) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.stamina", getClients()[civilian.syncer], civilian, stamina);
+		triggerNetworkEvent("sb.c.stamina", null, civilian, stamina);
 	});
 });
 
@@ -253,7 +252,7 @@ addNetworkHandler("sb.c.stamina", function(client, civilians, stamina) {
 
 addNetworkHandler("sb.c.staminadur", function(client, civilians, staminaDuration) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.staminadur", getClients()[civilian.syncer], civilian, staminaDuration);
+		triggerNetworkEvent("sb.c.staminadur", null, civilian, staminaDuration);
 	});
 });
 
@@ -261,7 +260,7 @@ addNetworkHandler("sb.c.staminadur", function(client, civilians, staminaDuration
 
 addNetworkHandler("sb.c.torsorot", function(client, civilians, rotation) {
 	civilians.forEach((civilian) => {
-		triggerNetworkEvent("sb.c.torsorot", getClients()[civilian.syncer], civilian, rotation);
+		triggerNetworkEvent("sb.c.torsorot", null, civilian, rotation);
 	});
 });
 
@@ -275,9 +274,9 @@ addNetworkHandler("sb.c.scale", function(client, civilians, scale) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.syncer", function(client, civilians, clientName) {
+addNetworkHandler("sb.c.syncer", function(client, civilians, targetClient) {
 	civilians.forEach(function(civilian) {
-		civilian.syncer = getClientFromName(clientName).index;
+		civilian.setSyncer(targetClient.index, true);
 	});
 });
 
