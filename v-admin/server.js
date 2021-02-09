@@ -4,319 +4,207 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 // ----------------------------------------------------------------------------
 
 let scriptConfig = null;
-let logMessagePrefix = "ADMIN:"
+let logMessagePrefix = "ADMIN:";
 
 // ----------------------------------------------------------------------------
 
-let adminCommands = [
-	"stop",
-	"start",
-	"restart",
-	"refresh",
-	"stopall",
-	"stopscript",
-	"deleteotherplayers"
-];
-
-// ----------------------------------------------------------------------------
-
-exportFunction("messageAdmins", messageAdmins);
-
-// ----------------------------------------------------------------------------
-
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	let configFile = openFile("config.json");
-	if(configFile == null) {
-		logInfo("Could not load config.json. Resource stopping ...");
-		thisResource.stop();
-		return false;
-	}
-	
-	scriptConfig = JSON.parse(configFile.readBytes(configFile.length));
-	configFile.close();
-	if(!scriptConfig) {
-		logInfo("Could not load config.json. Resource stopping ...");
-		thisResource.stop();
-		return false;
-	}
+bindEventHandler("onResourceStart", thisResource, (event, resource) => {
+	loadConfig();
+	applyBansToServer();
+	collectAllGarbage();
 });
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
-	removeEventHandler("OnDiscordCommand");
+bindEventHandler("onResourceStop", thisResource, (event, resource) => {
+	saveConfig();
+	removeBansFromServer();
+	collectAllGarbage();
 });
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnResourceStart", function(event, resource) {
-	messageAdmins("Resource '" + String(resource.name) + "' started!");
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnResourceStop", function(event, resource) {
-	messageAdmins("Resource '" + String(resource.name) + "' stopped!");
-});
-
-addEventHandler("OnPlayerChat", function(event, client, messageText) {
-	//if(client == consoleClient) {
-	//	event.preventDefault();
-	//	message("[ADMIN] [#FFFFFF]" + messageText, COLOUR_ORANGE)
-	//}
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnPlayerJoined", function(event, client) {
-	scriptConfig.admins.forEach(function(admin) {
-		if(client.ip == admin.ip) {
-			client.administrator = true;
-			messageAdmins(String(client.name) + " (IP: " + String(client.ip) + ") was in the admins list, and was given admin access.");
-			messageClient("You have been logged in as administrator!", client, COLOUR_YELLOW);
-			client.setData("v.admin", true, true);
-			return true;
-		}
-	});
-
-	if(!client.administrator) {
-		messageAdmins(client.name + " (IP: " + client.ip + ") is not in the admin list, and has normal player access.");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("admin", function(command, params, client) {
-	if(params == scriptConfig.adminPassword) {
+addEventHandler("onPlayerJoined", (event, client) => {
+	if(isAdminIP(client.ip)) {
+		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
 		client.administrator = true;
-		messageClient("You are now administrator!", client, COLOUR_YELLOW);
-	} else {
-		messageAdmins(client.name + " failed admin login (Tried password: " + String(params) + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("kick", function(command, params, client) {
-	if(client.administrator) {
-		let player = getClientFromParams(params);
-		if(player != false) {
-			if(player != client) {
-				messageClient(player.name + " has been kicked!", client, COLOUR_YELLOW);
-				player.disconnect();
-				destroyElement(player.player);
-			}
-		}
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("makeadmin", function(command, params, client) {
-	if(client.administrator) {
-		let targetClient = getClientFromParams(params);
-		targetClient.administrator = true;
-		//messageClient(client.name + " made you an administrator!", targetClient, COLOUR_YELLOW);
-		messageAdmins(String(client.name) + " made " + String(targetClient.name) + " an administrator!");
-		scriptConfig.admins.push({name: targetClient.name, ip: targetClient.ip});
-		saveConfig();
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("ip", function(command, params, client) {
-	if(client.administrator) {
-		let targetClient = getClientFromParams(params) || client;
-		//messageClient(client.name + " made you an administrator!", targetClient, COLOUR_YELLOW);
-		messageClient(String(client.name) + "'s IP is " + String(targetClient.ip), client, COLOUR_YELLOW);
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("geoip", function(command, params, client) {
-	if(client.administrator) {
-		let targetClient = getClientFromParams(params) || client;
-		//messageClient(client.name + " made you an administrator!", targetClient, COLOUR_YELLOW);
-		let countryName = module.geoip.getCountryName("geoip-country.mmdb", targetClient.ip) || "Unknown";
-		let cityName = module.geoip.getCityName("geoip-city.mmdb", targetClient.ip) || "Unknown";
-		messageClient(String(targetClient.name) + " is from " + String(cityName) + ", " + String(countryName), client, COLOUR_YELLOW);
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("reloadadmins", function(command, params, client) {
-	if(client.administrator) {
-		let configFile = openFile("config.json");
-		if(configFile == null) {
-			logError("Could not load config.json. Admins could not be reloaded! ...");
-			return false;
-		}
-		
-		let tempConfig = JSON.parse(configFile.readBytes(configFile.length));
-		scriptConfig.admins = tempConfig.admins;
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnPlayerCommand", function(event, command, params, client) {
-	if(isAdminCommand(command)) {
-		if(client.administrator) {
-			messageAdmins(client.name + " used admin command (String: /" + command + " " + params + ")");
-		} else {
-			messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-		}		
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-function onAdminCommand(command, params, client) {
-	if(client.administrator) {
-		logWarn(client.name + " used admin command (String: /" + command + " " + params + ")");
-	} else {
-		messageAdmins(client.name + " attempted admin command, but is not an admin and was denied. (String: /" + command + " " + params + ")");
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-function isAdminCommand(command) {
-	if(adminCommands.indexOf(command) != -1) {
+		messageClient(`You have been logged in as administrator!`, client, COLOUR_YELLOW);
 		return true;
 	}
-	
-	return false;
-}
+});
+
+// ----------------------------------------------------------------------------
+
+/*addCommandHandler("admin", (command, params, client) => {
+	if(params == scriptConfig.adminPassword) {
+		client.administrator = true;
+		messageAdmin(`You are now administrator!`, client, COLOUR_YELLOW);
+
+		//let replacedExisting = false;
+		//for(let i in scriptConfig.admins) {
+		//	if(scriptConfig.admins[i].ip == client.ip || scriptConfig.admins[i].name == client.name) {
+		//		scriptConfig.admins[i].ip = client.ip;
+		//		scriptConfig.admins[i].name = client.name;
+		//		scriptConfig.admins[i].timeStamp = new Date().toLocaleDateString('en-GB');
+		//		replacedExisting = true;
+		//	}
+		//}
+
+		//if(!replacedExisting) {
+		//	scriptConfig.admins.push({ip: client.ip, name: client.name, timeStamp: new Date().toLocaleDateString('en-GB')});
+		//}
+
+		scriptConfig.admins.push({ip: client.ip, name: client.name});
+		saveConfig();
+	} else {
+		messageAdmins(`${client.name} failed admin login`);
+	}
+});
+*/
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("kick", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let targetClient = getClientFromParams(params);
+		if(targetClient) {
+			if(targetClient.index != client.index) {
+				messageAdmins(`${targetClient.name} has been kicked!`, client, COLOUR_YELLOW);
+				targetClient.disconnect();
+			} else {
+				messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they tried to kick themselves.`, client, COLOUR_YELLOW);
+			}
+		} else {
+			messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`, client, COLOUR_YELLOW);
+		}
+	} else {
+		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`, client, COLOUR_YELLOW);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("ban", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let splitParams = params.split(" ");
+		let targetParams = splitParams[0];
+		let reasonParams = splitParams.slice(1).join(" ");
+
+		let targetClient = getClientFromParams(targetParams);
+		if(targetClient) {
+			if(targetClient.index != client.index) {
+				scriptConfig.bans.push({name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB')});
+				saveConfig();
+				messageAdmins(`${targetClient.name} has been banned!`, client, COLOUR_YELLOW);
+				server.banIP(targetClient.ip);
+			}
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("unban", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let removedBans = [];
+		for(let i in scriptConfig.bans) {
+			if(scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase())) {
+				server.unbanIP(scriptConfig.bans[i].ip);
+				removedBans.push(scriptConfig.bans.splice(i, 1));
+			}
+		}
+
+		messageClient(client, `${removedBans.length} bans removed!`);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("makeadmin", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let targetClient = getClientFromParams(params);
+		if(targetClient) {
+			targetClient.administrator = true;
+			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
+
+			//let replacedExisting = false;
+			//for(let i in scriptConfig.admins) {
+			//	if(scriptConfig.admins[i].ip == targetClient.ip || scriptConfig.admins[i].name == targetClient.name) {
+			//		scriptConfig.admins[i].ip = targetClient.ip;
+			//		scriptConfig.admins[i].name = targetClient.name;
+			//		replacedExisting = true;
+			//	}
+			//}
+
+			//if(!replacedExisting) {
+			//	scriptConfig.admins.push({ip: targetClient.ip, name: targetClient.name});
+			//}
+
+			scriptConfig.admins.push({ip: targetClient.ip, name: escapeJSONString(targetClient.name), addedBy: escapeJSONString(client.name)});
+			saveConfig();
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("ip", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let targetClient = getClientFromParams(params) || client;
+		if(targetClient) {
+			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("geoip", (command, params, client) => {
+	if(client.administrator) {
+		let targetClient = getClientFromParams(params) || client;
+		let countryName = module.geoip.getCountryName("geoip-country.mmdb", targetClient.ip) || "Unknown";
+		let cityName = module.geoip.getCityName("geoip-city.mmdb", targetClient.ip) || "Unknown";
+		messageAdmin(`${targetClient.name} is from ${cityName}, ${countryName}`, client, COLOUR_YELLOW);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("reloadadmins", (command, params, client) => {
+	if(client.administrator) {
+		loadConfig();
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("reloadbans", (command, params, client) => {
+	if(client.administrator) {
+		loadConfig();
+		removeBansFromServer();
+		applyBansToServer();
+	}
+});
 
 // ----------------------------------------------------------------------------
 
 function messageAdmins(messageText) {
-	getClients().forEach(function(client) {
+	getClients().forEach((client) => {
 		if(client.administrator) {
-			messageClient("[ADMIN] [#FFFFFF]" + String(messageText), client, COLOUR_ORANGE);
+			messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, COLOUR_ORANGE);
 		}
 	});
-	
-	console.warn("[ADMIN] " + String(messageText), COLOUR_ORANGE);
+
+	console.warn(`[ADMIN] [#FFFFFF]${messageText}`);
 }
 
 // ----------------------------------------------------------------------------
 
-function onDiscordCommand(event, author, command, params) {
-	let isAdministrator = (author.roles.indexOf("Administrator") != -1);
-	let isModerator = (author.roles.indexOf("Moderator") != -1);
-	
-	switch(command.toLowerCase()) {
-		case "kick":
-			if(isAdministrator || isModerator) {
-				let client = getClientFromParams(params.join(" "));
-				if(client != null) {
-					console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" ") + " and kicked " + client.name);
-					findResourceByName("v-discord").exports.messageDiscord("Server", String(client.name) + " has been kicked!");
-					client.disconnect();
-				} else {
-					console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but entered an invalid player name/id!");
-					findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", that player was not found!");
-				}
-			} else {
-				console.warn("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but did not have permission!");
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", you do not have permission to use that command!");
-			}
-			break;
-		
-		case "gameadmin":
-			if(isAdministrator) {
-				let client = getClientFromParams(params.join(" "));
-				if(client != null) {
-					if(!client.administrator) {
-						console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" ") + " and gave " + client.name + " game-admin permissions");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(client.name) + " has been given game admin permissions!");
-						client.administrator = true;
-					} else {
-						console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" ") + " and took " + client.name + "'s game-admin permissions");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(client.name) + "'s admin permissions have been revoked!");
-						client.administrator = false;						
-					}
-				} else {
-					console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but entered an invalid player name/id!");
-					findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", that player was not found!");
-				}
-			} else {
-				console.warn("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but did not have permission!");
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", you do not have permission to use that command!");
-			}
-			break;
-			
-		case "start":
-			if(isAdministrator) {
-				let resource = findResourceByName(params.join(" "));
-				if(resource != null) {
-					if(!resource.isStarted && resource.isStarting) {
-						console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" ") + " and started resource '" + resource.name + "'");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(resource.name) + ", is now starting ...");
-						resource.start();
-					} else {
-						console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " to start resource '" + resource.name + "' but failed. Resource already running!");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(resource.name) + ", is already running!");
-					}
-				} else {
-					console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but entered an invalid player name/id!");
-					findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", that resource was not found!");
-				}
-			} else {
-				console.warn("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but did not have permission!");
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", you do not have permission to use that command!");
-			}
-			break;
-
-		case "stop":
-			if(isAdministrator) {
-				let resource = findResourceByName(params.join(" "));
-				if(resource != null) {
-					if(!resource.isStarted && resource.isStarting) {
-						console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" ") + " and stopped resource '" + resource.name + "'");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(resource.name) + ", is now stopping ...");
-						resource.stop();
-					} else {
-						console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " to stop resource '" + resource + "'. Resource is not running!");
-						findResourceByName("v-discord").exports.messageDiscord("Server", String(resource.name) + ", is already running!");
-					}
-				} else {
-					console.log("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but entered an invalid player name/id!");
-					findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", that resource was not found!");
-				}
-			} else {
-				console.warn("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but did not have permission!");
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", you do not have permission to use that command!");
-			}
-			break;
-
-		case "resources":
-			if(isAdministrator) {
-				console.log("[Discord] " + String(author.name) + " used command '." + command + " " + params.join(" "));
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(resource.name) + ", the following resources are currently running: " + getResources().filter(resource => resource.isStarted).join(", "));
-			} else {
-				console.warn("[Discord] " + String(author.name) + " attempted to use command '." + command + " " + params.join(" ") + " but did not have permission!");
-				findResourceByName("v-discord").exports.messageDiscord("Server", String(author.name) + ", you do not have permission to use that command!");
-			}
-			break;
-			
-		default:
-			break;			
+function messageAdmin(messageText, client, colour) {
+	if(client.console) {
+		console.warn(`[ADMIN] [#FFFFFF]${messageText}`);
+	} else {
+		messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, colour);
 	}
 }
 
@@ -324,19 +212,12 @@ function onDiscordCommand(event, author, command, params) {
 
 function getClientFromParams(params) {
 	let clients = getClients();
-	if(isNaN(params)) {
-		for(let i in clients) {
-			if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return clients[i];
-			}			
-		}
-	} else {
-		let clientID = Number(params) || 0;
-		if(typeof clients[clientID] != "undefined") {
-			return clients[clientID];
+	for(let i in clients) {
+		if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+			return clients[i];
 		}
 	}
-	
+
 	return false;
 }
 
@@ -344,14 +225,14 @@ function getClientFromParams(params) {
 
 function saveConfig() {
 	let configText = JSON.stringify(scriptConfig);
-
-	let configFile = openFile("config.json", true);
-	if(configFile == null) {
-		logError("Could not load config.json. Config will not be saved! ...");
+	if(!configText) {
+		logInfo(`Config file could not be stringified`);
 		return false;
 	}
-	configFile.writeBytes(configText, configText.length);
-	configFile.close();
+
+	logInfo(`Config file stringified successfully`);
+	saveTextFile("config.json", configText);
+	logInfo(`Config file saved successfully`);
 }
 
 // ----------------------------------------------------------------------------
@@ -375,3 +256,75 @@ function logError(messageText) {
 // ----------------------------------------------------------------------------
 
 let errorMessageColour = toColour(237, 67, 55, 255);
+
+// ----------------------------------------------------------------------------
+
+function loadConfig() {
+	let configFile = loadTextFile("config.json");
+	if(configFile == "") {
+		logError("Could not load config.json. Resource stopping ...");
+		thisResource.stop();
+		return false;
+	}
+
+	logInfo("Loaded config file contents successfully.");
+
+	scriptConfig = JSON.parse(configFile);
+	if(scriptConfig == null) {
+		logError("Could not parse config.json. Resource stopping ...");
+		thisResource.stop();
+		return false;
+	}
+	logInfo("Parsed config file successfully.");
+}
+
+// ----------------------------------------------------------------------------
+
+function isAdminIP(ip) {
+	for(let i in scriptConfig.admins) {
+		if(ip == scriptConfig.admins.ip) {
+			return true;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function isAdminName(name) {
+	for(let i in scriptConfig.admins) {
+		if(name == scriptConfig.admins.name) {
+			return true;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function applyBansToServer() {
+	for(let i in scriptConfig.bans) {
+		server.banIP(scriptConfig.bans[i].ip, 0);
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function removeBansFromServer() {
+	for(let i in scriptConfig.bans) {
+		server.unbanIP(scriptConfig.bans[i].ip);
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function escapeJSONString(str) {
+	return str.replace(/\\n/g, "\\n")
+	.replace(/\\'/g, "\\'")
+	.replace(/\\"/g, '\\"')
+	.replace(/\\&/g, "\\&")
+	.replace(/\\r/g, "\\r")
+	.replace(/\\t/g, "\\t")
+	.replace(/\\b/g, "\\b")
+	.replace(/\\f/g, "\\f");
+}
+
+// ----------------------------------------------------------------------------
