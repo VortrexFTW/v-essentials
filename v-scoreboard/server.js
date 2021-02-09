@@ -7,15 +7,21 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	setInterval(setPlayerPingData, 3000);
+	setInterval(updatePlayerScoreboardPing, 3000);
 });
 
 // ----------------------------------------------------------------------------
 
-function setPlayerPingData() {
-	getClients().forEach(function(client) {
-		client.setData("v.ping", client.ping);
+function updatePlayerScoreboardPing() {
+	getClients().filter(c => !c.console).forEach((client) => {
+		client.setData("v.ping", client.ping, true);
 	});
+}
+
+// ----------------------------------------------------------------------------
+
+function updatePlayerScoreboardGTAIV(client, episode, gameMode) {
+	client.setData("v.ivinfo", [episode, gameMode], true);
 }
 
 // ----------------------------------------------------------------------------
@@ -34,17 +40,24 @@ function getClientFromParams(params) {
 			for(let i in clients) {
 				if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 					return clients[i];
-				}			
+				}
 			}
 		} else {
 			let clientID = Number(params) || 0;
 			if(typeof clients[clientID] != "undefined") {
 				return clients[clientID];
-			}			
+			}
 		}
 	}
-	
+
 	return false;
 }
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.ivinfo.", function(client, episode, gameMode) {
+	//console.log(`${client.name}'s episode is ${episode} and gamemode is ${gameMode}`);
+	updatePlayerScoreboardGTAIV(client, episode, gameMode);
+});
 
 // ----------------------------------------------------------------------------
