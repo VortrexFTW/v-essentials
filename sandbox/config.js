@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 
 // INSTRUCTIONS:
-// Each config option below has an array seven (7) slots. 
+// Each config option below has an array seven (7) slots.
 // The first slot must ALWAYS be null
 // The rest are for each game, indexed by the game id.
 // Game ID reference: https://wiki.gtaconnected.com/GameIdentifiers
@@ -46,8 +46,8 @@ let ssvBridgeEnabled = [null, true, false, false, true, false, false];
 
 // Weather and Snow
 let currentWeather = [null, 0, 0, 0, 0, 0, 0];
-let isSnowing = [null, true, true, true, true, true, true];
-let isWinter = [null, true, true, true, true, true, true];
+let isSnowing = [null, false, false, false, false, false, false];
+let isWinter = [null, false, false, false, false, false, false];
 let windSpeed = [null, 0, 0, 0, 0, 0, 0];
 
 // ----------------------------------------------------------------------------
