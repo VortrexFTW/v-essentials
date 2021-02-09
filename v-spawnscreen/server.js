@@ -7,7 +7,7 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 // ----------------------------------------------------------------------------
 
 let serverGame = server.game;
-let spawnScreenEnabled = false;
+let spawnScreenEnabled = true;
 
 // ----------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ let gameAnnounceColours = [
 	COLOUR_ORANGE,					// GTA San Andreas
 	COLOUR_ORANGE,					// GTA Underground
 	COLOUR_SILVER,					// GTA IV
-	COLOUR_SILVER					// GTA IV (EFLC)		
+	COLOUR_SILVER					// GTA IV (EFLC)
 ];
 
 // ----------------------------------------------------------------------------
@@ -36,10 +36,10 @@ if(serverGame == GAME_GTA_III) {
 	spawnScreenPedHeading = 0.0;
 } else if(serverGame == GAME_GTA_SA) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
-	spawnScreenPedHeading = 0.01;	
+	spawnScreenPedHeading = 0.01;
 } else if(serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(904.27, -498.00, 14.522);
-	spawnScreenPedHeading = 3.127;	
+	spawnScreenPedHeading = 3.127;
 }
 
 // ----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662];
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPedWasted", function(event, ped, attacker, weapon, pedPiece) {
+addEventHandler("onPedWasted", function(event, ped, attacker, weapon, pedPiece) {
 	if(ped.type == ELEMENT_PLAYER) {
 		let client = getClientFromPed(ped);
 		if(client != null) {
@@ -77,16 +77,22 @@ addEventHandler("OnPedWasted", function(event, ped, attacker, weapon, pedPiece) 
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPlayerJoined", function(event, client) {
-	if(server.game < GAME_GTA_IV) {
-		setTimeout(function() {
-			console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
-			fadeCamera(client, true);
-			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
-		}, 1000);
-	} else {
-		triggerNetworkEvent("v.spawn", client, spawnPoints[server.game].x, spawnPoints[server.game].y, spawnPoints[server.game].z, 0.0,. spawnSkin[server.game]);
+addEventHandler("onPlayerJoined", function(event, client) {
+	if(spawnScreenEnabled) {
+		if(server.game < GAME_GTA_IV) {
+			setTimeout(function() {
+				fadeCamera(client, true);
+				console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
+				spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+			}, 1000);
+		} else {
+			triggerNetworkEvent("v.spawn", client, spawnPoints[server.game], 0.0, spawnSkin[server.game]);
+		}
 	}
+
+	fadeCamera(client, true);
+	console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
+	spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
 });
 
 // ----------------------------------------------------------------------------
@@ -98,7 +104,7 @@ function getClientFromPed(ped) {
 			return clients[i];
 		}
 	}
-	
+
 	return false;
 }
 
@@ -119,6 +125,18 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 		console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
 		thisResource.stop();
 	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.ss.ivskinsel", function(client, skinId) {
+	spawnPlayer(client, spawnScreenPedPosition, spawnScreenPedHeading, skinId);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.ss.ivskinsel", function(client, skinId) {
+	spawnPlayer(client, spawnScreenPedPosition, spawnScreenPedHeading, skinId);
 });
 
 // ----------------------------------------------------------------------------
