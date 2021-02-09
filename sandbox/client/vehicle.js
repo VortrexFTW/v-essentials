@@ -168,7 +168,7 @@ function spawnVehicleCommand(cmdName, params) {
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.add", modelId, position, heading);
 	} else {
-		let thisVeh = createVehicle(modelId, position);
+		let thisVeh = gta.createVehicle(modelId, position);
 		if(!thisVeh) {
 			message("The vehicle could not be added!", errorMessageColour);
 			return false;
@@ -176,11 +176,11 @@ function spawnVehicleCommand(cmdName, params) {
 		thisVeh.heading = heading;
 		//modelId = thisVeh.modelIndex;
 	}
-	
+
 	let modelName = getVehicleNameFromModelId(modelId);
 	let outputText = "spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + String(modelName) + " (using /" + String(cmdName) + ")";
 	outputSandboxMessage(outputText);
-	
+
 	canSpawnVehicle = false;
 	setTimeout(function() { canSpawnVehicle = true; }, 15000);
 	return true;
@@ -204,7 +204,7 @@ addCommandHandler("veh_fix", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -225,7 +225,7 @@ addCommandHandler("veh_fix", function(cmdName, params) {
 	} else {
 		outputText = "repaired " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_fix)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -238,7 +238,7 @@ addCommandHandler("veh_explode", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -259,7 +259,7 @@ addCommandHandler("veh_explode", function(cmdName, params) {
 	} else {
 		outputText = "exploded " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_explode)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -274,7 +274,7 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -288,8 +288,8 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 	} else {
 		outputText = "deleted " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_delete)";
 	}
-	
-	outputSandboxMessage(outputText);	
+
+	outputSandboxMessage(outputText);
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.del", vehicles);
@@ -313,28 +313,28 @@ addCommandHandler("veh_siren", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let sirenState = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
 		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
-	
+
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.siren", vehicles, !!sirenState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.siren = !!sirenState;
 		});
-	}	
+	}
 
 	if(vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's sirens " + String((!!sirenState) ? "on" : "off");
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s siren " + String((!!sirenState) ? "on" : "off") + " (using /veh_siren)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -350,7 +350,7 @@ addCommandHandler("veh_alarm", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let alarmState = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -371,7 +371,7 @@ addCommandHandler("veh_alarm", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s alarm " + String((!!alarmState) ? "on" : "off") + " (using /veh_alarm)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -387,7 +387,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let upgradeId = getVehicleUpgradeIdFromParams(splitParams[1]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -413,7 +413,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 	} else {
 		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_upgrade)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -429,7 +429,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let upgradeId = getVehicleUpgradeIdFromParams(splitParams[1]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -455,7 +455,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 	} else {
 		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_downgrade)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -471,7 +471,7 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let paintJobId = splitParams[1] || 3;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -492,7 +492,7 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s paintjob to ID " + String(paintJobId) + " (using /veh_paintjob)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -508,7 +508,7 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let heading = splitParams[1] || 0.0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -529,7 +529,7 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s heading to " + String(heading) + " (using /veh_heading)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -547,7 +547,7 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 	let positionX = splitParams[1] || 0.0;
 	let positionY = splitParams[2] || 0.0;
 	let positionZ = splitParams[3] || 0.0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -568,7 +568,7 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ) + " (using /veh_pos)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -605,7 +605,7 @@ addCommandHandler("veh_horn", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s horn " + String((!!hornState) ? "on" : "off") + " (using /veh_horn)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -616,7 +616,7 @@ addCommandHandler("veh_lock", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let lockType = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -637,7 +637,7 @@ addCommandHandler("veh_lock", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s door locks to " + String(lockType) + " (using /veh_lock)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -648,7 +648,7 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let engineState = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -669,7 +669,7 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s engine " + String((!!engineState) ? "on" : "off") + " (using /veh_engine)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -686,7 +686,7 @@ addCommandHandler("veh_light", function(cmdName, params) {
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let lightId = (Number(splitParams[1]) || 0);
 	let lightState = (Number(splitParams[2]) || 0);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -707,7 +707,7 @@ addCommandHandler("veh_light", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleLightNames[lightId] + " light " + String((!!lightState) ? "on" : "off") + " (using /veh_light)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -724,7 +724,7 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let panelId = Number(splitParams[1]) || 0;
 	let panelState = Number(splitParams[2]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -745,7 +745,7 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 	} else {
 		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehiclePanelNames[panelId] + " panel state to " + String(panelState) + " (using /veh_panel)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -762,28 +762,28 @@ addCommandHandler("veh_door", function(cmdName, params) {
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let doorId = Number(splitParams[1]) || 0;
 	let doorState = Number(splitParams[2]) || vehicles[i].getDoorStatus(doorId);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
 		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
-	
+
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.door", vehicles, doorId, doorState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setDoorStatus(doorId, doorState);
 		});
-	}	
+	}
 
 	if(vehicles.length > 1) {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleDoorNames[doorId] + " door";
 	} else {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleDoorNames[doorId] + " door (using /veh_door)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -800,7 +800,7 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let wheelId = (Number(splitParams[1]) || 0);
 	let wheelState = (Number(splitParams[2]) || 0);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -821,7 +821,7 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 	} else {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleWheelNames[wheelId] + " wheel to " + vehicleWheelStateNames[wheelState].toLowerCase() + " (using /veh_wheel)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -837,7 +837,7 @@ addCommandHandler("veh_wheels", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let wheelState = (Number(splitParams[1]) || 0);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -860,7 +860,7 @@ addCommandHandler("veh_wheels", function(cmdName, params) {
 	} else {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s wheels (using /veh_wheels)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -881,7 +881,7 @@ addCommandHandler("veh_doors", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let doorState = (Number(splitParams[1]) || 0);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -904,7 +904,7 @@ addCommandHandler("veh_doors", function(cmdName, params) {
 	} else {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s doors (using /veh_doors)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -925,7 +925,7 @@ addCommandHandler("veh_god", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let godMode = (Number(splitParams[1]) || 1);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -947,7 +947,7 @@ addCommandHandler("veh_god", function(cmdName, params) {
 	} else {
 		outputText = "made " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " " + String((!!godMode) ? "invincible" : "not invincible") + " (using /veh_god)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -967,7 +967,7 @@ addCommandHandler("veh_syncer", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let clientName = splitParams[1] || localClient.name;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -976,13 +976,13 @@ addCommandHandler("veh_syncer", function(cmdName, params) {
 	}
 
 	triggerNetworkEvent("sb.v.syncer", vehicles, getClientFromName(clientName));
-	
+
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's syncer to " + String(getClientFromName(clientName).name);
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " syncer to " + String(getClientFromName(clientName).name) + " (using /veh_syncer)";
-	}	
-	
+	}
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1019,7 +1019,7 @@ addCommandHandler("veh_lights", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s lights " + String((!!lightState) ? "on" : "off") + " (using /veh_lights)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1035,7 +1035,7 @@ addCommandHandler("veh_taxilight", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let taxiLightState = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1056,7 +1056,7 @@ addCommandHandler("veh_taxilight", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s taxi light " + String((!!taxiLightState)? "on" : "off" ) + " (using /veh_taxilight)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1072,14 +1072,14 @@ addCommandHandler("veh_hazardlights", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let hazardLightState = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
 		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
-	
+
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.hazardlights", vehicles, !!hazardLightState);
 	} else {
@@ -1093,7 +1093,7 @@ addCommandHandler("veh_hazardlights", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s hazard light " + String((!!hazardLightState)? "on" : "off") + " (using /veh_hazardlight)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1109,7 +1109,7 @@ addCommandHandler("veh_dirtlevel", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let dirtLevel = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1130,7 +1130,7 @@ addCommandHandler("veh_dirtlevel", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s dirt level to " + String(dirtLevel) + " (using /veh_dirtlevel)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1151,7 +1151,7 @@ addCommandHandler("veh_radio", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let radioStation = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1172,7 +1172,7 @@ addCommandHandler("veh_radio", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[gta.game][radioStation] + " (using /veh_radio)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1193,7 +1193,7 @@ addCommandHandler("veh_mission", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let missionId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1214,7 +1214,7 @@ addCommandHandler("veh_mission", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[gta.game][missionId]) + " (using /veh_mission)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1238,7 +1238,7 @@ addCommandHandler("veh_rgb", function(cmdName, params) {
 	let green = Number(splitParams[2]) || 0;
 	let blue = Number(splitParams[3]) || 0;
 	let alpha = Number(splitParams[4]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1259,7 +1259,7 @@ addCommandHandler("veh_rgb", function(cmdName, params) {
 	} else {
 		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha) +  + " (using /veh_rgb)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1277,7 +1277,7 @@ addCommandHandler("veh_colour1", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let colourId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1292,7 +1292,7 @@ addCommandHandler("veh_colour1", function(cmdName, params) {
 			vehicle.colour1 = colourId;
 		});
 	}
-		
+
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's primary colours to " + String(colourId);
 	} else {
@@ -1314,7 +1314,7 @@ addCommandHandler("veh_colour2", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let colourId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1329,13 +1329,13 @@ addCommandHandler("veh_colour2", function(cmdName, params) {
 			vehicle.colour2 = colourId;
 		});
 	}
-	
+
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's secondary colours to " + String(colourId);
 	} else {
 		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s secondary colour to " + String(colourId) + " (using /veh_colour2)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1356,7 +1356,7 @@ addCommandHandler("veh_colour3", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let colourId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1377,7 +1377,7 @@ addCommandHandler("veh_colour3", function(cmdName, params) {
 	} else {
 		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s tertiary (third) colour to " + String(colourId) + " (using /veh_colour3)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1398,7 +1398,7 @@ addCommandHandler("veh_colour4", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let colourId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1440,7 +1440,7 @@ addCommandHandler("veh_collisions", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let collisionState = Number(splitParams[1] || 1);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1461,7 +1461,7 @@ addCommandHandler("veh_collisions", function(cmdName, params) {
 	} else {
 		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s collisions " + String((collisionState) ? "on" : "off") + " (using /veh_collisions)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1482,7 +1482,7 @@ addCommandHandler("veh_cruisespeed", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let cruiseSpeed = Number(splitParams[1]) || 14.0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1497,13 +1497,13 @@ addCommandHandler("veh_cruisespeed", function(cmdName, params) {
 			vehicle.setCarCruiseSpeed(cruiseSpeed);
 		});
 	}
-	
+
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's cruise speed to " + String(cruiseSpeed) + " mph";
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " cruise speed to  " + String(cruiseSpeed) + " mph (using /veh_cruisespeed)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1524,7 +1524,7 @@ addCommandHandler("veh_drivingstyle", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let drivingStyle = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1539,13 +1539,13 @@ addCommandHandler("veh_drivingstyle", function(cmdName, params) {
 			vehicle.setDrivingStyle(drivingStyle);
 		});
 	}
-	
+
 	if(vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's driving styles to " + String(drivingStyle);
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s driving style to " + String(drivingStyle) + " (using /veh_drivingstyle)";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1566,7 +1566,7 @@ addCommandHandler("veh_livery", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let liveryId = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1587,7 +1587,7 @@ addCommandHandler("veh_livery", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s livery design to " + String(liveryId);
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1608,7 +1608,7 @@ addCommandHandler("veh_handling", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let handlingIndex = Number(splitParams[1]) || 0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1629,7 +1629,7 @@ addCommandHandler("veh_handling", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s handling index to " + String(handlingIndex);
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1647,7 +1647,7 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 	let x = Number(splitParams[1]) || 0.0;
 	let y = Number(splitParams[1]) || 0.0;
 	let z = Number(splitParams[1]) || 0.0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1668,7 +1668,7 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " drive to " + String(x) + ", " + String(y) + ", " + String(z);
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1691,18 +1691,18 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
 		return false;
 	}
-	
+
 	let selectedLocation = false;
 	for(let j in gameLocations[thisGame]) {
 		if(gameLocations[thisGame][j][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
 			selectedLocation = gameLocations[thisGame][j];
 		}
 	}
-	
+
 	if(!selectedLocation) {
 		message("Invalid location name!", errorMessageColour);
 		return false;
-	}	
+	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.driveto", vehicles, selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
@@ -1717,7 +1717,7 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " to drive to " + String(selectedLocation[0]);
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1738,7 +1738,7 @@ addCommandHandler("veh_scale", function(cmdName, params) {
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let scale = Number(splitParams[1]) || 0.0;
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1753,13 +1753,13 @@ addCommandHandler("veh_scale", function(cmdName, params) {
 			vehicle.setData("sb.v.scale", scale);
 		});
 	}
-		
+
 	if(vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's scales to " + String(scale);
 	} else {
 		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s scale to " + String(scale)
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1779,7 +1779,7 @@ addCommandHandler("veh_wander", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	
+
 	let outputText = "";
 
 	if(vehicles.length == 0) {
@@ -1800,7 +1800,7 @@ addCommandHandler("veh_wander", function(cmdName, params) {
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " to drive around aimlessly when a ped driver is available.";
 	}
-	
+
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -1866,7 +1866,7 @@ function getVehiclesFromParams(params) {
 
 function getVehiclesFromParams(params) {
 	let parsedParams = parseParams(params);
-	
+
 	let vehicles = getVehicles();
 	let selectedVehicles = [];
 
@@ -1881,19 +1881,19 @@ function getVehiclesFromParams(params) {
 			case "l":
 				selectedVehicles.push(vehicles[vehicles.length-1]);
 				break;
-				
+
 			case "c":
 				selectedVehicles.push(getClosestVehicle(localPlayer.position));
 				break;
-				
+
 			case "pr":
 				selectedVehicles.push(getClosestVehicle(localPlayer.position));
-				break;				
+				break;
 
 			case "r":
 				selectedVehicles.concat(getVehiclesInRange(localPlayer.position, parsedParam[1] || 20.0));
 				break;
-				
+
 			case "a":
 			case "all":
 				selectedVehicles.concat(getVehicles());
@@ -1904,11 +1904,11 @@ function getVehiclesFromParams(params) {
 			case "any":
 				selectedVehicles.push(getRandomVehicle());
 				break;
-				
+
 			case "p":
 				let player = getPlayerFromParams(parsedParam[1]);
 				if(player != null) {
-					
+
 				}
 				break;
 
@@ -2129,6 +2129,18 @@ function resyncVehicle(vehicle) {
 
 	console.log("[Sandbox] Vehicle " + vehicle.id.toString() + " completely resynced!");
 	*/
+
+	if(vehicle.getData("sb.v.scale") != null) {
+		let scaleFactor = vehicle.getData("sb.v.scale");
+		let vehicleMatrix = vehicle.matrix;
+		vehicleMatrix.setScale(new Vec3(scaleFactor, scaleFactor, scaleFactor));
+		let vehiclePosition = vehicle.position;
+		vehicle.matrix = vehicleMatrix;
+		//vehiclePosition.z += vehicleData[vehicleDataStructure.scale];
+		vehicle.position = vehiclePosition;
+		vehicle.collisionsEnabled = false;
+		console.log("[Sandbox] Vehicle " + vehicle.id.toString() + " scale resynced");
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -2163,7 +2175,7 @@ addNetworkHandler("sb.v.fix", function(vehicles) {
 addNetworkHandler("sb.v.siren", function(vehicles, sirenState) {
 	vehicles.forEach(function(vehicle) {
 		vehicle.siren = sirenState;
-	});	
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2220,7 +2232,7 @@ addNetworkHandler("sb.v.doors", function(vehicles, doorState) {
 		for(let i = 0; i <= 6 ; i++) {
 			vehicle.setDoorStatus(i, doorState);
 		}
-	});	
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2416,7 +2428,7 @@ addNetworkHandler("sb.v.opentrunk", function(vehicles) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.v.petroltankhealth", function(petrolTankHealth) {
+addNetworkHandler("sb.v.petroltankhealth", function(vehicles, petrolTankHealth) {
 	vehicles.forEach(function(vehicle) {
 		vehicle.petrolTankHealth = petrolTankHealth;
 	})
@@ -2424,10 +2436,23 @@ addNetworkHandler("sb.v.petroltankhealth", function(petrolTankHealth) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.v.engineHealth", function(engineHealth) {
+addNetworkHandler("sb.v.engineHealth", function(vehicles, engineHealth) {
 	vehicles.forEach(function(vehicle) {
 		vehicle.engineHealth = engineHealth;
 	})
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.scale", function(vehicles, scaleFactor) {
+	vehicles.forEach(function(vehicle) {
+		let vehicleMatrix = vehicle.matrix;
+		vehicleMatrix.setScale(new Vec3(scaleFactor, scaleFactor, scaleFactor));
+		let vehiclePosition = vehicle.position;
+		vehicle.matrix = vehicleMatrix;
+		vehicle.position = vehiclePosition;
+		vehicle.collisionsEnabled = false;
+	});
 });
 
 // ----------------------------------------------------------------------------
