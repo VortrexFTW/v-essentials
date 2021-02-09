@@ -16,7 +16,7 @@ function updateCivilianMovement(civilian) {
 	if(!customCiviliansEnabled[gta.game]) {
 		return false;
 	}
-	
+
 	if(civilianFollowEnabled[gta.game]) {
 		if(civilian.getData("sb.c.following")) {
 			let following = civilian.getData("sb.c.following");
@@ -107,7 +107,7 @@ addCommandHandler("ped", function(cmdName, params) {
 	//		return false;
 	//	}
 	//}
-	
+
 	if(!canSpawnCivilian) {
 		message("Please wait before spawning another ped!", errorMessageColour);
 		return false;
@@ -122,12 +122,12 @@ addCommandHandler("ped", function(cmdName, params) {
 	let skinId = getSkinIdFromParams(splitParams[0], gta.game);
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
 	let heading = localPlayer.heading;
-	
+
 	// Make sure there aren't too many other peds nearby
 	if(getCiviliansInRange(position, 50.0).length >= 20) {
 		message("There are already enough peds in the area!", errorMessageColour);
 		return false;
-	}	
+	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.c.add", skinId, position, heading);
@@ -142,10 +142,10 @@ addCommandHandler("ped", function(cmdName, params) {
 		tempCiv.position = position;
 		tempCiv.heading = heading;
 	}
-	
+
 	let outputText = "spawned a " + getSkinNameFromId(skinId, gta.game) + " ped.";
 	outputSandboxMessage(outputText);
-	
+
 	canSpawnCivilian = false;
 	setTimeout(function() { canSpawnCivilian = true; }, 15000);
 	return true;
@@ -178,7 +178,7 @@ addCommandHandler("pedline", function(cmdName, params) {
 	let amount = (Number(splitParams[1]) || 8);
 	let gap = (Number(splitParams[2]) || 2);
 	let tempCiv = null;
-	
+
 	// Make sure there aren't too many other peds nearby
 	if((getCiviliansInRange(position, 50.0).length >= 25) && !client.administrator) {
 		message("There are already enough peds in the area!", errorMessageColour);
@@ -200,12 +200,12 @@ addCommandHandler("pedline", function(cmdName, params) {
 			tempCiv.heading = position;
 		}
 	}
-	
+
 	let outputText = "spawned a line of " + String(amount) + " " + getSkinNameFromParams(skinId, gta.game) + " peds, spaced apart by " + String(gap) + " meters";
-	outputSandboxMessage(outputText);	
-	
+	outputSandboxMessage(outputText);
+
 	canSpawnCivilian = false;
-	setTimeout(function() { canSpawnCivilian = true; }, 15000);	
+	setTimeout(function() { canSpawnCivilian = true; }, 15000);
 	return true;
 });
 
@@ -251,12 +251,12 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 			}
 		}
 	}
-	
+
 	let outputText = "spawned a " + String(cols) + "x" + String(rows) + " grid of " + getSkinNameFromParams(skinId, gta.game) + " peds, spaced apart by " + String(colGap) + "x" + String(rowGap) + " meters. Total: " + String(cols*rows);
 	outputSandboxMessage(outputText);
-	
+
 	canSpawnCivilian = false;
-	setTimeout(function() { canSpawnCivilian = true; }, 15000);	
+	setTimeout(function() { canSpawnCivilian = true; }, 15000);
 	return true;
 });
 
@@ -789,7 +789,7 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.c.syncer", civilians, clientName);
 	}
-	
+
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds syncer to " + getClientFromParams(clientName).name;
 	} else {
@@ -882,7 +882,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
 	//	message("This feature is not available in San Andreas!", errorMessageColour);
 	//	return false;
-	//}	
+	//}
 
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
@@ -1055,8 +1055,8 @@ addCommandHandler("ped_defendme", function(cmdName, params) {
 	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
 		message("This feature is not available in San Andreas!", errorMessageColour);
 		return false;
-	}		
-	
+	}
+
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
 		return false;
@@ -1132,7 +1132,7 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 		let weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game)) + " with " + String(ammo) + " ammo";
 		if(!isAmmoWeapon(weaponId, gta.game)) {
 			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game));
-		}		
+		}
 		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput;
 	}
 
@@ -2030,12 +2030,12 @@ function getCiviliansFromParams(params) {
 		case "near":
 		case "within":
 			selected.concat(getCiviliansInRange(localPlayer.position, 20.0));
-			break;		
+			break;
 
 		case "a":
 		case "all":
 			selected = getCivilians();
-			break;	
+			break;
 
 		case "r":
 		case "random":
@@ -2209,7 +2209,7 @@ addNetworkHandler("sb.c.god", function(civilian, godMode) {
 addNetworkHandler("sb.c.hailtaxi", function(civilian) {
 	civilian.invincible = godMode;
 	civilian.setProofs(godMode, godMode, godMode, godMode, godMode);
-	
+
 });
 
 // ----------------------------------------------------------------------------
