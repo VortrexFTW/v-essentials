@@ -38,14 +38,13 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnResourceStart", function(event, resource) {
-	console.warn("[Sandbox] Resource '" + resource.name + "' started!");
+	//console.warn("[Sandbox] Resource '" + resource.name + "' started!");
 });
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnResourceStop", function(event, resource) {
-	console.warn("[Sandbox] Resource '" + resource.name + "' stopping!!");
-	
+	//console.warn("[Sandbox] Resource '" + resource.name + "' stopping!!");
 	collectAllGarbage();
 });
 
@@ -62,12 +61,6 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 
 addNetworkHandler("sb.clientready", function(client) {
 	triggerNetworkEvent("sb.w.winter", client, isSnowing[serverGame], isWinter[serverGame]);
-	
-	//customEffects.forEach(function(customEffect) {
-	//	if(customEffect.exists) {
-	//		triggerNetworkEvent("sb.ef.add", client, customEffect.effectID, customEffect.effectType, customEffect.position.x, customEffect.position.y, customEffect.position.z);
-	//	}
-	//});
 });
 
 // ----------------------------------------------------------------------------
@@ -91,15 +84,7 @@ addNetworkHandler("sb.msg", function(client, messageText) {
 // ----------------------------------------------------------------------------
 
 function outputSandboxMessage(client, messageText) {
-	//console.log(client.name + " " + messageText);
-	//if(findResourceByName("v-chat").isStarted) {
-	//	if(typeof findResourceByName("v-chat").exports.translateSandboxMessage != "undefined") {
-	//		findResourceByName("v-chat").exports.translateSandboxMessage(client, messageText, gameAnnounceColour);
-	//		return true;
-	//	}
-	//}
-	
-	message(String(client.name) + " " + messageText, gameAnnounceColour);
+	message(`${client.name} ${messageText}`, gameAnnounceColour);
 }
 
 // ----------------------------------------------------------------------------
@@ -112,16 +97,8 @@ addEventHandler("OnPlayerQuit", function(event, client, disconnectReason) {
 
 function beginSandboxCleanup() {
 	if(getClients().length == 0) {
-		console.log("[Sandbox] Server is empty. Performing cleanup.");
-		//let vehicles = getElementsByType(ELEMENT_VEHICLE).filter(vehicle => vehicle.getData("sb.v.addedby") != null);
-		getVehicles().forEach(function(vehicle) { 
-			destroyElement(vehicle);
-		});
-
-		//let civilians = getElementsByType(ELEMENT_CIVILIAN).filter(civilian => civilian.getData("sb.c.addedby") != null);
-		getCivilians().forEach(function(civilian) { 
-			destroyElement(civilian);
-		});		
+		console.log(`[Sandbox] Server is empty. Restarting sandbox to clean up.`);
+		thisResource.restart();
 	}
 
 	collectAllGarbage();
