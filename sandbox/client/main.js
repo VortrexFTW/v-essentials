@@ -10,6 +10,7 @@ let gameName = gameNames[game.game];
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	if(isConnected) {
 		triggerNetworkEvent("sb.clientready");
+		triggerNetworkEvent("sb.w.sync");
 	} else {
 		resyncWorld();
 	}
@@ -21,19 +22,19 @@ addCommandHandler("clear", function(cmdName, params, client) {
 	for(let i=0;i<=19;i++) {
 		global.message("", COLOUR_BLACK);
 	}
-	console.log("[Sandbox] Chatbox cleared");
+	console.log(`[Sandbox] Chatbox cleared`);
 });
 
 // ----------------------------------------------------------------------------
 
 function outputSandboxMessage(messageText) {
 	if(isConnected) {
-		console.log("[Sandbox] " + String(localClient.name) + " " + messageText);
+		console.log(`[Sandbox] ${localClient.name} ${messageText}`);
 		triggerNetworkEvent("sb.msg", messageText);
 	} else {
-		console.log("[Sandbox] You " + messageText);
-		message("You " + messageText, gameAnnounceColour);
-		
+		console.log(`[Sandbox] You ${messageText}`);
+		message(`You ${messageText}`, gameAnnounceColour);
+
 	}
 }
 
