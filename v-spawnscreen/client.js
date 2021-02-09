@@ -56,7 +56,11 @@ bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
 	
 	skinSelectExplainFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
 	
-	//setTimeout(showSkinSelect, 500);
+	if(gta.game == GAME_GTA_IV) {
+		localPlayer.setData("v.ss.ivskinindex", 0);
+	}
+	
+	setTimeout(showSkinSelect, 500);
 });
 
 // ----------------------------------------------------------------------------
@@ -74,7 +78,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 		case SDLK_RIGHT:
 			if(inSpawnScreen) {
 				if(sdl.ticks-lastKeyPressTick >= keyPressDelay) {
-					if(game.game == GAME_GTA_III) {
+					if(gta.game == GAME_GTA_III) {
 						if(localPlayer.skin >= 122) {
 							localPlayer.skin = 0;
 						} else {
@@ -84,7 +88,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin++;
 							}					
 						}
-					} else if(game.game == GAME_GTA_VC) {
+					} else if(gta.game == GAME_GTA_VC) {
 						if(localPlayer.skin >= 100) {
 							localPlayer.skin = 0;
 						} else {
@@ -96,13 +100,21 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin++;
 							}						
 						}		
-					} else if(game.game == GAME_GTA_SA) {
+					} else if(gta.game == GAME_GTA_SA) {
 						if(localPlayer.skin >= 288) {
 							localPlayer.skin = 0;
 						} else {
 							localPlayer.skin++;
 						}
-					}
+					} else if(gta.game == GAME_GTA_IV) {
+						if(localPlayer.getData("v.ss.ivskinindex") >= gtaivSkinModels.length) {
+							localPlayer.setData("v.ss.ivskinindex", 0);
+							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
+						} else {
+							localPlayer.setData("v.ss.ivskinindex", localPlayer.getData("v.ss.ivskinindex")+1);
+							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
+						}
+					}					
 					
 					localPlayer.heading = spawnScreenPedHeading;
 					lastKeyPressTick = sdl.ticks;
@@ -113,7 +125,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 		case SDLK_LEFT:
 			if(inSpawnScreen) {
 				if(sdl.ticks-lastKeyPressTick >= keyPressDelay) {
-					if(game.game == GAME_GTA_III) {
+					if(gta.game == GAME_GTA_III) {
 						if(localPlayer.skin <= 0) {
 							localPlayer.skin = 122;
 						} else {
@@ -123,7 +135,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin--;
 							}
 						}
-					} else if(game.game == GAME_GTA_VC) {
+					} else if(gta.game == GAME_GTA_VC) {
 						if(localPlayer.skin <= 0) {
 							localPlayer.skin = 100;
 						} else {
@@ -135,13 +147,37 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin--;
 							}						
 						}		
-					} else if(game.game == GAME_GTA_SA) {
+					} else if(gta.game == GAME_GTA_SA) {
 						if(localPlayer.skin <= 0) {
-							localPlayer.skin = 288;
+							localPlayer.skin = 313;
+						} else if(localPlayer.skin == 9) {
+							localPlayer.skin = 2;
+						} else if(localPlayer.skin == 43) {
+							localPlayer.skin = 41;								
+						} else if(localPlayer.skin == 66) {
+							localPlayer.skin = 64;
+						} else if(localPlayer.skin == 75) {
+							localPlayer.skin = 73;							
+						} else if(localPlayer.skin == 87) {
+							localPlayer.skin = 85;	
+						} else if(localPlayer.skin == 120) {
+							localPlayer.skin = 118;	
+						} else if(localPlayer.skin == 150) {
+							localPlayer.skin = 148;
+						} else if(localPlayer.skin == 207) {
+							localPlayer.skin = 209;							
 						} else {
 							localPlayer.skin--;
 						}
-					}
+					} else if(gta.game == GAME_GTA_IV) {
+						if(localPlayer.getData("v.ss.ivskinindex") <= 0) {
+							localPlayer.setData("v.ss.ivskinindex", 0);
+							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
+						} else {
+							localPlayer.setData("v.ss.ivskinindex", localPlayer.getData("v.ss.ivskinindex")-1);
+							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
+						}
+					}	
 					localPlayer.heading = spawnScreenPedHeading;
 					lastKeyPressTick = sdl.ticks;
 				}
@@ -155,7 +191,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 					inSpawnScreen = false;
 					triggerNetworkEvent("v.ss.sel", localPlayer.skin);
 					setHUDEnabled(true);
-					let skinName = getSkinName(localPlayer.skin);
+					//let skinName = getSkinName(localPlayer.skin);
 					//if(skinName != false) {
 					//	message("You spawned as " + skinName, gameAnnounceColour);
 					//}
@@ -171,19 +207,15 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPedWasted", function(event, ped) {
-	if(gta.game < GAME_GTA_IV) {
-		if(ped == localPlayer) {
-			setTimeout(showSkinSelect, 500);
-		}
-	} else {
-		
+	if(ped == localPlayer) {
+		setTimeout(showSkinSelect, 500);
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.spawn", function(x, y, z, heading, skin) {
-	spawnPlayer(Vec3(x, y, z), heading, skin);
+addNetworkHandler("v.spawn", function(position, heading, skin) {
+	spawnPlayer(position, heading, skin);
 });
 
 // ----------------------------------------------------------------------------
@@ -193,14 +225,14 @@ function showSkinSelect() {
 		localPlayer.collisionsEnabled = false;
 		localPlayer.stayInSamePlace = true;
 		localPlayer.skin = 0;
-
-		setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);
-		setHUDEnabled(false);
-		inSpawnScreen = true;
-		fadeCamera(true);
-		gta.setPlayerControl(false);
-		gui.showCursor(true, false);	
 	}
+
+	gta.setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);
+	setHUDEnabled(false);
+	inSpawnScreen = true;
+	gta.fadeCamera(true);
+	gta.setPlayerControl(false);
+	gui.showCursor(true, false);
 	return true;
 }
 
@@ -244,7 +276,7 @@ let gameAnnounceColour = gameAnnounceColours[game.game];
 // ----------------------------------------------------------------------------
 
 let gtaivSkinModels = [
-	["Nico Bellic", 1862763509],
+	//["Nico Bellic", 1862763509],
 	["Male Multiplayer", -2020305438],
 	["Female Multiplayer", -641875910],
 	["MODEL_SUPERLOD", -1370810922],
@@ -465,22 +497,22 @@ let gtaivSkinModels = [
 	["Business Woman 3", -284229525],
 	["East European Woman 3", 677687516],
 	["Fat Black Woman", -1188238883],
-	["MODEL_F_M_PJERSEY_01", -2075220936],
-	["MODEL_F_M_PJERSEY_02", -1356924456],
-	["MODEL_F_M_PLATIN_01", 812112483],
-	["MODEL_F_M_PLATIN_02", -129242580],
-	["MODEL_F_M_PMANHAT_01", 852423121],
-	["MODEL_F_M_PMANHAT_02", 76551508],
-	["MODEL_F_M_PORIENT_01", -2118501976],
-	["MODEL_F_M_PRICH_01", 1616769823],
-	["MODEL_F_Y_BUSINESS_01", 453889158],
-	["MODEL_F_Y_CDRESS_01", 824245375],
-	["MODEL_F_Y_PBRONX_01", -1362442041],
-	["MODEL_F_Y_PCOOL_01", -1788328884],
-	["MODEL_F_Y_PCOOL_02", -1523915823],
-	["MODEL_F_Y_PEASTEURO_01", -949987237],
-	["MODEL_F_Y_PHARBRON_01", -1926577323],
-	["MODEL_F_Y_PHARLEM_01", 168065679],
+	["Jersey Woman 1", -2075220936],
+	["Jersey Woman 2", -1356924456],
+	["Fat Hispanic Woman 1", 812112483],
+	["Fat Hispanic Woman 2", -129242580],
+	["White Manhattan Woman", 852423121],
+	["Black Manhattan Woman", 76551508],
+	["Old Asian Woman", -2118501976],
+	["Old Rich Woman", 1616769823],
+	["Business Woman 4", 453889158],
+	["Asian Woman in Dress", 824245375],
+	["Fat Black Bronx Woman", -1362442041],
+	["Random White Woman", -1788328884],
+	["Random Hispanic Woman", -1523915823],
+	["Random Eastern European Woman", -949987237],
+	["Random Black Woman", -1926577323],
+	["Black Harlem Woman 1", 168065679],
 	["MODEL_F_Y_PJERSEY_02", 441464],
 	["MODEL_F_Y_PLATIN_01", 54114008],
 	["MODEL_F_Y_PLATIN_02", -292713088],
@@ -489,19 +521,19 @@ let gtaivSkinModels = [
 	["MODEL_F_Y_PMANHAT_02", 1354281938],
 	["MODEL_F_Y_PMANHAT_03", 1056837725],
 	["MODEL_F_Y_PORIENT_01", -1193633577],
-	["MODEL_F_Y_PQUEENS_01", 713691120],
-	["MODEL_F_Y_PRICH_01", -1780385799],
-	["MODEL_F_Y_PVILLBO_02", -952185135],
-	["MODEL_F_Y_SHOP_03", 1586287288],
-	["MODEL_F_Y_SHOP_04", 1848013291],
-	["MODEL_F_Y_SHOPPER_05", -1702036227],
-	["MODEL_F_Y_SOCIALITE", 1182843182],
-	["MODEL_F_Y_STREET_02", -900623157],
-	["MODEL_F_Y_STREET_05", 286007875],
-	["MODEL_F_Y_STREET_09", 1473654742],
-	["MODEL_F_Y_STREET_12", -1850743775],
-	["MODEL_F_Y_STREET_30", 1290755317],
-	["MODEL_F_Y_STREET_34", 1872110126],
+	["Random Black Woman 2", 713691120],
+	["Rich White Woman 1", -1780385799],
+	["Random Asian Woman", -952185135],
+	["Random Female Shopper 1", 1586287288],
+	["Random Female Shopper 2", 1848013291],
+	["Random Female Shopper 3", -1702036227],
+	["Random Female Socialite 1", 1182843182],
+	["Random Street Woman 1", -900623157],
+	["Random Street Woman 2", 286007875],
+	["Random Street Woman 3", 1473654742],
+	["Random Street Woman 4", -1850743775],
+	["Random Street Woman 5", 1290755317],
+	["Random Street Woman 6", 1872110126],
 	["MODEL_F_Y_TOURIST_01", 1754440500],
 	["MODEL_F_Y_VILLBO_01", 761763258],
 	["MODEL_M_M_BUSINESS_02", -636579119],
@@ -585,11 +617,11 @@ let gtaivSkinModels = [
 	["MODEL_M_Y_STREET_04", 813889395],
 	["MODEL_M_Y_STREETBLK_02", -1552214124],
 	["MODEL_M_Y_STREETBLK_03", -650575089],
-	["MODEL_M_Y_STREETPUNK_02", -740078918],
-	["MODEL_M_Y_STREETPUNK_04", -1927496394],
-	["MODEL_M_Y_STREETPUNK_05", 1374242512],
-	["MODEL_M_Y_TOUGH_05", -1139941790],
-	["MODEL_M_Y_TOURIST_02", 809067472],
+	["Street Punk 1", -740078918],
+	["Street Punk 2", -1927496394],
+	["Street Punk 3", 1374242512],
+	["Tough Guy", -1139941790],
+	["Male Tourist", 809067472],
 ];
 
 // ----------------------------------------------------------------------------
