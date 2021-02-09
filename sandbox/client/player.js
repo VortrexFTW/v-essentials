@@ -41,7 +41,6 @@ addCommandHandler("skin", function(cmdName, params) {
 		return false;
 	}
 
-	let splitParams = params.split(" ");
 	let skinId = getSkinIdFromParams(params, gta.game);
 
 	if(!skinId) {
@@ -62,16 +61,40 @@ addCommandHandler("skin", function(cmdName, params) {
 			message("That skin is invalid!", errorMessageColour);
 			return false;
 		}
+	} else if(gta.game == GAME_GTA_SA) {
+		if(skinId < 0 || skinId > 313) {
+			message("That skin is invalid!", errorMessageColour);
+			return false;
+		}
+
+		switch(skinId) {
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 42:
+			case 65:
+			case 74:
+			case 86:
+			case 119:
+			case 149:
+			case 210:
+				message("That skin is invalid!", errorMessageColour);
+				return false;
+		}
 	}
 
+
 	if(isConnected) {
-		triggerNetworkEvent("sb.p.skin", localPlayer.position, localPlayer.heading, skinId, localPlayer.invincible);
+		triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
 	} else {
 		localPlayer.skin = skinId;
 	}
 
 	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -103,7 +126,7 @@ addCommandHandler("clothes", function(cmdName, params) {
 		case "lower":
 			bodyPartId = 2;
 			break;
-			
+
 		default:
 			message("The body part must be: head, upper, or lower", errorMessageColour);
 			return false;
@@ -117,16 +140,16 @@ addCommandHandler("clothes", function(cmdName, params) {
 	if(texture < 0 || texture > 2) {
 		message("The texture must be between 0 and 2!", errorMessageColour);
 		return false;
-	}	
+	}
 
 	if(isConnected) {
 		localPlayer.changeBodyPart(bodyPartId, model, texture);
 	} else {
-		localPlayer.skin = skinId;
+		localPlayer.changeBodyPart(bodyPartId, model, texture);
 	}
 
 	let outputText = `changed ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} his ${bodyPartNames[bodyPartId]} to model ${model} and texture ${texture} (using /clothes)`;
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -148,7 +171,7 @@ addCommandHandler("lookatveh", function(cmdName, params) {
 	}
 
 	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -427,7 +450,7 @@ addCommandHandler("health", function(cmdName, params) {
 		}
 
 		localPlayer.health = health;
-		
+
 		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " health to " + String(health) + " (using /health)";
 		outputSandboxMessage(outputText);
 	}
@@ -729,7 +752,7 @@ addCommandHandler("helmet", function(cmdName, params) {
 	} else {t
 		outputText = "took off " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet (using /helmet)";
 	}
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -749,7 +772,7 @@ addCommandHandler("ba", function(cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosBehindPos(localPlayer.position, localPlayer.heading, distance);
 	let outputText = "teleported backward " + String(distance) + " meters (using /ba)";
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -759,7 +782,7 @@ addCommandHandler("up", function(cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosAbovePos(localPlayer.position, localPlayer.heading, distance);
 	let outputText = "teleported up " + String(distance) + " meters (using /up)";
-	outputSandboxMessage(outputText);	
+	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -842,7 +865,7 @@ addCommandHandler("jail", function(cmdName, params) {
 			localClient.setData("jailed", 1);
 		}
 	} else if(gta.game == GAME_GTA_VC) {
-		
+
 	} else if(gta.game == GAME_GTA_SA) {
 
 	}
@@ -910,13 +933,8 @@ addCommandHandler("gotopos", function(command, params) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.p.skin", function(playerId, skinId, invincible) {
-	if(gta.game >= GAME_GTA_IV) {
-		
-	} else {
-		getElementFromId(playerId).skin = Number(skinId);
-	}
-	
+addNetworkHandler("sb.p.skin", function(ped, skinId) {
+	ped.skin = skinId;
 });
 
 // ----------------------------------------------------------------------------
@@ -971,10 +989,10 @@ addNetworkHandler("sb.p.helmet", function(playerID, helmetState) {
 addNetworkHandler("sb.p.god", function(playerID, godMode) {
 	if(getElementFromId(playerID) != null) {
 		getElementFromId(playerID).invincible = godMode;
-	}
-	
-	if(gta.game < GAME_GTA_IV) {
-		getElementFromId(playerID).setProofs(godMode, godMode, godMode, godMode, godMode);
+
+		if(gta.game < GAME_GTA_IV) {
+			getElementFromId(playerID).setProofs(godMode, godMode, godMode, godMode, godMode);
+		}
 	}
 });
 
@@ -1010,6 +1028,12 @@ addNetworkHandler("sb.p.fatness", function(player, fatness) {
 	gta.tommyFatness = fatness;
 });
 
+// ----------------------------------------------------------------------------
 
+addCommandHandler("singleplayer", function(cmdName, params) {
+	if(gta.game == GAME_GTA_IV) {
+		gta.shutdownAndLaunchSinglePlayerGame();
+	}
+});
 
 // ----------------------------------------------------------------------------
