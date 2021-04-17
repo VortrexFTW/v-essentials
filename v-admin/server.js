@@ -11,6 +11,7 @@ let logMessagePrefix = "ADMIN:";
 bindEventHandler("onResourceStart", thisResource, (event, resource) => {
 	loadConfig();
 	applyBansToServer();
+	applyAdminPermissions();
 	collectAllGarbage();
 });
 
@@ -32,35 +33,6 @@ addEventHandler("onPlayerJoined", (event, client) => {
 		return true;
 	}
 });
-
-// ----------------------------------------------------------------------------
-
-/*addCommandHandler("admin", (command, params, client) => {
-	if(params == scriptConfig.adminPassword) {
-		client.administrator = true;
-		messageAdmin(`You are now administrator!`, client, COLOUR_YELLOW);
-
-		//let replacedExisting = false;
-		//for(let i in scriptConfig.admins) {
-		//	if(scriptConfig.admins[i].ip == client.ip || scriptConfig.admins[i].name == client.name) {
-		//		scriptConfig.admins[i].ip = client.ip;
-		//		scriptConfig.admins[i].name = client.name;
-		//		scriptConfig.admins[i].timeStamp = new Date().toLocaleDateString('en-GB');
-		//		replacedExisting = true;
-		//	}
-		//}
-
-		//if(!replacedExisting) {
-		//	scriptConfig.admins.push({ip: client.ip, name: client.name, timeStamp: new Date().toLocaleDateString('en-GB')});
-		//}
-
-		scriptConfig.admins.push({ip: client.ip, name: client.name});
-		saveConfig();
-	} else {
-		messageAdmins(`${client.name} failed admin login`);
-	}
-});
-*/
 
 // ----------------------------------------------------------------------------
 
@@ -118,6 +90,15 @@ addCommandHandler("unban", (command, params, client) => {
 	}
 });
 
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("a", (command, params, client) => {
+	if(client.administrator) {
+		message(`[#FF9900][ADMIN]: ${params}`, COLOUR_WHITE);
+	}
+});
+
 // ----------------------------------------------------------------------------
 
 addCommandHandler("makeadmin", (command, params, client) => {
@@ -126,19 +107,6 @@ addCommandHandler("makeadmin", (command, params, client) => {
 		if(targetClient) {
 			targetClient.administrator = true;
 			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-
-			//let replacedExisting = false;
-			//for(let i in scriptConfig.admins) {
-			//	if(scriptConfig.admins[i].ip == targetClient.ip || scriptConfig.admins[i].name == targetClient.name) {
-			//		scriptConfig.admins[i].ip = targetClient.ip;
-			//		scriptConfig.admins[i].name = targetClient.name;
-			//		replacedExisting = true;
-			//	}
-			//}
-
-			//if(!replacedExisting) {
-			//	scriptConfig.admins.push({ip: targetClient.ip, name: targetClient.name});
-			//}
 
 			scriptConfig.admins.push({ip: targetClient.ip, name: escapeJSONString(targetClient.name), addedBy: escapeJSONString(client.name)});
 			saveConfig();
@@ -161,6 +129,10 @@ addCommandHandler("ip", (command, params, client) => {
 
 addCommandHandler("geoip", (command, params, client) => {
 	if(client.administrator) {
+		if(typeof module.geoip == "undefined") {
+			return false;
+		}
+
 		let targetClient = getClientFromParams(params) || client;
 		let countryName = module.geoip.getCountryName("geoip-country.mmdb", targetClient.ip) || "Unknown";
 		let cityName = module.geoip.getCityName("geoip-city.mmdb", targetClient.ip) || "Unknown";
@@ -170,9 +142,22 @@ addCommandHandler("geoip", (command, params, client) => {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("docmd", (command, params, client) => {
+	if(client.administrator) {
+		let splitParams = params.split(" ");
+		let commandString = splitParams.slice(1).join(" ");
+		let targetClient = getClientFromParams(splitParams[0]) || client;
+		triggerNetworkEvent("v.admin.docmd", targetClient, );
+		messageAdmin(`Command simulated for ${targetClient.name} (${commandString})`, client, COLOUR_YELLOW);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("reloadadmins", (command, params, client) => {
 	if(client.administrator) {
 		loadConfig();
+		applyAdminPermissions();
 	}
 });
 
@@ -282,7 +267,7 @@ function loadConfig() {
 
 function isAdminIP(ip) {
 	for(let i in scriptConfig.admins) {
-		if(ip == scriptConfig.admins.ip) {
+		if(ip == scriptConfig.admins[i].ip) {
 			return true;
 		}
 	}
@@ -292,7 +277,7 @@ function isAdminIP(ip) {
 
 function isAdminName(name) {
 	for(let i in scriptConfig.admins) {
-		if(name == scriptConfig.admins.name) {
+		if(name == scriptConfig.admins[i].name) {
 			return true;
 		}
 	}
@@ -301,6 +286,7 @@ function isAdminName(name) {
 // ----------------------------------------------------------------------------
 
 function applyBansToServer() {
+	removeBansFromServer();
 	for(let i in scriptConfig.bans) {
 		server.banIP(scriptConfig.bans[i].ip, 0);
 	}
@@ -325,6 +311,19 @@ function escapeJSONString(str) {
 	.replace(/\\t/g, "\\t")
 	.replace(/\\b/g, "\\b")
 	.replace(/\\f/g, "\\f");
+}
+
+// ----------------------------------------------------------------------------
+
+function applyAdminPermissions() {
+	let clients = getClients();
+	for(let i in clients) {
+		if(isAdminIP(clients[i].ip)) {
+			clients[i].administrator = true;
+		} else {
+			clients[i].administrator = false;
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------
