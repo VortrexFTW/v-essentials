@@ -27,10 +27,10 @@ if(gta.game == GAME_GTA_III) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
 	spawnScreenCamPosition = new Vec3(2494.54, -1677.83, 15.33);
-	spawnScreenCamLookAtPosition = spawnScreenPedPosition;		
+	spawnScreenCamLookAtPosition = spawnScreenPedPosition;
 } else if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(904.27, -498.00, 14.522);
-	spawnScreenPedHeading = 3.127;	
+	spawnScreenPedHeading = 3.127;
 	spawnScreenCamPosition = new Vec3(908.48, -501.24, 15.146);
 	spawnScreenCamLookAtPosition = spawnScreenPedPosition;
 }
@@ -53,13 +53,13 @@ bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
 		skinSelectFont = lucasFont.createFont(fontStream, 28.0);
 		fontStream.close();
 	}
-	
+
 	skinSelectExplainFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
-	
+
 	if(gta.game == GAME_GTA_IV) {
 		localPlayer.setData("v.ss.ivskinindex", 0);
 	}
-	
+
 	setTimeout(showSkinSelect, 500);
 });
 
@@ -69,12 +69,12 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 	switch(keyCode) {
 		case SDLK_F1:
 			if(isConnected) {
-				if(!inSpawnScreen) {				
+				if(!inSpawnScreen) {
 					triggerNetworkEvent("v.respawn");
 				}
 			}
 			break;
-			
+
 		case SDLK_RIGHT:
 			if(inSpawnScreen) {
 				if(sdl.ticks-lastKeyPressTick >= keyPressDelay) {
@@ -86,7 +86,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin = 30;
 							} else {
 								localPlayer.skin++;
-							}					
+							}
 						}
 					} else if(gta.game == GAME_GTA_VC) {
 						if(localPlayer.skin >= 100) {
@@ -98,8 +98,8 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin = 142;
 							} else {
 								localPlayer.skin++;
-							}						
-						}		
+							}
+						}
 					} else if(gta.game == GAME_GTA_SA) {
 						if(localPlayer.skin >= 288) {
 							localPlayer.skin = 0;
@@ -114,14 +114,14 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 							localPlayer.setData("v.ss.ivskinindex", localPlayer.getData("v.ss.ivskinindex")+1);
 							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
 						}
-					}					
-					
+					}
+
 					localPlayer.heading = spawnScreenPedHeading;
 					lastKeyPressTick = sdl.ticks;
 				}
 			}
 			break;
-			
+
 		case SDLK_LEFT:
 			if(inSpawnScreen) {
 				if(sdl.ticks-lastKeyPressTick >= keyPressDelay) {
@@ -145,27 +145,27 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin = 139;
 							} else {
 								localPlayer.skin--;
-							}						
-						}		
+							}
+						}
 					} else if(gta.game == GAME_GTA_SA) {
 						if(localPlayer.skin <= 0) {
 							localPlayer.skin = 313;
 						} else if(localPlayer.skin == 9) {
 							localPlayer.skin = 2;
 						} else if(localPlayer.skin == 43) {
-							localPlayer.skin = 41;								
+							localPlayer.skin = 41;
 						} else if(localPlayer.skin == 66) {
 							localPlayer.skin = 64;
 						} else if(localPlayer.skin == 75) {
-							localPlayer.skin = 73;							
+							localPlayer.skin = 73;
 						} else if(localPlayer.skin == 87) {
-							localPlayer.skin = 85;	
+							localPlayer.skin = 85;
 						} else if(localPlayer.skin == 120) {
-							localPlayer.skin = 118;	
+							localPlayer.skin = 118;
 						} else if(localPlayer.skin == 150) {
 							localPlayer.skin = 148;
 						} else if(localPlayer.skin == 207) {
-							localPlayer.skin = 209;							
+							localPlayer.skin = 209;
 						} else {
 							localPlayer.skin--;
 						}
@@ -177,7 +177,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 							localPlayer.setData("v.ss.ivskinindex", localPlayer.getData("v.ss.ivskinindex")-1);
 							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
 						}
-					}	
+					}
 					localPlayer.heading = spawnScreenPedHeading;
 					lastKeyPressTick = sdl.ticks;
 				}
@@ -200,7 +200,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 					gui.showCursor(false, true);
 				}
 			}
-			break;		
+			break;
 	}
 });
 
@@ -245,16 +245,16 @@ addEventHandler("OnDrawnHUD", function (event) {
 				// Skin Name
 				let text = getSkinName(localPlayer.skin);
 				let size = false;
-				
+
 				if(text != false) {
 					size = skinSelectFont.measure(text, 200, 0.0, 1.0, 28, false, false);
 					skinSelectFont.render(text, [96, game.height-128], 300, 0.0, 0.0, skinSelectFont.size, COLOUR_WHITE, false, false, false, true);
 				}
-				
+
 				// Help text
 				text = "Use LEFT/RIGHT to select a skin, and ENTER to spawn."
 				size = skinSelectExplainFont.measure(text, 200, 0.0, 1.0, 12, false, false);
-				skinSelectExplainFont.render(text, [96, game.height-78], 300, 0.0, 0.0, skinSelectExplainFont.size, COLOUR_WHITE, false, false, false, true);			
+				skinSelectExplainFont.render(text, [96, game.height-78], 300, 0.0, 0.0, skinSelectExplainFont.size, COLOUR_WHITE, false, false, false, true);
 			}
 		}
 	}
@@ -269,7 +269,7 @@ let gameAnnounceColours = [
 	COLOUR_ORANGE,					// GTA San Andreas
 	COLOUR_ORANGE,					// GTA Underground
 	//COLOUR_SILVER,				// GTA IV
-	//COLOUR_SILVER					// GTA IV (EFLC)		
+	//COLOUR_SILVER					// GTA IV (EFLC)
 ];
 let gameAnnounceColour = gameAnnounceColours[game.game];
 
