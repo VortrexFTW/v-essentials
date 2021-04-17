@@ -20,7 +20,7 @@ let currentEntryPoint = 0
 let entryPoints = [
 	false,
 	false,
-	
+
 	[ // GTA Vice City
 		// Name									Position							Range 	Int		Angle		(Optional) Teleport (for places with blocked doors)
 		["North Point Mall", 					new Vec3(379.66, 998.47, 18.76), 	2.0, 	4, 		3.13,		new Vec3(379.62, 1007.00, 19.22),		 0.05],
@@ -47,11 +47,11 @@ let entryPoints = [
 		//["Downtown Police Station", 			new Vec3(-656.88, 762.48, 11.60), 	2.0, 	12, 	0.60,		false, 0.0],
 		["Auntie Poulet's House",				new Vec3(-962.72, 146.11, 9.395), 	0.5, 	12, 	-3.0,		new Vec3(-962.83, 146.96, 9.395), 		0.0],
 	],
-	
+
 	[ // GTA San Andreas
 		// Name									Position							Range 	Int		Angle		(Optional) Teleport (for places with blocked doors)
 		//["North Point Mall", 					new Vec3(379.66, 998.47, 18.76), 	2.0, 	4, 		3.13,		new Vec3(379.62, 1007.00, 19.22), 0.05],
-	],	
+	],
 ];
 
 
@@ -62,15 +62,15 @@ addEventHandler("OnProcess", function(deltaTime) {
 	if(gta.game == GAME_GTA_III) {
 		return false;
 	}
-	
+
 	if(localPlayer == null) {
 		return false;
 	}
-	
-	if(currentEntryPoint >= 0) { 
-		if(getDistance(localPlayer.position, entryPoints[gta.game][currentEntryPoint][1]) >= entryPoints[gta.game][currentEntryPoint][2]+2) { 
+
+	if(currentEntryPoint >= 0) {
+		if(localPlayer.position.distance(entryPoints[gta.game][currentEntryPoint][1]) >= entryPoints[gta.game][currentEntryPoint][2]+2) {
 			if(entryPoints[gta.game][currentEntryPoint][5] != false) {
-				if(getDistance(localPlayer.position, entryPoints[gta.game][currentEntryPoint][5]) >= entryPoints[gta.game][currentEntryPoint][2]+2) { 
+				if(localPlayer.position.distance(entryPoints[gta.game][currentEntryPoint][5]) >= entryPoints[gta.game][currentEntryPoint][2]+2) {
 					currentEntryPoint = -1;
 				}
 			} else {
@@ -78,23 +78,23 @@ addEventHandler("OnProcess", function(deltaTime) {
 			}
 		}
 	}
-	
-	for(let i in entryPoints[gta.game]) { 
+
+	for(let i in entryPoints[gta.game]) {
 		if(currentEntryPoint == -1) {
-			if(getDistance(localPlayer.position, entryPoints[gta.game][i][1]) <= entryPoints[gta.game][i][2]) { 
+			if(localPlayer.position.distance(entryPoints[gta.game][i][1]) <= entryPoints[gta.game][i][2]) {
 				// See if there's a second position (to teleport to)
 				if(entryPoints[gta.game][i][5] == false) {
 					// No second position, just fade and set interior
-					if(cameraInterior == entryPoints[gta.game][i][3]) { 
+					if(gta.cameraInterior == entryPoints[gta.game][i][3]) {
 						gta.setPlayerControl(false);
 						localPlayer.invincible = true;
-						fadeCamera(false, 0.5, toColour(0,0,0,255));
+						gta.fadeCamera(false, 0.5, toColour(0,0,0,255));
 						currentEntryPoint = i;
 						setTimeout(switchInteriorAndFadeIn, 500, -1);
-					} else { 
+					} else {
 						gta.setPlayerControl(false);
 						localPlayer.invincible = true;
-						fadeCamera(false, 0.5, toColour(0,0,0,255));
+						gta.fadeCamera(false, 0.5, toColour(0,0,0,255));
 						currentEntryPoint = i;
 						setTimeout(switchInteriorAndFadeIn, 500, entryPoints[gta.game][i][3]);
 						console.log(i);
@@ -103,20 +103,20 @@ addEventHandler("OnProcess", function(deltaTime) {
 					// A second position is provided. Fade, set interior and position
 					gta.setPlayerControl(false);
 					localPlayer.invincible = true;
-					fadeCamera(false, 0.5, toColour(0,0,0,255));
+					gta.fadeCamera(false, 0.5, toColour(0,0,0,255));
 					currentEntryPoint = i;
-					setTimeout(switchInteriorAndFadeIn, 500, entryPoints[gta.game][i][3], entryPoints[gta.game][i][5], entryPoints[gta.game][i][6]);					
+					setTimeout(switchInteriorAndFadeIn, 500, entryPoints[gta.game][i][3], entryPoints[gta.game][i][5], entryPoints[gta.game][i][6]);
 				}
 			} else {
 				// See if a second position is available
 				if(entryPoints[gta.game][i][5] != false) {
 					// Yes, so check if in range
-					if(getDistance(localPlayer.position, entryPoints[gta.game][i][5]) <= entryPoints[gta.game][i][2]) {
+					if(localPlayer.position.distance(entryPoints[gta.game][i][5]) <= entryPoints[gta.game][i][2]) {
 						gta.setPlayerControl(false);
 						localPlayer.invincible = true;
-						fadeCamera(false, 0.5, toColour(0,0,0,255));
+						gta.fadeCamera(false, 0.5, toColour(0,0,0,255));
 						currentEntryPoint = i;
-						setTimeout(switchInteriorAndFadeIn, 500, -1, entryPoints[gta.game][i][1], entryPoints[gta.game][i][2]);						
+						setTimeout(switchInteriorAndFadeIn, 500, -1, entryPoints[gta.game][i][1], entryPoints[gta.game][i][2]);
 					}
 				}
 			}
@@ -126,33 +126,26 @@ addEventHandler("OnProcess", function(deltaTime) {
 
 // ----------------------------------------------------------------------------
 
-function getDistance(pos1, pos2) {
-	let a = Math.pow(pos1.x-pos2.x, 2);
-	let b = Math.pow(pos1.y-pos2.y, 2);
-	
-	return Math.sqrt(a+b);
-}
-
-// ----------------------------------------------------------------------------
-
 function switchInteriorAndFadeIn(interiorID, position = false, heading = false) {
 	if(interiorID != -1) {
 		localPlayer.interior = interiorID;
-		cameraInterior = interiorID;
+		gta.cameraInterior = interiorID;
 	} else {
 		localPlayer.interior = 0;
-		cameraInterior = 0;
+		gta.cameraInterior = 0;
 	}
-	
+
 	if(position != false) {
 		localPlayer.position = position;
 	}
-	
+
 	if(heading != false) {
 		localPlayer.heading = heading;
 	}
-	
-	fadeCamera(true, 0.5, toColour(0,0,0,255));
+
+	gta.fadeCamera(true, 0.5, toColour(0,0,0,255));
 	gta.setPlayerControl(true);
 	localPlayer.invincible = false;
 }
+
+// ----------------------------------------------------------------------------
