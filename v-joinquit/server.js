@@ -27,24 +27,24 @@ let disconnectReasons = [
 // ----------------------------------------------------------------------------
 
 let gameNames = [
-	"Unknown", 
-	"GTA III", 
-	"GTA Vice City", 
-	"GTA San Andreas", 
-	"GTA Underground", 
-	"GTA IV", 
+	"Unknown",
+	"GTA III",
+	"GTA Vice City",
+	"GTA San Andreas",
+	"GTA Underground",
+	"GTA IV",
 	"GTA IV (EFLC)"
 ];
 
 // ----------------------------------------------------------------------------
 
 let gameAnnounceColour = [
-	COLOUR_BLACK, 
-	COLOUR_SILVER, 
-	COLOUR_AQUA, 
-	COLOUR_ORANGE, 
-	COLOUR_ORANGE, 
-	COLOUR_SILVER, 
+	COLOUR_BLACK,
+	COLOUR_SILVER,
+	COLOUR_AQUA,
+	COLOUR_ORANGE,
+	COLOUR_ORANGE,
+	COLOUR_SILVER,
 	COLOUR_SILVER
 ];
 
@@ -57,17 +57,17 @@ connectionID.fill(-1);
 
 addEventHandler("OnPlayerJoined", function(event, client) {
 	client.setData("connectTime", new Date().getTime());
-	messageClient("Welcome to " + server.name + "!", client, welcomeMessageColour);
-	messageClient("Use /help for commands and info", client, welcomeMessageColour);
-	
-	let messageText = client.name + " has joined the game.";
+	messageClient(`Welcome to ${server.name}!`, client, welcomeMessageColour);
+	messageClient(`Use /help for commands and info`, client, COLOUR_YELLOW);
+
+	let messageText = `${client.name} has joined the game.`;
 	if(typeof module.geoip != "undefined") {
 		let countryName = module.geoip.getCountryName("geoip-country.mmdb", client.ip) || "Unknown";
 		if(countryName != "Unknown") {
-			messageText = client.name + " has joined the game from " + String(countryName);
+			messageText = `👋 [#0099FF]${client.name} [#FFFFFF]has joined the game from ${countryName}`;
 		}
 	}
-	
+
 	message(messageText, gameAnnounceColour[server.game]);
 	console.log(messageText);
 });
@@ -75,7 +75,7 @@ addEventHandler("OnPlayerJoined", function(event, client) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPlayerQuit", function(event, client, reason) {
-	let messageText = client.name + " left the game (" + disconnectReasons[reason] + ")";
+	let messageText = `👋 [#0099FF]${client.name} [#FFFFFF]left the game [#999999](${disconnectReasons[reason]})`;
 	message(messageText, gameAnnounceColour[server.game]);
 	console.log(messageText);
 });
