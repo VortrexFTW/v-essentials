@@ -20,7 +20,7 @@ let playerColours = [
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPlayerJoined", function(event, client) {
-	client.setData("v.colour", playerColours[client.index], true);	
+	client.setData("v.colour", getRandomColour(), true);
 });
 
 // ----------------------------------------------------------------------------
@@ -29,11 +29,12 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	let clients = getClients();
 	for(let i in clients) {
 		let clientIndex = clients[i].index;
-		clients[i].setData("v.colour", playerColours[clientIndex], true);	
+		clients[i].setData("v.colour", getRandomColour(), true);
 		if(clients[i].player != null) {
-			clients[i].player.setData("v.colour", playerColours[clientIndex], true);	
+			clients[i].player.setData("v.colour", getRandomColour(), true);
 		}
 	}
+	triggerNetworkEvent("v.colour", null);
 });
 
 // ----------------------------------------------------------------------------
@@ -46,6 +47,7 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 			clients[i].player.removeData("v.colour");
 		}
 	}
+	triggerNetworkEvent("v.colour", null);
 });
 
 // ----------------------------------------------------------------------------
@@ -53,7 +55,10 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 function setPlayerColour(player) {
 	let client = getPlayerClient(player);
 	if(client != null) {
-		player.setData("v.colour", client.getData("v.colour"), true);
+		client.setData("v.colour", client.getData("v.colour"), true);
+		if(server.game == GAME_GTA_IV) {
+			triggerNetworkEvent("v.colour", null);
+		}
 	}
 }
 
@@ -74,8 +79,20 @@ function getPlayerClient(player) {
 			return clients[i];
 		}
 	}
-	
+
 	return null;
+}
+
+// ----------------------------------------------------------------------------
+
+function getRandomColour() {
+	return toColour(getRandom(32, 255), getRandom(32, 255), getRandom(32, 255), 255);
+}
+
+// ----------------------------------------------------------------------------
+
+function getRandom(min, max) {
+	return Math.floor(Math.random() * (Number(max) - Number(min) + 1)) + Number(min)
 }
 
 // ----------------------------------------------------------------------------
