@@ -168,17 +168,25 @@ function spawnVehicleCommand(cmdName, params) {
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.add", modelId, position, heading);
 	} else {
-		let thisVeh = gta.createVehicle(modelId, position);
+		let thisVeh = false;
+		if(gta.game == GAME_GTA_IV) {
+			thisVeh = createVehicle2(modelId, position, true);
+			thisVeh.heading = heading;
+		} else {
+			thisVeh = gta.createVehicle(modelId, position);
+			thisVeh.heading = heading;
+		}
+
 		if(!thisVeh) {
 			message("The vehicle could not be added!", errorMessageColour);
 			return false;
 		}
-		thisVeh.heading = heading;
+
 		//modelId = thisVeh.modelIndex;
 	}
 
 	let modelName = getVehicleNameFromModelId(modelId);
-	let outputText = "spawned " + String((doesWordStartWithVowel(modelName)) ? "an" : "a") + " " + String(modelName) + " (using /" + String(cmdName) + ")";
+	let outputText = `spawned ${(doesWordStartWithVowel(modelName)) ? "an" : "a"} ${modelName} (using /${cmdName})`;
 	outputSandboxMessage(outputText);
 
 	canSpawnVehicle = false;
@@ -294,9 +302,7 @@ addCommandHandler("veh_delete", function(cmdName, params) {
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.v.del", vehicles);
 	} else {
-		vehicles.forEach(function(vehicle) {
-			destroyElement(vehicle);
-		});
+		triggerPeerNetworkEvent("sb.v.del", null, vehicles);
 	}
 
 	return true;
@@ -386,7 +392,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let upgradeId = getVehicleUpgradeIdFromParams(splitParams[1]);
+	let upgradeId = getVehicleUpgradeIdFromParams(splitParams.slice(1).join(" "));
 
 	let outputText = "";
 
@@ -401,7 +407,7 @@ addCommandHandler("veh_upgrade", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.upgrade.add", vehicles, Number(upgradeId));
+		triggerPeerNetworkEvent("sb.v.upgrade.add", null, vehicles, Number(upgradeId));
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.addUpgrade(upgradeId);
@@ -428,7 +434,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let upgradeId = getVehicleUpgradeIdFromParams(splitParams[1]);
+	let upgradeId = getVehicleUpgradeIdFromParams(splitParams.slice(1).join(" "));
 
 	let outputText = "";
 
@@ -443,7 +449,7 @@ addCommandHandler("veh_downgrade", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.upgrade.del", vehicles, upgradeId);
+		triggerPeerNetworkEvent("sb.v.upgrade.del", null, vehicles, upgradeId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.removeUpgrade(upgradeId);
@@ -480,7 +486,7 @@ addCommandHandler("veh_paintjob", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.paintjob", vehicles, Number(paintJobId));
+		triggerPeerNetworkEvent("sb.v.paintjob", null, vehicles, Number(paintJobId));
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setPaintJob(paintJobId);
@@ -517,7 +523,7 @@ addCommandHandler("veh_heading", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.heading", vehicles, heading);
+		triggerPeerNetworkEvent("sb.v.heading", null, vehicles, heading);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.heading = heading;
@@ -556,7 +562,7 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.position", vehicles, positionX, positionY, positionZ);
+		triggerPeerNetworkEvent("sb.v.position", null, vehicles, positionX, positionY, positionZ);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.position = new Vec3(positionX, positionY, positionZ);
@@ -567,43 +573,6 @@ addCommandHandler("veh_pos", function(cmdName, params) {
 		outputText = "set " + String(vehicles.length) + " vehicle's position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ);
 	} else {
 		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ) + " (using /veh_pos)";
-	}
-
-	outputSandboxMessage(outputText);
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("veh_horn", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <vehicle> <0/1 horn state>", syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let hornState = Number(splitParams[1]) || 0;
-
-	let outputText = "";
-
-	if(vehicles.length == 0) {
-		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
-		return false;
-	}
-
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.horn", vehicles, !!hornState);
-	} else {
-		vehicles.forEach(function(vehicle) {
-			vehicle.setData("sb.v.horn", !!hornState);
-		});
-	}
-
-	if(vehicles.length > 1) {
-		outputText = "turned " + String(vehicles.length) + " vehicle's horns " + String((!!hornState) ? "on" : "off");
-	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s horn " + String((!!hornState) ? "on" : "off") + " (using /veh_horn)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -625,7 +594,7 @@ addCommandHandler("veh_lock", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.locked", vehicles, lockType);
+		triggerPeerNetworkEvent("sb.v.locked", null, vehicles, lockType);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.carLock = lockType;
@@ -657,7 +626,7 @@ addCommandHandler("veh_engine", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.engine", vehicles, !!engineState);
+		triggerPeerNetworkEvent("sb.v.engine", null, vehicles, !!engineState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.engine = !!engineState;
@@ -695,7 +664,7 @@ addCommandHandler("veh_light", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.light", vehicles, lightId, !!lightState);
+		triggerPeerNetworkEvent("sb.v.light", null, vehicles, lightId, !!lightState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setLightStatus(lightId, !!lightState);
@@ -733,7 +702,7 @@ addCommandHandler("veh_panel", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.panel", vehicles, panelId, panelState);
+		triggerPeerNetworkEvent("sb.v.panel", null, vehicles, panelId, panelState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setPanelStatus(panelId, panelState);
@@ -771,7 +740,7 @@ addCommandHandler("veh_door", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.door", vehicles, doorId, doorState);
+		triggerPeerNetworkEvent("sb.v.door", null, vehicles, doorId, doorState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setDoorStatus(doorId, doorState);
@@ -809,7 +778,7 @@ addCommandHandler("veh_wheel", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.wheel", vehicles, wheelId, wheelState);
+		triggerPeerNetworkEvent("sb.v.wheel", null, vehicles, wheelId, wheelState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setWheelStatus(wheelId, doorState);
@@ -846,7 +815,7 @@ addCommandHandler("veh_wheels", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.wheels", vehicles, wheelState);
+		triggerPeerNetworkEvent("sb.v.wheels", null, vehicles, wheelState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			for(let i = 0; i < 4 ; i++) {
@@ -890,7 +859,7 @@ addCommandHandler("veh_doors", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.doors", vehicles, doorState);
+		triggerPeerNetworkEvent("sb.v.doors", null, vehicles, doorState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			for(let i = 0; i < 4 ; i++) {
@@ -934,7 +903,7 @@ addCommandHandler("veh_god", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.god", vehicles, !!godMode);
+		triggerPeerNetworkEvent("sb.v.god", null, vehicles, !!godMode);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			//vehicle.invincible = !!godMode;
@@ -1007,7 +976,7 @@ addCommandHandler("veh_lights", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.lights", vehicles, !!lightState);
+		triggerPeerNetworkEvent("sb.v.lights", null, vehicles, !!lightState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.lights = !!lightState;
@@ -1081,7 +1050,7 @@ addCommandHandler("veh_hazardlights", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.hazardlights", vehicles, !!hazardLightState);
+		triggerPeerNetworkEvent("sb.v.hazardlights", null, vehicles, !!hazardLightState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.hazardLights = !!hazardLightState;
@@ -1118,7 +1087,7 @@ addCommandHandler("veh_dirtlevel", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.dirtlevel", vehicles, dirtLevel);
+		triggerPeerNetworkEvent("sb.v.dirtlevel", null, vehicles, dirtLevel);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.dirtLevel = dirtLevel;
@@ -1160,7 +1129,7 @@ addCommandHandler("veh_radio", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.radio", vehicles, radioStation);
+		triggerPeerNetworkEvent("sb.v.radio", null, vehicles, radioStation);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.radioStation = radioStation;
@@ -1202,7 +1171,7 @@ addCommandHandler("veh_mission", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.mission", vehicles, missionId);
+		triggerPeerNetworkEvent("sb.v.mission", null, vehicles, missionId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setCarMission(missionId);
@@ -1247,7 +1216,7 @@ addCommandHandler("veh_rgb", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.colourrgb", vehicles, red, green, blue, alpha);
+		triggerPeerNetworkEvent("sb.v.colourrgb", null, vehicles, red, green, blue, alpha);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setRGBColour(toColour(red, green, blue, alpha), toColour(red, green, blue, alpha));
@@ -1286,7 +1255,7 @@ addCommandHandler("veh_colour1", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.colour1", vehicles, colourId);
+		triggerPeerNetworkEvent("sb.v.colour1", null, vehicles, colourId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.colour1 = colourId;
@@ -1323,7 +1292,7 @@ addCommandHandler("veh_colour2", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.colour2", vehicles, colourId);
+		triggerPeerNetworkEvent("sb.v.colour2", null, vehicles, colourId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.colour2 = colourId;
@@ -1365,7 +1334,7 @@ addCommandHandler("veh_colour3", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.colour3", vehicles, colourId);
+		triggerPeerNetworkEvent("sb.v.colour3", null, vehicles, colourId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.colour3 = colourId;
@@ -1407,7 +1376,7 @@ addCommandHandler("veh_colour4", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.colour4", vehicles, colourId);
+		triggerPeerNetworkEvent("sb.v.colour4", null, vehicles, colourId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.colour4 = colourId;
@@ -1449,7 +1418,7 @@ addCommandHandler("veh_collisions", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.coll", vehicles, !!collisionState);
+		triggerPeerNetworkEvent("sb.v.coll", null, vehicles, !!collisionState);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.collisionsEnabled = !!collisionState;
@@ -1491,7 +1460,7 @@ addCommandHandler("veh_cruisespeed", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.cruisespeed", vehicles, cruiseSpeed);
+		triggerPeerNetworkEvent("sb.v.cruisespeed", null, vehicles, cruiseSpeed);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setCarCruiseSpeed(cruiseSpeed);
@@ -1533,7 +1502,7 @@ addCommandHandler("veh_drivingstyle", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.drivingstyle", vehicles, drivingStyle);
+		triggerPeerNetworkEvent("sb.v.drivingstyle", null, vehicles, drivingStyle);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setDrivingStyle(drivingStyle);
@@ -1575,7 +1544,7 @@ addCommandHandler("veh_livery", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.livery", vehicles, liveryId);
+		triggerPeerNetworkEvent("sb.v.livery", null, vehicles, liveryId);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.livery = liveryId;
@@ -1617,7 +1586,7 @@ addCommandHandler("veh_handling", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.handling", vehicles, handlingIndex);
+		triggerPeerNetworkEvent("sb.v.handling", null, vehicles, handlingIndex);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.handlingIndex = handlingIndex;
@@ -1656,7 +1625,7 @@ addCommandHandler("veh_drivetopos", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.driveto", vehicles, x, y, z);
+		triggerPeerNetworkEvent("sb.v.driveto", null, vehicles, x, y, z);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.driveTo(x, y, z, 20.0);
@@ -1683,7 +1652,7 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
-	let locationName = splitParams.slice(1, splitParams.length).join(" ");
+	let locationName = splitParams.slice(1).join(" ");
 
 	let outputText = "";
 
@@ -1705,7 +1674,7 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.driveto", vehicles, selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
+		triggerPeerNetworkEvent("sb.v.driveto", null, vehicles, selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2]);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.driveTo(selectedLocation[1][0], selectedLocation[1][1], selectedLocation[1][2], 20.0);
@@ -1747,7 +1716,7 @@ addCommandHandler("veh_scale", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.scale", vehicles, scale);
+		triggerPeerNetworkEvent("sb.v.scale", null, vehicles, scale);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.setData("sb.v.scale", scale);
@@ -1788,7 +1757,7 @@ addCommandHandler("veh_wander", function(cmdName, params) {
 	}
 
 	if(isConnected && gta.game < GAME_GTA_IV) {
-		triggerNetworkEvent("sb.v.wander", vehicles);
+		triggerPeerNetworkEvent("sb.v.wander", null, vehicles);
 	} else {
 		vehicles.forEach(function(vehicle) {
 			vehicle.carWanderRandomly();
@@ -2457,6 +2426,14 @@ addNetworkHandler("sb.v.scale", function(vehicles, scaleFactor) {
 
 // ----------------------------------------------------------------------------
 
+addNetworkHandler("sb.v.del2", function(vehicles) {
+	vehicles.forEach(function(vehicle) {
+		destroyElement(vehicle);
+	});
+});
+
+// ----------------------------------------------------------------------------
+
 function enterVehicle(vehicle, driver) {
 	localPlayer.enterVehicle(vehicle, driver);
 }
@@ -2468,6 +2445,16 @@ function getFirstEmptySeat(vehicle) {
 		if(vehicle.getOccupant(i) == null) {
 			return i;
 		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function createVehicle2(hash, position, sync) {
+	if(natives.isModelInCdimage(hash)) {
+		natives.requestModel(hash);
+		natives.loadAllObjectsNow();
+		return natives.createCar(hash, position, sync);
 	}
 }
 
