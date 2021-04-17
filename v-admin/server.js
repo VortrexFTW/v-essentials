@@ -260,6 +260,19 @@ function loadConfig() {
 		thisResource.stop();
 		return false;
 	}
+
+	if(typeof scriptConfig.admins == "undefined") {
+		scriptConfig.admins = [];
+	}
+
+	if(typeof scriptConfig.bans == "undefined") {
+		scriptConfig.bans = [];
+	}
+
+	if(typeof scriptConfig.blockedScripts == "undefined") {
+		scriptConfig.blockedScripts = [];
+	}
+
 	logInfo("Parsed config file successfully.");
 }
 
