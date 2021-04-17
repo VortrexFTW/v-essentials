@@ -5,34 +5,6 @@
 let godMode = false;
 let hudEnabled = true;
 
-addEventHandler("OnMouseWheel", function(event, mouse, offset, flipped) {
-	//if(offset) {
-	//	gta.forceRadioChannel(
-	//}
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnProcess", function(event, deltaTime) {
-	//if(gta.game > GAME_GTA_III) {
-	//	if(localPlayer != null) {
-	//		triggerNetworkEvent("sb.p.crouching", localPlayer, localPlayer.crouching);
-	//	}
-	//}
-});
-
-// ----------------------------------------------------------------------------
-
-//addNetworkHandler("sb.p.crouching", function(player, state) {
-//	if(gta.game > GAME_GTA_III) {
-//		if(player != null) {
-//			if(player != localPlayer) {
-//				player.crouching = state;
-//			}
-//		}
-//	}
-//});
-
 // ----------------------------------------------------------------------------
 
 addCommandHandler("skin", function(cmdName, params) {
@@ -45,7 +17,20 @@ addCommandHandler("skin", function(cmdName, params) {
 
 	if(!skinId) {
 		if(gta.game >= GAME_GTA_IV) {
+			if(localPlayer.vehicle) {
+				localPlayer.removeFromVehicle();
+			}
 			skinId = getSkinIdFromParams("Generic Man", gta.game);
+			if(skinId == -2020305438 || skinId == -641875910) {
+				natives.changePlayerModel(natives.getPlayerId(), natives.getPlayersettingsModelChoice())
+				natives.setPedComponentsToNetworkPlayersettingsModel(localPlayer);
+			} else {
+				if(skinId == -999506922 || skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -89302119 || skinId == -1004762946) {
+					natives.setPlayerAsCop(natives.getPlayerId(), true);
+				} else {
+					natives.setPlayerAsCop(natives.getPlayerId(), false);
+				}
+			}
 		} else {
 			skinId = 0;
 		}
@@ -86,14 +71,13 @@ addCommandHandler("skin", function(cmdName, params) {
 		}
 	}
 
-
 	if(isConnected) {
 		triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
 	} else {
 		localPlayer.skin = skinId;
 	}
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
+	let outputText = `set ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} skin to ${getSkinNameFromId(skinId)} (using /skin)`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -306,22 +290,16 @@ addCommandHandler("gun", function(cmdName, params) {
 		return false;
 	}
 
-	let splitParams = params.split(" ");
-	let wep = getWeaponIdFromParams(splitParams[0]) || 1;
-	let ammo = Number(splitParams[1]) || 100;
+	let wep = getWeaponIdFromParams(params) || 1;
 
 	if(wep > weaponNames[game.game].length-1 || wep < 0) {
 		message("❗ Invalid weapon! Use /guns for weapon ID or use a name instead" , errorMessageColour);
 		return false;
 	}
 
-	if(ammo > 99999) {
-		ammo = 99999;
-	}
+	localPlayer.giveWeapon(wep, 99999, true);
 
-	localPlayer.giveWeapon(wep, ammo, true);
-
-	let outputText = "has been given a " + getWeaponName(wep, gta.game) + " with " + ammo + " ammo (using /gun)";
+	let outputText = `has been given a ${getWeaponName(wep, gta.game)} (using /gun)`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -398,10 +376,12 @@ addCommandHandler("god", function(cmdName, params) {
 	localPlayer.invincible = godMode;
 	if(gta.game < GAME_GTA_IV) {
 		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
+	} else {
+		natives.setCharProofs(localPlayer, true, true, true, true, true);
 	}
-	triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
+	//triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
 
-	let outputText = "is " + String((godMode) ? "now" : "no longer") + " invincible (using /god)";
+	let outputText = `is ${(godMode) ? "now" : "no longer"} invincible (using /god)`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -929,6 +909,18 @@ addCommandHandler("gotopos", function(command, params) {
 		localPlayer.position = new Vec3(positionX, positionY, positionZ);
 	}
 	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("dance", function(command, params) {
+	let danceA = "DNCE_M_A";
+	let danceB = "DAN_LOOP_A";
+	let danceC = "DNCE_M_D";
+	natives.requestAnims("DANCING");
+	//if(natives.haveAnimsLoaded("DANCING")) {
+		natives.taskPlayAnimNonInterruptable(localPlayer, danceB, "DANCING", 16.0, 0, 1, 1, 0, -1);
+	//}
 });
 
 // ----------------------------------------------------------------------------
