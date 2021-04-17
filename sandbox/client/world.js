@@ -411,6 +411,8 @@ addCommandHandler("minutedur", function(command, params) {
 // ----------------------------------------------------------------------------
 
 function resyncWorld() {
+	return false;
+
 	if(gta.game == GAME_GTA_IV) {
 		if(gta.ivGamemode != 30) {
 			return false;
