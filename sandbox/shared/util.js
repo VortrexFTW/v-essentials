@@ -95,14 +95,30 @@ let gameLocations = [
 		["Little Haiti Slums", [-958.90, 116.41, 9.300], 0.031],
 		["Kaufman Cabs", [-1013.35, 198.70, 11.266], -1.680],
 		["Moist Palms Hotel", [-703.50, 545.30, 11.099], -3.105],
+		["North Point Mall", [486.50, 1124.89, 16.348], 1.610],
+		["Ocean View Hotel", [238.14, -1280.48, 11.071], 1.282],
+		["Ocean Beach Fuel Station", [63.32, -1074.50, 10.006], 0.102],
+		["Ken Rosenberg's Office", [115.48, -823.76, 10.463], -2.221]
 
 		// Bar, Restaurants and Food
 		["Little Havana Donut Shop", [-856.28, -649.32, 11.047], 1.700],
 		["Robina's Cafe", [-1170.36, -604.25, 11.640], -2.973],
 		["Biker Bar", [-601.72, 654.60, 11.073], -1.463],
 
+		// Clubs
+		["Malibu Club", [492.23, -81.41, 11.261], -2.306],
+		["Poll Position Club", [100.09, -1477.78, 10.432], 0.484],
+
 		// Tool Shops
 		["Little Havana Tool Shop", [-969.01, -684.27, 11.456], -2.994],
+		["Washington Beach Tool Shop", [197.83, -486.04, 11.127], 0.000]
+
+		// Gunshops
+		["Ocean Beach Ammunation", [-53.41, -1482.25, 10.293], 1.441],
+
+		// Pay-n-sprays
+		["Ocean Beach Pay-n-spray", [-18.51, -1256.76, 10.463], -1.556]
+
 	],
 
 	[ // GTA SA
@@ -205,6 +221,8 @@ let gameLocations = [
 		// Night Clubs/Strip Clubs/Bars
 		["Perestroika Club", [957.58, -292.58, 19.644], -0.009, null],
 		["Triangle Club", [1210.90, 1718.18, 16.667], 1.819, null],
+		["Bahama Mamas Club", [-387.33, 412.33, 5.674], 2.997, null],
+		["Maisonette Club", [-482.28, 155.56, 7.555], -1.559, null],
 
 		// TW@ Cafes
 		["Outlook Internet Cafe", [977.42, -169.11, 24.013], 1.844, null],
@@ -5176,82 +5194,44 @@ let gtaivVehicleModels = [
 	["Cablecar", -960289747, 0],
 	["Subway", 800869680, 0],
 	["El Train", -1953988645, 0],
-	
-	/*["Unknown 1", 0x7F1EFE34, 2],
-	["Unknown 2", 0x5796595E, 2],
-	["Unknown 3", 0x7F1EFE34, 2],
-	["Unknown 4", 0xCB8ECE1A, 2],
-	["Unknown 5", 0x1DAFD770, 2],
-	["Unknown 6", 0x1160ACEF, 2],
-	["Unknown 7", 0x7F1EFE34, 2],
-	["Unknown 8", 0xC96FA7CD, 2],
-	["Unknown 9", 0x7F1EFE34, 2],
-	["Unknown 10", 0xF991F9E6, 2],
-	["Unknown 11", 0xD0959211, 2],
-	["Unknown 12", 0xC492B410, 2],
-	["Unknown 13", 0xC438C055, 2],
-	["Unknown ", 0x676E2E17, 2],
-	["Unknown ", 0x7508E9B4, 2],
-	["Unknown ", 0x7F1EFE34, 2],
-	["Unknown ", 0x7F1EFE34, 2],
-	["Unknown ", 0x5E163909, 2],
-	["Unknown ", 0x908A36AC, 2],
-	["Unknown ", 0x37392F33, 2],
-	["Unknown ", 0xAD608783, 2],
-	["Unknown ", 0x3384D4E0, 2],
-	["Unknown ", 0xEEAF9D93, 2],
-	["Unknown ", 0x321D023E, 2],
-	["Unknown ", 0xBAC4A320, 2],
-	["Unknown ", 0x31683901, 2],
-	["Unknown ", 0xDB937DA5, 2],
-	["Unknown ", 0x759BC316, 2],
-	["Unknown ", 0xA35AE84B, 2],
-	["Unknown ", 0x05ABE6D5, 2],
-	["Unknown ", 0x8307C170, 2],
-	["Unknown ", 0x0C415802, 2],
-	["Unknown ", 0x3BB02DB7, 2],
-	["Unknown ", 0x8F7D807B, 2],
-	["Unknown ", 0x8543E9D9, 2],
-	["Unknown ", 0xA95F7168, 2],
-	["Unknown ", 0x2385D652, 2],
-	["Unknown ", 0xAB40F129, 2],
-	["Unknown ", 0xADD53BD4, 2],
-	["Unknown ", 0x81EC1EAC, 2],
-	["Unknown ", 0xF2D0E941, 2],
-	
-	["Unknown 51", 0x2BD928EE, 2],
-	["Unknown 52", 0x7F1EFE34, 2],
-	["Unknown 53", 0xACAF1BB9, 2],
-	["Unknown 54", 0x14D94C6C, 2],
-	["Unknown 55", 0x8DCC34F3, 2],
-	["Unknown 56", 0x052D99B3, 2],
-	["Unknown 57", 0xAC64ED89, 2],
-	["Unknown 58", 0x0D62B075, 2],
-	["Unknown 59", 0x8D2557D8, 2],
-	["Unknown 60", 0x4A115C65, 2],
-	
-	["Unknown 61", 0xD1734286, 2],
-	["Unknown 62", 0x7F1EFE34, 2],
-	["Unknown 63", 0x466B955D, 2],
-	["Unknown 64", 0x30C827D6, 2],
-	["Unknown 65", 0x72361452, 2],
-	
-	["Unknown 66", 0x6AB536C4, 2],
-	["Unknown 67", 0x7F1EFE34, 2],
-	["Unknown 68", 0xB92E635E, 2],
-	["Unknown 69", 0xEC8736D1, 2],
-	["Unknown 70", 0x2646E189, 2],
-	["Unknown 71", 0xB0C485D7, 2],
-	
-	["Unknown 72", 0x6BD27984, 2],
-	
-	["Unknown 73", 0x126DC304, 2],
-	["Unknown 74", 0x6B9B1605, 2],
-	["Unknown 75", 0x8D319316, 2],
-	["Unknown 76", 0x7767D97B, 2],
-	["Unknown 77", 0x19651FBF, 2],
-	["Unknown 78", 0x791A7F5A, 2],	
-	*/
+
+	["APC", 562680400, 1],
+	["Buffalo", -304802106, 1],
+	["Bullet", 2598821281, 1],
+	["Brickade", -283209848, 1],
+	["Caddy", 1147287684, 1],
+	["F620", -591610296, 1],
+	["Burrito", 2549763894, 1],
+	["Stretch E", -114627507, 1],
+	["Rhapsody", 841808271, 1],
+	["Packer", 207497487, 1],
+	["Prison Bus", 2287941233, 1],
+	["Serrano", 1337041428, 1],
+	["Serrano 2", 1051281622, 1],
+	["Schafter 2", 3039514899, 1],
+	["Schafter 3", 2809443750, 1],
+	["Slamvan", 729783779, 1],
+	["Super D", 1123216662, 1],
+	["Super D 2", 1638119866, 1],
+	["Tampa", 972671128, 1],
+	["Towtruck", -1323100960, 1],
+	["Police 3", 1912215274, 1],
+	["Police 4", -1973172295, 1],
+	["Police W", 908697398, 1],
+	["Zombie B", -570033273, 1],
+	["Akuma", 1672195559, 1],
+	["Bati Custom", -891462355, 1],
+	["Bati 800", -114291515, 1],
+	["Bobber", -1830458836, 1],
+	["Double", -1670998136, 1],
+	["Faggio 2", 55628203, 1],
+	["Hakuchou", 1265391242, 1],
+	["Hexer", 301427732, 1],
+	["Police B", -34623805, 1],
+	["Vader", -140902153, 1],
+	["Buzzard", 788747387, 1],
+	["Skylift", 1044954915, 1],
+	["Swift", -339587598, 1],
 ];
 
 // ----------------------------------------------------------------------------
@@ -6423,7 +6403,7 @@ function getVehicleModelIdFromName(params, gameId = thisGame) {
 			if(vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 				return Number(i)+Number(vehicleModelIdStart[gameId]);
 			}
-		}		
+		}
 	}
 
 	return false;
