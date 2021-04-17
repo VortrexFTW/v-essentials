@@ -1,5 +1,5 @@
 <meta>
 	<info title="v-admin" author="Vortrex" version="1.0" description="Simple admin login and management" />
-	
+
 	<script src="server.js" type="server" language="javascript" />
 </meta>
