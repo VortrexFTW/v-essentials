@@ -1,8 +1,3 @@
 {
-	"translateMessages": "false",
-	"enableEmoji": "true",
-	"discordEcho": "false",
-	
-	"translatorEmailAddress": "example@example.com",
-	"defaultLanguage": "EN"	
+	"enableEmoji": "true"
 }
