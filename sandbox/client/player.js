@@ -211,7 +211,6 @@ addCommandHandler("bikegod", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-/*
 addCommandHandler("mission", function(cmdName, params) {
 	if(gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
@@ -234,23 +233,15 @@ addCommandHandler("mission", function(cmdName, params) {
 	gta.cancelMission(false);
 	gta.startMission(missionId);
 
-	let outputText = "started mission " + String(missionNames[gta.game][missionId]) + " (ID: " + String(missionId) + ")";
+	let outputText = `started mission ${missionNames[gta.game][missionId]} (ID: ${missionId})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
-*/
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("lastseen", function(cmdName, params) {
 	gta.playSuspectLastSeen(localPlayer.position);
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("crouch", function(cmdName, params) {
-	localPlayer.crouching = !localPlayer.crouching;
 	return true;
 });
 
@@ -271,9 +262,9 @@ addCommandHandler("endmission", function(cmdName, params) {
 	}
 
 	let missionId = localClient.getData("sb.p.mission");
-	let outputText = "ended " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " mission (Status: " + String((!!failMission) ? "passed" : "failed") + ")";
+	let outputText = `ended ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex))} mission (Status: ${(!!failMission) ? "passed" : "failed"})`;
 	if(missionId != null) {
-		outputText = "ended mission " + String(missionNames[gta.game][missionId]) + " (ID: " + String(missionId) + ", Status: " + String((!!failMission) ? "passed" : "failed") + ")";
+		outputText = `ended mission ${missionNames[gta.game][missionId]} (ID: ${missionId}, Status: ${(!!failMission) ? "passed" : "failed"})`;
 		localClient.removeData("sb.p.mission");
 	}
 	gta.cancelMission(!!failMission);

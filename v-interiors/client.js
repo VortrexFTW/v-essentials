@@ -59,7 +59,7 @@ let entryPoints = [
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function(deltaTime) {
-	if(gta.game == GAME_GTA_III) {
+	if(gta.game != GAME_GTA_VC) {
 		return false;
 	}
 

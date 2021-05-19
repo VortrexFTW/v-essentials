@@ -22,7 +22,7 @@ function updateCivilianMovement(civilian) {
 			let following = civilian.getData("sb.c.following");
 			if(following != null) {
 				if(civilian.isInVehicle) {
-					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_CIVILIAN)) {
+					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
 						if(following.vehicle) {
 							if(civilian.vehicle != following.vehicle) {
 								civilian.exitVehicle();
@@ -35,7 +35,7 @@ function updateCivilianMovement(civilian) {
 						civilian.exitVehicle();
 					}
 				} else {
-					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_CIVILIAN)) {
+					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
 						if(following.vehicle) {
 							civilian.enterVehicle(following.vehicle, (following.vehicle.getOccupant(0) == null) ? true : false);
 						}
@@ -114,7 +114,7 @@ addCommandHandler("ped", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <skin id>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <skin id>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -143,7 +143,7 @@ addCommandHandler("ped", function(cmdName, params) {
 		tempCiv.heading = heading;
 	}
 
-	let outputText = "spawned a " + getSkinNameFromId(skinId, gta.game) + " ped.";
+	let outputText = `spawned a ${getSkinNameFromId(skinId, gta.game)} ped.`;
 	outputSandboxMessage(outputText);
 
 	canSpawnCivilian = false;
@@ -167,7 +167,7 @@ addCommandHandler("pedline", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <skin id> <amount> [gap]", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <skin id> <amount> [gap]`, syntaxMessageColour);
 		return false;
 	}
 
@@ -213,7 +213,7 @@ addCommandHandler("pedline", function(cmdName, params) {
 
 addCommandHandler("pedgrid", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <skin id> <columns> <rows> [column gap] [row gap]", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <skin id> <columns> <rows> [column gap] [row gap]`, syntaxMessageColour);
 		return false;
 	}
 
@@ -264,7 +264,7 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 
 addCommandHandler("ped_wander", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <wander path>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <wander path>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -289,9 +289,9 @@ addCommandHandler("ped_wander", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " civilians to wander on path " + String(wanderPath);
+		outputText = `set ${civilians.length} civilians to wander on path ${wanderPath} (using /${cmdName.toLowerCase()})`;
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " to wander on path " + String(wanderPath);
+		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} to wander on path ${wanderPath} (using /${cmdName.toLowerCase()})`;
 	}
 	outputSandboxMessage(outputText);
 	return true;
@@ -301,7 +301,7 @@ addCommandHandler("ped_wander", function(cmdName, params) {
 
 addCommandHandler("ped_delete", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -328,7 +328,7 @@ addCommandHandler("ped_delete", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "deleted " + String(civilians.length) + " peds.";
 	} else {
-		outputText = "deleted a " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped";
+		outputText = "deleted a " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -339,7 +339,7 @@ addCommandHandler("ped_delete", function(cmdName, params) {
 
 addCommandHandler("ped_stay", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <state>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <state>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -362,9 +362,9 @@ addCommandHandler("ped_stay", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " civilians to " + (stayState) ? "stay in the same place" : " not stay in the same place";
+		outputText = `set ${civilians.length} civilians to ${(stayState) ? "stay in the same place" : " not stay in the same place"} (using /${cmdName.toLowerCase()})`;
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " to " + (stayState) ? "stay in the same place" : " not stay in the same place";
+		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} to ${(stayState) ? "stay in the same place" : " not stay in the same place"} (using /${cmdName.toLowerCase()})`;
 	}
 
 	outputSandboxMessage(outputText);
@@ -382,7 +382,7 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <stamina>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <stamina>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -407,9 +407,9 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " civilians stamina to " + String(stamina);
+		outputText = `set ${civilians.length} civilians stamina to ${stamina} (using /${cmdName.toLowerCase()})`;
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " stamina to " + String(stamina);
+		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} stamina to ${stamina} (using /${cmdName.toLowerCase()})`;
 	}
 
 	outputSandboxMessage(outputText);
@@ -420,7 +420,7 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 
 addCommandHandler("ped_enterveh", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <vehicle> [driver 0/1]", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <vehicle> [driver 0/1]`, syntaxMessageColour);
 		return false;
 	}
 
@@ -451,9 +451,9 @@ addCommandHandler("ped_enterveh", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "set " + String(civilians.length) + " peds to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -464,7 +464,7 @@ addCommandHandler("ped_enterveh", function(cmdName, params) {
 
 addCommandHandler("ped_lookatveh", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <vehicle>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -495,9 +495,9 @@ addCommandHandler("ped_lookatveh", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "set " + String(civilians.length) + " peds to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -508,7 +508,7 @@ addCommandHandler("ped_lookatveh", function(cmdName, params) {
 
 addCommandHandler("ped_exitveh", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -532,9 +532,9 @@ addCommandHandler("ped_exitveh", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to exit their vehicle";
+		outputText = "set " + String(civilians.length) + " peds to exit their vehicle (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to exit its vehicle";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to exit its vehicle" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -557,7 +557,7 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <duration>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <duration>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -582,9 +582,9 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds stamina to " + String(stamina);
+		outputText = "set " + String(civilians.length) + " peds stamina to " + String(stamina) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's stamina to " + String(stamina);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's stamina to " + String(stamina) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -607,7 +607,7 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <rotation>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -632,9 +632,9 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds torso rotation to " + String(rotation);
+		outputText = "set " + String(civilians.length) + " peds torso rotation to " + String(rotation) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's torso rotation to " + String(rotation);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's torso rotation to " + String(rotation) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -645,7 +645,7 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 
 addCommandHandler("ped_walkstyle", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <rotation>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -670,9 +670,9 @@ addCommandHandler("ped_walkstyle", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds walk style to " + String(walkStyle);
+		outputText = "set " + String(civilians.length) + " peds walk style to " + String(walkStyle) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's walk style to " + String(walkStyle);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's walk style to " + String(walkStyle) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -683,7 +683,7 @@ addCommandHandler("ped_walkstyle", function(cmdName, params) {
 
 addCommandHandler("ped_armour", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <rotation>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -708,9 +708,9 @@ addCommandHandler("ped_armour", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds armour to " + String(armour);
+		outputText = "set " + String(civilians.length) + " peds armour to " + String(armour) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's armour to " + String(armour);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's armour to " + String(armour) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -721,7 +721,7 @@ addCommandHandler("ped_armour", function(cmdName, params) {
 
 addCommandHandler("ped_warpinveh", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <vehicle>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -752,9 +752,9 @@ addCommandHandler("ped_warpinveh", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "warped " + String(civilians.length) + " peds into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat";
+		outputText = "warped " + String(civilians.length) + " peds into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "warped " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat";
+		outputText = "warped " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -770,7 +770,7 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <client>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <client>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -791,9 +791,9 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds syncer to " + getClientFromParams(clientName).name;
+		outputText = "set " + String(civilians.length) + " peds syncer to " + getClientFromParams(clientName).name + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's syncer to " + getClientFromParams(clientName).name;
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's syncer to " + getClientFromParams(clientName).name + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -805,7 +805,7 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 
 addCommandHandler("ped_health", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <rotation>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -830,9 +830,9 @@ addCommandHandler("ped_health", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds health to " + String(health);
+		outputText = "set " + String(civilians.length) + " peds health to " + String(health) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's health to " + String(health);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's health to " + String(health) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -843,7 +843,7 @@ addCommandHandler("ped_health", function(cmdName, params) {
 
 addCommandHandler("ped_jump", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -869,7 +869,7 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "forced " + String(civilians.length) + " peds to jump";
 	} else {
-		outputText = "forced " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to jump";
+		outputText = "forced " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to jump" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -885,7 +885,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 	//}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -913,7 +913,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to walk forward " + String(distance) + " meters.";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to walk forward " + String(distance) + " meters.";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to walk forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -925,7 +925,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 
 addCommandHandler("ped_runfwd", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -953,7 +953,7 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to run forward " + String(distance) + " meters.";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to run forward " + String(distance) + " meters.";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to run forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -976,7 +976,7 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <distance>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1004,7 +1004,7 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to sprint forward " + String(distance) + " meters.";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to sprint forward " + String(distance) + " meters.";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to sprint forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1015,7 +1015,7 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 
 addCommandHandler("ped_follow", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <player name/id>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <player name/id>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1040,9 +1040,9 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name);
+		outputText = "set " + String(civilians.length) + " peds to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name)
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1051,14 +1051,14 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_defendme", function(cmdName, params) {
+addCommandHandler("ped_defend", function(cmdName, params) {
 	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
 		message("This feature is not available in San Andreas!", errorMessageColour);
 		return false;
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1083,9 +1083,9 @@ addCommandHandler("ped_defendme", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name);
+		outputText = "set " + String(civilians.length) + " peds to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name)  + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1096,7 +1096,7 @@ addCommandHandler("ped_defendme", function(cmdName, params) {
 
 addCommandHandler("ped_gun", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <weapon> [ammo] [hold]", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <weapon> [ammo] [hold]`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1133,7 +1133,7 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 		if(!isAmmoWeapon(weaponId, gta.game)) {
 			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game));
 		}
-		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput;
+		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1144,7 +1144,7 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 
 addCommandHandler("ped_scale", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <scale>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <scale>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1171,7 +1171,7 @@ addCommandHandler("ped_scale", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds scale to " + String(scaleFactor);
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's scale to " + String(scaleFactor)
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's scale to " + String(scaleFactor) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1182,7 +1182,7 @@ addCommandHandler("ped_scale", function(cmdName, params) {
 
 addCommandHandler("ped_stats", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <civ group> <stat>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <civ group> <stat>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1383,7 +1383,7 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to act like " + String(statInfo);
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to act like " + String(statInfo);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to act like " + String(statInfo) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1394,7 +1394,7 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 
 addCommandHandler("ped_nogun", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1420,7 +1420,7 @@ addCommandHandler("ped_nogun", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "took " + String(civilians.length) + " peds weapons";
 	} else {
-		outputText = "took " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's weapons";
+		outputText = "took " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's weapons" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1431,7 +1431,7 @@ addCommandHandler("ped_nogun", function(cmdName, params) {
 
 addCommandHandler("ped_god", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <state 0/1>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <state 0/1>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1459,7 +1459,7 @@ addCommandHandler("ped_god", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "made " + String(civilians.length) + " peds " + String((!!godMode) ? "invincible" : "not invincible");
 	} else {
-		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!godMode == 1) ? "invincible" : "not invincible");
+		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!godMode == 1) ? "invincible" : "not invincible") + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1470,7 +1470,7 @@ addCommandHandler("ped_god", function(cmdName, params) {
 
 addCommandHandler("ped_crouch", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1497,7 +1497,7 @@ addCommandHandler("ped_crouch", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "made " + String(civilians.length) + " peds " + String((!!crouchState) ? "crouch" : "stand up");
 	} else {
-		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!crouchState) ? "crouch" : "stand up");
+		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!crouchState) ? "crouch" : "stand up") + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1508,7 +1508,7 @@ addCommandHandler("ped_crouch", function(cmdName, params) {
 
 addCommandHandler("ped_waitstate", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <wait state> <time>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <wait state> <time>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1534,9 +1534,9 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + Sring(time) + " milliseconds";
+		outputText = "set " + String(civilians.length) + " peds wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + Sring(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + String(time) + " milliseconds";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + String(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1547,7 +1547,7 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 
 addCommandHandler("ped_threat", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1674,7 +1674,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 	}
 
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <threat name>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <threat name>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1694,7 +1694,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to attack " + String(threatInfo);
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack " + String(threatInfo);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack " + String(threatInfo) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1705,7 +1705,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 
 addCommandHandler("ped_nothreat", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1731,7 +1731,7 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to attack nobody";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack nobody";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack nobody" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1742,7 +1742,7 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 
 addCommandHandler("ped_aimatme", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " " + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} " + String(cmdName) + " <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1768,7 +1768,7 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to point their guns at " + getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin));
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to point their guns at " + getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin));
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to point their guns at " + getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1779,7 +1779,7 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 
 addCommandHandler("ped_aimatciv", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <player>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <player>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1811,7 +1811,7 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to aim their guns at " + getProperCivilianPossessionText(splitParams[1]) + " " + getCivilianName(civilians[1].skin) + " ped";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperCivilianPossessionText(splitParams[1]) + " " + getCivilianName(civilians[1].skin) + " ped";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperCivilianPossessionText(splitParams[1]) + " " + getCivilianName(civilians[1].skin) + " ped" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1822,7 +1822,7 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 
 addCommandHandler("ped_aimatveh", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped> <vehicle>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1855,7 +1855,7 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 	if(civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to aim their guns at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1866,7 +1866,7 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 
 addCommandHandler("ped_aimatplr", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1896,7 +1896,7 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 
 addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1920,9 +1920,9 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds to hail a taxi";
+		outputText = "set " + String(civilians.length) + " peds to hail a taxi" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to hail a taxi";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to hail a taxi" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1933,7 +1933,7 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 
 addCommandHandler("ped_resurrect", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1957,9 +1957,9 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "resurrected " + String(civilians.length) + " peds";
+		outputText = "resurrected " + String(civilians.length) + " peds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "resurrected " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped";
+		outputText = "resurrected " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1970,7 +1970,7 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 
 addCommandHandler("ped_coll", function(cmdName, params) {
 	if(isParamsInvalid(params)) {
-		message("Command: /" + String(cmdName) + " <ped>", syntaxMessageColour);
+		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
 
@@ -1995,9 +1995,9 @@ addCommandHandler("ped_coll", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "turned " + String(civilians.length) + " peds collisions " + (!!collisionsEnabled) ? "on" : "off";
+		outputText = "turned " + String(civilians.length) + " peds collisions " + (!!collisionsEnabled) ? "on" : "off" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "turned " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped collision " + (!!collisionsEnabled) ? "on" : "off";
+		outputText = "turned " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped collision " + (!!collisionsEnabled) ? "on" : "off" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -2056,7 +2056,7 @@ function getCiviliansFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function getCivilians() {
-	return getElementsByType(ELEMENT_CIVILIAN);
+	return getElementsByType(ELEMENT_PED);
 }
 
 // ----------------------------------------------------------------------------
