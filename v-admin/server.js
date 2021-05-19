@@ -6,6 +6,8 @@ setErrorMode(RESOURCEERRORMODE_STRICT);
 let scriptConfig = null;
 let logMessagePrefix = "ADMIN:";
 
+let returnScriptsToClient = null;
+
 // ----------------------------------------------------------------------------
 
 bindEventHandler("onResourceStart", thisResource, (event, resource) => {
@@ -26,6 +28,7 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 // ----------------------------------------------------------------------------
 
 addEventHandler("onPlayerJoined", (event, client) => {
+	sendClientBlockedScripts();
 	if(isAdminIP(client.ip)) {
 		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
 		client.administrator = true;
@@ -56,6 +59,22 @@ addCommandHandler("kick", (command, params, client) => {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("scripts", (command, params, client) => {
+	if(client.administrator || client.console) {
+		let targetClient = getClientFromParams(params);
+		if(targetClient) {
+			returnScriptsToClient = client;
+			requestGameScripts(targetClient, client);
+		} else {
+			messageAdmins(`${client.name} tried to get running scripts for '${params}' but failed because no player is connected with that name.`, client, COLOUR_YELLOW);
+		}
+	} else {
+		messageAdmins(`${client.name} tried to get ${targetClient.name}'s running scripts but failed because they aren't an admin!`, client, COLOUR_YELLOW);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
 addCommandHandler("ban", (command, params, client) => {
 	if(client.administrator || client.console) {
 		let splitParams = params.split(" ");
@@ -68,7 +87,10 @@ addCommandHandler("ban", (command, params, client) => {
 				scriptConfig.bans.push({name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB')});
 				saveConfig();
 				messageAdmins(`${targetClient.name} has been banned!`, client, COLOUR_YELLOW);
-				server.banIP(targetClient.ip);
+				server.banIP(targetClient.ip, 0);
+				if(targetClient) {
+					targetClient.disconnect();
+				}
 			}
 		}
 	}
@@ -90,12 +112,19 @@ addCommandHandler("unban", (command, params, client) => {
 	}
 });
 
-
 // ----------------------------------------------------------------------------
 
 addCommandHandler("a", (command, params, client) => {
+	messageAdmins(`[ADMIN] ${client.name}: ${messageText}`);
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("blockscript", (command, params, client) => {
 	if(client.administrator) {
-		message(`[#FF9900][ADMIN]: ${params}`, COLOUR_WHITE);
+		addBlockedScript(params);
+	} else {
+		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin!`, client, COLOUR_YELLOW);
 	}
 });
 
@@ -122,33 +151,6 @@ addCommandHandler("ip", (command, params, client) => {
 		if(targetClient) {
 			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 		}
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("geoip", (command, params, client) => {
-	if(client.administrator) {
-		if(typeof module.geoip == "undefined") {
-			return false;
-		}
-
-		let targetClient = getClientFromParams(params) || client;
-		let countryName = module.geoip.getCountryName("geoip-country.mmdb", targetClient.ip) || "Unknown";
-		let cityName = module.geoip.getCityName("geoip-city.mmdb", targetClient.ip) || "Unknown";
-		messageAdmin(`${targetClient.name} is from ${cityName}, ${countryName}`, client, COLOUR_YELLOW);
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("docmd", (command, params, client) => {
-	if(client.administrator) {
-		let splitParams = params.split(" ");
-		let commandString = splitParams.slice(1).join(" ");
-		let targetClient = getClientFromParams(splitParams[0]) || client;
-		triggerNetworkEvent("v.admin.docmd", targetClient, );
-		messageAdmin(`Command simulated for ${targetClient.name} (${commandString})`, client, COLOUR_YELLOW);
 	}
 });
 
@@ -187,9 +189,10 @@ function messageAdmins(messageText) {
 
 function messageAdmin(messageText, client, colour) {
 	if(client.console) {
-		console.warn(`[ADMIN] [#FFFFFF]${messageText}`);
+		console.warn(`[ADMIN] ${messageText}`);
 	} else {
 		messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, colour);
+		triggerNetworkEvent("receiveConsoleMessage", client, `[ADMIN] ${messageText}`);
 	}
 }
 
@@ -261,18 +264,7 @@ function loadConfig() {
 		return false;
 	}
 
-	if(typeof scriptConfig.admins == "undefined") {
-		scriptConfig.admins = [];
-	}
-
-	if(typeof scriptConfig.bans == "undefined") {
-		scriptConfig.bans = [];
-	}
-
-	if(typeof scriptConfig.blockedScripts == "undefined") {
-		scriptConfig.blockedScripts = [];
-	}
-
+	fixMissingConfigStuff();
 	logInfo("Parsed config file successfully.");
 }
 
@@ -336,6 +328,49 @@ function applyAdminPermissions() {
 		} else {
 			clients[i].administrator = false;
 		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+function requestGameScripts(targetClient) {
+	triggerNetworkEvent("requestGameScripts", targetClient);
+}
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("receiveGameScripts", function(fromClient, gameScripts) {
+	//if(returnScriptsToClient) {
+		messageClient(`${fromClient.name}'s game scripts: [#FFFF00]${gameScripts.join("[#CCCC00], [#FFFF00]")}`, returnScriptsToClient, COLOUR_AQUA);
+	//}
+});
+
+// ----------------------------------------------------------------------------
+
+function addBlockedScript(scriptName) {
+	scriptConfig.blockedScripts.push(scriptName);
+	sendClientBlockedScripts(null);
+}
+
+// ----------------------------------------------------------------------------
+
+function sendClientBlockedScripts(client) {
+	triggerNetworkEvent("receiveBlockedScripts", client, scriptConfig.blockedScripts);
+}
+
+// ----------------------------------------------------------------------------
+
+function fixMissingConfigStuff() {
+	if(typeof scriptConfig.blockedScripts == "undefined") {
+		scriptConfig.blockedScripts = [];
+	}
+
+	if(typeof scriptConfig.admins == "undefined") {
+		scriptConfig.admins = [];
+	}
+
+	if(typeof scriptConfig.bans == "undefined") {
+		scriptConfig.bans = [];
 	}
 }
 
