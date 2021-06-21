@@ -2,14 +2,10 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	//if(resource == thisResource) {
 		let clients = getClients();
-		for(let i in clients) {	
+		for(let i in clients) {
 			if(clients[i] != localClient) {
 				//if(peds[i].type == ELEMENT_PLAYER) {
 					setClientBlip(clients[i], clients[i].getData("v.colour"));
@@ -44,7 +40,7 @@ function getClientFromPed(ped) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -54,12 +50,12 @@ function setPlayerBlip(player) {
 	if(localPlayer == player) {
 		return false;
 	}
-	
+
 	let colour = COLOUR_WHITE;
 	if(player.getData("v.colour")) {
 		colour = player.getData("v.colour");
 	}
-	let tempBlip = createBlipAttachedTo(player, 0, 2, colour);				
+	let tempBlip = createBlipAttachedTo(player, 0, 2, colour);
 	player.getData("v.blip", tempBlip)
 }
 

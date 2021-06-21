@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 let spawnScreenPedPosition = new Vec3(0.0, 0.0, 0.0);
 let spawnScreenPedHeading = 0.0;
 let spawnScreenCamPosition = new Vec3(0.0, 0.0, 0.0);

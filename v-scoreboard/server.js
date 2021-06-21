@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	setInterval(updatePlayerScoreboardPing, 3000);
 });

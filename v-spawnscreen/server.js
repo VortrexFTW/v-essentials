@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 let serverGame = server.game;
 let spawnScreenEnabled = true;
 

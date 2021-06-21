@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 // WARNING: This resource is VERY buggy on GTA 3 and Vice City. I haven't had a chance to finish tweaking it.
 // You will often find yourself unable to aim or punch. I'll try to fix this soon ;)
 

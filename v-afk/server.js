@@ -2,8 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
 addEvent("OnPlayerGoAFK", 1);
 addEvent("OnPlayerBackFromAFK", 1);
 

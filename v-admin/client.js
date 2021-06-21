@@ -1,5 +1,4 @@
 "use strict";
-setErrorMode(RESOURCEERRORMODE_STRICT);
 
 // ----------------------------------------------------------------------------
 

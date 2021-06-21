@@ -1,6 +1,3 @@
--- ----------------------------------------------------------------------------
-
-setErrorMode(RESOURCEERRORMODE_STRICT)
 
 -- ----------------------------------------------------------------------------
 
@@ -13,9 +10,9 @@ addCommandHandler("lse", function(cmdName, params, client)
         messageClient("Syntax: /lse <code>", client, findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game))
         return false;
     end
-	
+
 	pcall(load(params))
-	
+
 	messageClient("Lua server code executed: " .. params, client, COLOUR_AQUA)
 end)
 
@@ -30,9 +27,9 @@ addCommandHandler("lsr", function(cmdName, params, client)
         messageClient("Syntax: /lsr <code>", client, findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game))
         return false;
     end
-	
+
 	local output = pcall(load("return " .. params))
-	
+
 	messageClient("Lua server code executed: " .. output, COLOUR_AQUA)
 	messageClient("Returns: " .. output, client, COLOUR_AQUA)
 end)

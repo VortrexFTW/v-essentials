@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 function destroyBlipsAttachedTo(element) {
 	element.children.forEach(function(value, index, array) {
 		if(value.isType(ELEMENT_BLIP)) {

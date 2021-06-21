@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	bindKey(SDLK_g, KEYSTATE_UP, enterVehicleAsPassenger);
 });
@@ -24,7 +20,7 @@ function enterVehicleAsPassenger() {
 		if(tempVehicle != null) {
 			localPlayer.enterVehicle(tempVehicle, false);
 		}
-	}	
+	}
 }
 
 // ----------------------------------------------------------------------------
