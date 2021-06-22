@@ -15,34 +15,13 @@ addCommandHandler("skin", function(cmdName, params) {
 
 	let skinId = getSkinIdFromParams(params, gta.game);
 
-	if(!skinId) {
-		if(gta.game >= GAME_GTA_IV) {
-			if(localPlayer.vehicle) {
-				localPlayer.removeFromVehicle();
-			}
-			skinId = getSkinIdFromParams("Generic Man", gta.game);
-			if(skinId == -2020305438 || skinId == -641875910) {
-				natives.changePlayerModel(natives.getPlayerId(), natives.getPlayersettingsModelChoice())
-				natives.setPedComponentsToNetworkPlayersettingsModel(localPlayer);
-			} else {
-				if(skinId == -999506922 || skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -89302119 || skinId == -1004762946) {
-					natives.setPlayerAsCop(natives.getPlayerId(), true);
-				} else {
-					natives.setPlayerAsCop(natives.getPlayerId(), false);
-				}
-			}
-		} else {
-			skinId = 0;
-		}
-	}
-
 	if(gta.game == GAME_GTA_III) {
-		if(skinId == 26 || skinId == 27 || skinId == 28 || skinId == 29) {
+		if(skinId == 26 || skinId == 27 || skinId == 28 || skinId == 29 || skinId > 122 || skinId < 0) {
 			message("That skin is invalid!", errorMessageColour);
 			return false;
 		}
 	} else if(gta.game == GAME_GTA_VC) {
-		if(skinId == 8 || skinId == 141 || skinId == 140) { // || skinID > 100) {
+		if(skinId == 8 || skinId == 141 || skinId == 140) {
 			message("That skin is invalid!", errorMessageColour);
 			return false;
 		}
@@ -71,10 +50,37 @@ addCommandHandler("skin", function(cmdName, params) {
 		}
 	}
 
-	if(isConnected) {
-		triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
+	if(gta.game < GAME_GTA_IV) {
+		if(isConnected) {
+			triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
+		} else {
+			localPlayer.skin = skinId;
+		}
 	} else {
-		localPlayer.skin = skinId;
+		if(!skinId) {
+			skinId = getSkinIdFromParams("Generic Man", gta.game);
+		}
+
+		if(localPlayer.vehicle) {
+			localPlayer.removeFromVehicle();
+		}
+
+		natives.requestModel(skinId);
+		natives.loadAllObjectsNow();
+
+		if(natives.hasModelLoaded(skinId)) {
+			if(skinId == -2020305438 || skinId == -641875910) {
+				natives.changePlayerModel(natives.getPlayerId(), natives.getPlayersettingsModelChoice());
+				natives.setPedComponentsToNetworkPlayersettingsModel(localPlayer);
+			} else {
+				natives.changePlayerModel(natives.getPlayerId(), skinId);
+				if(skinId == -999506922 || skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -89302119 || skinId == -1004762946) {
+					natives.setPlayerAsCop(natives.getPlayerId(), true);
+				} else {
+					natives.setPlayerAsCop(natives.getPlayerId(), false);
+				}
+			}
+		}
 	}
 
 	let outputText = `set ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} skin to ${getSkinNameFromId(skinId)} (using /skin)`;

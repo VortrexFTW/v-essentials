@@ -6105,7 +6105,7 @@ function getClosestVehicle(pos) {
 // ----------------------------------------------------------------------------
 
 function getClosestCivilian(pos) {
-	return getCivilians().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+	return getPeds().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
@@ -6676,7 +6676,7 @@ function getPlayersInRange(position, range) {
 // ----------------------------------------------------------------------------
 
 function getCiviliansInRange(position, range) {
-	return getElementsByType(ELEMENT_CIVILIAN).filter(civilian => position.distance(civilian.position) <= range);
+	return getPeds().filter(civilian => position.distance(civilian.position) <= range);
 }
 
 // ----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function(event, deltaTime) {
-	getCivilians().forEach(function(civilian) {
+	getPeds().forEach(function(civilian) {
 		updateCivilianMovement(civilian);
 	});
 });
@@ -132,7 +132,13 @@ addCommandHandler("ped", function(cmdName, params) {
 	if(isConnected && gta.game < GAME_GTA_IV) {
 		triggerNetworkEvent("sb.c.add", skinId, position, heading);
 	} else {
-		let tempCiv = gta.createCivilian(skinId);
+		let tempCiv = false;
+
+		natives.requestModel(skinId);
+		natives.loadAllObjectsNow();
+		if(natives.hasModelLoaded(skinId)) {
+			tempCiv = natives.createChar(1, skinId, position, true);
+		}
 
 		if(!tempCiv) {
 			message("The civilian could not be added!", errorMessageColour);
@@ -141,6 +147,9 @@ addCommandHandler("ped", function(cmdName, params) {
 
 		tempCiv.position = position;
 		tempCiv.heading = heading;
+
+		natives.setCharAsMissionChar(tempCiv, true);
+		natives.setCharStayInCarWhenJacked(tempCiv, true);
 	}
 
 	let outputText = `spawned a ${getSkinNameFromId(skinId, gta.game)} ped.`;
@@ -2007,7 +2016,7 @@ addCommandHandler("ped_coll", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 function getCiviliansFromParams(params) {
-	let civilians = getCivilians();
+	let civilians = getPeds();
 	let selected = [];
 
 	switch(params.toLowerCase()) {
@@ -2034,7 +2043,7 @@ function getCiviliansFromParams(params) {
 
 		case "a":
 		case "all":
-			selected = getCivilians();
+			selected = getPeds();
 			break;
 
 		case "r":
@@ -2056,7 +2065,7 @@ function getCiviliansFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function getCivilians() {
-	return getElementsByType(ELEMENT_PED);
+	return getPeds();
 }
 
 // ----------------------------------------------------------------------------
