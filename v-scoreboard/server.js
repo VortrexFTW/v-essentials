@@ -9,7 +9,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 // ----------------------------------------------------------------------------
 
 function updatePlayerScoreboardPing() {
-	getClients().filter(c => !c.console).forEach((client) => {
+	getClients().forEach((client) => {
 		client.setData("v.ping", client.ping, true);
 	});
 }
