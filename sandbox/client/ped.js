@@ -13,11 +13,11 @@ let canSpawnCivilian = true;
 // ----------------------------------------------------------------------------
 
 function updateCivilianMovement(civilian) {
-	if(!customCiviliansEnabled[gta.game]) {
+	if(!customCiviliansEnabled[game.game]) {
 		return false;
 	}
 
-	if(civilianFollowEnabled[gta.game]) {
+	if(civilianFollowEnabled[game.game]) {
 		if(civilian.getData("sb.c.following")) {
 			let following = civilian.getData("sb.c.following");
 			if(following != null) {
@@ -46,12 +46,12 @@ function updateCivilianMovement(civilian) {
 					}
 				}
 
-				if(following.position.distance(civilian.position) <= civilianFollowStopDistance[gta.game]) {
+				if(following.position.distance(civilian.position) <= civilianFollowStopDistance[game.game]) {
 					civilian.walkTo(civilian.position);
 				} else {
-					if(following.position.distance(civilian.position) > civilianFollowRunDistance[gta.game]) {
+					if(following.position.distance(civilian.position) > civilianFollowRunDistance[game.game]) {
 						if(game.game >= GAME_GTA_VC) {
-							if(following.position.distance(civilian.position) > civilianFollowSprintDistance[gta.game]) {
+							if(following.position.distance(civilian.position) > civilianFollowSprintDistance[game.game]) {
 								civilian.sprintTo(following.position);
 							} else {
 								civilian.runTo(following.position);
@@ -70,7 +70,7 @@ function updateCivilianMovement(civilian) {
 		}
 	}
 
-	if(civilianFacingEnabled[gta.game]) {
+	if(civilianFacingEnabled[game.game]) {
 		if(civilian.getData("sb.c.facing") != null) {
 			let facingPlayer = civilian.getData("sb.c.facing");
 			if(facingPlayer != null) {
@@ -101,8 +101,8 @@ function updateCivilianScale(civilian) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped", function(cmdName, params) {
-	//if(isConnected && gta.game < GAME_GTA_IV) {
-	//	if(!civiliansEnabled[gta.game]) {
+	//if(isConnected && !isGTAIV()) {
+	//	if(!civiliansEnabled[game.game]) {
 	//		message("Peds are disabled on this server!", errorMessageColour);
 	//		return false;
 	//	}
@@ -119,7 +119,7 @@ addCommandHandler("ped", function(cmdName, params) {
 	}
 
 	let splitParams = params.split(" ");
-	let skinId = getSkinIdFromParams(splitParams[0], gta.game);
+	let skinId = getSkinIdFromParams(splitParams[0], game.game);
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
 	let heading = localPlayer.heading;
 
@@ -129,30 +129,34 @@ addCommandHandler("ped", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected) {
 		triggerNetworkEvent("sb.c.add", skinId, position, heading);
 	} else {
-		let tempCiv = false;
+		if(isGTAIV()) {
+			let tempCiv = false;
 
-		natives.requestModel(skinId);
-		natives.loadAllObjectsNow();
-		if(natives.hasModelLoaded(skinId)) {
-			tempCiv = natives.createChar(1, skinId, position, true);
-		}
+			natives.requestModel(skinId);
+			natives.loadAllObjectsNow();
+			if(natives.hasModelLoaded(skinId)) {
+				tempCiv = natives.createChar(1, skinId, position, true);
+			}
 
-		if(!tempCiv) {
-			message("The civilian could not be added!", errorMessageColour);
+			if(!tempCiv) {
+				message("The civilian could not be added!", errorMessageColour);
+				return false;
+			}
+
+			tempCiv.position = position;
+			tempCiv.heading = heading;
+
+			natives.setCharAsMissionChar(tempCiv, true);
+			natives.setCharStayInCarWhenJacked(tempCiv, true);
+		} else {
 			return false;
 		}
-
-		tempCiv.position = position;
-		tempCiv.heading = heading;
-
-		natives.setCharAsMissionChar(tempCiv, true);
-		natives.setCharStayInCarWhenJacked(tempCiv, true);
 	}
 
-	let outputText = `spawned a ${getSkinNameFromId(skinId, gta.game)} ped.`;
+	let outputText = `spawned a ${getSkinNameFromId(skinId, game.game)} ped.`;
 	outputSandboxMessage(outputText);
 
 	canSpawnCivilian = false;
@@ -163,8 +167,8 @@ addCommandHandler("ped", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("pedline", function(cmdName, params) {
-	//if(isConnected && gta.game < GAME_GTA_IV) {
-	//	if(!civiliansEnabled[gta.game]) {
+	//if(isConnected && !isGTAIV()) {
+	//	if(!civiliansEnabled[game.game]) {
 	//		message("Peds are disabled on this server!", errorMessageColour);
 	//		return false;
 	//	}
@@ -194,7 +198,7 @@ addCommandHandler("pedline", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		for(let i=1;i<=amount;i++){
 			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i*gap);
 			let heading = localPlayer.heading;
@@ -210,7 +214,7 @@ addCommandHandler("pedline", function(cmdName, params) {
 		}
 	}
 
-	let outputText = "spawned a line of " + String(amount) + " " + getSkinNameFromParams(skinId, gta.game) + " peds, spaced apart by " + String(gap) + " meters";
+	let outputText = "spawned a line of " + String(amount) + " " + getSkinNameFromParams(skinId, game.game) + " peds, spaced apart by " + String(gap) + " meters";
 	outputSandboxMessage(outputText);
 
 	canSpawnCivilian = false;
@@ -241,7 +245,7 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 	let rowGap = (Number(splitParams[4]) || 3);
 	let tempCiv = null;
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		for(let k=1;k<=cols;k++) {
 			for(let i=1;i<=rows;i++) {
 				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading,k*rowGap), localPlayer.heading, i*colGap);
@@ -261,7 +265,7 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 		}
 	}
 
-	let outputText = "spawned a " + String(cols) + "x" + String(rows) + " grid of " + getSkinNameFromParams(skinId, gta.game) + " peds, spaced apart by " + String(colGap) + "x" + String(rowGap) + " meters. Total: " + String(cols*rows);
+	let outputText = "spawned a " + String(cols) + "x" + String(rows) + " grid of " + getSkinNameFromParams(skinId, game.game) + " peds, spaced apart by " + String(colGap) + "x" + String(rowGap) + " meters. Total: " + String(cols*rows);
 	outputSandboxMessage(outputText);
 
 	canSpawnCivilian = false;
@@ -289,7 +293,7 @@ addCommandHandler("ped_wander", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.wander", civilians, wanderPath);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -326,7 +330,7 @@ addCommandHandler("ped_delete", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.del", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -362,7 +366,7 @@ addCommandHandler("ped_stay", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.stay", civilians, !!stayState);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -383,8 +387,8 @@ addCommandHandler("ped_stay", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_stamina", function(cmdName, params) {
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
+	if(isConnected && !isGTAIV()) {
+		if(!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
@@ -407,7 +411,7 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.stamina", civilians, stamina);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -451,7 +455,7 @@ addCommandHandler("ped_enterveh", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.enterveh", civilians, vehicles[0], !!driver);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -495,7 +499,7 @@ addCommandHandler("ped_lookatveh", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.lookat", civilians, vehicles[0].position.x, vehicles[0].position.y, vehicles[0].position.z, duration);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -532,7 +536,7 @@ addCommandHandler("ped_exitveh", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.exitveh", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -553,13 +557,13 @@ addCommandHandler("ped_exitveh", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_staminadur", function(cmdName, params) {
-	if(gta.game == GAME_GTA_III) {
+	if(game.game == GAME_GTA_III) {
 		message("Ped stamina does not work on GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
+	if(isConnected && !isGTAIV()) {
+		if(!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
@@ -582,7 +586,7 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.stamina", civilians, staminaDuration);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -603,13 +607,13 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_torsorot", function(cmdName, params) {
-	if(gta.game == GAME_GTA_III) {
+	if(game.game == GAME_GTA_III) {
 		message("Ped torso rotation does not work on GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
+	if(isConnected && !isGTAIV()) {
+		if(!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
@@ -632,7 +636,7 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.torsorot", civilians, rotation);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -670,7 +674,7 @@ addCommandHandler("ped_walkstyle", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.walkstyle", civilians, walkStyle);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -708,7 +712,7 @@ addCommandHandler("ped_armour", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.armour", civilians, armour);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -752,7 +756,7 @@ addCommandHandler("ped_warpinveh", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.warpintoveh", civilians, vehicles[0], seatId);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -795,7 +799,7 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.syncer", civilians, clientName);
 	}
 
@@ -830,7 +834,7 @@ addCommandHandler("ped_health", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.armour", civilians, armour);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -867,7 +871,7 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.jump", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -888,7 +892,7 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_walkfwd", function(cmdName, params) {
-	//if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 	//	message("This feature is not available in San Andreas!", errorMessageColour);
 	//	return false;
 	//}
@@ -910,7 +914,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.walkfwd", civilians, distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -950,7 +954,7 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.runfwd", civilians, distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -972,13 +976,13 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_sprintfwd", function(cmdName, params) {
-	if(gta.game == GAME_GTA_III) {
+	if(game.game == GAME_GTA_III) {
 		message("Civilian sprint is not supported in GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
-		if(!civiliansEnabled[gta.game]) {
+	if(isConnected && !isGTAIV()) {
+		if(!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
@@ -1001,7 +1005,7 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.sprintfwd", civilians, distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1040,7 +1044,7 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.follow", civilians, localPlayer);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1061,7 +1065,7 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ped_defend", function(cmdName, params) {
-	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 		message("This feature is not available in San Andreas!", errorMessageColour);
 		return false;
 	}
@@ -1083,7 +1087,7 @@ addCommandHandler("ped_defend", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.defend", civilians, playerId);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1123,7 +1127,7 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.gun", civilians, weaponId, ammo, !!holdGun);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1132,15 +1136,15 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		let weaponAmmoOutput = String(getWeaponName(weaponId, gta.game)) + "'s with " + String(ammo) + " ammo";
-		if(!isAmmoWeapon(weaponId, gta.game)) {
-			weaponAmmoOutput = String(getWeaponName(weaponId, gta.game)) + "s";
+		let weaponAmmoOutput = String(getWeaponName(weaponId, game.game)) + "'s with " + String(ammo) + " ammo";
+		if(!isAmmoWeapon(weaponId, game.game)) {
+			weaponAmmoOutput = String(getWeaponName(weaponId, game.game)) + "s";
 		}
 		outputText = "gave " + String(civilians.length) + " peds " + weaponAmmoOutput;
 	} else {
-		let weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game)) + " with " + String(ammo) + " ammo";
-		if(!isAmmoWeapon(weaponId, gta.game)) {
-			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, gta.game));
+		let weaponAmmoOutput = "a " + String(getWeaponName(weaponId, game.game)) + " with " + String(ammo) + " ammo";
+		if(!isAmmoWeapon(weaponId, game.game)) {
+			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, game.game));
 		}
 		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
@@ -1169,7 +1173,7 @@ addCommandHandler("ped_scale", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.scale", civilians, scaleFactor);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1381,7 +1385,7 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 			break;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.stats", civilians, statId);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1418,7 +1422,7 @@ addCommandHandler("ped_nogun", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.nogun", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1456,7 +1460,7 @@ addCommandHandler("ped_god", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.god", civilians, !!godMode);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1495,7 +1499,7 @@ addCommandHandler("ped_crouch", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.crouch", civilians, !!crouchState);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1534,7 +1538,7 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.waitstate", civilians, waitState, time);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1543,9 +1547,9 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 	}
 
 	if(civilians.length > 1) {
-		outputText = "set " + String(civilians.length) + " peds wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + Sring(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
+		outputText = "set " + String(civilians.length) + " peds wait state to " + String(getPedWaitStateName(waitState, game.game)) + " for " + Sring(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped wait state to " + String(getPedWaitStateName(waitState, gta.game)) + " for " + String(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped wait state to " + String(getPedWaitStateName(waitState, game.game)) + " for " + String(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1692,7 +1696,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.threat.add", civilians, threatId);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1728,7 +1732,7 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.threat.clr", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1766,7 +1770,7 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.aimat", civilians, localPlayer.id);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1809,7 +1813,7 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.aimat", civilians, civilians2[0]);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1853,7 +1857,7 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 	}
 
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.aimat", civilians, vehicles[0]);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1891,7 +1895,7 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.aimatplr", civilians, playerName);
 	} else {
 		message("This command can't be used offline!", errorMessageColour);
@@ -1920,7 +1924,7 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.hailtaxi", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1957,7 +1961,7 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.resurrect", civilians);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1995,7 +1999,7 @@ addCommandHandler("ped_coll", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected && gta.game < GAME_GTA_IV) {
+	if(isConnected && !isGTAIV()) {
 		triggerNetworkEvent("sb.c.coll", civilians, !!collisionsEnabled);
 	} else {
 		civilians.forEach(function(civilian) {
