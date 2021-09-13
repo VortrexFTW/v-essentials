@@ -211,7 +211,7 @@ function getClientFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function saveConfig() {
-	let configText = JSON.stringify(scriptConfig);
+	let configText = JSON.stringify(scriptConfig, null, '\t');
 	if(!configText) {
 		logInfo(`Config file could not be stringified`);
 		return false;
