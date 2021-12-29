@@ -73,8 +73,8 @@ addEventHandler("OnDrawnHUD", function (event) {
 			for(let i in clients) {
 				if(!clients[i].console) {
 					let colour = COLOUR_WHITE;
-					if(clients[i].getData("v.colour")) {
-						colour = clients[i].getData("v.colour");
+					if(clients[i].player.getData("v.colour")) {
+						colour = clients[i].player.getData("v.colour");
 					}
 
 					let listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping"))];

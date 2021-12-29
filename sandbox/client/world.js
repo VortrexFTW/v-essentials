@@ -628,7 +628,7 @@ addNetworkHandler("sb.w.sync", function(weatherData, timeData, ambienceData, gar
 	trafficDensity[gta.game] = ambienceData[5];
 	console.log(`[Sandbox.Sync] Traffic density set to ${civilianDensity[gta.game]}`);
 
-	if(gta.game == GAME_GTA_III || gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	if(gta.game == GAME_GTA_III || gta.game == GAME_GTA_SA) {
 		for(let i in garages) {
 			gameGarages[gta.game][i][3] = garages[i][1];
 			if(gameGarages[gta.game][i][3] == true) {
@@ -639,7 +639,7 @@ addNetworkHandler("sb.w.sync", function(weatherData, timeData, ambienceData, gar
 		}
 	}
 
-	if(gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	if(gta.game == GAME_GTA_SA) {
 		for(let i in stats) {
 			console.log(`[Sandbox.Sync] Game stat ${stats[i][0]} set to ${stats[i][1]}`);
 		}

@@ -15,71 +15,22 @@ addCommandHandler("skin", function(cmdName, params) {
 
 	let skinId = getSkinIdFromParams(params, gta.game);
 
-	if(gta.game == GAME_GTA_III) {
-		if(skinId == 26 || skinId == 27 || skinId == 28 || skinId == 29 || skinId > 122 || skinId < 0) {
-			message("That skin is invalid!", errorMessageColour);
-			return false;
-		}
-	} else if(gta.game == GAME_GTA_VC) {
-		if(skinId == 8 || skinId == 141 || skinId == 140) {
-			message("That skin is invalid!", errorMessageColour);
-			return false;
-		}
-	} else if(gta.game == GAME_GTA_SA) {
-		if(skinId < 0 || skinId > 313) {
-			message("That skin is invalid!", errorMessageColour);
-			return false;
-		}
-
-		switch(skinId) {
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-			case 42:
-			case 65:
-			case 74:
-			case 86:
-			case 119:
-			case 149:
-			case 210:
-				message("That skin is invalid!", errorMessageColour);
-				return false;
-		}
+	if(!skinId) {
+		message("That skin is invalid!", errorMessageColour);
+		return false;
 	}
 
-	if(gta.game < GAME_GTA_IV) {
-		if(isConnected) {
-			triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
+	if(isConnected) {
+		if(game.game == GAME_GTA_IV) {
+			natives.changePlayerModel(natives.getPlayerId(), skinId);
 		} else {
-			localPlayer.skin = skinId;
+			triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
 		}
 	} else {
-		if(!skinId) {
-			skinId = getSkinIdFromParams("Generic Man", gta.game);
-		}
-
-		if(localPlayer.vehicle) {
-			localPlayer.removeFromVehicle();
-		}
-
-		natives.requestModel(skinId);
-		natives.loadAllObjectsNow();
-
-		if(natives.hasModelLoaded(skinId)) {
-			if(skinId == -2020305438 || skinId == -641875910) {
-				natives.changePlayerModel(natives.getPlayerId(), natives.getPlayersettingsModelChoice());
-				natives.setPedComponentsToNetworkPlayersettingsModel(localPlayer);
-			} else {
-				natives.changePlayerModel(natives.getPlayerId(), skinId);
-				if(skinId == -999506922 || skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -89302119 || skinId == -1004762946) {
-					natives.setPlayerAsCop(natives.getPlayerId(), true);
-				} else {
-					natives.setPlayerAsCop(natives.getPlayerId(), false);
-				}
-			}
+		if(game.game == GAME_GTA_IV) {
+			natives.changePlayerModel(natives.getPlayerId(), skinId);
+		} else {
+			localPlayer.skin = skinId;
 		}
 	}
 
@@ -93,7 +44,7 @@ addCommandHandler("skin", function(cmdName, params) {
 addCommandHandler("clothes", function(cmdName, params) {
 	if(!params || params == "") {
 		message("Syntax: /clothes <body part> <model> <texture>", syntaxMessageColour);
-		message("Bodyparts are: head, upper, lower", syntaxMessageColour);
+		message("Bodyparts are: head, upper, lower, hat", syntaxMessageColour);
 		return false;
 	}
 
@@ -101,24 +52,34 @@ addCommandHandler("clothes", function(cmdName, params) {
 	let bodyPartName = splitParams[0] || "head";
 	let model = Number(splitParams[1]) || 0;
 	let texture = Number(splitParams[2]) || 0;
+
+	let bodyPartType = 0;
 	let bodyPartId = 0;
 	let bodyPartNames = ["head", "upper body", "lower body"];
 
 	switch(bodyPartName.toLowerCase()) {
 		case "head":
+			bodyPartType = 1;
 			bodyPartId = 0;
 			break;
 
 		case "upper":
+			bodyPartType = 1;
 			bodyPartId = 1;
 			break;
 
 		case "lower":
+			bodyPartType = 1;
 			bodyPartId = 2;
 			break;
 
+		case "hat":
+			bodyPartType = 2;
+			bodyPartId = 0;
+			break;
+
 		default:
-			message("The body part must be: head, upper, or lower", errorMessageColour);
+			message("The body part must be: head, upper, lower, or hat", errorMessageColour);
 			return false;
 	}
 
@@ -132,10 +93,10 @@ addCommandHandler("clothes", function(cmdName, params) {
 		return false;
 	}
 
-	if(isConnected) {
+	if(bodyPartType == 1) {
 		localPlayer.changeBodyPart(bodyPartId, model, texture);
-	} else {
-		localPlayer.changeBodyPart(bodyPartId, model, texture);
+	} else if(bodyPartType == 2) {
+		natives.setCharPropIndex(localPlayer, bodyPartId, model);
 	}
 
 	let outputText = `changed ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} his ${bodyPartNames[bodyPartId]} to model ${model} and texture ${texture} (using /clothes)`;

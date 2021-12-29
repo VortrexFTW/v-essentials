@@ -28,194 +28,194 @@ addNetworkHandler(`sb.v.del`, function(client, vehicles) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.siren`, function(client, vehicles, sirenState) {
-	triggerNetworkEvent(`sb.v.siren`, null, vehicles, sirenState);
+addNetworkHandler(`sb.v.siren`, function(client, vehicleIds, sirenState) {
+	triggerNetworkEvent(`sb.v.siren`, null, vehicleIds, sirenState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.engine`, function(client, vehicles, engineState) {
-	triggerNetworkEvent(`sb.v.engine`, null, vehicles, engineState);
+addNetworkHandler(`sb.v.engine`, function(client, vehicleIds, engineState) {
+	triggerNetworkEvent(`sb.v.engine`, null, vehicleIds, engineState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.radio`, function(client, vehicles, radioStation) {
-	triggerNetworkEvent(`sb.v.radio`, null, vehicles, radioStation);
+addNetworkHandler(`sb.v.radio`, function(client, vehicleIds, radioStation) {
+	triggerNetworkEvent(`sb.v.radio`, null, vehicleIds, radioStation);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.lights`, function(client, vehicles, lightState) {
-	triggerNetworkEvent(`sb.v.lights`, null, vehicles, lightState);
+addNetworkHandler(`sb.v.lights`, function(client, vehicleIds, lightState) {
+	triggerNetworkEvent(`sb.v.lights`, null, vehicleIds, lightState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.light`, function(client, vehicles, lightID, lightState) {
-	triggerNetworkEvent(`sb.v.light`, null, vehicles, lightID, lightState);
+addNetworkHandler(`sb.v.light`, function(client, vehicleIds, lightID, lightState) {
+	triggerNetworkEvent(`sb.v.light`, null, vehicleIds, lightID, lightState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.syncer`, function(client, vehicles, targetClient) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.setSyncer(targetClient.index, true);
+addNetworkHandler(`sb.v.syncer`, function(client, vehicleIds, targetClient) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).setSyncer(targetClient.index, true);
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.wheels`, function(client, vehicles, wheelState) {
-	triggerNetworkEvent(`sb.v.wheels`, null, vehicles, wheelState);
+addNetworkHandler(`sb.v.wheels`, function(client, vehicleIds, wheelState) {
+	triggerNetworkEvent(`sb.v.wheels`, null, vehicleIds, wheelState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.upgrade.add`, function(client, vehicles, upgradeId) {
+addNetworkHandler(`sb.v.upgrade.add`, function(client, vehicleIds, upgradeId) {
 	console.log(vehicles);
-	triggerNetworkEvent(`sb.v.upgrade.add`, null, vehicles, upgradeId);
+	triggerNetworkEvent(`sb.v.upgrade.add`, null, vehicleIds, upgradeId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.upgrade.del`, function(client, vehicles, upgradeId) {
-	triggerNetworkEvent(`sb.v.upgrade.del`, null, vehicles, upgradeId);
+addNetworkHandler(`sb.v.upgrade.del`, function(client, vehicleIds, upgradeId) {
+	triggerNetworkEvent(`sb.v.upgrade.del`, null, vehicleIds, upgradeId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.paintjob`, function(client, vehicles, paintjobId) {
-	triggerNetworkEvent(`sb.v.paintjob`, null, vehicles, paintjobId);
+addNetworkHandler(`sb.v.paintjob`, function(client, vehicleIds, paintjobId) {
+	triggerNetworkEvent(`sb.v.paintjob`, null, vehicleIds, paintjobId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.doors`, function(client, vehicles, doorState) {
-	triggerNetworkEvent(`sb.v.doors`, null, vehicles, doorState);
+addNetworkHandler(`sb.v.doors`, function(client, vehicleIds, doorState) {
+	triggerNetworkEvent(`sb.v.doors`, null, vehicleIds, doorState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.mission`, function(client, vehicles, missionID) {
-	triggerNetworkEvent(`sb.v.mission`, null, vehicles, missionID);
+addNetworkHandler(`sb.v.mission`, function(client, vehicleIds, missionID) {
+	triggerNetworkEvent(`sb.v.mission`, null, vehicleIds, missionID);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.handling`, function(client, vehicles, handlingIndex) {
-	triggerNetworkEvent(`sb.v.handling`, null, vehicles, handlingIndex);
+addNetworkHandler(`sb.v.handling`, function(client, vehicleIds, handlingIndex) {
+	triggerNetworkEvent(`sb.v.handling`, null, vehicleIds, handlingIndex);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.door`, function(client, vehicles, doorID, doorState) {
-	triggerNetworkEvent(`sb.v.door`, null, vehicles, doorID, doorState);
+addNetworkHandler(`sb.v.door`, function(client, vehicleIds, doorID, doorState) {
+	triggerNetworkEvent(`sb.v.door`, null, vehicleIds, doorID, doorState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.wheel`, function(client, vehicles, wheelID, wheelState) {
-	triggerNetworkEvent(`sb.v.wheel`, null, vehicles, doorID, doorState);
+addNetworkHandler(`sb.v.wheel`, function(client, vehicleIds, wheelID, wheelState) {
+	triggerNetworkEvent(`sb.v.wheel`, null, vehicleIds, doorID, doorState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.alarm`, function(client, vehicles, alarmState) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.setData(`sb.v.alarm`, alarmState, true);
+addNetworkHandler(`sb.v.alarm`, function(client, vehicleIds, alarmState) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).setData(`sb.v.alarm`, alarmState, true);
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.horn`, function(client, vehicles, hornState) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.setData(`sb.v.horn`, hornState, true);
+addNetworkHandler(`sb.v.horn`, function(client, vehicleIds, hornState) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).setData(`sb.v.horn`, hornState, true);
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.health`, function(client, vehicles, health) {
-	triggerNetworkEvent(`sb.v.health`, null, vehicles, health);
+addNetworkHandler(`sb.v.health`, function(client, vehicleIds, health) {
+	triggerNetworkEvent(`sb.v.health`, null, vehicleIds, health);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.colour1`, function(client, vehicles, colour1) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.colour1 = colour1;
+addNetworkHandler(`sb.v.colour1`, function(client, vehicleIds, colour1) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).colour1 = colour1;
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.colour2`, function(client, vehicles, colour2) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.colour2 = colour2;
+addNetworkHandler(`sb.v.colour2`, function(client, vehicleIds, colour2) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).colour2 = colour2;
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.colour3`, function(client, vehicles, colour3) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.colour3 = colour3;
+addNetworkHandler(`sb.v.colour3`, function(client, vehicleIds, colour3) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).colour3 = colour3;
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.colour4`, function(client, vehicles, colour4) {
-	vehicles.forEach(function(vehicle) {
-		vehicle.colour4 = colour4;
+addNetworkHandler(`sb.v.colour4`, function(client, vehicleIds, colour4) {
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).colour4 = colour4;
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.colour`, function(client, vehicles, colourID, red, green, blue, alpha) {
+addNetworkHandler(`sb.v.colour`, function(client, vehicleIds, red, green, blue, alpha) {
 	let colour = toColour(red, green, blue, alpha);
-	vehicles.forEach(function(vehicle) {
-		vehicle.setRGBColours(colour, colour);
+	vehicleIds.forEach(function(vehicleId) {
+		getElementFromId(vehicleId).setRGBColours(colour, colour);
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.coll`, function(client, vehicles, collisionState) {
-	triggerNetworkEvent(`sb.v.coll`, null, vehicles, collisionState);
+addNetworkHandler(`sb.v.coll`, function(client, vehicleIds, collisionState) {
+	triggerNetworkEvent(`sb.v.coll`, null, vehicleIds, collisionState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.locked`, function(client, vehicles, lockState) {
-	triggerNetworkEvent(`sb.v.locked`, null, vehicles, lockState);
+addNetworkHandler(`sb.v.locked`, function(client, vehicleIds, lockState) {
+	triggerNetworkEvent(`sb.v.locked`, null, vehicleIds, lockState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.god`, function(client, vehicles, godMode) {
-	triggerNetworkEvent(`sb.v.god`, null, vehicles, godMode);
+addNetworkHandler(`sb.v.god`, function(client, vehicleIds, godMode) {
+	triggerNetworkEvent(`sb.v.god`, null, vehicleIds, godMode);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.cruisespeed`, function(client, vehicles, cruiseSpeed) {
-	triggerNetworkEvent(`sb.v.cruisespeed`, null, vehicles, cruiseSpeed);
+addNetworkHandler(`sb.v.cruisespeed`, function(client, vehicleIds, cruiseSpeed) {
+	triggerNetworkEvent(`sb.v.cruisespeed`, null, vehicleIds, cruiseSpeed);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.petroltankhealth`, function(client, vehicles, patrolTankHealth) {
-	triggerNetworkEvent(`sb.v.petroltankhealth`, null, vehicles, patrolTankHealth);
+addNetworkHandler(`sb.v.petroltankhealth`, function(client, vehicleIds, patrolTankHealth) {
+	triggerNetworkEvent(`sb.v.petroltankhealth`, null, vehicleIds, patrolTankHealth);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.enginehealth`, function(client, vehicles, engineHealth) {
-	triggerNetworkEvent(`sb.v.enginehealth`, null, vehicles, engineHealth);
+addNetworkHandler(`sb.v.enginehealth`, function(client, vehicleIds, engineHealth) {
+	triggerNetworkEvent(`sb.v.enginehealth`, null, vehicleIds, engineHealth);
 });
 
 // ----------------------------------------------------------------------------
@@ -232,59 +232,59 @@ addNetworkHandler(`sb.v.opentrunk`, function(client, vehicles) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.scale`, function(client, vehicles, scale) {
-	vehicles.forEach(function(vehicle) {
+addNetworkHandler(`sb.v.scale`, function(client, vehicleIds, scale) {
+	vehicleIds.forEach(function(vehicleId) {
 		if(scale != 0) {
-			vehicle.setData(`sb.v.scale`, scale, true);
+			getElementFromId(vehicleId).setData(`sb.v.scale`, scale, true);
 		} else {
-			vehicle.removeData(`sb.v.scale`);
+			getElementFromId(vehicleId).removeData(`sb.v.scale`);
 		}
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.drivingstyle`, function(client, vehicles, drivingStyle) {
-	triggerNetworkEvent(`sb.v.drivingstyle`, null, vehicles, drivingStyle);
+addNetworkHandler(`sb.v.drivingstyle`, function(client, vehicleIds, drivingStyle) {
+	triggerNetworkEvent(`sb.v.drivingstyle`, null, vehicleIds, drivingStyle);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.livery`, function(client, vehicles, livery) {
-	triggerNetworkEvent(`sb.v.livery`, null, vehicles, livery);
+addNetworkHandler(`sb.v.livery`, function(client, vehicleIds, livery) {
+	triggerNetworkEvent(`sb.v.livery`, null, vehicleIds, livery);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.dirtlevel`, function(client, vehicles, dirtLevel) {
-	triggerNetworkEvent(`sb.v.dirtlevel`, null, vehicles, dirtLevel);
+addNetworkHandler(`sb.v.dirtlevel`, function(client, vehicleIds, dirtLevel) {
+	triggerNetworkEvent(`sb.v.dirtlevel`, null, vehicleIds, dirtLevel);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.hazardlights`, function(client, vehicles, hazardLightState) {
-	triggerNetworkEvent(`sb.v.hazardlights`, null, vehicles, hazardLightState);
+addNetworkHandler(`sb.v.hazardlights`, function(client, vehicleIds, hazardLightState) {
+	triggerNetworkEvent(`sb.v.hazardlights`, null, vehicleIds, hazardLightState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.driveto`, function(client, vehicles, x, y, z) {
-	triggerNetworkEvent(`sb.v.driveto`, null, vehicles, x, y, z);
+addNetworkHandler(`sb.v.driveto`, function(client, vehicleIds, x, y, z) {
+	triggerNetworkEvent(`sb.v.driveto`, null, vehicleIds, x, y, z);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.position`, function(client, vehicles, x, y, z) {
-	vehicles.forEach(function(vehicle) {
-		triggerNetworkEvent(`sb.v.position`, vehicle.syncer, vehicle, x, y, z);
+addNetworkHandler(`sb.v.position`, function(client, vehicleIds, x, y, z) {
+	vehicleIds.forEach(function(vehicleId) {
+		triggerNetworkEvent(`sb.v.position`, getVehicleFromId(vehicleId).syncer, vehicleId, x, y, z);
 	});
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.heading`, function(client, vehicles, heading) {
-	vehicles.forEach(function(vehicle) {
-		triggerNetworkEvent(`sb.v.heading`, vehicle.syncer, vehicle, heading);
+addNetworkHandler(`sb.v.heading`, function(client, vehicleIds, heading) {
+	vehicleIds.forEach(function(vehicleId) {
+		triggerNetworkEvent(`sb.v.heading`, getVehicleFromId(vehicleId).syncer, vehicleId, heading);
 	});
 });
 
@@ -292,17 +292,6 @@ addNetworkHandler(`sb.v.heading`, function(client, vehicles, heading) {
 
 addNetworkHandler(`sb.v.wander`, function(client, vehicles) {
 	triggerNetworkEvent(`sb.v.wander`, null, vehicles);
-});
-
-// ----------------------------------------------------------------------------
-
-bindEventHandler(`OnResourceStart`, thisResource, function(event, resource) {
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler(`OnElementStreamIn`, function(event, element, client) {
-
 });
 
 // ----------------------------------------------------------------------------

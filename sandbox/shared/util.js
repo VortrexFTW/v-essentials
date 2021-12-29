@@ -6105,7 +6105,7 @@ function getClosestVehicle(pos) {
 // ----------------------------------------------------------------------------
 
 function getClosestCivilian(pos) {
-	return getPeds().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+	return getCivilians().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
@@ -6221,8 +6221,6 @@ function getSkinIdFromParams(params, gameId = thisGame) {
 			return params;
 		}
 	}
-
-	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -6327,8 +6325,10 @@ function getSkinIdFromName(params, gameId = thisGame) {
 		}
 	} else {
 		for(let i in skinNames[gameId]) {
-			if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return Number(i);
+			if(skinNames[gameId][i].toLowerCase().indexOf("invalid") == -1) {
+				if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+					return i;
+				}
 			}
 		}
 	}
@@ -6676,7 +6676,7 @@ function getPlayersInRange(position, range) {
 // ----------------------------------------------------------------------------
 
 function getCiviliansInRange(position, range) {
-	return getPeds().filter(civilian => position.distance(civilian.position) <= range);
+	return getCivilians().filter((civilian) => position.distance(civilian.position) <= range);
 }
 
 // ----------------------------------------------------------------------------

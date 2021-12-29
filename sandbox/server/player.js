@@ -97,9 +97,9 @@ addCommandHandler(`gotopos`, function(cmdName, params, client) {
 
 addNetworkHandler(`sb.p.skin`, function(client, skinId, position, heading) {
 	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-		spawnPlayer(client, position, heading, skinId);
+		spawnPlayer(client, position, heading, Number(skinId));
 	} else {
-		client.player.modelIndex = skinId;
+		client.player.modelIndex = Number(skinId);
 	}
 	//message(client.name + ` changed their skin to ` + skinNames[server.game][skinId], gameAnnounceColours[serverGame]);
 });
