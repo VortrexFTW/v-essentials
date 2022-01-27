@@ -1,5 +1,4 @@
 "use strict";
-setErrorMode(RESOURCEERRORMODE_STRICT);
 
 // ----------------------------------------------------------------------------
 
@@ -18,28 +17,28 @@ let translateURL = "http://api.mymemory.translated.net/get?de={3}&q={0}&langpair
 // ----------------------------------------------------------------------------
 
 let translationLanguages = [
-	["Abkhazian", "AB"], 
-	["Afar", "AA"], 
-	["Afrikaans", "AF", "🇿🇦"], 
-	["Albanian", "SQ"], 
-	["Amharic", "AM"], 
-	["Arabic", "AR"], 
-	["Armenian", "HY"], 
-	["Assamese", "AS"], 
+	["Abkhazian", "AB"],
+	["Afar", "AA"],
+	["Afrikaans", "AF", "🇿🇦"],
+	["Albanian", "SQ"],
+	["Amharic", "AM"],
+	["Arabic", "AR"],
+	["Armenian", "HY"],
+	["Assamese", "AS"],
 	["Aymara", "AY"],
-	["Azerbaijani", "AZ"], 
-	["Bashkir", "BA"], 
-	["Basque", "EU"], 
-	["Bengali, Bangla", "BN"], 
-	["Bhutani", "DZ"], 
-	["Bihari", "BH"], 
-	["Bislama", "BI"], 
-	["Breton", "BR"], 
+	["Azerbaijani", "AZ"],
+	["Bashkir", "BA"],
+	["Basque", "EU"],
+	["Bengali, Bangla", "BN"],
+	["Bhutani", "DZ"],
+	["Bihari", "BH"],
+	["Bislama", "BI"],
+	["Breton", "BR"],
 	["Bulgarian", "BG"],
-	["Burmese", "MY"], 
+	["Burmese", "MY"],
 	["Byelorussian", "BE"],
-	["Cambodian", "KM"], 
-	["Catalan", "CA"], 
+	["Cambodian", "KM"],
+	["Catalan", "CA"],
 	["Chinese", "ZH"],
 	["Corsican", "CO"],
 	["Croatian", "HR"],
@@ -198,22 +197,22 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 		thisResource.stop();
 		return false;
 	}
-	
+
 	defaultLanguageId = getLanguageIdFromParams(scriptConfig.defaultLanguage) || 28;
-	
+
 	let clients = getClients();
 	getClients().forEach(function(client) {
 		let languageId = getPlayerLanguage(client.name);
 		client.setData("v.translate", languageId);
 	});
-	
+
 	exportFunction("translateMessage", translateMessage);
 	exportFunction("getLanguageIdFromParams", getLanguageIdFromParams);
 	exportFunction("getPlayerLanguage", getPlayerLanguage);
 	exportFunction("setPlayerLanguage", setPlayerLanguage);
-	
+
 	console.log("[Translate] Resource started!");
-	
+
 	runTranslatorTest();
 });
 
@@ -224,7 +223,7 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 	getClients().forEach(function(client) {
 		client.removeData("v.translate");
 	});
-	
+
 	console.log("[Translate] Resource stopped!");
 });
 
@@ -237,37 +236,37 @@ function getLanguageIdFromParams(params) {
 			return Number(i);
 		}
 	}
-	
+
 	// Search english-based language names next (English, Spanish, German, etc)
 	for(let i in translationLanguages) {
 		if(translationLanguages[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
-	
+
 	return false;
 }
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("lang", function(command, params, client) {
+addCommandHandler("lang", async function(command, params, client) {
 	if(!params) {
 		messageClient(`/${command} <language name>`, client, syntaxMessageColour);
 		return false;
 	}
-	
+
 	let languageId = getLanguageIdFromParams(params);
 	if(!languageId) {
 		messageClient("That language was not found!", client, errorMessageColour);
 		return false;
 	}
-	
+
 	let tempLanguageId = client.getData("v.translate");
 	client.setData("v.translate", languageId);
-	setPlayerLanguage(client.name, languageId);	
-	
-	let outputString = "Your language has been set to " + translationLanguages[languageId][0];		
-	let translatedMessage = translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
+	setPlayerLanguage(client.name, languageId);
+
+	let outputString = "Your language has been set to " + translationLanguages[languageId][0];
+	let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
 	console.log(translatedMessage);
 	messageClient(translatedMessage, client, COLOUR_YELLOW);
 });
@@ -281,7 +280,7 @@ function getPlayerLanguage(name) {
 	let languageId = ini.getIntValue("Game", name, 28);
 	console.log("LANG: " + languageId);
 	module.ini.delete(ini);
-	
+
 	return languageId;
 	*/
 	return 28;
@@ -295,7 +294,7 @@ function setPlayerLanguage(name, languageId) {
 	ini.loadFile("translate.ini");
 	ini.setIntValue("Game", name, languageId);
 	module.ini.delete(ini);
-	
+
 	return languageId;
 	*/
 }
@@ -306,7 +305,7 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 	if(translateFrom == translateTo) {
 		return messageText;
 	}
-	
+
 	return new Promise(resolve => {
 		for(let i in cachedTranslations[translateFrom][translateTo]) {
 			if(cachedTranslations[translateFrom][translateTo][0] == messageText) {
@@ -314,13 +313,14 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 				resolve(cachedTranslations[translateFrom][translateTo][1]);
 			}
 		}
-		
-		let thisTranslationURL = translateURL.format(encodeURI(messageText), translationLanguages[translateFrom][1], translationLanguages[translateTo][1], scriptConfig.translatorEmailAddress);
+
+		let thisTranslationURL = translateURL.format(encodeURI(messageText), translationLanguages[translateFrom][1], translationLanguages[translateTo][1], scriptConfig.emailAddress);
 		httpGet(
 			thisTranslationURL,
 			"",
 			function(data) {
-				data = String(data).substr(0, String(data).lastIndexOf("}")+1);
+				data = ab2str(data);
+				//tdata = data.substr(0, data.lastIndexOf("}")+1);
 				let translationData = JSON.parse(data);
 				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
 				resolve(translationData.responseData.translatedText);
@@ -344,17 +344,13 @@ String.prototype.format = function() {
 // ----------------------------------------------------------------------------
 
 function loadResourceConfig() {
-	let configFile = openFile("config.json");
-	if(configFile == null) {
-		return false;
-	}
-	
-	let tempScriptConfig = JSON.parse(configFile.readBytes(configFile.length));
-	configFile.close();
+	let configFile = loadTextFile("config.json");
+
+	let tempScriptConfig = JSON.parse(configFile);
 	if(!tempScriptConfig) {
 		return false;
 	}
-	
+
 	return tempScriptConfig;
 }
 
@@ -365,6 +361,12 @@ async function runTranslatorTest() {
 	console.log(translateTo);
 	let translateTest = await translateMessage("Hello", defaultLanguageId, translateTo);
 	console.log("[Translate] Testing translator (EN/ES): Hello / " + String(translateTest));
+}
+
+// ----------------------------------------------------------------------------
+
+function ab2str(buf) {
+	return String.fromCharCode.apply(null, new Uint8Array(buf));
 }
 
 // ----------------------------------------------------------------------------
