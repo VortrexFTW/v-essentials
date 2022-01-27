@@ -34,8 +34,8 @@ if(serverGame == GAME_GTA_III) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
 } else if(serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
-	spawnScreenPedPosition = new Vec3(904.27, -498.00, 14.522);
-	spawnScreenPedHeading = 3.127;
+	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
+	spawnScreenPedHeading = -1.642;
 }
 
 // ----------------------------------------------------------------------------
@@ -46,8 +46,8 @@ let spawnPoints = [
 	new Vec3(-379.16, -535.27, 17.28), 										// GTA Vice City
 	new Vec3(2495.1884765625, -1687.4456787109, 13.515254974365), 			// GTA San Andreas
 	new Vec3(2495.1884765625, -1687.4456787109, 13.515254974365), 			// GTA Underground
-	new Vec3(904.27, -498.00, 14.522),							 			// GTA IV
-	new Vec3(904.27, -498.00, 14.522),							 			// GTA IV: EFLC
+	new Vec3(900.94, -506.06, 15.044),							 			// GTA IV
+	new Vec3(900.94, -506.06, 15.044),							 			// GTA IV: EFLC
 ];
 
 // ----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ addEventHandler("onPlayerJoined", function(event, client) {
 		if(server.game < GAME_GTA_IV) {
 			setTimeout(function() {
 				fadeCamera(client, true);
-				console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
+				console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
 				spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
 			}, 1000);
 		} else {
@@ -87,7 +87,7 @@ addEventHandler("onPlayerJoined", function(event, client) {
 	}
 
 	fadeCamera(client, true);
-	console.log("[SPAWN] " + String(client.name) + " spawned as " + getSkinName(spawnSkin[server.game]));
+	console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
 	spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
 });
 
@@ -117,10 +117,10 @@ function getSkinName(skinId) {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-		console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
-		thisResource.stop();
-	}
+	//if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
+	//	console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
+	//	thisResource.stop();
+	//}
 });
 
 // ----------------------------------------------------------------------------
