@@ -71,25 +71,23 @@ addEventHandler("OnDrawnHUD", function (event) {
 
 			let clients = getClients();
 			for(let i in clients) {
-				if(!clients[i].console) {
-					let colour = COLOUR_WHITE;
-					if(clients[i].player.getData("v.colour")) {
-						colour = clients[i].player.getData("v.colour");
-					}
+				let colour = COLOUR_WHITE;
+				if(clients[i].getData("v.colour") != null) {
+					colour = clients[i].getData("v.colour");
+				}
 
-					let listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping"))];
-					if(typeof gta != "undefined") {
-						// Episode
-						text = "Unknown";
-						if(gta.game == GAME_GTA_IV) {
-							listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping")), ivEpisodes[clients[i].getData("v.ivinfo")[0]], ivGamemodes[clients[i].getData("v.ivinfo")[1]]];
-						}
+				let listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping"))];
+				if(typeof gta != "undefined") {
+					// Episode
+					text = "Unknown";
+					if(gta.game == GAME_GTA_IV) {
+						listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping")), ivEpisodes[clients[i].getData("v.ivinfo")[0]], ivGamemodes[clients[i].getData("v.ivinfo")[1]]];
 					}
+				}
 
-					for(let j in listColumnData) {
-						size = listFont.measure(listColumnData[j], Math.round(listWidth/listColumns.length), 0.0, 1.0, 10, false, false);
-						listFont.render(listColumnData[j], [(Math.round(game.width/2)-Math.round(listWidth/listColumns.length))+(Math.round(listWidth/listColumns.length))*j, scoreboardStart + (i*20)], 0, 0.5, 0.0, listFont.size, COLOUR_WHITE, false, false, false, true);
-					}
+				for(let j in listColumnData) {
+					size = listFont.measure(listColumnData[j], Math.round(listWidth/listColumns.length), 0.0, 1.0, 10, false, false);
+					listFont.render(listColumnData[j], [(Math.round(game.width/2)-Math.round(listWidth/listColumns.length))+(Math.round(listWidth/listColumns.length))*j, scoreboardStart + (i*20)], 0, 0.5, 0.0, listFont.size, COLOUR_WHITE, false, false, false, true);
 				}
 			}
 		}
