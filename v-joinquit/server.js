@@ -29,7 +29,14 @@ let gameNames = [
 	"GTA San Andreas",
 	"GTA Underground",
 	"GTA IV",
-	"GTA IV (EFLC)"
+	"GTA IV (EFLC)",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Mafia: The City of Lost Heaven",
+	"Mafia II",
+	"Mafia III",
+	"Mafia Definitive Edition",
 ];
 
 // ----------------------------------------------------------------------------
@@ -41,7 +48,14 @@ let gameAnnounceColour = [
 	COLOUR_ORANGE,
 	COLOUR_ORANGE,
 	COLOUR_SILVER,
-	COLOUR_SILVER
+	COLOUR_SILVER,
+	COLOUR_BLACK,
+	COLOUR_BLACK,
+	COLOUR_BLACK,
+	COLOUR_RED,
+	COLOUR_RED,
+	COLOUR_RED,
+	COLOUR_RED,
 ];
 
 // ----------------------------------------------------------------------------
