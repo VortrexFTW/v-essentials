@@ -1,3 +1,5 @@
 <meta>
+	<info title="v-interiors" author="Vortrex" version="1.0" description="Makes interiors enterable for GTA Vice City" />
+
 	<script src="client.js" type="client" language="javascript" />
 </meta>

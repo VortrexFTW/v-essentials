@@ -1,3 +1,5 @@
 <meta>
+	<info title="v-deathmessages" author="Vortrex" version="1.0" description="Shows a message when a player dies" />
+
 	<script src="server.js" type="server" language="javascript" />
 </meta>
