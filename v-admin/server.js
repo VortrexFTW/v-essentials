@@ -10,6 +10,7 @@ let returnScriptsToClient = null;
 // ----------------------------------------------------------------------------
 
 bindEventHandler("onResourceStart", thisResource, (event, resource) => {
+	removeBansFromServer();
 	loadConfig();
 	applyBansToServer();
 	applyAdminPermissions();
@@ -28,6 +29,7 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 
 addEventHandler("onPlayerJoined", (event, client) => {
 	sendClientBlockedScripts();
+
 	if(isAdminIP(client.ip)) {
 		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
 		client.administrator = true;
@@ -299,9 +301,7 @@ function applyBansToServer() {
 // ----------------------------------------------------------------------------
 
 function removeBansFromServer() {
-	for(let i in scriptConfig.bans) {
-		server.unbanIP(scriptConfig.bans[i].ip);
-	}
+	server.unbanAllIPs();
 }
 
 // ----------------------------------------------------------------------------
@@ -339,9 +339,15 @@ function requestGameScripts(targetClient) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("receiveGameScripts", function(fromClient, gameScripts) {
-	//if(returnScriptsToClient) {
+	if(!returnScriptsToClient) {
+		return false;
+	}
+
+	if(returnScriptsToClient.console) {
+		console.log(`${fromClient.name}'s game scripts: ${gameScripts.join(", ")}`);
+	} else {
 		messageClient(`${fromClient.name}'s game scripts: [#FFFF00]${gameScripts.join("[#CCCC00], [#FFFF00]")}`, returnScriptsToClient, COLOUR_AQUA);
-	//}
+	}
 });
 
 // ----------------------------------------------------------------------------
