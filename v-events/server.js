@@ -10,7 +10,7 @@ addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shoo
 addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 
 addNetworkHandler("OnPedBusted", function(client, pedId) {
-	triggerEvent("OnPedBusted", ped, ped);
+	triggerEvent("OnPedBusted", getElementFromId(pedId));
 });
 
 addNetworkHandler("OnPedEnteredVehicle", function(client, pedId, vehicleId, seat) {
