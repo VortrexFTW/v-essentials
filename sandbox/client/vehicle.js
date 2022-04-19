@@ -1,5 +1,7 @@
 "use strict";
 
+let lastVehicleSpawn = 0;
+
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnEntityProcess", function(event, entity) {
@@ -13,6 +15,11 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 function spawnVehicleCommand(cmdName, params) {
 	if(isParamsInvalid(params)) {
 		message("Command: /" + String(cmdName) + " <name or id>", syntaxMessageColour);
+		return false;
+	}
+
+	if(getCurrentUnixTimestamp()-lastVehicleSpawn < 15000) {
+		message("You must wait before spawning another vehicle!", errorMessageColour);
 		return false;
 	}
 
@@ -116,6 +123,7 @@ function spawnVehicleCommand(cmdName, params) {
 	if(gta.game == GAME_GTA_IV) {
 		thisVeh = createVehicle2(modelId, position, true);
 		thisVeh.heading = heading;
+		lastVehicleSpawn = getCurrentUnixTimestamp();
 	} else {
 		if(isConnected) {
 			triggerNetworkEvent("sb.v.add", modelId, position, heading);
@@ -125,7 +133,7 @@ function spawnVehicleCommand(cmdName, params) {
 		}
 	}
 
-	if(!thisVeh) {
+	if(thisVeh == null) {
 		message("The vehicle could not be added!", errorMessageColour);
 		return false;
 	}
@@ -1605,9 +1613,9 @@ addCommandHandler("veh_driveto", function(cmdName, params) {
 	}
 
 	let selectedLocation = false;
-	for(let j in gameLocations[thisGame]) {
-		if(gameLocations[thisGame][j][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
-			selectedLocation = gameLocations[thisGame][j];
+	for(let i in gameLocations[gta.game]) {
+		if(gameLocations[gta.game][i][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
+			selectedLocation = gameLocations[gta.game][i];
 		}
 	}
 
@@ -2066,7 +2074,7 @@ addNetworkHandler("sb.v.hazardlights", function(vehicleIds, hazardLightState) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.v.wander", function(vehicles) {
+addNetworkHandler("sb.v.wander", function(vehicleIds) {
 	vehicleIds.forEach(function(vehicleId) {
 		getVehicleFromId(vehicleId).carWanderRandomly();
 	});
@@ -2083,9 +2091,9 @@ addNetworkHandler("sb.v.driveto", function(vehicleIds, x, y, z) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.v.god", function(vehicleIds, godMode) {
-	vehicles.forEach(function(vehicle) {
-		//vehicle.invincible = godMode;
-		vehicle.setProofs(godMode, godMode, godMode, godMode, godMode);
+	vehicleIds.forEach(function(vehicleId) {
+		getVehicleFromId(vehicleId).invincible = godMode;
+		getVehicleFromId(vehicleId).setProofs(godMode, godMode, godMode, godMode, godMode);
 	});
 });
 
