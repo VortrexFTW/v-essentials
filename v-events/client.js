@@ -15,6 +15,7 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			if(entity.getData("dead") == null) {
 				entity.setData("dead", true);
 				triggerEvent("OnPedDeath", entity);
+				triggerNetworkEvent("OnPedDeath", entity.id);
 			}
 		} else {
 			if(entity.getData("dead") != null) {
@@ -26,8 +27,8 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			if(entity.getData("weapon") != null) {
 				if(entity.getData("weapon") != entity.weapon) {
 					triggerEvent("OnPedChangeWeapon", entity, entity, entity.weapon, entity.getData("weapon"));
+					triggerNetworkEvent("OnPedChangeWeapon", entity.id, entity.weapon, entity.getData("weapon"));
 					entity.setData("weapon", entity.weapon);
-					triggerNetworkEvent("OnPedChangeWeapon", entity, entity.weapon, entity.getData("weapon"));
 				}
 			} else {
 				entity.setData("weapon", entity.weapon);
@@ -38,8 +39,8 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			if(entity.getData("ammo") != null) {
 				if(entity.getData("ammo") != entity.weaponAmmo) {
 					triggerEvent("OnPedChangeAmmo", entity, entity, entity.weaponAmmo, entity.getData("ammo"));
+					triggerNetworkEvent("OnPedChangeAmmo", entity.id, entity.weaponAmmo, entity.getData("ammo"));
 					entity.setData("ammo", entity.weapon);
-					triggerNetworkEvent("OnPedChangeAmmo", entity, entity.weaponAmmo, entity.getData("ammo"));
 				}
 			} else {
 				entity.setData("weapon", entity.weapon);
@@ -51,7 +52,7 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 				if(entity.getData("busted") == null) {
 					entity.setData("busted", true);
 					triggerEvent("OnPedBusted", entity, entity);
-					triggerNetworkEvent("OnPedBusted", entity);
+					triggerNetworkEvent("OnPedBusted", entity.id);
 				}
 			} else {
 				if(entity.getData("busted") != null) {
@@ -63,41 +64,48 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 				if(entity.getData("snipermode") == null) {
 					entity.setData("snipermode", true);
 					triggerEvent("OnPedEnterSniperMode", entity, entity);
-					triggerNetworkEvent("OnPedEnterSniperMode", entity);
+					triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
 				}
 			} else {
 				if(entity.getData("snipermode") != null) {
 					entity.removeData("snipermode");
 					triggerEvent("OnPedExitSniperMode", entity, entity);
-					triggerNetworkEvent("OnPedEnterSniperMode", entity);
+					triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
 				}
 			}
 		}
 
 		getElementsByType(ELEMENT_VEHICLE).forEach(function(vehicle) {
 			if(entity.vehicle == vehicle) {
-				if(entity.getData("in.vehicle") == null) {
+				if(entity.getData("vehicle") == null) {
+					let seat = getPedVehicleSeat(entity);
 					triggerEvent("OnPedEnteredVehicle", entity, entity, vehicle, getPedVehicleSeat(entity));
-					entity.setData("in.vehicle", vehicle);
+					triggerNetworkEvent("OnPedEnteredVehicle", entity.id, vehicle.id, seat);
+					entity.setData("vehicle", vehicle);
+					entity.setData("vehicleseat", seat);
 				}
 			} else {
-				if(entity.getData("in.vehicle") == vehicle) {
-					triggerEvent("OnPedExitedVehicle", entity, entity, entity.getData("in.vehicle"));
-					entity.removeData("in.vehicle");
+				if(entity.getData("vehicle") == vehicle) {
+					triggerEvent("OnPedExitedVehicle", entity, entity, vehicle, entity.getData("vehicleseat"));
+					triggerNetworkEvent("OnPedExitedVehicle", entity.id, vehicle.id, entity.getData("vehicleseat"));
+					entity.removeData("vehicle");
+					entity.removeData("vehicleseat");
 				}
 			}
 		});
 
 		getElementsByType(ELEMENT_MARKER).forEach(function(sphere) {
 			if(sphere.position.distance(entity.position) <= sphere.radius) {
-				if(entity.getData("in.sphere") == null) {
-					triggerEvent("OnPedEnterSphere", entity, entity, sphere);
-					entity.setData("in.sphere", true);
+				if(entity.getData("sphere") == null) {
+					triggerEvent("OnPedEnteredSphere", entity, entity, sphere);
+					triggerNetworkEvent("OnPedEnteredSphere", entity.id, sphere.id);
+					entity.setData("sphere", true);
 				}
 			} else {
-				if(entity.getData("in.sphere") != null) {
-					triggerEvent("OnPedExitSphere", entity, entity, sphere);
-					entity.removeData("in.sphere");
+				if(entity.getData("sphere") != null) {
+					triggerEvent("OnPedExitedSphere", entity, entity, sphere);
+					triggerNetworkEvent("OnPedExitedSphere", entity.id, sphere.id);
+					entity.removeData("sphere");
 				}
 			}
 		});

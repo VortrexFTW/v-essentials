@@ -9,42 +9,42 @@ addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
 addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 
-addNetworkHandler("OnPedBusted", function(client, ped) {
+addNetworkHandler("OnPedBusted", function(client, pedId) {
 	triggerEvent("OnPedBusted", ped, ped);
 });
 
-addNetworkHandler("OnPedEnteredVehicle", function(client, ped, vehicle, seat) {
-	triggerEvent("OnPedEnteredVehicle", ped, ped, vehicle, seat);
+addNetworkHandler("OnPedEnteredVehicle", function(client, pedId, vehicleId, seat) {
+	triggerEvent("OnPedEnteredVehicle", getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 
-addNetworkHandler("OnPedExitedVehicle", function(client, ped, vehicle, seat) {
-	triggerEvent("OnPedExitedVehicle", ped, ped, vehicle, seat);
+addNetworkHandler("OnPedExitedVehicle", function(client, pedId, vehicleId, seat) {
+	triggerEvent("OnPedExitedVehicle", getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 
-addNetworkHandler("OnPedEnteredSphere", function(client, ped, sphere) {
-	triggerEvent("OnPedEnteredSphere", ped, ped, sphere);
+addNetworkHandler("OnPedEnteredSphere", function(client, pedId, sphereId) {
+	triggerEvent("OnPedEnteredSphere", getElementFromId(pedId), getElementFromId(sphereId));
 });
 
-addNetworkHandler("OnPedExitedSphere", function(client, ped, sphere) {
-	triggerEvent("OnPedExitedSphere", ped, ped, sphere);
+addNetworkHandler("OnPedExitedSphere", function(client, pedId, sphereId) {
+	triggerEvent("OnPedExitedSphere", getElementFromId(pedId), getElementFromId(sphereId));
 });
 
-addNetworkHandler("OnPedEnterSniperMode", function(client, ped, sphere) {
-	triggerEvent("OnPedEnterSniperMode", ped, ped, sphere);
+addNetworkHandler("OnPedEnterSniperMode", function(client, pedId) {
+	triggerEvent("OnPedEnterSniperMode", getElementFromId(pedId));
 });
 
-addNetworkHandler("OnPedExitSniperMode", function(client, ped, sphere) {
-	triggerEvent("OnPedExitSniperMode", ped, ped, sphere);
+addNetworkHandler("OnPedExitSniperMode", function(client, pedId) {
+	triggerEvent("OnPedExitSniperMode", getElementFromId(pedId));
 });
 
-addNetworkHandler("OnPedDeath", function(client, ped) {
-	triggerEvent("OnPedDeath", ped, ped);
+addNetworkHandler("OnPedDeath", function(client, pedId) {
+	triggerEvent("OnPedDeath", getElementFromId(pedId));
 });
 
-addNetworkHandler("OnPedChangeWeapon", function(client, ped, newWeapon, oldWeapon) {
-	triggerEvent("OnPedChangeWeapon", ped, ped, newWeapon, oldWeapon);
+addNetworkHandler("OnPedChangeWeapon", function(client, pedId, newWeapon, oldWeapon) {
+	triggerEvent("OnPedChangeWeapon", getElementFromId(pedId), newWeapon, oldWeapon);
 });
 
-addNetworkHandler("OnPedChangeAmmo", function(client, ped, newAmmo, oldAmmo) {
-	triggerEvent("OnPedChangeAmmo", ped, ped, newAmmo, oldAmmo);
+addNetworkHandler("OnPedChangeAmmo", function(client, pedId, newAmmo, oldAmmo) {
+	triggerEvent("OnPedChangeAmmo", getElementFromId(pedId), newAmmo, oldAmmo);
 });
