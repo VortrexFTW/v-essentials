@@ -123,6 +123,8 @@ let gameLocations = [
 	[ // GTA SA
 		// Police Stations
 		["Los Santos Police Department", [1545.53, -1675.64, 13.561], -1.575, null],
+		["San Fierro Police Department", [-1605.16, 720.79, 11.90], 0.0, null],
+		["Las Venturas Police Department", [2339.68, 2453.99, 14.97], 0.0, null],
 
 		// Ammunations
 		["Market Ammunation", [1364.84, -1283.79, 13.547], -0.541, null],
@@ -155,7 +157,7 @@ let gameLocations = [
 		["Marina Burger Shot", [816.55, -1617.00, 13.859], 1.396, null],
 
 		// Airports
-		["Los Santos International Airport", [1958.201049,-2182.789794,13.546875], 1.0, null],
+		["Los Santos International Airport Gate", [1958.201049,-2182.789794,13.546875], 1.0, null],
 		["Los Santos International Airport Runway", [2054.12, -2493.84, 13.547], 1.569, null],
 		["Los Santos Stadium", [2694.261474,-1703.194335,11.506717], 1.0, null],
 
@@ -167,11 +169,13 @@ let gameLocations = [
 		// Misc/Other
 		["Grotti Dealership", [540.6011,-1291.2489,17.2422], 0.0, null],
 		["Santa Maria Beach", [302.994567,-1900.099121,1.938840], 0.0, null],
+		["Glen Park Bridge", [1968.33, -1195.10, 25.70], 0.0, null],
+		["Los Santos Skate Park", [1865.96, -1380.53, 13.50], 0.0, null],
+		["Los Santos Garbage Dump", [2194.91, -1977.58, 13.55], 0.0, null],
 
 		// Train Stations
 		["Unity Station", [1742.60, -1859.98, 13.414], -3.112, null],
 		["Market Station", [814.26, -1345.38, 13.532], -1.624, null],
-
 	],
 
 	[ // GTA UG
@@ -6475,39 +6479,52 @@ function getSyncerFromId(syncerId) {
 function getClientFromName(clientName) {
 	let clients = getClients();
 	for(let i in clients) {
-		if(clients[i].name.indexOf(clientName)) {
+		if(clients[i].name.toLowerCase().indexOf(clientName.toLowerCase()) != -1) {
 			return clients[i];
 		}
 	}
+
+    return false;
+}
+
+// ----------------------------------------------------------------------------
+
+function getClientFromIndex(index) {
+	let clients = getClients();
+	for(let i in clients) {
+		if(clients[i].index == index) {
+			return clients[i];
+		}
+	}
+
+    return false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClientFromPlayer(player) {
-	return getClientFromPlayerElement(player) || false;
+	return getClientFromPlayerElement(player);
 }
 
 // ----------------------------------------------------------------------------
 
 function getPlayerFromParams(params) {
 	if(isNaN(params)) {
-		return getClientFromName(params) || false;
+		return getClientFromName(params);
 	} else {
-		return getClients()[Number(params)] || false;
+		return getClientFromIndex(Number(params));
 	}
+
+    return false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClientFromParams(params) {
-	if(typeof server == "undefined") {
-		return getClientFromName(params) || false;
+	if(isNaN(params)) {
+		return getClientFromName(params);
 	} else {
-		if(isNaN(params)) {
-			return getClientFromName(params) || false;
-		} else {
-			return getClients()[Number(params)] || false;
-		}
+		return getClientFromIndex(Number(params));
 	}
 
 	return false;
@@ -7726,3 +7743,7 @@ let pedComponents = [
 		"Head",
 	]
 ];
+
+function getCurrentUnixTimestamp() {
+	return new Date().getTime()/1000;
+}
