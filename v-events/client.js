@@ -22,24 +22,28 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			}
 		}
 
-		if(entity.getData("weapon") != null) {
-			if(entity.getData("weapon") != entity.weapon) {
-				triggerEvent("OnPedChangeWeapon", entity, entity, entity.weapon, entity.getData("weapon"));
+		if(typeof entity.weapon != "undefined") {
+			if(entity.getData("weapon") != null) {
+				if(entity.getData("weapon") != entity.weapon) {
+					triggerEvent("OnPedChangeWeapon", entity, entity, entity.weapon, entity.getData("weapon"));
+					entity.setData("weapon", entity.weapon);
+					triggerNetworkEvent("OnPedChangeWeapon", entity, entity.weapon, entity.getData("weapon"));
+				}
+			} else {
 				entity.setData("weapon", entity.weapon);
-				triggerNetworkEvent("OnPedChangeWeapon", entity, entity.weapon, entity.getData("weapon"));
 			}
-		} else {
-			entity.setData("weapon", entity.weapon);
 		}
 
-		if(entity.getData("ammo") != null) {
-			if(entity.getData("ammo") != entity.weaponAmmo) {
-				triggerEvent("OnPedChangeAmmo", entity, entity, entity.weaponAmmo, entity.getData("ammo"));
-				entity.setData("ammo", entity.weapon);
-				triggerNetworkEvent("OnPedChangeAmmo", entity, entity.weaponAmmo, entity.getData("ammo"));
+		if(typeof entity.weaponAmmo != "undefined") {
+			if(entity.getData("ammo") != null) {
+				if(entity.getData("ammo") != entity.weaponAmmo) {
+					triggerEvent("OnPedChangeAmmo", entity, entity, entity.weaponAmmo, entity.getData("ammo"));
+					entity.setData("ammo", entity.weapon);
+					triggerNetworkEvent("OnPedChangeAmmo", entity, entity.weaponAmmo, entity.getData("ammo"));
+				}
+			} else {
+				entity.setData("weapon", entity.weapon);
 			}
-		} else {
-			entity.setData("weapon", entity.weapon);
 		}
 
 		if(game.game == GAME_GTA_III) {
