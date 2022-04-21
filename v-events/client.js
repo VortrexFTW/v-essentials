@@ -75,24 +75,20 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			}
 		}
 
-		getElementsByType(ELEMENT_VEHICLE).forEach(function(vehicle) {
-			if(entity.vehicle == vehicle) {
-				if(entity.getData("vehicle") == null) {
-					let seat = getPedVehicleSeat(entity);
-					triggerEvent("OnPedEnteredVehicle", entity, entity, vehicle, getPedVehicleSeat(entity));
-					triggerNetworkEvent("OnPedEnteredVehicle", entity.id, vehicle.id, seat);
-					entity.setData("vehicle", vehicle);
-					entity.setData("vehicleseat", seat);
-				}
+		if(entity.vehicle != null) {
+			if(entity.getData("vehicle") == null) {
+				let seat = getPedVehicleSeat(entity);
+				triggerEvent("OnPedEnteredVehicle", entity, entity, entity.vehicle, getPedVehicleSeat(entity.vehicle));
+				triggerNetworkEvent("OnPedEnteredVehicle", entity.id, entity.vehicle.id, seat);
+				entity.setData("vehicle", entity.vehicle);
+				entity.setData("vehicleseat", seat);
 			} else {
-				if(entity.getData("vehicle") == vehicle) {
-					triggerEvent("OnPedExitedVehicle", entity, entity, vehicle, entity.getData("vehicleseat"));
-					triggerNetworkEvent("OnPedExitedVehicle", entity.id, vehicle.id, entity.getData("vehicleseat"));
-					entity.removeData("vehicle");
-					entity.removeData("vehicleseat");
-				}
+				triggerEvent("OnPedExitedVehicle", entity, entity, vehicle, entity.getData("vehicleseat"));
+				triggerNetworkEvent("OnPedExitedVehicle", entity.id, vehicle.id, entity.getData("vehicleseat"));
+				entity.removeData("vehicle");
+				entity.removeData("vehicleseat");
 			}
-		});
+		}
 
 		getElementsByType(ELEMENT_MARKER).forEach(function(sphere) {
 			if(sphere.position.distance(entity.position) <= sphere.radius) {
