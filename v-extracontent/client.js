@@ -10,6 +10,11 @@ let customWorldGraphicsReady = false;
 
 // ===========================================================================
 
+let movingGates = [];
+let gateCheckTimer = null;
+
+// ===========================================================================
+
 const IMAGE_TYPE_NONE = 0;
 const IMAGE_TYPE_PNG = 1;
 const IMAGE_TYPE_BMP = 2;
@@ -124,6 +129,24 @@ class CustomWorldGraphicsRendering {
     constructor(imageName, points) {
         this.imageName = imageName;
         this.points = points;
+        this.image = null;
+    }
+}
+
+// ===========================================================================
+
+class MovingGate {
+    constructor(gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement) {
+        this.gateObjectId = gateObjectId;
+        this.gateId = gateId;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.startRotation = startRotation;
+        this.endRotation = endRotation;
+        this.positionInterpolationRatioIncrement = positionInterpolationRatioIncrement;
+        this.rotationInterpolationRatioIncrement = rotationInterpolationRatioIncrement;
+        this.positionInterpolateRatio = 0.0;
+        this.rotationInterpolateRatio = 0.0;
     }
 }
 
@@ -156,7 +179,13 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 // ===========================================================================
 
 addEventHandler("OnRender", function(event) {
-    //renderCustomWorldGraphics();
+    renderCustomWorldGraphics();
+});
+
+// ===========================================================================
+
+addNetworkHandler("moveGate", function(gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement) {
+    movingGates.push(new MovingGate(gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement));
 });
 
 // ===========================================================================
@@ -164,9 +193,15 @@ addEventHandler("OnRender", function(event) {
 function initResource() {
     resourceInit = true;
 
-    console.warn("Loading images");
+    //for(let i in customAudios) {
+    //    let audioFile = openFile(customAudios[i].file);
+    //    if(audioFile != null) {
+    //        customAudios[i].object = audio.createSound(audioFile, customAudios[i].loop);
+    //        audioFile.close();
+    //    }
+    //}
+
     for(let i in customImages) {
-        console.log(`Loading image file ${customImages[i].file}`);
         let imageFile = openFile(customImages[i].file);
         if(imageFile != null) {
             if(customImages[i].fileType == IMAGE_TYPE_BMP) {
@@ -178,10 +213,8 @@ function initResource() {
         }
     }
 
-    console.warn("Replacing textures");
     for(let i in customTextures) {
         let textureName = `${customTextures[i].textureName}`;
-        console.log(`Replacing texture ${textureName} with ${customTextures[i].filePath}`);
         let txdFile = openFile(customTextures[i].filePath);
         if(txdFile != null) {
             gta.loadTXD(textureName, txdFile);
@@ -189,9 +222,7 @@ function initResource() {
         }
     }
 
-    console.warn("Replacing models");
     for(let i in customModels) {
-        console.log(`Replacing model ${customModels[i].modelId} with ${customModels[i].filePath}`);
         let dffFile = openFile(customModels[i].filePath);
         if(dffFile != null) {
             gta.loadDFF(customModels[i].modelId, dffFile);
@@ -199,9 +230,7 @@ function initResource() {
         }
     }
 
-    console.warn("Replacing collisions");
     for(let i in customCollisions) {
-        console.log(`Replacing collision ${customCollisions[i].objectId} with ${customCollisions[i].filePath}`);
         let colFile = openFile(customCollisions[i].filePath);
         if(colFile != null) {
             gta.loadCOL(colFile, customCollisions[i].objectId);
@@ -209,22 +238,16 @@ function initResource() {
         }
     }
 
-    console.warn("Removing world objects");
     for(let i in removedWorldObjects) {
-        console.log(`Removing world object ${removedWorldObjects[i].objectName}`);
         game.removeWorldObject(removedWorldObjects[i].modelName, removedWorldObjects[i].position, removedWorldObjects[i].radius);
         //game.setVisibilityOfClosestObjectOfType(removedWorldObjects[i].position, removedWorldObjects[i].radius, removedWorldObjects[i].modelName, false);
     }
 
-    console.warn("Excluding ground snow objects");
     for(let i in excludedSnowModels) {
-        console.log(`Excluding ground snow object ${excludedSnowModels[i]}`);
         groundSnow.excludeModel(excludedSnowModels[i]);
     }
 
     customWorldGraphicsReady = true;
-
-    console.warn("All extra content applied!");
 }
 
 // ===========================================================================
@@ -268,6 +291,7 @@ function getCustomAudio(soundName) {
 
 function playCustomAudio(soundName, volume = 0.5, loop = false) {
     if(typeof customAudios[soundName] != "undefined") {
+        customAudios[soundName].object = audio.createSound(audioFile, customAudios[i].loop);
         customAudios[soundName].object.volume = volume;
         customAudios[soundName].object.play();
     }
@@ -312,21 +336,47 @@ function renderCustomWorldGraphics() {
         return false;
     }
 
-    for(let i in worldGraphicsRenderings) {
-        if(getCustomImage(worldGraphicsRenderings[i].imageName) != false) {
-            gta.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATESRCBLEND, rwBLENDSRCALPHA);
-            gta.rwRenderStateSet(rwRENDERSTATEDESTBLEND, rwBLENDINVSRCALPHA);
-            gta.rwRenderStateSet(rwRENDERSTATETEXTURERASTER, getCustomImage(worldGraphicsRenderings[i].imageName));
-            gta.rwRenderStateSet(rwRENDERSTATETEXTUREFILTER, rwFILTERLINEAR);
-            gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, rwTEXTUREADDRESSCLAMP);
+    if(localPlayer == null) {
+        return false;
+    }
 
-            for(let j in worldGraphicsRenderings[i].points) {
-                graphics.drawQuad3D(worldGraphicsRenderings[i].points[j][0], worldGraphicsRenderings[i].points[j][1], worldGraphicsRenderings[i].points[j][2], worldGraphicsRenderings[i].points[j][3], COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE);
+    for(let i in worldGraphicsRenderings) {
+        //if(localPlayer.position.distance(worldGraphicsRenderings[i].points[j])) {
+            if(worldGraphicsRenderings[i].image != null) {
+                gta.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
+                gta.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
+                gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
+                gta.rwRenderStateSet(rwRENDERSTATESRCBLEND, rwBLENDSRCALPHA);
+                gta.rwRenderStateSet(rwRENDERSTATEDESTBLEND, rwBLENDINVSRCALPHA);
+                gta.rwRenderStateSet(rwRENDERSTATETEXTURERASTER, worldGraphicsRenderings[i].image);
+                gta.rwRenderStateSet(rwRENDERSTATETEXTUREFILTER, rwFILTERLINEAR);
+                gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
+                gta.rwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, rwTEXTUREADDRESSCLAMP);
+
+                for(let j in worldGraphicsRenderings[i].points) {
+                    graphics.drawQuad3D(worldGraphicsRenderings[i].points[j][0], worldGraphicsRenderings[i].points[j][1], worldGraphicsRenderings[i].points[j][2], worldGraphicsRenderings[i].points[j][3], COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE);
+                }
             }
+        //}
+    }
+}
+
+// ===========================================================================
+
+function checkMovingGates() {
+    for(let i in movingGates) {
+        if(movingGates[i].positionInterpolateRatio <= 1.0) {
+
+            movingGates[i].positionInterpolateRatio = movingGates[i].positionInterpolateRatio + movingGates[i].positionInterpolationRatioIncrement;
+            movingGates[i].rotationInterpolateRatio = movingGates[i].rotationInterpolateRatio + movingGates[i].rotationInterpolationRatioIncrement;
+
+            getElementFromId(movingGates[i].gateObjectId).position = movingGates[i].startPosition.interpolate(movingGates[i].endPosition, movingGates[i].positionInterpolateRatio);
+            getElementFromId(movingGates[i].gateObjectId).setRotation(movingGates[i].startRotation.interpolate(movingGates[i].endRotation, movingGates[i].rotationInterpolateRatio));
+        } else {
+            movingGates[i].positionInterpolateRatio = -1.0;
+            movingGates[i].rotationInterpolateRatioIncrement = -1.0;
+            triggerNetworkEvent("moveGateFinished", movingGates[i].gateId);
+            movingGates.splice(i, 1);
         }
     }
 }
