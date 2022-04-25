@@ -1,0 +1,11 @@
+<meta>
+	<info author="Vortrex" version="1.0" description="Makes adding extra content easy" />
+
+	<!-- Scripts -->
+	<script src="client.js" type="client" language="javascript" />
+	<script src="server.js" type="server" language="javascript" />
+
+	<!-- Content Lists -->
+	<script src="files.js" type="client" language="javascript" />
+	<script src="objects.js" type="server" language="javascript" />
+</meta>
