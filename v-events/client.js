@@ -8,6 +8,7 @@ addEvent("OnPedExitSniperMode", 1); // Called when ped stops aiming sniper scope
 addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
 addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
+addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
 
 addEventHandler("OnEntityProcess", function(event, entity) {
 	if(entity.isType(ELEMENT_PLAYER) || entity.isType(ELEMENT_PED)) {
@@ -106,6 +107,11 @@ addEventHandler("OnEntityProcess", function(event, entity) {
 			}
 		});
 	}
+});
+
+addEventHandler("OnPickupCollected", function(event, pickup, ped) {
+	triggerEvent("OnPickupPickedUp", pickup, pickup);
+	triggerNetworkEvent("OnPickupPickedUp", pickup.id, ped.id);
 });
 
 function getPedVehicleSeat(ped) {

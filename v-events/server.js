@@ -8,6 +8,7 @@ addEvent("OnPedExitSniperMode", 1); // Called when ped stops aiming sniper scope
 addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
 addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
+addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
 
 addNetworkHandler("OnPedBusted", function(client, pedId) {
 	triggerEvent("OnPedBusted", getElementFromId(pedId), getElementFromId(pedId));
@@ -47,4 +48,8 @@ addNetworkHandler("OnPedChangeWeapon", function(client, pedId, newWeapon, oldWea
 
 addNetworkHandler("OnPedChangeAmmo", function(client, pedId, newAmmo, oldAmmo) {
 	triggerEvent("OnPedChangeAmmo", getElementFromId(pedId), newAmmo, oldAmmo);
+});
+
+addNetworkHandler("OnPickupPickedUp", function(client, pickupId, pedId) {
+	triggerEvent("OnPickupPickedUp", getElementFromId(pickupId), getElementFromId(pedId));
 });
