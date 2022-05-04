@@ -39,11 +39,11 @@ class CustomAudio {
         this.effects = effects;
         this.object = null;
 
-        let audioFile = openFile(this.filePath);
-        if(audioFile) {
-            this.object = audio.createSound(audioFile, this.loop);
-            audioFile.close();
-        }
+        //let audioFile = openFile(this.filePath);
+        //if(audioFile) {
+        //    this.object = audio.createSound(audioFile, this.loop);
+        //    audioFile.close();
+        //}
     }
 }
 
@@ -56,11 +56,11 @@ class CustomImage {
         this.height = height;
         this.type = type;
 
-        let imageFile = openFile(this.filePath);
-        if(imageFile) {
-            this.object = (this.type == IMAGE_TYPE_BMP) ? graphics.loadBMP(imageFile) : graphics.loadPNG(imageFile);
-            imageFile.close();
-        }
+        //let imageFile = openFile(this.filePath);
+        //if(imageFile) {
+        //    this.object = (this.type == IMAGE_TYPE_BMP) ? graphics.loadBMP(imageFile) : graphics.loadPNG(imageFile);
+        //    imageFile.close();
+        //}
     }
 }
 
@@ -130,6 +130,7 @@ class CustomWorldGraphicsRendering {
         this.imageName = imageName;
         this.points = points;
         this.image = null;
+        this.drawDistance = 100.0;
     }
 }
 
@@ -205,9 +206,9 @@ function initResource() {
         let imageFile = openFile(customImages[i].file);
         if(imageFile != null) {
             if(customImages[i].fileType == IMAGE_TYPE_BMP) {
-                customImages[i].object = drawing.loadBMP(customImages[i].file);
+                customImages[i].object = drawing.loadBMP(imageFile);
             } else {
-                customImages[i].object = drawing.loadPNG(customImages[i].file);
+                customImages[i].object = drawing.loadPNG(imageFile);
             }
             imageFile.close();
         }
@@ -302,7 +303,9 @@ function playCustomAudio(soundName, volume = 0.5, loop = false) {
 
 function getCustomImage(imageName) {
     if(typeof customImages[imageName] != "undefined") {
-        return customImages[imageName].object;
+        if(customImages[imageName].object != null) {
+            return customImages[imageName].object;
+        }
     }
     return false;
 }
@@ -311,7 +314,9 @@ function getCustomImage(imageName) {
 
 function getCustomFont(fontName) {
     if(typeof customFonts[fontName] != "undefined") {
-        return customFonts[fontName].object;
+        if(customImages[imageName].object != null) {
+            return customFonts[fontName].object;
+        }
     }
     return false;
 }
@@ -341,7 +346,7 @@ function renderCustomWorldGraphics() {
     }
 
     for(let i in worldGraphicsRenderings) {
-        //if(localPlayer.position.distance(worldGraphicsRenderings[i].points[j])) {
+        if(localPlayer.position.distance(worldGraphicsRenderings[i].points[j][0]) < worldGraphicsRenderings[i].drawDistance) {
             if(worldGraphicsRenderings[i].image != null) {
                 gta.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
                 gta.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
@@ -357,7 +362,7 @@ function renderCustomWorldGraphics() {
                     graphics.drawQuad3D(worldGraphicsRenderings[i].points[j][0], worldGraphicsRenderings[i].points[j][1], worldGraphicsRenderings[i].points[j][2], worldGraphicsRenderings[i].points[j][3], COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE);
                 }
             }
-        //}
+        }
     }
 }
 
