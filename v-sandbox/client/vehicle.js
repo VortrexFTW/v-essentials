@@ -18,10 +18,10 @@ function spawnVehicleCommand(cmdName, params) {
 		return false;
 	}
 
-	if(getCurrentUnixTimestamp()-lastVehicleSpawn < 15000) {
-		message("You must wait before spawning another vehicle!", errorMessageColour);
-		return false;
-	}
+	//if(getCurrentUnixTimestamp()-lastVehicleSpawn < 15000) {
+	//	message("You must wait before spawning another vehicle!", errorMessageColour);
+	//	return false;
+	//}
 
 	let modelId = getVehicleModelIdFromParams(params, gta.game);
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
