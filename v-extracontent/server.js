@@ -1,10 +1,21 @@
+"use strict";
+
+// ===========================================================================
+
 let movingGates = [];
 let proximityGateTriggers = [];
 
 // ===========================================================================
 
+const STREAM_DISTANCE_EXTREME = 1000.0;
+const STREAM_DISTANCE_HIGH = 500.0;
+const STREAM_DISTANCE_MEDIUM = 250.0;
+const STREAM_DISTANCE_LOW = 100.0;
+
+// ===========================================================================
+
 class ServerObject {
-    constructor(modelId, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, dimension = -1, interior = 0) {
+    constructor(modelId, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, dimension = -1, interior = 0, streamDistance = STREAM_DISTANCE_MEDIUM) {
         this.modelId = modelId;
         this.position = new Vec3(positionX, positionY, positionZ);
         this.rotation = new Vec3(degToRad(rotationX), degToRad(rotationY), degToRad(rotationZ));
@@ -12,19 +23,21 @@ class ServerObject {
         this.dimension = dimension;
         this.interior = interior;
         this.index = -1;
+        this.streamDistance = streamDistance;
     }
 }
 
 // ===========================================================================
 
 class ServerObjectGroup {
-    constructor(positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objects, dimension = -1, interior = 0) {
+    constructor(positionX, positionY, positionZ, rotationX, rotationY, rotationZ, objects, dimension = -1, interior = 0, streamDistance = STREAM_DISTANCE_MEDIUM) {
         this.objects = objects;
         this.position = new Vec3(positionX, positionY, positionZ);
         this.rotation = new Vec3(degToRad(rotationX), degToRad(rotationY), degToRad(rotationZ));
         this.dimension = dimension;
         this.interior = interior;
         this.index = -1;
+        this.streamDistance = streamDistance;
     }
 }
 
@@ -50,6 +63,7 @@ class ServerGate {
         this.rotateInterpolateIncrement = (typeof extra.rotateRatioIncrement != "undefined") ? extra.rotateRatioIncrement : 0.02;
         this.openRelative = (typeof extra.openRelative != "undefined") ? extra.openRelative : true;
         this.proximityTriggerDistance = (typeof extra.proximityTriggerDistance != "undefined") ? extra.proximityTriggerDistance : 0.0;
+        this.streamDistance = (typeof extra.streamDistance != "undefined") ? extra.streamDistance : STREAM_DISTANCE_MEDIUM;
         this.clientsInRange = [];
     }
 }
@@ -67,16 +81,12 @@ class ServerSyncedGate {
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
     createAllServerObjects();
-
     exportFunction("triggerServerGate", triggerServerGate);
 });
 
 // ===========================================================================
 
 bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
-    // Don't need this. They get destroyed automatically when the resource is unloaded.
-    //destroyAllServerObjects();
-
     collectAllGarbage();
 });
 
@@ -86,18 +96,20 @@ function createAllServerObjects() {
     for(let i in serverObjects) {
         serverObjects[i].index = i;
         serverObjects[i].object = gta.createObject(serverObjects[i].modelId, serverObjects[i].position);
-        serverObjects[i].object.setRotation(serverObjects[i].rotation);
+        serverObjects[i].object.rotation = serverObjects[i].rotation;
+        serverObjects[i].object.streamInDistance = serverObjects[i].streamDistance;
+        serverObjects[i].object.streamOutDistance = serverObjects[i].streamDistance+50.0;
 
-        if(serverObjects[i].dimension == -1) {
-            serverObjects[i].object.onAllDimensions = true;
-        } else {
-            serverObjects[i].object.dimension = serverObjects[i].dimension;
-            serverObjects[i].object.onAllDimensions = false;
+        if(serverObjects[i].interior != -1) {
+            serverObjects[i].object.interior = serverObjects[i].interior;
         }
 
-        //serverObjects[i].object.interior = serverObjects[i].interior;
-
-        addToWorld(serverObjects[i].object);
+        if(serverObjects[i].dimension == -1) {
+            serverObjects[i].object.netFlags.onAllDimensions = true;
+        } else {
+            serverObjects[i].object.dimension = serverObjects[i].dimension;
+            serverObjects[i].object.netFlags.onAllDimensions = false;
+        }
     }
 
     for(let i in serverObjectGroups) {
@@ -105,61 +117,39 @@ function createAllServerObjects() {
         for(let j in serverObjectGroups[i].objects) {
             serverObjectGroups[i].objects[j].index = i;
             serverObjectGroups[i].objects[j].object = gta.createObject(serverObjectGroups[i].objects[j].modelId, applyOffsetToVector(serverObjectGroups[i].position, serverObjectGroups[i].objects[j].position));
-            serverObjectGroups[i].objects[j].object.setRotation(applyOffsetToVector(serverObjectGroups[i].rotation, serverObjectGroups[i].objects[j].rotation));
+            serverObjectGroups[i].objects[j].object.rotation = applyOffsetToVector(serverObjectGroups[i].rotation, serverObjectGroups[i].objects[j].rotation);
+            serverObjectGroups[i].objects[j].object.streamInDistance = serverObjectGroups[i].objects[j].streamDistance;
+            serverObjectGroups[i].objects[j].object.streamOutDistance = serverObjectGroups[i].objects[j].streamDistance+50.0;
 
-            if(serverObjectGroups[i].objects[j].dimension == -1) {
-                serverObjectGroups[i].objects[j].object.onAllDimensions = true;
-            } else {
-                serverObjectGroups[i].objects[j].object.dimension = serverObjectGroups[i].dimension;
-                serverObjectGroups[i].objects[j].object.onAllDimensions = false;
+            if(serverObjectGroups[i].objects[j].interior != -1) {
+                serverObjectGroups[i].objects[j].object.interior = serverObjectGroups[i].objects[j].interior;
             }
 
-            addToWorld(serverObjectGroups[i].objects[j].object);
+            if(serverObjectGroups[i].objects[j].dimension == -1) {
+                serverObjectGroups[i].objects[j].object.netFlags.onAllDimensions = true;
+            } else {
+                serverObjectGroups[i].objects[j].object.dimension = serverObjectGroups[i].dimension;
+                serverObjectGroups[i].objects[j].object.netFlags.onAllDimensions = false;
+            }
         }
     }
 
     for(let i in serverGates) {
         serverGates[i].index = i;
         serverGates[i].object = gta.createObject(serverGates[i].modelId, serverGates[i].closedPosition);
-        serverGates[i].object.setRotation(serverGates[i].closedRotation);
+        serverGates[i].object.rotation = serverGates[i].closedRotation;
+        serverGates[i].object.streamInDistance = serverGates[i].streamDistance;
+        serverGates[i].object.streamOutDistance = serverGates[i].streamDistance+50.0;
+
+        if(serverGates[i].object.interior != -1) {
+            serverGates[i].object.interior = serverGates[i].interior;
+        }
 
         if(serverGates[i].dimension == -1) {
-            serverGates[i].object.onAllDimensions = true;
+            serverGates[i].object.netFlags.onAllDimensions = true;
         } else {
             serverGates[i].object.dimension = serverGates[i].dimension;
-            serverGates[i].object.onAllDimensions = false;
-        }
-
-        if(serverGates[i].proximityTriggerDistance > 0.0) {
-            proximityGateTriggers.push(i);
-        }
-
-        //serverGates[i].object.interior = serverGates[i].interior;
-
-        addToWorld(serverGates[i].object);
-    }
-}
-
-// ===========================================================================
-
-function destroyAllServerObjects() {
-    for(let i in serverObjects) {
-        if(serverObjects[i].object != false) {
-            destroyElement(serverObjects[i].object);
-        }
-    }
-
-    for(let j in serverObjectGroups) {
-        for(let k in serverObjectGroups[j].objects) {
-            if(serverObjectGroups[j].objects[k].object != false) {
-                destroyElement(serverObjectGroups[j].objects[k].object);
-            }
-        }
-    }
-
-    for(let m in serverGates) {
-        if(serverGates[m].object != false) {
-            destroyElement(serverGates[m].object);
+            serverGates[i].object.netFlags.onAllDimensions = false;
         }
     }
 }
@@ -192,10 +182,7 @@ function getOffsetFromVector(position2, position) {
 
 function triggerServerGate(gateName, force = false, open = true) {
     let gateId = getServerGateByName(gateName);
-
-    //if(!serverGates[gateId].beingMoved) {
-        moveServerGate(gateId, !serverGates[gateId].opened, true);
-    //}
+    moveServerGate(gateId, !serverGates[gateId].opened, true);
 }
 
 // ===========================================================================
@@ -210,7 +197,6 @@ function getServerGateByName(gateName) {
 
 // ===========================================================================
 
-// Object doesn't slide or anything yet. Needs to be coded.
 function moveServerGate(gateId, open = true, applyToSyncedGates = true) {
     let startPosition = (open) ? serverGates[gateId].closedPosition : applyOffsetToVector(serverGates[gateId].closedPosition, serverGates[gateId].openPosition);
     let endPosition = (open) ? applyOffsetToVector(serverGates[gateId].closedPosition, serverGates[gateId].openPosition) : serverGates[gateId].closedPosition;
@@ -225,8 +211,6 @@ function moveServerGate(gateId, open = true, applyToSyncedGates = true) {
     }
 
     serverGates[gateId].opened = open;
-    //serverGates[gateId].beingMoved = true;
-
     triggerNetworkEvent("moveGate", null, serverGates[gateId].object.id, gateId, startPosition, endPosition, startRotation, endRotation, serverGates[gateId].moveInterpolateIncrement, serverGates[gateId].rotateInterpolateIncrement);
 
     if(applyToSyncedGates == true) {
