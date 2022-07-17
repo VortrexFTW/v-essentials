@@ -2,7 +2,7 @@
 
 // ===========================================================================
 
-let adTimer = null;
+let timer = null;
 let scriptConfig = null;
 
 // ===========================================================================
@@ -26,17 +26,17 @@ bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
 		return false;
 	}
 
-	adTimer = setInterval(() => {
-		let randomId = getRandom(0, scriptConfig.advertisements.length - 1);
-		message(scriptConfig.advertisements[randomId], COLOUR_WHITE);
+	timer = setInterval(() => {
+		let randomId = getRandom(0, scriptConfig.messages.length - 1);
+		message(scriptConfig.messages[randomId], COLOUR_WHITE);
 	}, scriptConfig.interval);
 });
 
 // ===========================================================================
 
 bindEventHandler("OnResourceStop", thisResource, (event, resource) => {
-	if (adTimer != null) {
-		clearInterval(adTimer);
+	if (timer != null) {
+		clearInterval(timer);
 	}
 
 	collectAllGarbage();
