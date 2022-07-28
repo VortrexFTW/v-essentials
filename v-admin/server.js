@@ -30,7 +30,7 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 addEventHandler("onPlayerJoined", (event, client) => {
 	sendClientBlockedScripts();
 
-	if(isAdminIP(client.ip)) {
+	if (isAdminIP(client.ip)) {
 		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
 		client.administrator = true;
 		messageClient(`You have been logged in as administrator!`, client, COLOUR_YELLOW);
@@ -41,10 +41,10 @@ addEventHandler("onPlayerJoined", (event, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("kick", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params);
-		if(targetClient) {
-			if(targetClient.index != client.index) {
+		if (targetClient) {
+			if (targetClient.index != client.index) {
 				messageAdmins(`${targetClient.name} has been kicked!`, client, COLOUR_YELLOW);
 				targetClient.disconnect();
 			} else {
@@ -61,9 +61,9 @@ addCommandHandler("kick", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("scripts", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params);
-		if(targetClient) {
+		if (targetClient) {
 			returnScriptsToClient = client;
 			requestGameScripts(targetClient, client);
 		} else {
@@ -77,19 +77,19 @@ addCommandHandler("scripts", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ban", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let splitParams = params.split(" ");
 		let targetParams = splitParams[0];
 		let reasonParams = splitParams.slice(1).join(" ");
 
 		let targetClient = getClientFromParams(targetParams);
-		if(targetClient) {
-			if(targetClient.index != client.index) {
-				scriptConfig.bans.push({name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB')});
+		if (targetClient) {
+			if (targetClient.index != client.index) {
+				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
 				saveConfig();
 				messageAdmins(`${targetClient.name} has been banned!`, client, COLOUR_YELLOW);
 				server.banIP(targetClient.ip, 0);
-				if(targetClient) {
+				if (targetClient) {
 					targetClient.disconnect();
 				}
 			}
@@ -100,10 +100,10 @@ addCommandHandler("ban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("unban", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let removedBans = [];
-		for(let i in scriptConfig.bans) {
-			if(scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase())) {
+		for (let i in scriptConfig.bans) {
+			if (scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase())) {
 				server.unbanIP(scriptConfig.bans[i].ip);
 				removedBans.push(scriptConfig.bans.splice(i, 1));
 			}
@@ -122,7 +122,7 @@ addCommandHandler("a", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("blockscript", (command, params, client) => {
-	if(client.administrator) {
+	if (client.administrator) {
 		addBlockedScript(params);
 	} else {
 		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin!`, client, COLOUR_YELLOW);
@@ -132,13 +132,13 @@ addCommandHandler("blockscript", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("makeadmin", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params);
-		if(targetClient) {
+		if (targetClient) {
 			targetClient.administrator = true;
 			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
 
-			scriptConfig.admins.push({ip: targetClient.ip, name: escapeJSONString(targetClient.name), addedBy: escapeJSONString(client.name)});
+			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), addedBy: escapeJSONString(client.name) });
 			saveConfig();
 		}
 	}
@@ -147,9 +147,9 @@ addCommandHandler("makeadmin", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ip", (command, params, client) => {
-	if(client.administrator || client.console) {
+	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params) || client;
-		if(targetClient) {
+		if (targetClient) {
 			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 		}
 	}
@@ -158,7 +158,7 @@ addCommandHandler("ip", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("reloadadmins", (command, params, client) => {
-	if(client.administrator) {
+	if (client.administrator) {
 		loadConfig();
 		applyAdminPermissions();
 	}
@@ -167,7 +167,7 @@ addCommandHandler("reloadadmins", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("reloadbans", (command, params, client) => {
-	if(client.administrator) {
+	if (client.administrator) {
 		loadConfig();
 		removeBansFromServer();
 		applyBansToServer();
@@ -178,7 +178,7 @@ addCommandHandler("reloadbans", (command, params, client) => {
 
 function messageAdmins(messageText) {
 	getClients().forEach((client) => {
-		if(client.administrator) {
+		if (client.administrator) {
 			messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, COLOUR_ORANGE);
 		}
 	});
@@ -189,7 +189,7 @@ function messageAdmins(messageText) {
 // ----------------------------------------------------------------------------
 
 function messageAdmin(messageText, client, colour) {
-	if(client.console) {
+	if (client.console) {
 		console.warn(`[ADMIN] ${messageText}`);
 	} else {
 		messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, colour);
@@ -201,8 +201,8 @@ function messageAdmin(messageText, client, colour) {
 
 function getClientFromParams(params) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in clients) {
+		if (clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return clients[i];
 		}
 	}
@@ -214,7 +214,7 @@ function getClientFromParams(params) {
 
 function saveConfig() {
 	let configText = JSON.stringify(scriptConfig, null, '\t');
-	if(!configText) {
+	if (!configText) {
 		logInfo(`Config file could not be stringified`);
 		return false;
 	}
@@ -250,7 +250,7 @@ let errorMessageColour = toColour(237, 67, 55, 255);
 
 function loadConfig() {
 	let configFile = loadTextFile("config.json");
-	if(configFile == "") {
+	if (configFile == "") {
 		logError("Could not load config.json. Resource stopping ...");
 		thisResource.stop();
 		return false;
@@ -259,7 +259,7 @@ function loadConfig() {
 	logInfo("Loaded config file contents successfully.");
 
 	scriptConfig = JSON.parse(configFile);
-	if(scriptConfig == null) {
+	if (scriptConfig == null) {
 		logError("Could not parse config.json. Resource stopping ...");
 		thisResource.stop();
 		return false;
@@ -272,8 +272,8 @@ function loadConfig() {
 // ----------------------------------------------------------------------------
 
 function isAdminIP(ip) {
-	for(let i in scriptConfig.admins) {
-		if(ip == scriptConfig.admins[i].ip) {
+	for (let i in scriptConfig.admins) {
+		if (ip == scriptConfig.admins[i].ip) {
 			return true;
 		}
 	}
@@ -282,8 +282,8 @@ function isAdminIP(ip) {
 // ----------------------------------------------------------------------------
 
 function isAdminName(name) {
-	for(let i in scriptConfig.admins) {
-		if(name == scriptConfig.admins[i].name) {
+	for (let i in scriptConfig.admins) {
+		if (name == scriptConfig.admins[i].name) {
 			return true;
 		}
 	}
@@ -293,7 +293,7 @@ function isAdminName(name) {
 
 function applyBansToServer() {
 	removeBansFromServer();
-	for(let i in scriptConfig.bans) {
+	for (let i in scriptConfig.bans) {
 		server.banIP(scriptConfig.bans[i].ip, 0);
 	}
 }
@@ -308,21 +308,21 @@ function removeBansFromServer() {
 
 function escapeJSONString(str) {
 	return str.replace(/\\n/g, "\\n")
-	.replace(/\\'/g, "\\'")
-	.replace(/\\"/g, '\\"')
-	.replace(/\\&/g, "\\&")
-	.replace(/\\r/g, "\\r")
-	.replace(/\\t/g, "\\t")
-	.replace(/\\b/g, "\\b")
-	.replace(/\\f/g, "\\f");
+		.replace(/\\'/g, "\\'")
+		.replace(/\\"/g, '\\"')
+		.replace(/\\&/g, "\\&")
+		.replace(/\\r/g, "\\r")
+		.replace(/\\t/g, "\\t")
+		.replace(/\\b/g, "\\b")
+		.replace(/\\f/g, "\\f");
 }
 
 // ----------------------------------------------------------------------------
 
 function applyAdminPermissions() {
 	let clients = getClients();
-	for(let i in clients) {
-		if(isAdminIP(clients[i].ip)) {
+	for (let i in clients) {
+		if (isAdminIP(clients[i].ip)) {
 			clients[i].administrator = true;
 		} else {
 			clients[i].administrator = false;
@@ -338,12 +338,12 @@ function requestGameScripts(targetClient) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("receiveGameScripts", function(fromClient, gameScripts) {
-	if(!returnScriptsToClient) {
+addNetworkHandler("receiveGameScripts", function (fromClient, gameScripts) {
+	if (!returnScriptsToClient) {
 		return false;
 	}
 
-	if(returnScriptsToClient.console) {
+	if (returnScriptsToClient.console) {
 		console.log(`${fromClient.name}'s game scripts: ${gameScripts.join(", ")}`);
 	} else {
 		messageClient(`${fromClient.name}'s game scripts: [#FFFF00]${gameScripts.join("[#CCCC00], [#FFFF00]")}`, returnScriptsToClient, COLOUR_AQUA);
@@ -366,15 +366,18 @@ function sendClientBlockedScripts(client) {
 // ----------------------------------------------------------------------------
 
 function fixMissingConfigStuff() {
-	if(typeof scriptConfig.blockedScripts == "undefined") {
+	if (typeof scriptConfig.blockedScripts == "undefined") {
 		scriptConfig.blockedScripts = [];
+		for (let i = 0; i < 15; i++) {
+			scriptConfig.blockedScripts.push([]);
+		}
 	}
 
-	if(typeof scriptConfig.admins == "undefined") {
+	if (typeof scriptConfig.admins == "undefined") {
 		scriptConfig.admins = [];
 	}
 
-	if(typeof scriptConfig.bans == "undefined") {
+	if (typeof scriptConfig.bans == "undefined") {
 		scriptConfig.bans = [];
 	}
 }
