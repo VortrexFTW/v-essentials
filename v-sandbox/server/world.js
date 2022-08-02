@@ -3,9 +3,15 @@
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.weather`, function(client, weather, force) {
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
+
 	let outputMessage = ``;
 
 	currentWeather[server.game] = weather;
+
 	if(force) {
 		gta.forceWeather(weather);
 		outputMessage = `forced the weather to ${weatherNames[server.game][weather]}`;
@@ -20,8 +26,12 @@ addNetworkHandler(`sb.w.weather`, function(client, weather, force) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.winter`, function(client, winter) {
-	let outputMessage = ``;
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
 
+	let outputMessage = ``;
 	isWinter[server.game] = winter;
 
 	triggerNetworkEvent(`sb.w.winter`, null, isWinter[server.game]);
@@ -42,11 +52,16 @@ addNetworkHandler(`sb.w.garage`, function(client, garageId, state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.snow`, function(client, snow) {
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
+
 	let outputMessage = ``;
 
 	isSnowing[serverGame] = snow;
 
-	triggerNetworkEvent(`sb.w.snow`, null, isSnowing[server.game]);
+	triggerNetworkEvent(`sb.w.snow`, null, server.getCVar("snowing"));
 	outputMessage = `${(isSnowing[server.game]) ? "enabled" : "disabled"} falling snow`;
 	outputSandboxMessage(client, outputMessage);
 });
@@ -54,6 +69,11 @@ addNetworkHandler(`sb.w.snow`, function(client, snow) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.time`, function(client, hour, minute) {
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
+
 	let outputMessage = ``;
 
 	timeLockHour[server.game] = hour;
@@ -85,6 +105,11 @@ addNetworkHandler(`sb.w.minutedur`, function(client, minuteDuration) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.timelock`, function(client, state) {
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
+
 	let outputMessage = ``;
 
 	timeLocked[server.game] = !!state;
@@ -132,6 +157,11 @@ addNetworkHandler(`sb.w.planes`, function(client, state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.ssvbridge`, function(client, state) {
+	if(!client.administrator) {
+		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
+		return false;
+	}
+
 	let outputMessage = ``;
 
 	ssvBridgeEnabled = state;
