@@ -3,8 +3,8 @@
 // ----------------------------------------------------------------------------
 
 function destroyBlipsAttachedTo(element) {
-	element.children.forEach(function(value, index, array) {
-		if(value.isType(ELEMENT_BLIP)) {
+	element.children.forEach(function (value, index, array) {
+		if (value.isType(ELEMENT_BLIP)) {
 			destroyElement(value);
 		}
 	});
@@ -14,23 +14,30 @@ function destroyBlipsAttachedTo(element) {
 
 function attachBlipToPed(ped) {
 	let colour = COLOUR_WHITE;
-	if(ped.getData("v.colour") != null) {
+	if (ped.getData("v.colour") != null) {
 		colour = ped.getData("v.colour");
 	} else {
 		let client = getClientFromPlayerElement(ped);
-		if(client != null) {
+		if (client != null) {
 			colour = client.getData("v.colour");
 		}
 	}
-	return gta.createBlipAttachedTo(ped, 0, 2, colour, true, false);
+	let blip = gta.createBlipAttachedTo(ped, 0, 2, colour, true, false);
+	blip.streamInDistance = 999998;
+	blip.streamOutDistance = 999999;
+	//blip.existsFor(client, false);
+
+	return blip;
 }
 
 // ----------------------------------------------------------------------------
 
 // Add blips to existing players
-bindEventHandler("OnResourceStart", thisResource, (event,resource) => {
-	getClients().forEach(function(client) {
-		if(client.player != null) {
+bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
+	getClients().forEach(function (client) {
+		if (client.player != null) {
+			client.player.streamInDistance = 999998;
+			client.player.streamOutDistance = 999999;
 			attachBlipToPed(client.player);
 		}
 	});
@@ -55,9 +62,9 @@ addEventHandler("OnElementDestroy", (event, element) => {
 
 // Stop players getting their own blips
 addEventHandler("OnElementStreamIn", (event, element, client) => {
-	if(element.isType(ELEMENT_BLIP)) {
+	if (element.isType(ELEMENT_BLIP)) {
 		let attachee = element.parent;
-		if(attachee != null && attachee == client.player) {
+		if (attachee != null && attachee == client.player) {
 			event.preventDefault();
 		}
 	}
