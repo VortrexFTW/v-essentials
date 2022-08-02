@@ -1,5 +1,5 @@
-addEvent("OnPedEnteredSphere", 2);
-addEvent("OnPedExitedSphere", 2);
+addEvent("OnPedEnteredSphereEx", 2);
+addEvent("OnPedExitedSphereEx", 2);
 addEvent("OnPedEnteredVehicleEx", 3); // Called when ped finishes entering vehicle
 addEvent("OnPedExitedVehicleEx", 2); // Called when ped finishes exiting vehicle
 addEvent("OnPedEnteringVehicleEx", 3); // Called when ped starts entering vehicle
@@ -16,20 +16,20 @@ addNetworkHandler("OnPedBusted", function (client, pedId) {
 	triggerEvent("OnPedBusted", getElementFromId(pedId), getElementFromId(pedId));
 });
 
-addNetworkHandler("OnPedEnteredVehicle", function (client, pedId, vehicleId, seat) {
-	triggerEvent("OnPedEnteredVehicle", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+addNetworkHandler("OnPedEnteredVehicleEx", function (client, pedId, vehicleId, seat) {
+	triggerEvent("OnPedEnteredVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 
-addNetworkHandler("OnPedExitedVehicle", function (client, pedId, vehicleId, seat) {
-	triggerEvent("OnPedExitedVehicle", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId, vehicleId, seat) {
+	triggerEvent("OnPedExitedVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 
-addNetworkHandler("OnPedEnteredSphere", function (client, pedId, sphereId) {
-	triggerEvent("OnPedEnteredSphere", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
+addNetworkHandler("OnPedEnteredSphereEx", function (client, pedId, sphereId) {
+	triggerEvent("OnPedEnteredSphereEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
 });
 
-addNetworkHandler("OnPedExitedSphere", function (client, pedId, sphereId) {
-	triggerEvent("OnPedExitedSphere", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
+addNetworkHandler("OnPedExitedSphereEx", function (client, pedId, sphereId) {
+	triggerEvent("OnPedExitedSphereEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
 });
 
 addNetworkHandler("OnPedEnterSniperMode", function (client, pedId) {

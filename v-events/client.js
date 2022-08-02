@@ -1,5 +1,5 @@
-addEvent("OnPedEnteredSphere", 2);
-addEvent("OnPedExitedSphere", 2);
+addEvent("OnPedEnteredSphereEx", 2);
+addEvent("OnPedExitedSphereEx", 2);
 addEvent("OnPedEnteredVehicleEx", 3); // Called when ped finishes entering vehicle (built-in onPedEnterVehicle is called when they start entering)
 addEvent("OnPedExitedVehicleEx", 2); // Called when ped finishes exiting vehicle (built-in onPedExitVehicle is called when they start exiting)
 addEvent("OnPedBusted", 1); // Called when police bust a player (immediately when invoked, will be too soon for when released from jail)
@@ -10,105 +10,124 @@ addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shoo
 addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
 
+let vehicle = null;
+let vehicleSeat = 0;
+let sphere = null;
+let dead = false;
+let weapon = -1;
+let weaponAmmo = 0;
+let busted = false;
+let sniperMode = false;
+
 addEventHandler("OnEntityProcess", function (event, entity) {
-	if (entity.isType(ELEMENT_PLAYER) || entity.isType(ELEMENT_PED)) {
-		if (entity.health <= 0) {
-			if (entity.getData("dead") == null) {
-				entity.setData("dead", true);
-				triggerEvent("OnPedDeath", entity);
-				triggerNetworkEvent("OnPedDeath", entity.id);
-			}
-		} else {
-			if (entity.getData("dead") != null) {
-				entity.removeData("dead");
-			}
-		}
-
-		if (typeof entity.weapon != "undefined") {
-			if (entity.getData("weapon") != null) {
-				if (entity.getData("weapon") != entity.weapon) {
-					triggerEvent("OnPedChangeWeapon", entity, entity, entity.weapon, entity.getData("weapon"));
-					triggerNetworkEvent("OnPedChangeWeapon", entity.id, entity.weapon, entity.getData("weapon"));
-					entity.setData("weapon", entity.weapon);
+	if (localPlayer != null) {
+		if (entity == localPlayer) {
+			if (entity.health <= 0) {
+				if (dead == false) {
+					dead = true;
+					triggerEvent("OnPedDeath", entity);
+					triggerNetworkEvent("OnPedDeath", entity.id);
 				}
 			} else {
-				entity.setData("weapon", entity.weapon);
+				if (dead == true) {
+					dead = false;
+				}
 			}
-		}
 
-		if (typeof entity.weaponAmmo != "undefined") {
-			if (entity.getData("ammo") != null) {
-				if (entity.getData("ammo") != entity.weaponAmmo) {
-					triggerEvent("OnPedChangeAmmo", entity, entity, entity.weaponAmmo, entity.getData("ammo"));
-					triggerNetworkEvent("OnPedChangeAmmo", entity.id, entity.weaponAmmo, entity.getData("ammo"));
-					entity.setData("ammo", entity.weapon);
+			if (typeof entity.weapon != "undefined") {
+				if (weapon != -1) {
+					if (weapon != entity.weapon) {
+						triggerEvent("OnPedChangeWeapon", entity, entity, entity.weapon, weapon);
+						triggerNetworkEvent("OnPedChangeWeapon", entity.id, entity.weapon, weapon);
+						weapon = entity.weapon;
+					}
+				} else {
+					weapon = entity.weapon;
+				}
+			}
+
+			if (typeof entity.weaponAmmo != "undefined") {
+				if (weaponAmmo != -1) {
+					if (weaponAmmo != entity.weaponAmmo) {
+						triggerEvent("OnPedChangeAmmo", entity, entity, entity.weaponAmmo, weaponAmmo);
+						triggerNetworkEvent("OnPedChangeAmmo", entity.id, entity.weaponAmmo, weaponAmmo);
+						weaponAmmo = entity.weaponAmmo;
+					}
+				} else {
+					weaponAmmo = entity.weaponAmmo;
+				}
+			}
+
+			// GTA 3
+			if (game.game == 1) {
+				if (entity.state == 51) {
+					if (busted == false) {
+						busted = true;
+						triggerEvent("OnPedBusted", entity, entity);
+						triggerNetworkEvent("OnPedBusted", entity.id);
+					}
+				} else {
+					if (busted == true) {
+						busted = false;
+					}
+				}
+
+				if (entity.state == 12) {
+					if (sniperMode == false) {
+						sniperMode = true;
+						triggerEvent("OnPedEnterSniperMode", entity, entity);
+						triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
+					}
+				} else {
+					if (sniperMode == true) {
+						sniperMode = false;
+						triggerEvent("OnPedExitSniperMode", entity, entity);
+						triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
+					}
+				}
+			}
+
+			if (entity.vehicle == null) {
+				if (vehicle != null) {
+					triggerEvent("OnPedExitedVehicleEx", entity, entity, vehicle, vehicleSeat);
+					triggerNetworkEvent("OnPedExitedVehicleEx", entity.id, vehicle.id, vehicleSeat);
+					vehicle = null;
+					vehicleSeat = -1;
 				}
 			} else {
-				entity.setData("weapon", entity.weapon);
-			}
-		}
-
-		if (game.game == GAME_GTA_III) {
-			if (entity.state == 51) {
-				if (entity.getData("busted") == null) {
-					entity.setData("busted", true);
-					triggerEvent("OnPedBusted", entity, entity);
-					triggerNetworkEvent("OnPedBusted", entity.id);
-				}
-			} else {
-				if (entity.getData("busted") != null) {
-					entity.removeData("busted");
+				if (vehicle == null) {
+					let seat = getPedVehicleSeat(entity);
+					triggerEvent("OnPedEnteredVehicleEx", entity, entity, entity.vehicle, seat);
+					triggerNetworkEvent("OnPedEnteredVehicleEx", entity.id, entity.vehicle.id, seat);
+					vehicle = entity.vehicle
+					vehicleSeat = seat;
 				}
 			}
 
-			if (entity.state == 12) {
-				if (entity.getData("snipermode") == null) {
-					entity.setData("snipermode", true);
-					triggerEvent("OnPedEnterSniperMode", entity, entity);
-					triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
-				}
-			} else {
-				if (entity.getData("snipermode") != null) {
-					entity.removeData("snipermode");
-					triggerEvent("OnPedExitSniperMode", entity, entity);
-					triggerNetworkEvent("OnPedEnterSniperMode", entity.id);
-				}
-			}
-		}
+			if (typeof ELEMENT_MARKER == "undefined") {
+				getElementsByType(ELEMENT_MARKER).forEach(function (tempSphere) {
+					let position = entity.position;
+					if (entity.vehicle) {
+						position = entity.vehicle.position;
+					}
 
-		if (entity.vehicle == null) {
-			if (entity.getData("vehicle") != null) {
-				triggerEvent("OnPedExitedVehicleEx", entity, entity, vehicle, entity.getData("vehicleseat"));
-				triggerNetworkEvent("OnPedExitedVehicleEx", entity.id, vehicle.id, entity.getData("vehicleseat"));
-				entity.removeData("vehicle");
-				entity.removeData("vehicleseat");
-			}
-		} else {
-			if (entity.getData("vehicle") == null) {
-				let seat = getPedVehicleSeat(entity);
-				triggerEvent("OnPedEnteredVehicleEx", entity, entity, entity.vehicle, seat);
-				triggerNetworkEvent("OnPedEnteredVehicleEx", entity.id, entity.vehicle.id, seat);
-				entity.setData("vehicle", entity.vehicle);
-				entity.setData("vehicleseat", seat);
+					if (tempSphere.position.distance(position) <= tempSphere.radius) {
+						if (sphere == null) {
+							triggerEvent("OnPedEnteredSphereEx", entity, entity, tempSphere);
+							triggerNetworkEvent("OnPedEnteredSphereEx", entity.id, tempSphere.id);
+							sphere = tempSphere;
+						}
+					} else {
+						if (sphere != null) {
+							triggerEvent("OnPedExitedSphereEx", entity, entity, tempSphere);
+							triggerNetworkEvent("OnPedExitedSphereEx", entity.id, tempSphere.id);
+							sphere = null;
+						}
+					}
+				});
 			}
 		}
 	}
-
-	getElementsByType(ELEMENT_MARKER).forEach(function (sphere) {
-		if (sphere.position.distance(entity.position) <= sphere.radius) {
-			if (entity.getData("sphere") == null) {
-				triggerEvent("OnPedEnteredSphere", entity, entity, sphere);
-				triggerNetworkEvent("OnPedEnteredSphere", entity.id, sphere.id);
-				entity.setData("sphere", true);
-			}
-		} else {
-			if (entity.getData("sphere") != null) {
-				triggerEvent("OnPedExitedSphere", entity, entity, sphere);
-				triggerNetworkEvent("OnPedExitedSphere", entity.id, sphere.id);
-				entity.removeData("sphere");
-			}
-		}
-	});
 });
 
 addEventHandler("OnPickupCollected", function (event, pickup, ped) {
