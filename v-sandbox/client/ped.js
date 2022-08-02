@@ -116,7 +116,7 @@ addCommandHandler("ped", function(cmdName, params) {
 	//}
 
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.add", skinId, position, heading);
+		triggerNetworkEvent("sb.c.add", Number(skinId), position, heading);
 	} else {
 		if(isGTAIV()) {
 			let tempCiv = false;
@@ -717,6 +717,7 @@ addCommandHandler("ped_warpinveh", function(cmdName, params) {
 	}
 
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.warpintoveh", getPedsIdsArray(civilians), vehicles[0], seatId);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -875,6 +876,7 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 	}
 
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.walkfwd", getPedsIdsArray(civilians), distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -915,6 +917,7 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 	}
 
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.runfwd", getPedsIdsArray(civilians), distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -966,6 +969,7 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 	}
 
 	if(isConnected) {
+		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.sprintfwd", getPedsIdsArray(civilians), distance);
 	} else {
 		civilians.forEach(function(civilian) {
@@ -1016,6 +1020,44 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 		outputText = "set " + String(civilians.length) + " peds to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
+	}
+
+	outputSandboxMessage(outputText);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("ped_follow", function(cmdName, params) {
+	if(isParamsInvalid(params)) {
+		message(`Command: /${String(cmdName)} <ped> <player name/id>`, syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+
+	let civilians = getCiviliansFromParams(splitParams[0]);
+	let playerId = splitParams[1] || localClient.index;
+
+	let outputText = "";
+
+	if(civilians.length == 0) {
+		message("No peds found!", errorMessageColour);
+		return false;
+	}
+
+	if(isConnected) {
+		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians), localPlayer.id);
+	} else {
+		civilians.forEach(function(civilian) {
+			civilian.removeData("sb.c.following");
+		});
+	}
+
+	if(civilians.length > 1) {
+		outputText = "set " + String(civilians.length) + " peds to stop following";
+	} else {
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to stop following";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1693,7 +1735,7 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 	}
 
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.threat.clr", civilians);
+		triggerNetworkEvent("sb.c.threat.clr", getPedsIdsArray(civilians));
 	} else {
 		civilians.forEach(function(civilian) {
 			civilian.clearThreatSearch();
@@ -1774,7 +1816,7 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 	}
 
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), civilians2[0]);
+		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), civilians2[0].id);
 	} else {
 		civilians.forEach(function(civilian) {
 			civilian.pointGunAt(civilians2[0]);
@@ -1818,7 +1860,7 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 
 
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), vehicles[0]);
+		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), vehicles[0].id);
 	} else {
 		civilians.forEach(function(civilian) {
 			civilian.pointGunAt(vehicles[0]);
@@ -1846,7 +1888,9 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 	let splitParams = params.split(" ");
 
 	let civilians = getCiviliansFromParams(splitParams[0]);
-	let playerName = splitParams[1];
+	let targetClient = getClientFromParams(splitParams.slice(1).join(" "));
+	console.log(`ARG ${splitParams.slice(1).join(" ")}`);
+	console.log(`SELECTING ${targetClient.name}`);
 
 	let outputText = "";
 
@@ -1856,9 +1900,15 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 	}
 
 	if(isConnected) {
-		triggerNetworkEvent("sb.c.aimatplr", getPedsIdsArray(civilians), playerName);
+		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), targetClient.player.id);
 	} else {
 		message("This command can't be used offline!", errorMessageColour);
+	}
+
+	if(civilians.length > 1) {
+		outputText = `set ${civilians.length} peds to aim their guns at ${targetClient.name}`;
+	} else {
+		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} ped to aim their guns at ${targetClient.name}`;
 	}
 
 	outputSandboxMessage(outputText);
@@ -2211,31 +2261,31 @@ addNetworkHandler("sb.c.jump", function(civilianId) {
 // ----------------------------------------------------------------------------
 
 function makeCivilianWander(civilian, wanderPath) {
-	getElementFromId(civilianId).setWanderPath(wanderPath);
+	civilian.setWanderPath(wanderPath);
 }
 
 // ----------------------------------------------------------------------------
 
 function setCivilianStayInSamePlace(civilian, stayState) {
-	getElementFromId(civilianId).stayInSamePlace = stayState;
+	civilian.stayInSamePlace = stayState;
 }
 
 // ----------------------------------------------------------------------------
 
 function makeCivilianWalkTo(civilian, position) {
-	getElementFromId(civilianId).walkTo(position);
+	civilian.walkTo(position);
 }
 
 // ----------------------------------------------------------------------------
 
 function makeCivilianRunTo(civilian, position) {
-	getElementFromId(civilianId).runTo(position);
+	civilian.runTo(position);
 }
 
 // ----------------------------------------------------------------------------
 
 function makeCivilianSprintTo(civilian, position) {
-	getElementFromId(civilianId).sprintTo(position);
+	civilian.sprintTo(position);
 }
 
 // ----------------------------------------------------------------------------
