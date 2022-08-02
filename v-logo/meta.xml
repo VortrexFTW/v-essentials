@@ -1,0 +1,8 @@
+<meta>
+	<info title="v-logo" author="Vortrex" version="1.0" description="Display a logo in the corner" />
+
+	<script src="client.js" type="client" language="javascript" />
+
+	<file type="client" src="mafiac-logo.png" />
+	<file type="client" src="gtac-logo.png" />
+</meta>
