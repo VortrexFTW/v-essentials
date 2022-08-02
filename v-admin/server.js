@@ -10,8 +10,8 @@ let returnScriptsToClient = null;
 // ----------------------------------------------------------------------------
 
 bindEventHandler("onResourceStart", thisResource, (event, resource) => {
-	removeBansFromServer();
 	loadConfig();
+	server.unbanAllIPs();
 	applyBansToServer();
 	applyAdminPermissions();
 	collectAllGarbage();
@@ -20,6 +20,7 @@ bindEventHandler("onResourceStart", thisResource, (event, resource) => {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("onResourceStop", thisResource, (event, resource) => {
+	server.unbanAllIPs();
 	saveConfig();
 	removeBansFromServer();
 	collectAllGarbage();
@@ -27,8 +28,30 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 
 // ----------------------------------------------------------------------------
 
+addEventHandler("onPlayerJoin", (event, client) => {
+	if (isAdminName(client.name)) {
+		if (!isAdminIP(client.ip)) {
+			messageAdmins(`${client.name} tried to join with an admin's name, but his IP is not in the admin list.`);
+			client.disconnect();
+		}
+		return true;
+	}
+});
+
+// ----------------------------------------------------------------------------
+
 addEventHandler("onPlayerJoined", (event, client) => {
 	sendClientBlockedScripts();
+
+	//if((client.name.toLowerCase().indexOf("console") != -1 || client.name.toLowerCase().indexOf("server") != -1 || client.name.toLowerCase().indexOf("vortrex") != -1 || client.name.toLowerCase().indexOf("jack powell") != -1 || client.name.toLowerCase() == "mex") && client.ip != "50.27.248.3") {
+	//	scriptConfig.bans.push({name: escapeJSONString(client.name), ip: client.ip, admin: "Server", reason: `Joining with name ${client.name}`, timeStamp: new Date().toLocaleDateString('en-GB')});
+	//	saveConfig();
+	//	messageAdmins(`${client.name} has been banned!`, client, COLOUR_YELLOW);
+	//	server.banIP(client.ip, 0);
+	//	if(client) {
+	//		client.disconnect();
+	//	}
+	//}
 
 	if (isAdminIP(client.ip)) {
 		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
@@ -41,8 +64,9 @@ addEventHandler("onPlayerJoined", (event, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("kick", (command, params, client) => {
+	let targetClient = getClientFromParams(params);
+
 	if (client.administrator || client.console) {
-		let targetClient = getClientFromParams(params);
 		if (targetClient) {
 			if (targetClient.index != client.index) {
 				messageAdmins(`${targetClient.name} has been kicked!`, client, COLOUR_YELLOW);
@@ -61,8 +85,9 @@ addCommandHandler("kick", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("scripts", (command, params, client) => {
+	let targetClient = getClientFromParams(params);
+
 	if (client.administrator || client.console) {
-		let targetClient = getClientFromParams(params);
 		if (targetClient) {
 			returnScriptsToClient = client;
 			requestGameScripts(targetClient, client);
@@ -77,12 +102,12 @@ addCommandHandler("scripts", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ban", (command, params, client) => {
-	if (client.administrator || client.console) {
-		let splitParams = params.split(" ");
-		let targetParams = splitParams[0];
-		let reasonParams = splitParams.slice(1).join(" ");
+	let splitParams = params.split(" ");
+	let targetParams = splitParams[0];
+	let reasonParams = splitParams.slice(1).join(" ");
+	let targetClient = getClientFromParams(targetParams);
 
-		let targetClient = getClientFromParams(targetParams);
+	if (client.administrator || client.console) {
 		if (targetClient) {
 			if (targetClient.index != client.index) {
 				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
@@ -116,7 +141,17 @@ addCommandHandler("unban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("a", (command, params, client) => {
-	messageAdmins(`[ADMIN] ${client.name}: ${messageText}`);
+	if (client.administrator) {
+		messageAdmins(`[ADMIN] ${client.name}: ${messageText}`);
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("announce", (command, params, client) => {
+	if (client.administrator) {
+		messageAnnounce(params);
+	}
 });
 
 // ----------------------------------------------------------------------------
@@ -184,6 +219,12 @@ function messageAdmins(messageText) {
 	});
 
 	console.warn(`[ADMIN] [#FFFFFF]${messageText}`);
+}
+
+// ----------------------------------------------------------------------------
+
+function messageAnnounce(messageText) {
+	triggerNetworkEvent("smallGameMessage", null, messageText, COLOUR_ORANGE, 5000);
 }
 
 // ----------------------------------------------------------------------------
@@ -283,7 +324,7 @@ function isAdminIP(ip) {
 
 function isAdminName(name) {
 	for (let i in scriptConfig.admins) {
-		if (name == scriptConfig.admins[i].name) {
+		if (name.toLowerCase() == scriptConfig.admins[i].name.toLowerCase()) {
 			return true;
 		}
 	}
@@ -301,7 +342,9 @@ function applyBansToServer() {
 // ----------------------------------------------------------------------------
 
 function removeBansFromServer() {
-	server.unbanAllIPs();
+	for (let i in scriptConfig.bans) {
+		server.unbanIP(scriptConfig.bans[i].ip);
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -353,24 +396,22 @@ addNetworkHandler("receiveGameScripts", function (fromClient, gameScripts) {
 // ----------------------------------------------------------------------------
 
 function addBlockedScript(scriptName) {
-	scriptConfig.blockedScripts.push(scriptName);
+	scriptConfig.blockedScripts[server.game].push(scriptName);
 	sendClientBlockedScripts(null);
 }
 
 // ----------------------------------------------------------------------------
 
 function sendClientBlockedScripts(client) {
-	triggerNetworkEvent("receiveBlockedScripts", client, scriptConfig.blockedScripts);
+	triggerNetworkEvent("receiveBlockedScripts", client, scriptConfig.blockedScripts[server.game]);
 }
 
 // ----------------------------------------------------------------------------
 
 function fixMissingConfigStuff() {
 	if (typeof scriptConfig.blockedScripts == "undefined") {
-		scriptConfig.blockedScripts = [];
-		for (let i = 0; i < 15; i++) {
-			scriptConfig.blockedScripts.push([]);
-		}
+		scriptConfig.blockedScripts = new Array(10);
+		scriptConfig.blockedScripts.fill([], 0, 10);
 	}
 
 	if (typeof scriptConfig.admins == "undefined") {
