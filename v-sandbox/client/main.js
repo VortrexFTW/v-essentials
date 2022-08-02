@@ -15,28 +15,32 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 		resyncWorld();
 	}
 
-	if(modType == V_MPMOD_GTAC) {
-		if(game.game == GAME_GTA_IV) {
-			if(gta.ivGamemode == 8 || gta.ivGamemode == 30) {
-				natives.allowEmergencyServices(true);
-				natives.setCreateRandomCops(true);
-				natives.setMaxWantedLevel(0);
-				natives.setWantedMultiplier(0.0);
-				natives.allowPlayerToCarryNonMissionObjects(natives.getPlayerId(), true);
-
-				natives.setPlayerTeam(natives.getPlayerId(), 0);
-				natives.usePlayerColourInsteadOfTeamColour(true);
-			}
-			natives.requestAnims("DANCING");
-			natives.loadAllObjectsNow();
-
-			gta.startNewScript("ambnightclubm92");
-			gta.startNewScript("drinking");
-			bindKey(SDLK_m, KEYSTATE_UP, function() { natives.activateNetworkSettingsMenu(); });
+	if(game.game == GAME_GTA_IV) {
+		if(gta.ivGamemode == 8 || gta.ivGamemode == 30) {
+			natives.allowEmergencyServices(true);
+			natives.setCreateRandomCops(true);
+			natives.setMaxWantedLevel(0);
+			natives.setWantedMultiplier(0.0);
+			natives.allowPlayerToCarryNonMissionObjects(natives.getPlayerId(), true);
+			natives.switchRandomTrains(true);
+			natives.switchRandomBoats(true);
+			natives.switchAmbientPlanes(true);
+			natives.switchMadDrivers(false);
+			natives.setPlayerTeam(natives.getPlayerId(), 0);
+			natives.usePlayerColourInsteadOfTeamColour(true);
+			natives.allowGameToPauseForStreaming(false);
 		}
-	} else if(mpModType == V_MPMOD_MAFIAC) {
-		return false;
+		natives.requestAnims("DANCING");
+		natives.loadAllObjectsNow();
+
+		gta.startNewScript("ambnightclubm92");
+		gta.startNewScript("drinking");
+		//bindKey(SDLK_m, KEYSTATE_UP, function() { natives.activateNetworkSettingsMenu(); });
 	}
+});
+
+bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+	unbindKey(SDLK_m);
 });
 
 // ----------------------------------------------------------------------------
