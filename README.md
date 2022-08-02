@@ -5,12 +5,13 @@ Publicly available for anybody to use. I hope you find some of these useful.
 ### v-admin
 Server management and moderation. People added as admin can kick, ban, etc. Bans are saved with IP, reason, admin, and timestamp.
 Also has ability to block game scripts (some trainers and mods use these and blocking them will prevent them being used on your server.)
+Any player who joins with an admin's name but wrong IP will be automatically kicked.
 
 ### v-afk
 AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, it'll show "PAUSED" next to AFK players in the list. If `v-nametags` is loaded, the nametag will show a red "PAUSED" above AFK players heads.
 
 ### v-chat
-Custom chat. Converts emoji names (e.g. `:thumbsup:`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colourm, otherwise the names will be white.
+Custom chat. Converts emoji names (e.g. `:thumbsup:`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
 
 ### v-deathmessages
 Shows messages when a player dies, with killer name.
@@ -33,6 +34,9 @@ Currently only for Vice City. Enables interiors. Just walk up to the door to ent
 
 ### v-joinquit
 Announces to all players when somebody joins or leaves the server.
+
+### v-logo
+Shows an image in the bottom right corner (default is GTAC/MafiaC logo)
 
 ### v-lookat
 Only works on GTA SA. Makes player heads turn to face where they are looking. Also syncs to other players
