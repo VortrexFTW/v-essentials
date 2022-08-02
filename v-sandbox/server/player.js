@@ -67,9 +67,9 @@ addCommandHandler(`goto`, function (cmdName, params, client) {
 		}, 500);
 		outputSandboxMessage(client, `teleported to ${tempClient.name} (Using /goto)`);
 	} else {
-		teleportTo[targetClient.index] = client;
-		messageClient(`[#FF9900]${client.name} wants to teleport to you. Use [#99999]/accept[#FF9900] to accept or ignore to decline`, targetClient);
-		messageClient(`[#FF9900]You sent a teleport request to ${client.name}. Please wait for them to accept`, targetClient);
+		teleportTo[tempClient.index] = client;
+		messageClient(`[#FF9900]${client.name} wants to teleport to you. Use [#99999]/accept[#FF9900] to accept or ignore to decline`, tempClient);
+		messageClient(`[#FF9900]You sent a teleport request to ${tempClient.name}. Please wait for them to accept`, client);
 	}
 	return true;
 });
