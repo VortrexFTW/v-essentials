@@ -8,7 +8,6 @@ let isServer = (typeof server == "undefined") ? false : true;
 
 // ----------------------------------------------------------------------------
 
-exportFunction("createDefaultVehicleData", createDefaultVehicleData);
 exportFunction("getSkinName", getSkinNameFromId);
 exportFunction("getVehicleModelName", getVehicleNameFromModelId);
 
@@ -131,25 +130,25 @@ let gameLocations = [
 
 		// Hospitals
 		["All Saints General Hospital", [1182.67, -1323.81, 13.579], 1.543, null],
-		["County General Hospital", [2034.7567,-1403.1083,17.2931], 0.0, null],
+		["County General Hospital", [2034.7567, -1403.1083, 17.2931], 0.0, null],
 
 		// Strip Clubs
-		["Pig Pen Strip Club", [2420.906982,-1222.321777,25.348423], 0.0, null],
+		["Pig Pen Strip Club", [2420.906982, -1222.321777, 25.348423], 0.0, null],
 
 		// Night/Dance Clubs
 		["Club Tableau", [551.877502, -1506.095581, 14.550004], 1.0, null],
 		["Club Alhambra", [1832.55, -1681.91, 13.510], -1.561, null],
 
 		// Bars
-		["Ten Green Bottles Bar", [2305.922363,-1646.797241,14.461124], 1.0, null],
+		["Ten Green Bottles Bar", [2305.922363, -1646.797241, 14.461124], 1.0, null],
 
 		// Restaurants and Food
-		["Market Donut Shop", [1040.932006,-1336.229492,13.550251], 1.0, null],
-		["Idlewood Pizza Stack", [2099.827636,-1806.375610,13.554687], 0.0, null],
-		["Temple Burger Shot", [1212.020019,-924.311462,42.930198], 1.0, null],
+		["Market Donut Shop", [1040.932006, -1336.229492, 13.550251], 1.0, null],
+		["Idlewood Pizza Stack", [2099.827636, -1806.375610, 13.554687], 0.0, null],
+		["Temple Burger Shot", [1212.020019, -924.311462, 42.930198], 1.0, null],
 
 		// Clothes Shops
-		["Ganton Binco", [2244.837402,-1664.232299,15.476562], 1.0, null],
+		["Ganton Binco", [2244.837402, -1664.232299, 15.476562], 1.0, null],
 		["Los Santos Victim ", [456.31, -1501.53, 31.041], -1.378, null],
 		["Los Santos Didier Sachs", [449.68, -1479.94, 30.639], -1.149, null],
 		["ProLaps Los Santos", [502.37, -1355.58, 16.133], 2.659, null],
@@ -157,18 +156,18 @@ let gameLocations = [
 		["Marina Burger Shot", [816.55, -1617.00, 13.859], 1.396, null],
 
 		// Airports
-		["Los Santos International Airport Gate", [1958.201049,-2182.789794,13.546875], 1.0, null],
+		["Los Santos International Airport Gate", [1958.201049, -2182.789794, 13.546875], 1.0, null],
 		["Los Santos International Airport Runway", [2054.12, -2493.84, 13.547], 1.569, null],
-		["Los Santos Stadium", [2694.261474,-1703.194335,11.506717], 1.0, null],
+		["Los Santos Stadium", [2694.261474, -1703.194335, 11.506717], 1.0, null],
 
 		// Sex Shops
-		["El Corona Sex Shop", [1944.994873,-2116.641113,13.550632], 1.0, null],
-		["Temple Sex Shop", [1090.181884,-927.265869,43.182197], 1.0, null],
-		["Market Sex Shop", [1090.181884,-927.265869,43.182197], 1.0, null]
+		["El Corona Sex Shop", [1944.994873, -2116.641113, 13.550632], 1.0, null],
+		["Temple Sex Shop", [1090.181884, -927.265869, 43.182197], 1.0, null],
+		["Market Sex Shop", [1090.181884, -927.265869, 43.182197], 1.0, null]
 
 		// Misc/Other
-		["Grotti Dealership", [540.6011,-1291.2489,17.2422], 0.0, null],
-		["Santa Maria Beach", [302.994567,-1900.099121,1.938840], 0.0, null],
+		["Grotti Dealership", [540.6011, -1291.2489, 17.2422], 0.0, null],
+		["Santa Maria Beach", [302.994567, -1900.099121, 1.938840], 0.0, null],
 		["Glen Park Bridge", [1968.33, -1195.10, 25.70], 0.0, null],
 		["Los Santos Skate Park", [1865.96, -1380.53, 13.50], 0.0, null],
 		["Los Santos Garbage Dump", [2194.91, -1977.58, 13.55], 0.0, null],
@@ -576,33 +575,33 @@ let gameGarages = [
 	false,
 	[ // GTA III
 		// Name									Location Name							Position						Opened
-		["Car Crusher Garage", 					"Harwood, Portland",  					[],								true],
-		["Safe House", 							"Red Light District, Portland",  		[],								true],
-		["Import/Export Garage",				"Portland Harbor, Portland",  			[],								true],
-		["8 Balls Bomb Shop", 					"Harwood, Portland",  					[],								true],
-		["Pay-n-Spray", 						"Red Light District, Portland",  		[],								true],
-		["Salvatore's Garage", 					"Saint Mark's, Portland",  				[],								true],
-		["Securicar Garage", 					"Portland Harbor, Portland",  			[],								true],
-		["Luigi's Lockup", 						"Portland View, Portland",  			[],								true],
-		["Safe House", 							"Belleville Park, Staunton Island",  	[],								true],
-		["8 Balls Bomb Shop", 					"Newport, Staunton Island",  			[],								true],
-		["Pay-n-Spray", 						"Newport, Staunton Island",  			[],								true],
-		["Ray's Lockup", 						"Bedford Point, Staunton Island",  		[],								true],
-		["Witness Protection Safe House", 		"Newport, Staunton Island", 			[],								true],
-		["Kenji's Lockup", 						"Newport, Staunton Island",  			[],								true],
-		["Columbian Garage 1", 					"Aspatria, Staunton Island",  			[],								true],
-		["Columbian Garage 2", 					"Aspatria, Staunton Island",  			[],								true],
-		["Columbian Garage 3", 					"Aspatria, Staunton Island",  			[],								true],
-		["Columbian Garage 4", 					"Aspatria, Staunton Island",  			[],								true],
-		["Columbian Garage 5", 					"Aspatria, Staunton Island",  			[],								true],
-		["Yardie's Lockup", 					"Newport, Staunton Island",  			[],								true],
-		["Safe House", 							"Wichita Gardens, Shoreside Vale",  	[],								true],
-		["Pay-n-Spray", 						"Pike Creek, Shoreside Vale",  			[],								true],
-		["8 Balls Bomb Shop", 					"Pike Creek, Shoreside Vale",  			[],								true],
-		["Import/Export Garage", 				"Pike Creek, Shoreside Vale",  			[],								true],
-		["Hoodz's Bomb Defusal Garage", 		"Saint Mark's, Portland",  				[],								true],
-		["Platinum Dropoff Garage", 			"Pike Creek, Shoreside Vale",  			[],								true],
-		["Donald Love's Stash Garage", 			"Pike Creek, Shoreside Vale",  			[],								true],
+		["Car Crusher Garage", "Harwood, Portland", [], true],
+		["Safe House", "Red Light District, Portland", [], true],
+		["Import/Export Garage", "Portland Harbor, Portland", [], true],
+		["8 Balls Bomb Shop", "Harwood, Portland", [], true],
+		["Pay-n-Spray", "Red Light District, Portland", [], true],
+		["Salvatore's Garage", "Saint Mark's, Portland", [], true],
+		["Securicar Garage", "Portland Harbor, Portland", [], true],
+		["Luigi's Lockup", "Portland View, Portland", [], true],
+		["Safe House", "Belleville Park, Staunton Island", [], true],
+		["8 Balls Bomb Shop", "Newport, Staunton Island", [], true],
+		["Pay-n-Spray", "Newport, Staunton Island", [], true],
+		["Ray's Lockup", "Bedford Point, Staunton Island", [], true],
+		["Witness Protection Safe House", "Newport, Staunton Island", [], true],
+		["Kenji's Lockup", "Newport, Staunton Island", [], true],
+		["Columbian Garage 1", "Aspatria, Staunton Island", [], true],
+		["Columbian Garage 2", "Aspatria, Staunton Island", [], true],
+		["Columbian Garage 3", "Aspatria, Staunton Island", [], true],
+		["Columbian Garage 4", "Aspatria, Staunton Island", [], true],
+		["Columbian Garage 5", "Aspatria, Staunton Island", [], true],
+		["Yardie's Lockup", "Newport, Staunton Island", [], true],
+		["Safe House", "Wichita Gardens, Shoreside Vale", [], true],
+		["Pay-n-Spray", "Pike Creek, Shoreside Vale", [], true],
+		["8 Balls Bomb Shop", "Pike Creek, Shoreside Vale", [], true],
+		["Import/Export Garage", "Pike Creek, Shoreside Vale", [], true],
+		["Hoodz's Bomb Defusal Garage", "Saint Mark's, Portland", [], true],
+		["Platinum Dropoff Garage", "Pike Creek, Shoreside Vale", [], true],
+		["Donald Love's Stash Garage", "Pike Creek, Shoreside Vale", [], true],
 	],
 
 	[ // GTA Vice City
@@ -630,99 +629,99 @@ let gameGarages = [
 
 	[ // GTA San Andreas
 		// Name									Location Name							Position						Opened
-		["Life's a Beach Mission Garage",		"Commerce, Los Santos",					[1643.43, -1521.95, 13.56],		true],
-		["Los Desperados Mission Garage",		"El Corona, Los Santos",				[1877.30, -2097.85, 13.53],		true],
-		["Eight Ball Autos",					"El Corona, Los Santos",				[1842.32, -1856.37, 13.38],		true],
-		["Cesar Vialpando Mission Garage",		"El Corona, Los Santos",				[1797.62, -2146.73, 13.55],		true],
-		["Player Garage",						"El Corona, Los Santos",				[1699.06, -2089.99, 13.55],		true],
-		["LS Burglary Garage",					"Playa del Seville, Los Santos",		[2741.21, -2003.46, 13.55],		true],
-		["LowRider Tuning Garage",				"Willowfield, Los Santos",				[2644.90, -2038.41, 13.55],		true],
-		["Pay 'n' Spray",						"Idlewood, Los Santos",					[2072.40, -1831.38, 13.55],		true],
-		["Player Garage",						"Ganton, Los Santos",					[2505.68, -1689.95, 13.56],		true],
-		["Transfender",							"Temple, Los Santos",					[1041.42, -1026.78, 32.10],		true],
-		["Pay 'n' Spray",						"Temple, Los Santos",					[1025.09, -1030.52, 32.04],		true],
-		["Pay 'n' Spray",						"Santa Maria Beach, Los Santos",		[488.41, -1733.88, 11.18],		true],
-		["Player Garage",						"Santa Maria Beach, Los Santos",		[322.60, -1769.86, 4.72],		true],
-		["Player Garage",						"Mulholland, Los Santos",				[1353.23, -625.68, 109.13],		true],
-		["Wheel Archangels",					"Ocean Flats, San Fierro",				[-2715.30, 217.61, 4.32],		true],
-		["T-Bone Mendez Mission Garage",		"Ocean Flats, San Fierro",				[-2730.48, 74.22, 4.34],		true],
-		["Player Garage",						"Hashbury, San Fierro",					[-2455.66, -123.73, 26.09],		true],
-		["Transfender",							"Doherty, San Fierro",					[-1935.88, 237.90, 34.31],		true],
-		["Pay 'n' Spray",						"Downtown, San Fierro",					[-1904.53, 276.63, 41.05],		true],
-		["SF Burglary Garage",					"Doherty, San Fierro",					[-2101.90, -16.07, 35.32],		true],
-		["Player Garage",						"Doherty, San Fierro",					[-2026.94, 130.57, 28.84],		true],
-		["Mission Garage",						"Doherty, San Fierro",					[-2038.18, 178.87, 28.84],		true],
-		["Michelle's Pay 'n' Spray",			"Downtown, San Fierro",					[-1786.78, 1208.87, 25.13],		true],
-		["Player Garage",						"Calton Height, San Fierro",			[-2105.22, 897.84, 76.71],		true],
-		["Pay 'n' Spray",						"Juniper Hollow, San Fierro",			[-2425.70, 1029.37, 50.39],		true],
-		["Player Garage",						"Paradiso, San Fierro",					[-2695.94, 820.34, 49.98],		true],
-		["Airport Hangar",						"Las Venturas Airport, San Fierro",		[1585.90, 1226.73, 10.81],		true],
-		["LV Burglary Garage",					"Pilgrim, Las Venturas",				[2609.68, 1436.90, 10.82],		true],
-		["Transfender",							"Come-A-Lot, Las Venturas",				[2386.75, 1042.44, 10.82],		true],
-		["Player Garage",						"Rockshore West, Las Venturas",			[2448.44, 697.76, 11.46],		true],
-		["Welding Wedding Bomb-workshop",		"Redsands East, Las Venturas",			[2006.11, 2302.69, 10.82],		true],
-		["Pay 'n' Spray",						"Redsands East, Las Venturas",			[1967.55, 2162.43, 10.82],		true],
-		["Player Garage",						"Redsands West, Las Venturas",			[1407.23, 1902.37, 11.46],		true],
-		["Player Garage",						"Prickle Pine, Las Venturas",			[1280.85, 2529.82, 10.82],		true],
-		["Player Garage",						"Whitewood Estates, Las Venturas",		[928.43, 2011.86, 11.46],		true],
-		["Pay 'n' Spray",						"El Quebrados, Tierra Robada",			[-1420.43, 2591.78, 55.82],		true],
-		["Pay 'n' Spray",						"Fort Carson, Bone County",				[-100.00, 1110.53, 19.74],		true],
-		["Player Garage",						"Fort Carson, Bone County",				[-360.72, 1193.05, 19.74],		true],
-		["Player Garage",						"Verdant Meadows, Bone County",			[428.90, 2546.57, 16.21],		true],
-		["Interdiction Mission Garage",			"El Castillo del Diablo, Bone County",	[-388.78, 2228.05, 42.43],		true],
-		["Airport Hangar",						"Verdant Meadows, Bone County",			[404.97, 2478.38, 16.48],		true],
-		["Puncture Wounds Mission Garage",		"Angel Pine, Flint County",				[-2113.93, -2459.94, 30.63],	true],
-		["Pay 'n' Spray",						"Dillimore, Red County",				[719.96, -464.34, 16.34],		true],
-		["Player Garage",						"Palomino Creek, Red County",			[2231.22, 167.27, 27.48],		true],
-		["Player Garage",						"Dillimore, Red County",				[785.95, -494.23, 17.34],		true],
+		["Life's a Beach Mission Garage", "Commerce, Los Santos", [1643.43, -1521.95, 13.56], true],
+		["Los Desperados Mission Garage", "El Corona, Los Santos", [1877.30, -2097.85, 13.53], true],
+		["Eight Ball Autos", "El Corona, Los Santos", [1842.32, -1856.37, 13.38], true],
+		["Cesar Vialpando Mission Garage", "El Corona, Los Santos", [1797.62, -2146.73, 13.55], true],
+		["Player Garage", "El Corona, Los Santos", [1699.06, -2089.99, 13.55], true],
+		["LS Burglary Garage", "Playa del Seville, Los Santos", [2741.21, -2003.46, 13.55], true],
+		["LowRider Tuning Garage", "Willowfield, Los Santos", [2644.90, -2038.41, 13.55], true],
+		["Pay 'n' Spray", "Idlewood, Los Santos", [2072.40, -1831.38, 13.55], true],
+		["Player Garage", "Ganton, Los Santos", [2505.68, -1689.95, 13.56], true],
+		["Transfender", "Temple, Los Santos", [1041.42, -1026.78, 32.10], true],
+		["Pay 'n' Spray", "Temple, Los Santos", [1025.09, -1030.52, 32.04], true],
+		["Pay 'n' Spray", "Santa Maria Beach, Los Santos", [488.41, -1733.88, 11.18], true],
+		["Player Garage", "Santa Maria Beach, Los Santos", [322.60, -1769.86, 4.72], true],
+		["Player Garage", "Mulholland, Los Santos", [1353.23, -625.68, 109.13], true],
+		["Wheel Archangels", "Ocean Flats, San Fierro", [-2715.30, 217.61, 4.32], true],
+		["T-Bone Mendez Mission Garage", "Ocean Flats, San Fierro", [-2730.48, 74.22, 4.34], true],
+		["Player Garage", "Hashbury, San Fierro", [-2455.66, -123.73, 26.09], true],
+		["Transfender", "Doherty, San Fierro", [-1935.88, 237.90, 34.31], true],
+		["Pay 'n' Spray", "Downtown, San Fierro", [-1904.53, 276.63, 41.05], true],
+		["SF Burglary Garage", "Doherty, San Fierro", [-2101.90, -16.07, 35.32], true],
+		["Player Garage", "Doherty, San Fierro", [-2026.94, 130.57, 28.84], true],
+		["Mission Garage", "Doherty, San Fierro", [-2038.18, 178.87, 28.84], true],
+		["Michelle's Pay 'n' Spray", "Downtown, San Fierro", [-1786.78, 1208.87, 25.13], true],
+		["Player Garage", "Calton Height, San Fierro", [-2105.22, 897.84, 76.71], true],
+		["Pay 'n' Spray", "Juniper Hollow, San Fierro", [-2425.70, 1029.37, 50.39], true],
+		["Player Garage", "Paradiso, San Fierro", [-2695.94, 820.34, 49.98], true],
+		["Airport Hangar", "Las Venturas Airport, San Fierro", [1585.90, 1226.73, 10.81], true],
+		["LV Burglary Garage", "Pilgrim, Las Venturas", [2609.68, 1436.90, 10.82], true],
+		["Transfender", "Come-A-Lot, Las Venturas", [2386.75, 1042.44, 10.82], true],
+		["Player Garage", "Rockshore West, Las Venturas", [2448.44, 697.76, 11.46], true],
+		["Welding Wedding Bomb-workshop", "Redsands East, Las Venturas", [2006.11, 2302.69, 10.82], true],
+		["Pay 'n' Spray", "Redsands East, Las Venturas", [1967.55, 2162.43, 10.82], true],
+		["Player Garage", "Redsands West, Las Venturas", [1407.23, 1902.37, 11.46], true],
+		["Player Garage", "Prickle Pine, Las Venturas", [1280.85, 2529.82, 10.82], true],
+		["Player Garage", "Whitewood Estates, Las Venturas", [928.43, 2011.86, 11.46], true],
+		["Pay 'n' Spray", "El Quebrados, Tierra Robada", [-1420.43, 2591.78, 55.82], true],
+		["Pay 'n' Spray", "Fort Carson, Bone County", [-100.00, 1110.53, 19.74], true],
+		["Player Garage", "Fort Carson, Bone County", [-360.72, 1193.05, 19.74], true],
+		["Player Garage", "Verdant Meadows, Bone County", [428.90, 2546.57, 16.21], true],
+		["Interdiction Mission Garage", "El Castillo del Diablo, Bone County", [-388.78, 2228.05, 42.43], true],
+		["Airport Hangar", "Verdant Meadows, Bone County", [404.97, 2478.38, 16.48], true],
+		["Puncture Wounds Mission Garage", "Angel Pine, Flint County", [-2113.93, -2459.94, 30.63], true],
+		["Pay 'n' Spray", "Dillimore, Red County", [719.96, -464.34, 16.34], true],
+		["Player Garage", "Palomino Creek, Red County", [2231.22, 167.27, 27.48], true],
+		["Player Garage", "Dillimore, Red County", [785.95, -494.23, 17.34], true],
 	],
 
 	[ // GTA Underground
-		["Life's a Beach Mission Garage",		"Commerce, Los Santos",					[1643.43, -1521.95, 13.56],		true],
-		["Los Desperados Mission Garage",		"El Corona, Los Santos",				[1877.30, -2097.85, 13.53],		true],
-		["Eight Ball Autos",					"El Corona, Los Santos",				[1842.32, -1856.37, 13.38],		true],
-		["Cesar Vialpando Mission Garage",		"El Corona, Los Santos",				[1797.62, -2146.73, 13.55],		true],
-		["Player Garage",						"El Corona, Los Santos",				[1699.06, -2089.99, 13.55],		true],
-		["LS Burglary Garage",					"Playa del Seville, Los Santos",		[2741.21, -2003.46, 13.55],		true],
-		["LowRider Tuning Garage",				"Willowfield, Los Santos",				[2644.90, -2038.41, 13.55],		true],
-		["Pay 'n' Spray",						"Idlewood, Los Santos",					[2072.40, -1831.38, 13.55],		true],
-		["Player Garage",						"Ganton, Los Santos",					[2505.68, -1689.95, 13.56],		true],
-		["Transfender",							"Temple, Los Santos",					[1041.42, -1026.78, 32.10],		true],
-		["Pay 'n' Spray",						"Temple, Los Santos",					[1025.09, -1030.52, 32.04],		true],
-		["Pay 'n' Spray",						"Santa Maria Beach, Los Santos",		[488.41, -1733.88, 11.18],		true],
-		["Player Garage",						"Santa Maria Beach, Los Santos",		[322.60, -1769.86, 4.72],		true],
-		["Player Garage",						"Mulholland, Los Santos",				[1353.23, -625.68, 109.13],		true],
-		["Wheel Archangels",					"Ocean Flats, San Fierro",				[-2715.30, 217.61, 4.32],		true],
-		["T-Bone Mendez Mission Garage",		"Ocean Flats, San Fierro",				[-2730.48, 74.22, 4.34],		true],
-		["Player Garage",						"Hashbury, San Fierro",					[-2455.66, -123.73, 26.09],		true],
-		["Transfender",							"Doherty, San Fierro",					[-1935.88, 237.90, 34.31],		true],
-		["Pay 'n' Spray",						"Downtown, San Fierro",					[-1904.53, 276.63, 41.05],		true],
-		["SF Burglary Garage",					"Doherty, San Fierro",					[-2101.90, -16.07, 35.32],		true],
-		["Player Garage",						"Doherty, San Fierro",					[-2026.94, 130.57, 28.84],		true],
-		["Mission Garage",						"Doherty, San Fierro",					[-2038.18, 178.87, 28.84],		true],
-		["Michelle's Pay 'n' Spray",			"Downtown, San Fierro",					[-1786.78, 1208.87, 25.13],		true],
-		["Player Garage",						"Calton Height, San Fierro",			[-2105.22, 897.84, 76.71],		true],
-		["Pay 'n' Spray",						"Juniper Hollow, San Fierro",			[-2425.70, 1029.37, 50.39],		true],
-		["Player Garage",						"Paradiso, San Fierro",					[-2695.94, 820.34, 49.98],		true],
-		["Airport Hangar",						"Las Venturas Airport, San Fierro",		[1585.90, 1226.73, 10.81],		true],
-		["LV Burglary Garage",					"Pilgrim, Las Venturas",				[2609.68, 1436.90, 10.82],		true],
-		["Transfender",							"Come-A-Lot, Las Venturas",				[2386.75, 1042.44, 10.82],		true],
-		["Player Garage",						"Rockshore West, Las Venturas",			[2448.44, 697.76, 11.46],		true],
-		["Welding Wedding Bomb-workshop",		"Redsands East, Las Venturas",			[2006.11, 2302.69, 10.82],		true],
-		["Pay 'n' Spray",						"Redsands East, Las Venturas",			[1967.55, 2162.43, 10.82],		true],
-		["Player Garage",						"Redsands West, Las Venturas",			[1407.23, 1902.37, 11.46],		true],
-		["Player Garage",						"Prickle Pine, Las Venturas",			[1280.85, 2529.82, 10.82],		true],
-		["Player Garage",						"Whitewood Estates, Las Venturas",		[928.43, 2011.86, 11.46],		true],
-		["Pay 'n' Spray",						"El Quebrados, Tierra Robada",			[-1420.43, 2591.78, 55.82],		true],
-		["Pay 'n' Spray",						"Fort Carson, Bone County",				[-100.00, 1110.53, 19.74],		true],
-		["Player Garage",						"Fort Carson, Bone County",				[-360.72, 1193.05, 19.74],		true],
-		["Player Garage",						"Verdant Meadows, Bone County",			[428.90, 2546.57, 16.21],		true],
-		["Interdiction Mission Garage",			"El Castillo del Diablo, Bone County",	[-388.78, 2228.05, 42.43],		true],
-		["Airport Hangar",						"Verdant Meadows, Bone County",			[404.97, 2478.38, 16.48],		true],
-		["Puncture Wounds Mission Garage",		"Angel Pine, Flint County",				[-2113.93, -2459.94, 30.63],	true],
-		["Pay 'n' Spray",						"Dillimore, Red County",				[719.96, -464.34, 16.34],		true],
-		["Player Garage",						"Palomino Creek, Red County",			[2231.22, 167.27, 27.48],		true],
-		["Player Garage",						"Dillimore, Red County",				[785.95, -494.23, 17.34],		true],
+		["Life's a Beach Mission Garage", "Commerce, Los Santos", [1643.43, -1521.95, 13.56], true],
+		["Los Desperados Mission Garage", "El Corona, Los Santos", [1877.30, -2097.85, 13.53], true],
+		["Eight Ball Autos", "El Corona, Los Santos", [1842.32, -1856.37, 13.38], true],
+		["Cesar Vialpando Mission Garage", "El Corona, Los Santos", [1797.62, -2146.73, 13.55], true],
+		["Player Garage", "El Corona, Los Santos", [1699.06, -2089.99, 13.55], true],
+		["LS Burglary Garage", "Playa del Seville, Los Santos", [2741.21, -2003.46, 13.55], true],
+		["LowRider Tuning Garage", "Willowfield, Los Santos", [2644.90, -2038.41, 13.55], true],
+		["Pay 'n' Spray", "Idlewood, Los Santos", [2072.40, -1831.38, 13.55], true],
+		["Player Garage", "Ganton, Los Santos", [2505.68, -1689.95, 13.56], true],
+		["Transfender", "Temple, Los Santos", [1041.42, -1026.78, 32.10], true],
+		["Pay 'n' Spray", "Temple, Los Santos", [1025.09, -1030.52, 32.04], true],
+		["Pay 'n' Spray", "Santa Maria Beach, Los Santos", [488.41, -1733.88, 11.18], true],
+		["Player Garage", "Santa Maria Beach, Los Santos", [322.60, -1769.86, 4.72], true],
+		["Player Garage", "Mulholland, Los Santos", [1353.23, -625.68, 109.13], true],
+		["Wheel Archangels", "Ocean Flats, San Fierro", [-2715.30, 217.61, 4.32], true],
+		["T-Bone Mendez Mission Garage", "Ocean Flats, San Fierro", [-2730.48, 74.22, 4.34], true],
+		["Player Garage", "Hashbury, San Fierro", [-2455.66, -123.73, 26.09], true],
+		["Transfender", "Doherty, San Fierro", [-1935.88, 237.90, 34.31], true],
+		["Pay 'n' Spray", "Downtown, San Fierro", [-1904.53, 276.63, 41.05], true],
+		["SF Burglary Garage", "Doherty, San Fierro", [-2101.90, -16.07, 35.32], true],
+		["Player Garage", "Doherty, San Fierro", [-2026.94, 130.57, 28.84], true],
+		["Mission Garage", "Doherty, San Fierro", [-2038.18, 178.87, 28.84], true],
+		["Michelle's Pay 'n' Spray", "Downtown, San Fierro", [-1786.78, 1208.87, 25.13], true],
+		["Player Garage", "Calton Height, San Fierro", [-2105.22, 897.84, 76.71], true],
+		["Pay 'n' Spray", "Juniper Hollow, San Fierro", [-2425.70, 1029.37, 50.39], true],
+		["Player Garage", "Paradiso, San Fierro", [-2695.94, 820.34, 49.98], true],
+		["Airport Hangar", "Las Venturas Airport, San Fierro", [1585.90, 1226.73, 10.81], true],
+		["LV Burglary Garage", "Pilgrim, Las Venturas", [2609.68, 1436.90, 10.82], true],
+		["Transfender", "Come-A-Lot, Las Venturas", [2386.75, 1042.44, 10.82], true],
+		["Player Garage", "Rockshore West, Las Venturas", [2448.44, 697.76, 11.46], true],
+		["Welding Wedding Bomb-workshop", "Redsands East, Las Venturas", [2006.11, 2302.69, 10.82], true],
+		["Pay 'n' Spray", "Redsands East, Las Venturas", [1967.55, 2162.43, 10.82], true],
+		["Player Garage", "Redsands West, Las Venturas", [1407.23, 1902.37, 11.46], true],
+		["Player Garage", "Prickle Pine, Las Venturas", [1280.85, 2529.82, 10.82], true],
+		["Player Garage", "Whitewood Estates, Las Venturas", [928.43, 2011.86, 11.46], true],
+		["Pay 'n' Spray", "El Quebrados, Tierra Robada", [-1420.43, 2591.78, 55.82], true],
+		["Pay 'n' Spray", "Fort Carson, Bone County", [-100.00, 1110.53, 19.74], true],
+		["Player Garage", "Fort Carson, Bone County", [-360.72, 1193.05, 19.74], true],
+		["Player Garage", "Verdant Meadows, Bone County", [428.90, 2546.57, 16.21], true],
+		["Interdiction Mission Garage", "El Castillo del Diablo, Bone County", [-388.78, 2228.05, 42.43], true],
+		["Airport Hangar", "Verdant Meadows, Bone County", [404.97, 2478.38, 16.48], true],
+		["Puncture Wounds Mission Garage", "Angel Pine, Flint County", [-2113.93, -2459.94, 30.63], true],
+		["Pay 'n' Spray", "Dillimore, Red County", [719.96, -464.34, 16.34], true],
+		["Player Garage", "Palomino Creek, Red County", [2231.22, 167.27, 27.48], true],
+		["Player Garage", "Dillimore, Red County", [785.95, -494.23, 17.34], true],
 	],
 
 	[ // GTA IV
@@ -1689,13 +1688,13 @@ let emojiReplaceString = [
 	[":water_buffalo:", "🐃"],
 	[":neutral_face:", "😐"],
 	[":clock1230:", "🕧"],
-	[":P", "😛" ],
-	[":)", "🙂" ],
-	[":D", "😃" ],
-	[":o", "😮" ],
-	[":O", "😮" ],
-	[":(", "☹️" ],
-	[":|", "😐" ],
+	[":P", "😛"],
+	[":)", "🙂"],
+	[":D", "😃"],
+	[":o", "😮"],
+	[":O", "😮"],
+	[":(", "☹️"],
+	[":|", "😐"],
 ];
 
 // ----------------------------------------------------------------------------
@@ -3989,7 +3988,7 @@ let skinNames = [
 		"Lawyer 1",
 		"Lawyer 2",
 		"Loony Black Man",
-		"Pilot",
+		"Pilot 2",
 		"Generic Man",
 		"Postal Worker",
 		"Saxophone Player",
@@ -5279,7 +5278,7 @@ let gtaivSkinModels = [
 	["Lawyer 1", -1852976689],
 	["Lawyer 2", -1134712978],
 	["Loony Black Man", 379171768],
-	["Pilot", -1945168882],
+	["Random Dude", -1945168882],
 	["Generic Man", 807236245],
 	["Postal Worker", -284362863],
 	["Saxophone Player", -1188246269],
@@ -5326,7 +5325,7 @@ let gtaivSkinModels = [
 	["Male Gym Worker", -1902758612],
 	["Mechanic 2", -356904519],
 	["Male Modo Worker", -1056268969],
-	["Helicopter Pilot", 1201610759],
+	["Helicopter Pilot 2", 1201610759],
 	["Perseus", -151000142],
 	["Generic Male 1", 501136335],
 	["Generic Male 2", 186619473],
@@ -5863,54 +5862,6 @@ let vehicleDataStructure = Enum(vehicleDataArray);
 
 // ----------------------------------------------------------------------------
 
-function createDefaultVehicleData(vehicle) {
-	let vehicleData = new Array(vehicleDataStructure.length);
-
-	vehicleData[vehicleDataStructure.health] = 1000;
-	vehicleData[vehicleDataStructure.engineState] = false;
-	vehicleData[vehicleDataStructure.lightState] = false;
-	vehicleData[vehicleDataStructure.sirenState] = false;
-	vehicleData[vehicleDataStructure.alarmState] = false;
-	vehicleData[vehicleDataStructure.hornState] = false;
-	vehicleData[vehicleDataStructure.lockState] = false;
-	vehicleData[vehicleDataStructure.suspensionHeight] = -1;
-	vehicleData[vehicleDataStructure.mission] = -1;
-	vehicleData[vehicleDataStructure.cruiseSpeed] = 15.0;
-	vehicleData[vehicleDataStructure.driveTo] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.drivingStyle] = 1;
-	vehicleData[vehicleDataStructure.panelStatus] = -1;
-	vehicleData[vehicleDataStructure.doorStatus] = -1;
-	vehicleData[vehicleDataStructure.lightStatus] = -1;
-	vehicleData[vehicleDataStructure.wheelStatus] = -1;
-	vehicleData[vehicleDataStructure.doorsState] = [-1, -1, -1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.lightsState] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.wheelsState] = [-1, -1, -1, -1];
-	vehicleData[vehicleDataStructure.radioStation] = 0;
-	vehicleData[vehicleDataStructure.handlingIndex] = -1;
-	vehicleData[vehicleDataStructure.wanderRandomly] = false;
-	vehicleData[vehicleDataStructure.scale] = 1.0;
-	vehicleData[vehicleDataStructure.taxiLightState] = false;
-	vehicleData[vehicleDataStructure.livery] = -1;
-	vehicleData[vehicleDataStructure.hazardLightState] = false;
-	vehicleData[vehicleDataStructure.dirtLevel] = -1;
-	vehicleData[vehicleDataStructure.gpsEnabled] = false;
-	vehicleData[vehicleDataStructure.upgrades] = [];
-	vehicleData[vehicleDataStructure.paintJob] = -1;
-
-	if(isServer) {
-		vehicle.setData("sb", vehicleData, true);
-		triggerNetworkEvent("sb.v.sync", null, vehicle.id);
-	} else {
-		// We only need to set the data and sync it if it's a client and not connected to the server.
-		if(!isConnected) {
-			vehicle.setData("sb", vehicleData, true);
-			resyncVehicle(vehicle);
-		}
-	}
-}
-
-// ----------------------------------------------------------------------------
-
 let pedDataArray = [
 	'skin',
 	'health',
@@ -5956,7 +5907,7 @@ let syntaxMessageColour = toColour(200, 200, 200, 255);
 // ----------------------------------------------------------------------------
 
 function replaceEmojiInString(message) {
-	for(let i in emojiReplaceString) {
+	for (let i in emojiReplaceString) {
 		message = message.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
 	}
 	return message;
@@ -5969,25 +5920,25 @@ function makeReadableTime(hour, minute) {
 	let minuteStr = String(minute);
 	let meridianStr = "AM";
 
-	if(hour < 10) {
+	if (hour < 10) {
 		hourStr = "0" + String(hour);
-		if(hour == 0) {
+		if (hour == 0) {
 			hourStr = "12";
 		}
 		meridianStr = "AM";
 	}
 
-	if(hour > 12) {
-		let actualHour = hour-12;
-		if(actualHour < 10) {
-			hourStr = "0" + String(hour-12);
+	if (hour > 12) {
+		let actualHour = hour - 12;
+		if (actualHour < 10) {
+			hourStr = "0" + String(hour - 12);
 		} else {
-			hourStr = String(hour-12);
+			hourStr = String(hour - 12);
 		}
 		meridianStr = "PM";
 	}
 
-	if(minute < 10) {
+	if (minute < 10) {
 		minuteStr = "0" + String(minute);
 	}
 
@@ -5997,8 +5948,8 @@ function makeReadableTime(hour, minute) {
 // ----------------------------------------------------------------------------
 
 function getPosToRightOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((-angle+1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((-angle+1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos((-angle + 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((-angle + 1.57) + (Math.PI / 2))) * distance));
 
 	let rightPos = new Vec3(x, y, pos.z);
 
@@ -6008,8 +5959,8 @@ function getPosToRightOfPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosToLeftOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos((angle+1.57)+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin((angle+1.57)+(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos((angle + 1.57) + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin((angle + 1.57) + (Math.PI / 2))) * distance));
 
 	let leftPos = new Vec3(x, y, pos.z);
 
@@ -6019,8 +5970,8 @@ function getPosToLeftOfPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosInFrontOfPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos(angle+(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin(angle+(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
 	let z = pos.z;
 
 	return new Vec3(x, y, z);
@@ -6029,17 +5980,17 @@ function getPosInFrontOfPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosBehindPos(pos, angle, distance) {
-	let x = (pos.x+((Math.cos(angle-(Math.PI/2)))*distance));
-	let y = (pos.y+((Math.sin(angle-(Math.PI/2)))*distance));
+	let x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+	let y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
 	let z = pos.z;
 
-	return new Vec3(x,y,z);
+	return new Vec3(x, y, z);
 }
 
 // ----------------------------------------------------------------------------
 
 function getPosAbovePos(pos, distance) {
-	let z = pos.z+distance;
+	let z = pos.z + distance;
 
 	return new Vec3(pos.x, pos.y, z);
 }
@@ -6047,7 +5998,7 @@ function getPosAbovePos(pos, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosBelowPos(pos, distance) {
-	let z = pos.z-distance;
+	let z = pos.z - distance;
 
 	return new Vec3(pos.x, pos.y, z);
 }
@@ -6056,8 +6007,8 @@ function getPosBelowPos(pos, distance) {
 
 function getHeadingFromPosToPos(pos1, pos2) {
 
-	let x = pos2.x-pos1.x;
-	let y = pos2.y-pos1.y;
+	let x = pos2.x - pos1.x;
+	let y = pos2.y - pos1.y;
 	let rad = Math.atan2(y, x);
 	let deg = radToDeg(rad);
 	deg -= 90;
@@ -6081,12 +6032,12 @@ function radToDeg(rad) {
 
 function getAngleInCircleFromCenter(center, total, current) {
 	let gap = 360 / total;
-	let deg = Math.floor(gap*current);
+	let deg = Math.floor(gap * current);
 
-	if(deg <= 0) {
+	if (deg <= 0) {
 		deg = 1;
 	} else {
-		if(deg >= 360) {
+		if (deg >= 360) {
 			deg = 359;
 		}
 	}
@@ -6127,15 +6078,15 @@ function vec3ToVec2(pos) {
 // ----------------------------------------------------------------------------
 
 function isParamsInvalid(params) {
-	if(params == null) {
+	if (params == null) {
 		return true;
 	}
 
-	if(params == "") {
+	if (params == "") {
 		return true;
 	}
 
-	if(params.length == 0) {
+	if (params.length == 0) {
 		return true;
 	}
 
@@ -6145,23 +6096,23 @@ function isParamsInvalid(params) {
 // ----------------------------------------------------------------------------
 
 function isValidVehicleModel(modelId) {
-	if(thisGame == GAME_GTA_III) {
-		if(modelId < 90 || modelId > 150) {
+	if (thisGame == GAME_GTA_III) {
+		if (modelId < 90 || modelId > 150) {
 			return false;
 		}
 
 		return true;
 	}
 
-	if(thisGame == GAME_GTA_VC) {
-		if(modelId < 130 || modelId > 236) {
+	if (thisGame == GAME_GTA_VC) {
+		if (modelId < 130 || modelId > 236) {
 			return false;
 		}
 
 		return true;
 	}
 
-	if(thisGame >= GAME_GTA_SA) {
+	if (thisGame >= GAME_GTA_SA) {
 		return true;
 	}
 	return false;
@@ -6170,14 +6121,14 @@ function isValidVehicleModel(modelId) {
 // ----------------------------------------------------------------------------
 
 function getVehicleModelIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		let modelId = getVehicleModelIdFromName(params);
 
-		if(!modelId) {
+		if (!modelId) {
 			return vehicleModelIdStart[gameId];
 		}
 
-		if(isValidVehicleModel(Number(modelId))) {
+		if (isValidVehicleModel(Number(modelId))) {
 			return Number(modelId);
 		}
 
@@ -6188,7 +6139,7 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 		//	return gtaivVehicleModels[params][1];
 		//}
 
-		if(isValidVehicleModel(Number(params))) {
+		if (isValidVehicleModel(Number(params))) {
 			return Number(params);
 		}
 		return vehicleModelIdStart[gameId];
@@ -6200,10 +6151,10 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getGarageIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getGarageIdFromName(params);
 	} else {
-		if(!isValidGarageId(Number(params))) {
+		if (!isValidGarageId(Number(params))) {
 			return false;
 		}
 		return Number(params);
@@ -6215,11 +6166,11 @@ function getGarageIdFromParams(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getSkinIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getSkinIdFromName(params, gameId);
 	} else {
 		params = Number(params);
-		if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
+		if (gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
 			return gtaivSkinModels[params][1];
 		} else {
 			return params;
@@ -6230,10 +6181,10 @@ function getSkinIdFromParams(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getMissionIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getMissionIdFromName(params, gameId);
 	} else {
-		if(typeof missionNames[gameId][Number(params)] != undefined) {
+		if (typeof missionNames[gameId][Number(params)] != undefined) {
 			return Number(params);
 		}
 	}
@@ -6244,10 +6195,10 @@ function getMissionIdFromParams(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getWeaponIdFromParams(params, gameId = thisGame) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getWeaponIdFromName(params, gameId);
 	} else {
-		if(typeof weaponNames[gameId][Number(params)] != undefined) {
+		if (typeof weaponNames[gameId][Number(params)] != undefined) {
 			return Number(params);
 		}
 	}
@@ -6258,8 +6209,8 @@ function getWeaponIdFromParams(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getMissionIdFromName(missionName, gameId = thisGame) {
-	for(let i in missionNames[gameId]) {
-		if(missionNames[gameId][i].toLowerCase().indexOf(missionName.toLowerCase()) != -1) {
+	for (let i in missionNames[gameId]) {
+		if (missionNames[gameId][i].toLowerCase().indexOf(missionName.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
@@ -6272,10 +6223,10 @@ function getMissionIdFromName(missionName, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getVehicleUpgradeIdFromParams(params) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getVehicleUpgradeIdFromName(params);
 	} else {
-		if(typeof vehicleUpgradeNames[Number(params)] != "undefined") {
+		if (typeof vehicleUpgradeNames[Number(params)] != "undefined") {
 			return Number(params);
 		}
 	}
@@ -6286,19 +6237,19 @@ function getVehicleUpgradeIdFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function getVehicleModelIdFromName(params, gameId = thisGame) {
-	if(gameId >= GAME_GTA_IV) {
-		for(let i in gtaivVehicleModels) {
-			if(gtaivVehicleModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				if(gameId >= GAME_GTA_IV) {
+	if (gameId >= GAME_GTA_IV) {
+		for (let i in gtaivVehicleModels) {
+			if (gtaivVehicleModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				if (gameId >= GAME_GTA_IV) {
 					return gtaivVehicleModels[Number(i)][1];
 				}
 			}
 		}
 		return gtaivVehicleModels[0][1];
 	} else {
-		for(let i in vehicleNames[gameId]) {
-			if(vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				return Number(i)+Number(vehicleModelIdStart[gameId]);
+		for (let i in vehicleNames[gameId]) {
+			if (vehicleNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				return Number(i) + Number(vehicleModelIdStart[gameId]);
 			}
 		}
 	}
@@ -6309,8 +6260,8 @@ function getVehicleModelIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getVehicleUpgradeIdFromName(params, gameId = thisGame) {
-	for(let i in vehicleUpgradeNames) {
-		if(vehicleUpgradeNames[i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in vehicleUpgradeNames) {
+		if (vehicleUpgradeNames[i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return i;
 		}
 	}
@@ -6321,16 +6272,16 @@ function getVehicleUpgradeIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getSkinIdFromName(params, gameId = thisGame) {
-	if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
-		for(let i in gtaivSkinModels) {
-			if(gtaivSkinModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	if (gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
+		for (let i in gtaivSkinModels) {
+			if (gtaivSkinModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 				return gtaivSkinModels[i][1];
 			}
 		}
 	} else {
-		for(let i in skinNames[gameId]) {
-			if(skinNames[gameId][i].toLowerCase().indexOf("invalid") == -1) {
-				if(skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+		for (let i in skinNames[gameId]) {
+			if (skinNames[gameId][i].toLowerCase().indexOf("invalid") == -1) {
+				if (skinNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 					return i;
 				}
 			}
@@ -6343,8 +6294,8 @@ function getSkinIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getGarageIdFromName(params, gameId = thisGame) {
-	for(let i in gameGarages[gameId]) {
-		if(gameGarages[gameId][i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in gameGarages[gameId]) {
+		if (gameGarages[gameId][i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
@@ -6355,7 +6306,7 @@ function getGarageIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function isValidGarageId(params, gameId = thisGame) {
-	if(gameGarages[gameId][Number(params)] != "undefined") {
+	if (gameGarages[gameId][Number(params)] != "undefined") {
 		return true;
 	}
 
@@ -6365,8 +6316,8 @@ function isValidGarageId(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getWeaponIdFromName(params, gameId = thisGame) {
-	for(let i in weaponNames[gameId]) {
-		if(weaponNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in weaponNames[gameId]) {
+		if (weaponNames[gameId][i].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
@@ -6375,7 +6326,7 @@ function getWeaponIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function doesWordStartWithVowel(word) {
-	switch(word.substr(0,1).toLowerCase()) {
+	switch (word.substr(0, 1).toLowerCase()) {
 		case "a":
 		case "e":
 		case "i":
@@ -6399,17 +6350,17 @@ function arrayBufferToString(arrayBuffer) {
 // ----------------------------------------------------------------------------
 
 function getVehicleNameFromModelId(modelId, gameId = thisGame) {
-	if(gameId >= GAME_GTA_IV) {
+	if (gameId >= GAME_GTA_IV) {
 		console.log(modelId);
-		for(let i in gtaivVehicleModels) {
-			if(gtaivVehicleModels[i][1] == modelId) {
+		for (let i in gtaivVehicleModels) {
+			if (gtaivVehicleModels[i][1] == modelId) {
 				return gtaivVehicleModels[i][0];
 			}
 		}
 
 		return gtaivVehicleModels[0][0];
 	} else {
-		let modelIdToArraySlot = modelId-vehicleModelIdStart[gameId];
+		let modelIdToArraySlot = modelId - vehicleModelIdStart[gameId];
 		return vehicleNames[gameId][modelIdToArraySlot];
 
 	}
@@ -6420,9 +6371,9 @@ function getVehicleNameFromModelId(modelId, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getSkinNameFromId(modelId, gameId = thisGame) {
-	if(gameId >= GAME_GTA_IV) {
-		for(let i in gtaivSkinModels) {
-			if(gtaivSkinModels[i][1] == modelId) {
+	if (gameId >= GAME_GTA_IV) {
+		for (let i in gtaivSkinModels) {
+			if (gtaivSkinModels[i][1] == modelId) {
 				return gtaivSkinModels[i][0];
 			}
 		}
@@ -6459,8 +6410,8 @@ function getMissionNameFromId(missionId, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function replaceEmojiInString(message) {
-	for(let i in emojiReplaceString) {
-		while(message.indexOf(emojiReplaceString[i][0]) != -1) {
+	for (let i in emojiReplaceString) {
+		while (message.indexOf(emojiReplaceString[i][0]) != -1) {
 			message = message.replace(emojiReplaceString[i][0], emojiReplaceString[i][1]);
 		}
 	}
@@ -6478,26 +6429,26 @@ function getSyncerFromId(syncerId) {
 
 function getClientFromName(clientName) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].name.toLowerCase().indexOf(clientName.toLowerCase()) != -1) {
+	for (let i in clients) {
+		if (clients[i].name.toLowerCase().indexOf(clientName.toLowerCase()) != -1) {
 			return clients[i];
 		}
 	}
 
-    return false;
+	return false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClientFromIndex(index) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].index == index) {
+	for (let i in clients) {
+		if (clients[i].index == index) {
 			return clients[i];
 		}
 	}
 
-    return false;
+	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -6509,19 +6460,19 @@ function getClientFromPlayer(player) {
 // ----------------------------------------------------------------------------
 
 function getPlayerFromParams(params) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getClientFromName(params);
 	} else {
 		return getClientFromIndex(Number(params));
 	}
 
-    return false;
+	return false;
 }
 
 // ----------------------------------------------------------------------------
 
 function getClientFromParams(params) {
-	if(isNaN(params)) {
+	if (isNaN(params)) {
 		return getClientFromName(params);
 	} else {
 		return getClientFromIndex(Number(params));
@@ -6533,8 +6484,8 @@ function getClientFromParams(params) {
 // ----------------------------------------------------------------------------
 
 function packData(...args) {
-	for(let i in args) {
-		switch(args[i].constructor.name) {
+	for (let i in args) {
+		switch (args[i].constructor.name) {
 			case "Vec3":
 				let x = toFixed(args[i].x, 2);
 				let y = toFixed(args[i].y, 2);
@@ -6568,7 +6519,7 @@ function createBitwiseTable(tableKeys) {
 	let bitTable = {};
 	let incVal = 1;
 
-	for(let i in tableKeys) {
+	for (let i in tableKeys) {
 		let key = tableKeys[i];
 		bitTable[key] = bitVal;
 		bitVal = 1 << incVal;
@@ -6580,7 +6531,7 @@ function createBitwiseTable(tableKeys) {
 // ----------------------------------------------------------------------------
 
 function hasBitFlag(checkThis, checkFor) {
-	if(checkThis & checkFor) {
+	if (checkThis & checkFor) {
 		return true;
 	}
 	return false;
@@ -6589,15 +6540,15 @@ function hasBitFlag(checkThis, checkFor) {
 // ----------------------------------------------------------------------------
 
 function killDeathRatio(kills, deaths) {
-	if(deaths == 0 || kills == 0) {
+	if (deaths == 0 || kills == 0) {
 		return 0.0;
 	}
-	return Float((iKills*100/iDeaths) * 0.01);
+	return Float((iKills * 100 / iDeaths) * 0.01);
 }
 
 // ----------------------------------------------------------------------------
 
-function getCardinalDirection ( pos1 , pos2 ) {
+function getCardinalDirection(pos1, pos2) {
 	let a = pos1.x - pos2.x;
 	let b = pos1.y - pos2.y;
 	let c = pos1.z - pos2.z;
@@ -6616,34 +6567,34 @@ function getCardinalDirection ( pos1 , pos2 ) {
 	let nw = 7;
 	let na = 8;
 
-	if(b < 0 && a < 0){
-		if(x < (y/2)){
+	if (b < 0 && a < 0) {
+		if (x < (y / 2)) {
 			return no;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return ea;
 		} else {
 			return ne;
 		}
-	} else if(b < 0 && a >= 0){
-		if(x < (y/2)){
+	} else if (b < 0 && a >= 0) {
+		if (x < (y / 2)) {
 			return no;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return we;
 		} else {
 			return nw;
 		}
-	} else if(b >= 0 && a >= 0){
-		if(x < (y/2)){
+	} else if (b >= 0 && a >= 0) {
+		if (x < (y / 2)) {
 			return so;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return we;
 		} else {
 			return sw;
 		}
-	} else if(b >= 0 && a < 0){
-		if(x < (y/2)){
+	} else if (b >= 0 && a < 0) {
+		if (x < (y / 2)) {
 			return so;
-		} else if(y < (x/2)){
+		} else if (y < (x / 2)) {
 			return ea;
 		} else {
 			return se;
@@ -6657,25 +6608,25 @@ function getCardinalDirection ( pos1 , pos2 ) {
 // ----------------------------------------------------------------------------
 
 function getTimeDifferenceDisplay(unixTimeOne, unixTimeTwo) {
-    let timeDifference = unixTimeOne-unixTimeTwo;
-    let hours = Math.floor(timeDifference/3600);
-    let minutes = Math.floor(timeDifference/60);
-    let hourString = "";
+	let timeDifference = unixTimeOne - unixTimeTwo;
+	let hours = Math.floor(timeDifference / 3600);
+	let minutes = Math.floor(timeDifference / 60);
+	let hourString = "";
 	let minuteString = "";
 
-    if(hours == 1) {
-        hourString = "1 hour";
-    } else {
-        hourString = String(hours) + " hours";
-    }
+	if (hours == 1) {
+		hourString = "1 hour";
+	} else {
+		hourString = String(hours) + " hours";
+	}
 
-    if(minutes == 1) {
-        minuteString = "1 minute";
-    } else {
-        minuteString = String(minutes) + " minute";
-    }
+	if (minutes == 1) {
+		minuteString = "1 minute";
+	} else {
+		minuteString = String(minutes) + " minute";
+	}
 
-    return hourString + " and " + minuteString;
+	return hourString + " and " + minuteString;
 }
 
 // ----------------------------------------------------------------------------
@@ -6713,7 +6664,7 @@ function isValidObjectModel(modelId, gameId = thisGame) {
 
 function getFileData(filePath) {
 	let file = openFile(filePath, false);
-	if(!file) {
+	if (!file) {
 		return false;
 	}
 	let fileData = file.readBytes(file.length);
@@ -6723,10 +6674,9 @@ function getFileData(filePath) {
 
 // ----------------------------------------------------------------------------
 
-function setFileData(filePath, fileData)
-{
+function setFileData(filePath, fileData) {
 	let file = openFile(filePath, true);
-	if(!file) {
+	if (!file) {
 		return false;
 	}
 	file.writeBytes(fileData, fileData.length);
@@ -6744,7 +6694,7 @@ function getXMLItems(filePath) {
 	let xml = parser.parse(data);
 	let root = xml.getRootElement();
 	let items = root.getChildElements();
-	return {root: root, items: items};
+	return { root: root, items: items };
 }
 
 // ----------------------------------------------------------------------------
@@ -6762,11 +6712,11 @@ function updateXMLItem(filePath, rootNode, itemNode, itemAttrName, itemAttrValue
 	let data = getXMLItems(filePath);
 	let item = getXMLItemsByAttribute(data.root, itemAttrName, itemAttrValue);
 
-	if(!item) {
+	if (!item) {
 		return;
 	}
 
-	for(let k in newData) {
+	for (let k in newData) {
 		item.setAttribute(k, newData[k] + '');
 	}
 	saveXMLItems(filePath, rootNode, itemNode, data.root);
@@ -6795,12 +6745,12 @@ function breakText(text, maxLength) {
 	let lines = [];
 	let j = Math.floor(text.length / maxLength);
 
-	for(let i = 0; i < j; i++) {
-		lines.push(text.substr(i*maxLength,maxLength));
+	for (let i = 0; i < j; i++) {
+		lines.push(text.substr(i * maxLength, maxLength));
 	}
 
-	let line = text.substr(j*maxLength, text.length % maxLength);
-	if(line.length > 0) {
+	let line = text.substr(j * maxLength, text.length % maxLength);
+	if (line.length > 0) {
 		lines.push(line);
 	}
 
@@ -6810,7 +6760,7 @@ function breakText(text, maxLength) {
 // ----------------------------------------------------------------------------
 
 function getSpeedFromVelocity(vel) {
-	return Math.sqrt(vel.x*vel.x + vel.y*vel.y + vel.z*vel.z);
+	return Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
 }
 
 // ----------------------------------------------------------------------------
@@ -6823,7 +6773,7 @@ function getRandom(min, max) {
 
 function getArrayOfElementId(elements) {
 	let tempArray = [];
-	for(let i in elements) {
+	for (let i in elements) {
 		tempArray.push(elements[i].id);
 	}
 
@@ -6833,20 +6783,20 @@ function getArrayOfElementId(elements) {
 // ----------------------------------------------------------------------------
 
 function Enum(constantsList) {
-    let tempTable = {};
-	for(let i in constantsList) {
-        tempTable[constantsList[i]] = i;
-    }
+	let tempTable = {};
+	for (let i in constantsList) {
+		tempTable[constantsList[i]] = i;
+	}
 	return tempTable;
 }
 
 // ----------------------------------------------------------------------------
 
 function isValidSkin(skin, game = GAME_GTA_III) {
-	if(game == GAME_GTA_III) {
+	if (game == GAME_GTA_III) {
 		return true;
-	} else if(game == GAME_GTA_VC) {
-		switch(skin) {
+	} else if (game == GAME_GTA_VC) {
+		switch (skin) {
 			case 111:
 				return false;
 
@@ -6859,7 +6809,7 @@ function isValidSkin(skin, game = GAME_GTA_III) {
 // ----------------------------------------------------------------------------
 
 function getProperVehiclePossessionText(params = "") {
-	switch(params.toLowerCase()) {
+	switch (params.toLowerCase()) {
 		case "m":
 		case "me":
 		case "mine":
@@ -6893,15 +6843,15 @@ function getProperVehiclePossessionText(params = "") {
 			return "a random";
 
 		default:
-			if(isNaN(params)) {
+			if (isNaN(params)) {
 				let peds = getPeds();
-				for(let i in peds) {
-					if(peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				for (let i in peds) {
+					if (peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 						return peds[i].name + "'s";
 					}
 				}
 			} else {
-				if(typeof getVehicles()[Number(params)] != "undefined") {
+				if (typeof getVehicles()[Number(params)] != "undefined") {
 					return "The ID " + params;
 				}
 			}
@@ -6912,7 +6862,7 @@ function getProperVehiclePossessionText(params = "") {
 // ----------------------------------------------------------------------------
 
 function getProperCivilianPossessionText(params = "") {
-	switch(params.toLowerCase()) {
+	switch (params.toLowerCase()) {
 		case "m":
 		case "me":
 		case "mine":
@@ -6946,15 +6896,15 @@ function getProperCivilianPossessionText(params = "") {
 			return "The random";
 
 		default:
-			if(isNaN(params)) {
+			if (isNaN(params)) {
 				let peds = getPeds();
-				for(let i in peds) {
-					if(peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+				for (let i in peds) {
+					if (peds[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 						return peds[i].name + "'s";
 					}
 				}
 			} else {
-				if(typeof vehicles[Number(params)] != "undefined") {
+				if (typeof vehicles[Number(params)] != "undefined") {
 					return "The ID " + params;
 				}
 			}
@@ -7692,8 +7642,8 @@ let seatNames = [
 function parseParams(params) {
 	let parsedParams = [];
 	let paramsEntries = params.split(",");
-	paramsEntries.forEach(function(paramsEntry) {
-		if(paramsEntry.indexOf("=") != -1) {
+	paramsEntries.forEach(function (paramsEntry) {
+		if (paramsEntry.indexOf("=") != -1) {
 			parsedParams.push(paramsEntry.split("="));
 		} else {
 			parsedParams.push(paramsEntry);
@@ -7702,8 +7652,8 @@ function parseParams(params) {
 }
 
 function isAmmoWeapon(weaponId, game = thisGame) {
-	if(game == GAME_GTA_III) {
-		if(weaponId == 1) {
+	if (game == GAME_GTA_III) {
+		if (weaponId == 1) {
 			return false;
 		}
 	}
@@ -7745,5 +7695,5 @@ let pedComponents = [
 ];
 
 function getCurrentUnixTimestamp() {
-	return new Date().getTime()/1000;
+	return new Date().getTime() / 1000;
 }
