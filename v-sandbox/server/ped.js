@@ -146,9 +146,9 @@ addNetworkHandler(`sb.c.pos`, function(client, civilianIds, position) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.c.aimat`, function(client, civilianIds, element) {
+addNetworkHandler(`sb.c.aimat`, function(client, civilianIds, elementId) {
 	civilianIds.forEach((civilianId) => {
-		triggerNetworkEvent(`sb.c.aimat`, null, civilianId, element);
+		triggerNetworkEvent(`sb.c.aimat`, null, civilianId, getElementFromId(elementId));
 	});
 });
 
