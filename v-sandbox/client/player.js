@@ -41,6 +41,12 @@ addCommandHandler("skin", function (cmdName, params) {
 				natives.loadAllObjectsNow();
 				if (natives.hasModelLoaded(skinId)) {
 					natives.changePlayerModel(natives.getPlayerId(), skinId);
+
+					if (skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -1004762946) {
+						natives.setPlayerAsCop(natives.getPlayerId(), true);
+					} else {
+						natives.setPlayerAsCop(natives.getPlayerId(), false);
+					}
 				}
 			}
 		} else {
@@ -52,6 +58,8 @@ addCommandHandler("skin", function (cmdName, params) {
 	outputSandboxMessage(outputText);
 	return true;
 });
+
+// ----------------------------------------------------------------------------
 
 addCommandHandler("skintest", function (cmdName, params) {
 	if (game.game != GAME_GTA_IV) {
@@ -364,23 +372,6 @@ addCommandHandler("clear", function (cmdName, params) {
 		message(" ", COLOUR_WHITE);
 	}
 
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("god", function (cmdName, params) {
-	godMode = !godMode;
-	localPlayer.invincible = godMode;
-	if (gta.game < GAME_GTA_IV) {
-		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
-	} else {
-		natives.setCharProofs(localPlayer, godMode, godMode, godMode, godMode, godMode);
-	}
-	//triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
-
-	let outputText = `is ${(godMode) ? "now" : "no longer"} invincible (using /god)`;
-	outputSandboxMessage(outputText);
 	return true;
 });
 
@@ -1017,6 +1008,23 @@ addNetworkHandler("sb.p.delplayer", function (player) {
 
 addNetworkHandler("sb.p.fatness", function (player, fatness) {
 	gta.tommyFatness = fatness;
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.god", function () {
+	godMode = !godMode;
+	localPlayer.invincible = godMode;
+	if (gta.game < GAME_GTA_IV) {
+		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
+	} else {
+		natives.setCharProofs(localPlayer, godMode, godMode, godMode, godMode, godMode);
+	}
+	//triggerNetworkEvent("sb.p.god", localPlayer.id, godMode);
+
+	let outputText = `You are ${(godMode) ? "now" : "no longer"} invincible`;
+	message(outputText);
+	return true;
 });
 
 // ----------------------------------------------------------------------------
