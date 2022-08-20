@@ -83,16 +83,21 @@ addEventHandler("OnDrawnHUD", function (event) {
 			let clients = getClients();
 			for (let i in clients) {
 				let colour = COLOUR_WHITE;
-				if (clients[i].getData("v.colour") != null) {
+				if (clients[i].getData("v.colour")) {
 					colour = clients[i].getData("v.colour");
 				}
 
-				let listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping"))];
+				let name = clients[i].name;
+				if (clients[i].getData("v.name")) {
+					name = clients[i].getData("v.name");
+				}
+
+				let listColumnData = [String(clients[i].index), name, String(clients[i].getData("v.ping"))];
 				if (typeof gta != "undefined") {
 					// Episode
 					text = "Unknown";
 					if (gta.game == GAME_GTA_IV) {
-						listColumnData = [String(clients[i].index), String(clients[i].name), String(clients[i].getData("v.ping")), ivEpisodes[clients[i].getData("v.ivinfo")[0]], ivGamemodes[clients[i].getData("v.ivinfo")[1]]];
+						listColumnData = [String(clients[i].index), name, String(clients[i].getData("v.ping")), ivEpisodes[clients[i].getData("v.ivinfo")[0]], ivGamemodes[clients[i].getData("v.ivinfo")[1]]];
 					}
 				}
 
