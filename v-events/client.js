@@ -104,7 +104,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (typeof ELEMENT_MARKER == "undefined") {
+			if (typeof gta != "undefined") {
 				getElementsByType(ELEMENT_MARKER).forEach(function (tempSphere) {
 					let position = entity.position;
 					if (entity.vehicle) {
