@@ -9,12 +9,13 @@ let smallGameMessageTimer = null;
 
 let blockedScripts = [];
 
+let tokenData = {};
+
 // ----------------------------------------------------------------------------
 
-bindEventHandler("onResourceReady", thisResource, function(event, resource) {
-    console.log(`Admin resource ready!`);
+bindEventHandler("onResourceReady", thisResource, function (event, resource) {
     let fontStream = openFile("pricedown.ttf");
-    if(fontStream != null) {
+    if (fontStream != null) {
         smallGameMessageFont = lucasFont.createFont(fontStream, 20.0);
         fontStream.close();
     }
@@ -22,7 +23,7 @@ bindEventHandler("onResourceReady", thisResource, function(event, resource) {
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnProcess", function(event, deltaTime) {
+addEventHandler("OnProcess", function (event, deltaTime) {
     blockedScripts.forEach((blockedScript) => {
         gta.terminateScript(blockedScript);
     });
@@ -31,26 +32,26 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnDrawnHUD", function (event) {
-    if(smallGameMessageFont != null) {
-        if(smallGameMessageText != "") {
-            smallGameMessageFont.render(smallGameMessageText, [0, gta.height-50], gta.width, 0.5, 0.0, smallGameMessageFont.size, smallGameMessageColour, true, true, false, true);
+    if (smallGameMessageFont != null) {
+        if (smallGameMessageText != "") {
+            smallGameMessageFont.render(smallGameMessageText, [0, gta.height - 50], gta.width, 0.5, 0.0, smallGameMessageFont.size, smallGameMessageColour, true, true, false, true);
         }
     }
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("smallGameMessage", function(text, colour, duration) {
-    console.log(`Showing small game message: ${text} for ${duration}ms`);
+addNetworkHandler("smallGameMessage", function (text, colour, duration) {
+    //console.log(`Showing small game message: ${text} for ${duration}ms`);
 
-    if(smallGameMessageText != "") {
+    if (smallGameMessageText != "") {
         clearTimeout(smallGameMessageTimer);
     }
 
     smallGameMessageColour = colour;
     smallGameMessageText = text;
 
-    smallGameMessageTimer = setTimeout(function() {
+    smallGameMessageTimer = setTimeout(function () {
         smallGameMessageText = "";
         smallGameMessageColour = COLOUR_WHITE;
         smallGameMessageTimer = null;
@@ -59,20 +60,58 @@ addNetworkHandler("smallGameMessage", function(text, colour, duration) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("requestGameScripts", function() {
+addNetworkHandler("requestGameScripts", function () {
     triggerNetworkEvent("receiveGameScripts", gta.getActiveScripts());
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("receiveBlockedScripts", function(scripts) {
+addNetworkHandler("receiveBlockedScripts", function (scripts) {
     blockedScripts = scripts;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("receiveConsoleMessage", function(messageText) {
+addNetworkHandler("receiveConsoleMessage", function (messageText) {
     console.warn(messageText);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.admin.token", function (serverToken) {
+    let tokenFile = loadTextFile("token.json");
+    if (tokenFile == "") {
+        tokenData = {};
+    }
+
+    tokenData = JSON.parse(tokenFile);
+    if (tokenData == null) {
+        tokenData = {};
+    }
+
+    let token = "";
+    if (typeof tokenData[serverToken] != "undefined") {
+        token = tokenData[serverToken];
+    }
+
+    triggerNetworkEvent("v.admin.token", token);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.admin.token.save", function (token, serverToken) {
+    let tokenFile = loadTextFile("token.json");
+    if (tokenFile == "") {
+        tokenData = {};
+    }
+
+    tokenData = JSON.parse(tokenFile);
+    if (tokenData == null) {
+        tokenData = {};
+    }
+
+    tokenData[serverToken] = token;
+    saveTextFile("token.json", JSON.stringify(tokenData));
 });
 
 // ----------------------------------------------------------------------------

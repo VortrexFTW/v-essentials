@@ -29,13 +29,6 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 // ----------------------------------------------------------------------------
 
 addEventHandler("onPlayerJoin", (event, client) => {
-	if (isAdminName(client.name)) {
-		if (!isAdminIP(client.ip)) {
-			messageAdmins(`${client.name} tried to join with an admin's name, but his IP is not in the admin list.`);
-			client.disconnect();
-		}
-		return true;
-	}
 });
 
 // ----------------------------------------------------------------------------
@@ -53,12 +46,7 @@ addEventHandler("onPlayerJoined", (event, client) => {
 	//	}
 	//}
 
-	if (isAdminIP(client.ip)) {
-		messageAdmins(`${client.name} was in the admins list, and was given admin access.`);
-		client.administrator = true;
-		messageClient(`You have been logged in as administrator!`, client, COLOUR_YELLOW);
-		return true;
-	}
+	triggerNetworkEvent("v.admin.token", client);
 });
 
 // ----------------------------------------------------------------------------
@@ -142,7 +130,7 @@ addCommandHandler("unban", (command, params, client) => {
 
 addCommandHandler("a", (command, params, client) => {
 	if (client.administrator) {
-		messageAdmins(`[ADMIN] ${client.name}: ${messageText}`);
+		messageAdmins(`${client.name}: ${params}`);
 	}
 });
 
@@ -167,13 +155,14 @@ addCommandHandler("blockscript", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("makeadmin", (command, params, client) => {
+	let targetClient = getClientFromParams(params);
+
 	if (client.administrator || client.console) {
-		let targetClient = getClientFromParams(params);
 		if (targetClient) {
 			targetClient.administrator = true;
 			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-
-			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), addedBy: escapeJSONString(client.name) });
+			let randomToken = generateRandomString(128);
+			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
 			saveConfig();
 		}
 	}
@@ -184,6 +173,18 @@ addCommandHandler("makeadmin", (command, params, client) => {
 addCommandHandler("ip", (command, params, client) => {
 	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params) || client;
+		if (targetClient) {
+			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("geoip", (command, params, client) => {
+	let targetClient = getClientFromParams(params) || client;
+
+	if (client.administrator || client.console) {
 		if (targetClient) {
 			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 		}
@@ -242,6 +243,12 @@ function messageAdmin(messageText, client, colour) {
 
 function getClientFromParams(params) {
 	let clients = getClients();
+	for (let i in clients) {
+		if (clients[i].index == Number(params)) {
+			return clients[i];
+		}
+	}
+
 	for (let i in clients) {
 		if (clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return clients[i];
@@ -324,7 +331,7 @@ function isAdminIP(ip) {
 
 function isAdminName(name) {
 	for (let i in scriptConfig.admins) {
-		if (name.toLowerCase() == scriptConfig.admins[i].name.toLowerCase()) {
+		if (name.toLowerCase().trim() == scriptConfig.admins[i].name.toLowerCase().trim()) {
 			return true;
 		}
 	}
@@ -422,5 +429,36 @@ function fixMissingConfigStuff() {
 		scriptConfig.bans = [];
 	}
 }
+
+// ----------------------------------------------------------------------------
+
+function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") {
+	var result = '';
+	var charactersLength = characters.length;
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("v.admin.token", function (fromClient, token) {
+	let tokenValid = false;
+
+	for (let i in scriptConfig.admins) {
+		if (scriptConfig.admins[i].token == token) {
+			fromClient.administrator = true;
+			tokenValid = true;
+		}
+	}
+
+	if (isAdminName(fromClient.name)) {
+		if (tokenValid == false) {
+			messageAdmins(`${client.name} was kicked from the server (reserved name but failed token check)`);
+			fromClient.disconnect();
+		}
+	}
+});
 
 // ----------------------------------------------------------------------------
