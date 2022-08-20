@@ -29,9 +29,9 @@ exportFunction("getCustomFont", getCustomFont);
 class CustomAudio {
     constructor(file, loop = false, volume = 1, effects = []) {
         this.filePath = file,
-        this.loop = loop,
-        this.volume = volume,
-        this.effects = effects;
+            this.loop = loop,
+            this.volume = volume,
+            this.effects = effects;
         this.object = null;
     }
 }
@@ -134,25 +134,25 @@ class MovingGate {
 
 // ===========================================================================
 
-bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
+bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
     resourceReady = true;
-    if(resourceStarted && !resourceInit) {
+    if (resourceStarted && !resourceInit) {
         initResource();
     }
 });
 
 // ===========================================================================
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
     resourceStarted = true;
-    if(resourceReady && !resourceInit) {
+    if (resourceReady && !resourceInit) {
         initResource();
     }
 });
 
 // ===========================================================================
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
     game.undoEntityInvisibilitySettings();
     groundSnow.clearModelExclusions();
     collectAllGarbage();
@@ -160,13 +160,13 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 
 // ===========================================================================
 
-addEventHandler("OnDrawHUD", function(event) {
+addEventHandler("OnDrawHUD", function (event) {
     renderCustomWorldGraphics();
 });
 
 // ===========================================================================
 
-addNetworkHandler("moveGate", function(gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement) {
+addNetworkHandler("moveGate", function (gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement) {
     movingGates.push(new MovingGate(gateObjectId, gateId, startPosition, endPosition, startRotation, endRotation, positionInterpolationRatioIncrement, rotationInterpolationRatioIncrement));
 });
 
@@ -183,10 +183,10 @@ function initResource() {
     //    }
     //}
 
-    for(let i in customImages) {
+    for (let i in customImages) {
         let imageFile = openFile(customImages[i].filePath);
-        if(imageFile != null) {
-            if(customImages[i].fileType == IMAGE_TYPE_BMP) {
+        if (imageFile != null) {
+            if (customImages[i].fileType == IMAGE_TYPE_BMP) {
                 customImages[i].object = drawing.loadBMP(imageFile);
             } else {
                 customImages[i].object = drawing.loadPNG(imageFile);
@@ -195,41 +195,43 @@ function initResource() {
         }
     }
 
-    for(let i in customTextures) {
-        let textureName = `${customTextures[i].textureName}`;
-        let txdFile = openFile(customTextures[i].filePath);
-        if(txdFile != null) {
-            gta.loadTXD(textureName, txdFile);
-            txdFile.close();
+    if (game.game <= GAME_GTA_VC) {
+        for (let i in customTextures) {
+            let textureName = `${customTextures[i].textureName}`;
+            let txdFile = openFile(customTextures[i].filePath);
+            if (txdFile != null) {
+                gta.loadTXD(textureName, txdFile);
+                txdFile.close();
+            }
         }
-    }
 
-    for(let i in customModels) {
-        let dffFile = openFile(customModels[i].filePath);
-        if(dffFile != null) {
-            gta.loadDFF(customModels[i].modelId, dffFile);
-            dffFile.close();
+        for (let i in customModels) {
+            let dffFile = openFile(customModels[i].filePath);
+            if (dffFile != null) {
+                gta.loadDFF(customModels[i].modelId, dffFile);
+                dffFile.close();
+            }
         }
-    }
 
-    for(let i in customCollisions) {
-        let colFile = openFile(customCollisions[i].filePath);
-        if(colFile != null) {
-            gta.loadCOL(colFile, customCollisions[i].objectId);
-            colFile.close();
+        for (let i in customCollisions) {
+            let colFile = openFile(customCollisions[i].filePath);
+            if (colFile != null) {
+                gta.loadCOL(colFile, customCollisions[i].objectId);
+                colFile.close();
+            }
         }
-    }
 
-    for(let i in removedWorldObjects) {
-        game.removeWorldObject(removedWorldObjects[i].modelName, removedWorldObjects[i].position, removedWorldObjects[i].radius);
-    }
+        for (let i in removedWorldObjects) {
+            game.removeWorldObject(removedWorldObjects[i].modelName, removedWorldObjects[i].position, removedWorldObjects[i].radius);
+        }
 
-    for(let i in excludedSnowModels) {
-        groundSnow.excludeModel(excludedSnowModels[i]);
-    }
+        for (let i in excludedSnowModels) {
+            groundSnow.excludeModel(excludedSnowModels[i]);
+        }
 
-    for(let i in customGameTexts) {
-        gta.setCustomText(customGameTexts[i][0], customGameTexts[i][1]);
+        for (let i in customGameTexts) {
+            gta.setCustomText(customGameTexts[i][0], customGameTexts[i][1]);
+        }
     }
 
     customWorldGraphicsReady = true;
@@ -238,7 +240,7 @@ function initResource() {
 // ===========================================================================
 
 function getCustomAudio(soundName) {
-    if(typeof customAudios[soundName] != "undefined") {
+    if (typeof customAudios[soundName] != "undefined") {
         customAudios[soundName].object = audio.createSound(audioFile, customAudios[i].loop);
         return customAudios[soundName].object;
     }
@@ -248,8 +250,8 @@ function getCustomAudio(soundName) {
 // ===========================================================================
 
 function playCustomAudio(soundName, volume = 0.5, loop = false) {
-    if(typeof customAudios[soundName] != "undefined") {
-        if(customAudios[soundName].object == null) {
+    if (typeof customAudios[soundName] != "undefined") {
+        if (customAudios[soundName].object == null) {
             customAudios[soundName].object = audio.createSound(audioFile, customAudios[i].loop);
         }
 
@@ -262,8 +264,8 @@ function playCustomAudio(soundName, volume = 0.5, loop = false) {
 // ===========================================================================
 
 function getCustomImage(imageName) {
-    if(typeof customImages[imageName] != "undefined") {
-        if(customImages[imageName].object != null) {
+    if (typeof customImages[imageName] != "undefined") {
+        if (customImages[imageName].object != null) {
             return customImages[imageName].object;
         }
     }
@@ -273,8 +275,8 @@ function getCustomImage(imageName) {
 // ===========================================================================
 
 function getCustomFont(fontName) {
-    if(typeof customFonts[fontName] != "undefined") {
-        if(customFonts[fontName].object != null) {
+    if (typeof customFonts[fontName] != "undefined") {
+        if (customFonts[fontName].object != null) {
             return customFonts[fontName].object;
         }
     }
@@ -286,10 +288,10 @@ function getCustomFont(fontName) {
 function loadCustomFont(fontPath, size) {
     let font = null;
     let fontStream = openFile(fontPath);
-	if(fontStream != null) {
-		font = lucasFont.createFont(fontStream, size);
-		fontStream.close();
-	}
+    if (fontStream != null) {
+        font = lucasFont.createFont(fontStream, size);
+        fontStream.close();
+    }
 
     return font;
 }
@@ -297,12 +299,16 @@ function loadCustomFont(fontPath, size) {
 // ===========================================================================
 
 function renderCustomWorldGraphics() {
-    if(!customWorldGraphicsReady) {
+    if (!customWorldGraphicsReady) {
         return false;
     }
 
-    for(let i in worldGraphicsRenderings) {
-        if(getCustomImage(worldGraphicsRenderings[i].imageName) != false) {
+    if (game.game > GAME_GTA_VC) {
+        return false;
+    }
+
+    for (let i in worldGraphicsRenderings) {
+        if (getCustomImage(worldGraphicsRenderings[i].imageName) != false) {
             gta.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
             gta.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
             gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
@@ -321,8 +327,8 @@ function renderCustomWorldGraphics() {
 // ===========================================================================
 
 function checkMovingGates() {
-    for(let i in movingGates) {
-        if(movingGates[i].positionInterpolateRatio <= 1.0) {
+    for (let i in movingGates) {
+        if (movingGates[i].positionInterpolateRatio <= 1.0) {
             movingGates[i].positionInterpolateRatio = movingGates[i].positionInterpolateRatio + movingGates[i].positionInterpolationRatioIncrement;
             movingGates[i].rotationInterpolateRatio = movingGates[i].rotationInterpolateRatio + movingGates[i].rotationInterpolationRatioIncrement;
             getElementFromId(movingGates[i].gateObjectId).position = movingGates[i].startPosition.interpolate(movingGates[i].endPosition, movingGates[i].positionInterpolateRatio);
