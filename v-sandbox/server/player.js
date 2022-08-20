@@ -77,15 +77,19 @@ addCommandHandler(`goto`, function (cmdName, params, client) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler(`accept`, function (cmdName, params, client) {
-	if (typeof teleportTo[client.index] == "undefined" || teleportTo[client.index] == null) {
-		messageClient(`You don't have a teleport request`, targetClient, errorMessageColour);
+	if (typeof teleportTo[client.index] == "undefined") {
+		messageClient(`You don't have a teleport request`, client, errorMessageColour);
 		return false;
 	}
 
-	setTimeout(function () {
-		let position = getPosInFrontOfPos(playerPosition[client.index], playerHeading[client.index], 2);
-		triggerNetworkEvent(`sb.p.goto`, teleportTo[client.index], position);
-	}, 500);
+	if (teleportTo[client.index] == null) {
+		messageClient(`You don't have a teleport request`, client, errorMessageColour);
+		return false;
+	}
+
+	let position = getPosInFrontOfPos(playerPosition[client.index], playerHeading[client.index], 2);
+	triggerNetworkEvent(`sb.p.goto`, teleportTo[client.index], position);
+
 	outputSandboxMessage(teleportTo[client.index], `teleported to ${client.name} (Using /goto)`);
 
 	teleportTo[client.index] = null;
@@ -218,6 +222,17 @@ addCommandHandler(`connecttime`, function (command, params, client) {
 
 	message(`${tempClient.name} has been connected for ${getTimeDifferenceDisplay(new Date().getTime(), tempClient.getData(`sb.p.connecttime`))}`, gameAnnounceColours[serverGame]);
 	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("god", function (command, params, client) {
+	if (!client.administrator) {
+		messageClient(`You need to be an admin to use this command!`, client, errorMessageColour);
+		return false;
+	}
+
+	triggerNetworkEvent("sb.p.god", client);
 });
 
 // ----------------------------------------------------------------------------
