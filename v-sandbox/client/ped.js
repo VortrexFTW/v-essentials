@@ -2,7 +2,7 @@
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnProcess", function(event, deltaTime) {
+addEventHandler("OnProcess", function (event, deltaTime) {
 	getPeds().filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach((civilian) => {
 		updateCivilianMovement(civilian);
 	});
@@ -11,18 +11,18 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 // ----------------------------------------------------------------------------
 
 function updateCivilianMovement(civilian) {
-	if(!customCiviliansEnabled[game.game]) {
+	if (!customCiviliansEnabled[game.game]) {
 		return false;
 	}
 
-	if(civilianFollowEnabled[game.game]) {
-		if(civilian.getData("sb.c.following")) {
+	if (civilianFollowEnabled[game.game]) {
+		if (civilian.getData("sb.c.following")) {
 			let following = getElementFromId(civilian.getData("sb.c.following"));
-			if(following != null) {
-				if(civilian.isInVehicle) {
-					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
-						if(following.vehicle) {
-							if(civilian.vehicle != following.vehicle) {
+			if (following != null) {
+				if (civilian.isInVehicle) {
+					if (following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
+						if (following.vehicle) {
+							if (civilian.vehicle != following.vehicle) {
 								civilian.exitVehicle();
 								civilian.enterVehicle(following.vehicle, (following.vehicle.getOccupant(0) == null) ? true : false);
 							}
@@ -33,23 +33,23 @@ function updateCivilianMovement(civilian) {
 						civilian.exitVehicle();
 					}
 				} else {
-					if(following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
-						if(following.vehicle) {
+					if (following.isType(ELEMENT_PLAYER) || following.isType(ELEMENT_PED)) {
+						if (following.vehicle) {
 							civilian.enterVehicle(following.vehicle, (following.vehicle.getOccupant(0) == null) ? true : false);
 						}
 					} else {
-						if(following.isType(ELEMENT_VEHICLE)) {
+						if (following.isType(ELEMENT_VEHICLE)) {
 							civilian.enterVehicle(following, (following.getOccupant(0) == null) ? true : false);
 						}
 					}
 				}
 
-				if(following.position.distance(civilian.position) <= civilianFollowStopDistance[game.game]) {
+				if (following.position.distance(civilian.position) <= civilianFollowStopDistance[game.game]) {
 					civilian.walkTo(civilian.position);
 				} else {
-					if(following.position.distance(civilian.position) > civilianFollowRunDistance[game.game]) {
-						if(game.game >= GAME_GTA_VC) {
-							if(following.position.distance(civilian.position) > civilianFollowSprintDistance[game.game]) {
+					if (following.position.distance(civilian.position) > civilianFollowRunDistance[game.game]) {
+						if (game.game >= GAME_GTA_VC) {
+							if (following.position.distance(civilian.position) > civilianFollowSprintDistance[game.game]) {
 								civilian.sprintTo(following.position);
 							} else {
 								civilian.runTo(following.position);
@@ -68,10 +68,10 @@ function updateCivilianMovement(civilian) {
 		}
 	}
 
-	if(civilianFacingEnabled[game.game]) {
-		if(civilian.getData("sb.c.facing") != null) {
+	if (civilianFacingEnabled[game.game]) {
+		if (civilian.getData("sb.c.facing") != null) {
 			let facingPlayer = getElementFromId(civilian.getData("sb.c.facing"));
-			if(facingPlayer != null) {
+			if (facingPlayer != null) {
 				civilian.heading = getHeadingFromPosToPos(facingPlayer.position, facingPlayer.position);
 			} else {
 				console.error(`Ped ${civilian.id}'s entity facing data is set, but the entity doesn't exist. Removing data.`);
@@ -84,22 +84,22 @@ function updateCivilianMovement(civilian) {
 // ----------------------------------------------------------------------------
 
 function updateCivilianScale(civilian) {
-	if(civilian.getData("sb.c.scale") != null) {
-		if(civilian.getData("sb.c.scale") != -1) {
+	if (civilian.getData("sb.c.scale") != null) {
+		if (civilian.getData("sb.c.scale") != -1) {
 			let scaleFactor = Number(civilian.getData("sb.c.scale"));
 			let civilianMatrix = civilian.matrix;
 			civilianMatrix.setScale(new Vec3(scaleFactor, scaleFactor, scaleFactor));
 			let civilianPosition = civilian.position;
 			civilian.matrix = civilianMatrix;
-			civilian.position = new Vec3(civilianPosition.x, civilian.Position.y, civilianPosition.z+Math.round(scaleFactor));
+			civilian.position = new Vec3(civilianPosition.x, civilian.Position.y, civilianPosition.z + Math.round(scaleFactor));
 		}
 	}
 }
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <skin id>`, syntaxMessageColour);
 		return false;
 	}
@@ -115,19 +115,17 @@ addCommandHandler("ped", function(cmdName, params) {
 	//	return false;
 	//}
 
-	if(isConnected) {
-		triggerNetworkEvent("sb.c.add", Number(skinId), position, heading);
-	} else {
-		if(isGTAIV()) {
+	if (isConnected) {
+		if (game.game == GAME_GTA_IV) {
 			let tempCiv = false;
 
 			natives.requestModel(skinId);
 			natives.loadAllObjectsNow();
-			if(natives.hasModelLoaded(skinId)) {
+			if (natives.hasModelLoaded(skinId)) {
 				tempCiv = natives.createChar(1, skinId, position, true);
 			}
 
-			if(!tempCiv) {
+			if (!tempCiv) {
 				message("The civilian could not be added!", errorMessageColour);
 				return false;
 			}
@@ -138,7 +136,28 @@ addCommandHandler("ped", function(cmdName, params) {
 			natives.setCharAsMissionChar(tempCiv, true);
 			natives.setCharStayInCarWhenJacked(tempCiv, true);
 		} else {
-			return false;
+			triggerNetworkEvent("sb.c.add", Number(skinId), position, heading);
+		}
+	} else {
+		if (game.game == GAME_GTA_IV) {
+			let tempCiv = false;
+
+			natives.requestModel(skinId);
+			natives.loadAllObjectsNow();
+			if (natives.hasModelLoaded(skinId)) {
+				tempCiv = natives.createChar(1, skinId, position, true);
+			}
+
+			if (!tempCiv) {
+				message("The civilian could not be added!", errorMessageColour);
+				return false;
+			}
+
+			tempCiv.position = position;
+			tempCiv.heading = heading;
+
+			natives.setCharAsMissionChar(tempCiv, true);
+			natives.setCharStayInCarWhenJacked(tempCiv, true);
 		}
 	}
 
@@ -150,8 +169,8 @@ addCommandHandler("ped", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("pedline", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("pedline", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <skin id> <amount> [gap]`, syntaxMessageColour);
 		return false;
 	}
@@ -169,15 +188,37 @@ addCommandHandler("pedline", function(cmdName, params) {
 	//	return false;
 	//}
 
-	if(isConnected) {
-		for(let i=1;i<=amount;i++){
-			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i*gap);
+	if (isConnected) {
+		for (let i = 1; i <= amount; i++) {
+			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i * gap);
 			let heading = localPlayer.heading;
-			triggerNetworkEvent("sb.c.add", skinId, new Vec3(position.x, position.y, position.z), heading, false);
+
+			if (game.game == GAME_GTA_IV) {
+				let tempCiv = false;
+
+				natives.requestModel(skinId);
+				natives.loadAllObjectsNow();
+				if (natives.hasModelLoaded(skinId)) {
+					tempCiv = natives.createChar(1, skinId, position, true);
+				}
+
+				if (!tempCiv) {
+					message("The civilian could not be added!", errorMessageColour);
+					return false;
+				}
+
+				tempCiv.position = position;
+				tempCiv.heading = heading;
+
+				natives.setCharAsMissionChar(tempCiv, true);
+				natives.setCharStayInCarWhenJacked(tempCiv, true);
+			} else {
+				triggerNetworkEvent("sb.c.add", skinId, new Vec3(position.x, position.y, position.z), heading, false);
+			}
 		}
 	} else {
-		for(let i=1;i<=amount;i++) {
-			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i*gap);
+		for (let i = 1; i <= amount; i++) {
+			let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, i * gap);
 			let heading = localPlayer.heading;
 			tempCiv = createCivilian(skinId);
 			tempCiv.position = position;
@@ -193,8 +234,8 @@ addCommandHandler("pedline", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("pedgrid", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("pedgrid", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <skin id> <columns> <rows> [column gap] [row gap]`, syntaxMessageColour);
 		return false;
 	}
@@ -208,18 +249,40 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 	let rowGap = (Number(splitParams[4]) || 3);
 	let tempCiv = null;
 
-	if(isConnected) {
-		for(let k=1;k<=cols;k++) {
-			for(let i=1;i<=rows;i++) {
-				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading,k*rowGap), localPlayer.heading, i*colGap);
+	if (isConnected) {
+		for (let k = 1; k <= cols; k++) {
+			for (let i = 1; i <= rows; i++) {
+				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading, k * rowGap), localPlayer.heading, i * colGap);
 				let heading = localPlayer.heading;
-				triggerNetworkEvent("sb.c.add", skinId, new Vec3(position.x, position.y, position.z), heading, false);
+
+				if (game.game == GAME_GTA_IV) {
+					let tempCiv = false;
+
+					natives.requestModel(skinId);
+					natives.loadAllObjectsNow();
+					if (natives.hasModelLoaded(skinId)) {
+						tempCiv = natives.createChar(1, skinId, position, true);
+					}
+
+					if (!tempCiv) {
+						message("The civilian could not be added!", errorMessageColour);
+						return false;
+					}
+
+					tempCiv.position = position;
+					tempCiv.heading = heading;
+
+					natives.setCharAsMissionChar(tempCiv, true);
+					natives.setCharStayInCarWhenJacked(tempCiv, true);
+				} else {
+					triggerNetworkEvent("sb.c.add", skinId, new Vec3(position.x, position.y, position.z), heading, false);
+				}
 			}
 		}
 	} else {
-		for(let k=1;k<=cols;k++) {
-			for(let i=1;i<=rows;i++) {
-				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading,k*rowGap), localPlayer.heading, i*colGap);
+		for (let k = 1; k <= cols; k++) {
+			for (let i = 1; i <= rows; i++) {
+				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading, k * rowGap), localPlayer.heading, i * colGap);
 				let heading = localPlayer.heading;
 				tempCiv = gta.createCivilian(skinId);
 				tempCiv.position = position;
@@ -228,7 +291,7 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 		}
 	}
 
-	let outputText = `spawned a ${cols}x${rows} grid of ${getSkinNameFromId(skinId, game.game)} peds, spaced apart by ${colGap}x${rowGap} meters. Total peds: ${cols*rows}`;
+	let outputText = `spawned a ${cols}x${rows} grid of ${getSkinNameFromId(skinId, game.game)} peds, spaced apart by ${colGap}x${rowGap} meters. Total peds: ${cols * rows}`;
 	outputSandboxMessage(outputText);
 
 	return true;
@@ -236,8 +299,8 @@ addCommandHandler("pedgrid", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_wander", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_wander", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <wander path>`, syntaxMessageColour);
 		return false;
 	}
@@ -249,20 +312,20 @@ addCommandHandler("ped_wander", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.wander", getPedsIdsArray(civilians), wanderPath);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			makeCivilianWander(civilian, wanderPath);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = `set ${civilians.length} civilians to wander on path ${wanderPath} (using /${cmdName.toLowerCase()})`;
 	} else {
 		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} to wander on path ${wanderPath} (using /${cmdName.toLowerCase()})`;
@@ -273,8 +336,8 @@ addCommandHandler("ped_wander", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_delete", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_delete", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -285,20 +348,20 @@ addCommandHandler("ped_delete", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.del", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			deleteCivilian(civilian);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "deleted " + String(civilians.length) + " peds.";
 	} else {
 		outputText = "deleted a " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped (using " + String(cmdName.toLowerCase()) + ")";
@@ -310,8 +373,8 @@ addCommandHandler("ped_delete", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_stay", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_stay", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <state>`, syntaxMessageColour);
 		return false;
 	}
@@ -321,20 +384,20 @@ addCommandHandler("ped_stay", function(cmdName, params) {
 	let civilians = getCiviliansFromParams(splitParams[0]);
 	let stayState = Number(splitParams[1]);
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.stay", getPedsIdsArray(civilians), !!stayState);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			setCivilianStayInSamePlace(civilian, !!stayState);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = `set ${civilians.length} civilians to ${(stayState) ? "stay in the same place" : " not stay in the same place"} (using /${cmdName.toLowerCase()})`;
 	} else {
 		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} to ${(stayState) ? "stay in the same place" : " not stay in the same place"} (using /${cmdName.toLowerCase()})`;
@@ -346,15 +409,15 @@ addCommandHandler("ped_stay", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_stamina", function(cmdName, params) {
-	if(isConnected) {
-		if(!civiliansEnabled[game.game]) {
+addCommandHandler("ped_stamina", function (cmdName, params) {
+	if (isConnected) {
+		if (!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <stamina>`, syntaxMessageColour);
 		return false;
 	}
@@ -366,20 +429,20 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.stamina", getPedsIdsArray(civilians), stamina);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			setCivilianStamina(civilian, stamina);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = `set ${civilians.length} civilians stamina to ${stamina} (using /${cmdName.toLowerCase()})`;
 	} else {
 		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} stamina to ${stamina} (using /${cmdName.toLowerCase()})`;
@@ -391,8 +454,8 @@ addCommandHandler("ped_stamina", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_enterveh", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_enterveh", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <vehicle> [driver 0/1]`, syntaxMessageColour);
 		return false;
 	}
@@ -405,25 +468,25 @@ addCommandHandler("ped_enterveh", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(vehicles.length == 0) {
+	if (vehicles.length == 0) {
 		message("No vehicles found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.enterveh", getPedsIdsArray(civilians), vehicles[0], !!driver);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.enterVehicle(vehicles[0], !!driver);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to enter " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -435,8 +498,8 @@ addCommandHandler("ped_enterveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_lookatveh", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_lookatveh", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
@@ -449,25 +512,25 @@ addCommandHandler("ped_lookatveh", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(vehicles.length == 0) {
+	if (vehicles.length == 0) {
 		message("No vehicles found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.lookat", getPedsIdsArray(civilians), vehicles[0].position.x, vehicles[0].position.y, vehicles[0].position.z, duration);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.lookAt(vehicles[0].position, duration);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to look at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -479,8 +542,8 @@ addCommandHandler("ped_lookatveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_exitveh", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_exitveh", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -491,20 +554,20 @@ addCommandHandler("ped_exitveh", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.exitveh", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			setCivilianStamina(civilian, stamina);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to exit their vehicle (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to exit its vehicle" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -516,20 +579,20 @@ addCommandHandler("ped_exitveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_staminadur", function(cmdName, params) {
-	if(game.game == GAME_GTA_III) {
+addCommandHandler("ped_staminadur", function (cmdName, params) {
+	if (game.game == GAME_GTA_III) {
 		message("Ped stamina does not work on GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
-		if(!civiliansEnabled[game.game]) {
+	if (isConnected) {
+		if (!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <duration>`, syntaxMessageColour);
 		return false;
 	}
@@ -541,20 +604,20 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.stamina", getPedsIdsArray(civilians), staminaDuration);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.staminaDuration = staminaDuration;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds stamina to " + String(stamina) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's stamina to " + String(stamina) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -566,20 +629,20 @@ addCommandHandler("ped_staminadur", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_torsorot", function(cmdName, params) {
-	if(game.game == GAME_GTA_III) {
+addCommandHandler("ped_torsorot", function (cmdName, params) {
+	if (game.game == GAME_GTA_III) {
 		message("Ped torso rotation does not work on GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
-		if(!civiliansEnabled[game.game]) {
+	if (isConnected) {
+		if (!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
@@ -591,20 +654,20 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.torsorot", getPedsIdsArray(civilians), rotation);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.torsoRotation = rotation;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds torso rotation to " + String(rotation) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's torso rotation to " + String(rotation) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -616,8 +679,8 @@ addCommandHandler("ped_torsorot", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_walkstyle", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_walkstyle", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
@@ -629,20 +692,20 @@ addCommandHandler("ped_walkstyle", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.walkstyle", getPedsIdsArray(civilians), walkStyle);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.walkStyle = walkStyle;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds walk style to " + String(walkStyle) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's walk style to " + String(walkStyle) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -654,8 +717,8 @@ addCommandHandler("ped_walkstyle", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_armour", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_armour", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
@@ -667,20 +730,20 @@ addCommandHandler("ped_armour", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.armour", getPedsIdsArray(civilians), armour);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.armour = armour;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds armour to " + String(armour) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's armour to " + String(armour) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -692,8 +755,8 @@ addCommandHandler("ped_armour", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_warpinveh", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_warpinveh", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
@@ -706,26 +769,26 @@ addCommandHandler("ped_warpinveh", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(vehicles.length == 0) {
+	if (vehicles.length == 0) {
 		message("No vehicles found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.warpintoveh", getPedsIdsArray(civilians), vehicles[0], seatId);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.warpIntoVehicle(vehicles[0], seatId);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "warped " + String(civilians.length) + " peds into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "warped " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped into the " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " vehicle in the " + seatNames[seatId].toLowerCase() + " seat" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -737,13 +800,13 @@ addCommandHandler("ped_warpinveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_syncer", function(cmdName, params) {
-	if(!isConnected) {
+addCommandHandler("ped_syncer", function (cmdName, params) {
+	if (!isConnected) {
 		message("This command cannot be used offline!", errorMessageColour);
 		return false;
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <client>`, syntaxMessageColour);
 		return false;
 	}
@@ -755,16 +818,16 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.syncer", getPedsIdsArray(civilians), clientName);
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds syncer to " + getClientFromParams(clientName).name + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's syncer to " + getClientFromParams(clientName).name + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -777,8 +840,8 @@ addCommandHandler("ped_syncer", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_health", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_health", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <rotation>`, syntaxMessageColour);
 		return false;
 	}
@@ -790,20 +853,20 @@ addCommandHandler("ped_health", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.armour", getPedsIdsArray(civilians), armour);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.armour = armour;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds health to " + String(health) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's health to " + String(health) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -815,8 +878,8 @@ addCommandHandler("ped_health", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_jump", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_jump", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
@@ -827,20 +890,20 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.jump", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.jumping = true;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "forced " + String(civilians.length) + " peds to jump";
 	} else {
 		outputText = "forced " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to jump" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -852,13 +915,13 @@ addCommandHandler("ped_jump", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_walkfwd", function(cmdName, params) {
+addCommandHandler("ped_walkfwd", function (cmdName, params) {
 	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 	//	message("This feature is not available in San Andreas!", errorMessageColour);
 	//	return false;
 	//}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
@@ -870,22 +933,22 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.walkfwd", getPedsIdsArray(civilians), distance);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
 			makeCivilianWalkTo(civilian, position.x, position.y, position.z);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to walk forward " + String(distance) + " meters.";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to walk forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -898,8 +961,8 @@ addCommandHandler("ped_walkfwd", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_runfwd", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_runfwd", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
@@ -911,22 +974,22 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.runfwd", getPedsIdsArray(civilians), distance);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
 			makeCivilianRunTo(civilian, position.x, position.y, position.z);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to run forward " + String(distance) + " meters.";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to run forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -938,20 +1001,20 @@ addCommandHandler("ped_runfwd", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_sprintfwd", function(cmdName, params) {
-	if(game.game == GAME_GTA_III) {
+addCommandHandler("ped_sprintfwd", function (cmdName, params) {
+	if (game.game == GAME_GTA_III) {
 		message("Civilian sprint is not supported in GTA 3!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
-		if(!civiliansEnabled[game.game]) {
+	if (isConnected) {
+		if (!civiliansEnabled[game.game]) {
 			message("Peds are disabled on this server!", errorMessageColour);
 			return false;
 		}
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <distance>`, syntaxMessageColour);
 		return false;
 	}
@@ -963,22 +1026,22 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians));
 		triggerNetworkEvent("sb.c.sprintfwd", getPedsIdsArray(civilians), distance);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			let position = getPosInFrontOfPos(civilian.position, civilian.heading, distance);
 			makeCivilianSprintTo(civilian, position.x, position.y, position.z)
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to sprint forward " + String(distance) + " meters.";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to sprint forward " + String(distance) + " meters." + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -990,8 +1053,8 @@ addCommandHandler("ped_sprintfwd", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_follow", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_follow", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <player name/id>`, syntaxMessageColour);
 		return false;
 	}
@@ -1003,20 +1066,20 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.follow", getPedsIdsArray(civilians), localPlayer.id);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setData("sb.c.following", localPlayer.id);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to follow " + String((playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1028,8 +1091,8 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_follow", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_follow", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <player name/id>`, syntaxMessageColour);
 		return false;
 	}
@@ -1041,20 +1104,20 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nofollow", getPedsIdsArray(civilians), localPlayer.id);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.removeData("sb.c.following");
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to stop following";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to stop following";
@@ -1066,13 +1129,13 @@ addCommandHandler("ped_follow", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_defend", function(cmdName, params) {
-	if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
+addCommandHandler("ped_defend", function (cmdName, params) {
+	if (game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 		message("This feature is not available in San Andreas!", errorMessageColour);
 		return false;
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1084,23 +1147,23 @@ addCommandHandler("ped_defend", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.defend", getPedsIdsArray(civilians), playerId);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setData("sb.c.defending", true);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
-		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name)  + " (using " + String(cmdName.toLowerCase()) + ")";
+		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to defend " + (playerId == localClient.index) ? getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) : String(getClients()[playerId].name) + " (using " + String(cmdName.toLowerCase()) + ")";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1109,8 +1172,8 @@ addCommandHandler("ped_defend", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_gun", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_gun", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <weapon> [ammo] [hold]`, syntaxMessageColour);
 		return false;
 	}
@@ -1124,28 +1187,28 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.gun", getPedsIdsArray(civilians), weaponId, ammo, !!holdGun);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.giveWeapon(weaponId, ammo, !!holdGun);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		let weaponAmmoOutput = String(getWeaponName(weaponId, game.game)) + "'s with " + String(ammo) + " ammo";
-		if(!isAmmoWeapon(weaponId, game.game)) {
+		if (!isAmmoWeapon(weaponId, game.game)) {
 			weaponAmmoOutput = String(getWeaponName(weaponId, game.game)) + "s";
 		}
 		outputText = "gave " + String(civilians.length) + " peds " + weaponAmmoOutput;
 	} else {
 		let weaponAmmoOutput = "a " + String(getWeaponName(weaponId, game.game)) + " with " + String(ammo) + " ammo";
-		if(!isAmmoWeapon(weaponId, game.game)) {
+		if (!isAmmoWeapon(weaponId, game.game)) {
 			weaponAmmoOutput = "a " + String(getWeaponName(weaponId, game.game));
 		}
 		outputText = "gave " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + weaponAmmoOutput + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1157,8 +1220,8 @@ addCommandHandler("ped_gun", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_scale", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_scale", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <scale>`, syntaxMessageColour);
 		return false;
 	}
@@ -1170,20 +1233,20 @@ addCommandHandler("ped_scale", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.scale", getPedsIdsArray(civilians), scaleFactor);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setData("sb.c.scale", scaleFactor);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds scale to " + String(scaleFactor);
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's scale to " + String(scaleFactor) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1195,8 +1258,8 @@ addCommandHandler("ped_scale", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_stats", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_stats", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <civ group> <stat>`, syntaxMessageColour);
 		return false;
 	}
@@ -1210,12 +1273,12 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	switch(statName.toLowerCase()) {
+	switch (statName.toLowerCase()) {
 		case "cop":
 			statId = STAT_COP;
 			statInfo = "cops";
@@ -1387,15 +1450,15 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 			break;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.stats", getPedsIdsArray(civilians), statId);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setPedStats(civilian, statId);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to act like " + String(statInfo);
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to act like " + String(statInfo) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1407,8 +1470,8 @@ addCommandHandler("ped_stats", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_nogun", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_nogun", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1419,20 +1482,20 @@ addCommandHandler("ped_nogun", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.nogun", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.clearWeapons();
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "took " + String(civilians.length) + " peds weapons";
 	} else {
 		outputText = "took " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped's weapons" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1444,8 +1507,8 @@ addCommandHandler("ped_nogun", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_god", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_god", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <state 0/1>`, syntaxMessageColour);
 		return false;
 	}
@@ -1457,21 +1520,21 @@ addCommandHandler("ped_god", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.god", getPedsIdsArray(civilians), !!godMode);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.invincible = !!godMode;
 			civilian.setProofs(!!godMode, !!godMode, !!godMode, !!godMode, !!godMode);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "made " + String(civilians.length) + " peds " + String((!!godMode) ? "invincible" : "not invincible");
 	} else {
 		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!godMode == 1) ? "invincible" : "not invincible") + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1483,8 +1546,8 @@ addCommandHandler("ped_god", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_crouch", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_crouch", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1496,20 +1559,20 @@ addCommandHandler("ped_crouch", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.crouch", getPedsIdsArray(civilians), !!crouchState);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.crouching = !!crouchState;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "made " + String(civilians.length) + " peds " + String((!!crouchState) ? "crouch" : "stand up");
 	} else {
 		outputText = "made " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped " + String((!!crouchState) ? "crouch" : "stand up") + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1521,8 +1584,8 @@ addCommandHandler("ped_crouch", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_waitstate", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_waitstate", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <wait state> <time>`, syntaxMessageColour);
 		return false;
 	}
@@ -1535,20 +1598,20 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.waitstate", getPedsIdsArray(civilians), waitState, time);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setWaitState(waitState, time);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds wait state to " + String(getPedWaitStateName(waitState, game.game)) + " for " + Sring(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped wait state to " + String(getPedWaitStateName(waitState, game.game)) + " for " + String(time) + " milliseconds" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1560,8 +1623,8 @@ addCommandHandler("ped_waitstate", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_threat", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_threat", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1573,7 +1636,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
@@ -1581,7 +1644,7 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 	var threatId = 1;
 	var threatInfo = "players";
 
-	switch(threatText.toLowerCase()) {
+	switch (threatText.toLowerCase()) {
 		case "cop":
 			threatId = 64;
 			threatInfo = "cops";
@@ -1688,25 +1751,25 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 			break;
 	}
 
-	if(isParamsInvalid(params)) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <threat name>`, syntaxMessageColour);
 		return false;
 	}
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.threat.add", getPedsIdsArray(civilians), threatId);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.setThreatSearch(threatId);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to attack " + String(threatInfo);
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack " + String(threatInfo) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1718,8 +1781,8 @@ addCommandHandler("ped_threat", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_nothreat", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_nothreat", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1729,21 +1792,21 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.threat.clr", getPedsIdsArray(civilians));
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.clearThreatSearch();
 			civilian.heedThreats = false;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to attack nobody";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to attack nobody" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1755,8 +1818,8 @@ addCommandHandler("ped_nothreat", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_aimatme", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_aimatme", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} " + String(cmdName) + " <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1767,20 +1830,20 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), localPlayer.id);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.pointGunAt(localPlayer);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to point their guns at " + getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin));
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to point their guns at " + getGenderObjectivePronoun(getGenderForSkin(localPlayer.skin)) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1792,8 +1855,8 @@ addCommandHandler("ped_aimatme", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_aimatciv", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_aimatciv", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <player>`, syntaxMessageColour);
 		return false;
 	}
@@ -1805,25 +1868,25 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(civilians2.length == 0) {
+	if (civilians2.length == 0) {
 		message("No target peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), civilians2[0].id);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.pointGunAt(civilians2[0]);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to aim their guns at " + getProperCivilianPossessionText(splitParams[1]) + " " + getCivilianName(civilians[1].skin) + " ped";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperCivilianPossessionText(splitParams[1]) + " " + getCivilianName(civilians[1].skin) + " ped" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1835,8 +1898,8 @@ addCommandHandler("ped_aimatciv", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_aimatveh", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_aimatveh", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped> <vehicle>`, syntaxMessageColour);
 		return false;
 	}
@@ -1848,26 +1911,26 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(vehicles.length == 0) {
+	if (vehicles.length == 0) {
 		message("No target peds found!", errorMessageColour);
 		return false;
 	}
 
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), vehicles[0].id);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.pointGunAt(vehicles[0]);
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to aim their guns at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex);
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to aim their guns at " + getProperVehiclePossessionText(splitParams[1]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1879,8 +1942,8 @@ addCommandHandler("ped_aimatveh", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_aimatplr", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_aimatplr", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1894,18 +1957,18 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.aimat", getPedsIdsArray(civilians), targetClient.player.id);
 	} else {
 		message("This command can't be used offline!", errorMessageColour);
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = `set ${civilians.length} peds to aim their guns at ${targetClient.name}`;
 	} else {
 		outputText = `set ${getProperCivilianPossessionText(splitParams[0]).toLowerCase()} ${getSkinNameFromId(civilians[0].skin)} ped to aim their guns at ${targetClient.name}`;
@@ -1917,8 +1980,8 @@ addCommandHandler("ped_aimatplr", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_hailtaxi", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_hailtaxi", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1929,20 +1992,20 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.hailtaxi", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.hailTaxi();
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "set " + String(civilians.length) + " peds to hail a taxi" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "set " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped to hail a taxi" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1954,8 +2017,8 @@ addCommandHandler("ped_hailtaxi", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_resurrect", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_resurrect", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -1966,20 +2029,20 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.resurrect", civilians);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.resurrect();
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "resurrected " + String(civilians.length) + " peds" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "resurrected " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -1991,8 +2054,8 @@ addCommandHandler("ped_resurrect", function(cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("ped_coll", function(cmdName, params) {
-	if(isParamsInvalid(params)) {
+addCommandHandler("ped_coll", function (cmdName, params) {
+	if (isParamsInvalid(params)) {
 		message(`Command: /${String(cmdName)} <ped>`, syntaxMessageColour);
 		return false;
 	}
@@ -2004,20 +2067,20 @@ addCommandHandler("ped_coll", function(cmdName, params) {
 
 	let outputText = "";
 
-	if(civilians.length == 0) {
+	if (civilians.length == 0) {
 		message("No peds found!", errorMessageColour);
 		return false;
 	}
 
-	if(isConnected) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.c.coll", getPedsIdsArray(civilians), !!collisionsEnabled);
 	} else {
-		civilians.forEach(function(civilian) {
+		civilians.forEach(function (civilian) {
 			civilian.collisionsEnabled = (collisionsEnabled == 1) ? true : false;
 		});
 	}
 
-	if(civilians.length > 1) {
+	if (civilians.length > 1) {
 		outputText = "turned " + String(civilians.length) + " peds collisions " + (!!collisionsEnabled) ? "on" : "off" + " (using " + String(cmdName.toLowerCase()) + ")";
 	} else {
 		outputText = "turned " + getProperCivilianPossessionText(splitParams[0]).toLowerCase() + " " + getSkinNameFromId(civilians[0].skin) + " ped collision " + (!!collisionsEnabled) ? "on" : "off" + " (using " + String(cmdName.toLowerCase()) + ")";
@@ -2033,12 +2096,12 @@ function getCiviliansFromParams(params) {
 	let civilians = getCivilians();
 	let selected = [];
 
-	switch(params.toLowerCase()) {
+	switch (params.toLowerCase()) {
 		case "last":
 		case "new":
 		case "newest":
 		case "l":
-			selected.push(civilians[civilians.length-1]);
+			selected.push(civilians[civilians.length - 1]);
 			break;
 
 		case "n":
@@ -2067,7 +2130,7 @@ function getCiviliansFromParams(params) {
 			break;
 
 		default:
-			if(typeof civilians[Number(params)] != "undefined") {
+			if (typeof civilians[Number(params)] != "undefined") {
 				selected.push(civilians[Number(params)]);
 			}
 			return [];
@@ -2084,119 +2147,119 @@ function getCivilians() {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.wander", function(civilianId, wanderPath) {
+addNetworkHandler("sb.c.wander", function (civilianId, wanderPath) {
 	makeCivilianWander(getElementFromId(civilianId), wanderPath);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.nogun", function(civilianId, wanderPath) {
+addNetworkHandler("sb.c.nogun", function (civilianId, wanderPath) {
 	civilian.clearWeapons();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stay", function(civilianId, stayState) {
+addNetworkHandler("sb.c.stay", function (civilianId, stayState) {
 	setCivilianStayInSamePlace(getElementFromId(civilianId), stayState);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkto", function(civilianId, position) {
+addNetworkHandler("sb.c.walkto", function (civilianId, position) {
 	makeCivilianWalkTo(getElementFromId(civilianId), position);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkfwd", function(civilianId, distance) {
+addNetworkHandler("sb.c.walkfwd", function (civilianId, distance) {
 	let position = getPosInFrontOfPos(getElementFromId(civilianId).position, getElementFromId(civilianId).heading, distance);
 	makeCivilianWalkTo(getElementFromId(civilianId), position);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.runfwd", function(civilianId, distance) {
+addNetworkHandler("sb.c.runfwd", function (civilianId, distance) {
 	let position = getPosInFrontOfPos(getElementFromId(civilianId).position, getElementFromId(civilianId).heading, distance);
 	makeCivilianRunTo(getElementFromId(civilianId), position);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.sprintfwd", function(civilianId, distance) {
+addNetworkHandler("sb.c.sprintfwd", function (civilianId, distance) {
 	let position = getPosInFrontOfPos(getElementFromId(civilianId).position, getElementFromId(civilianId).heading, distance);
 	makeCivilianSprintTo(getElementFromId(civilianId), position);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.runto", function(civilianId, x, y, z) {
+addNetworkHandler("sb.c.runto", function (civilianId, x, y, z) {
 	makeCivilianRunTo(getElementFromId(civilianId), x, y, z);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.crouch", function(civilianId, crouchState) {
+addNetworkHandler("sb.c.crouch", function (civilianId, crouchState) {
 	getElementFromId(civilianId).crouching = crouchState;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.add", function(civilianId, threatId) {
+addNetworkHandler("sb.c.threat.add", function (civilianId, threatId) {
 	getElementFromId(civilianId).setThreatSearch(threatId);
 });
 
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.clr", function(civilianId, threatId) {
+addNetworkHandler("sb.c.threat.clr", function (civilianId, threatId) {
 	getElementFromId(civilianId).setThreatSearch(threatId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.threat.heed", function(civilianId, heedThreatState) {
+addNetworkHandler("sb.c.threat.heed", function (civilianId, heedThreatState) {
 	getElementFromId(civilianId).clearThreatSearch();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.stat", function(civilianId, pedStat) {
+addNetworkHandler("sb.c.stat", function (civilianId, pedStat) {
 	getElementFromId(civilianId).setPedStats(pedStat);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.skin", function(civilianId, skinId) {
+addNetworkHandler("sb.c.skin", function (civilianId, skinId) {
 	getElementFromId(civilianId).skin = skinId;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.pos", function(civilianId, position) {
+addNetworkHandler("sb.c.pos", function (civilianId, position) {
 	getElementFromId(civilianId).position = position;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.lookat", function(civilianId, position, duration) {
+addNetworkHandler("sb.c.lookat", function (civilianId, position, duration) {
 	getElementFromId(civilianId).lookat(position, duration);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.aimat", function(civilianId, elementId) {
+addNetworkHandler("sb.c.aimat", function (civilianId, elementId) {
 	getElementFromId(civilianId).pointGunAt(getElementFromId(elementId));
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.walkstyle", function(civilianId, walkStyle) {
+addNetworkHandler("sb.c.walkstyle", function (civilianId, walkStyle) {
 	getElementFromId(civilianId).walkStyle = walkStyle;
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.scale", function(civilian, scaleFactor) {
+addNetworkHandler("sb.c.scale", function (civilian, scaleFactor) {
 	//civilians.forEach(function(civilian) {
 	//	/civilian.setData("sb.scale", scaleFactor);
 	//});
@@ -2204,64 +2267,69 @@ addNetworkHandler("sb.c.scale", function(civilian, scaleFactor) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.warpintoveh", function(civilianId, vehicle, seatId) {
+addNetworkHandler("sb.c.warpintoveh", function (civilianId, vehicle, seatId) {
 	getElementFromId(civilianId).warpIntoVehicle(vehicle, seatId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.enterveh", function(civilianId, vehicle, driver) {
+addNetworkHandler("sb.c.enterveh", function (civilianId, vehicle, driver) {
 	getElementFromId(civilianId).enterVehicle(vehicle, driver);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.exitveh", function(civilianId) {
+addNetworkHandler("sb.c.exitveh", function (civilianId) {
 	getElementFromId(civilianId).exitVehicle();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.god", function(civilianId) {
+addNetworkHandler("sb.c.god", function (civilianId) {
 	getElementFromId(civilianId).hailTaxi();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.hailtaxi", function(civilianId) {
+addNetworkHandler("sb.c.hailtaxi", function (civilianId) {
 	getElementFromId(civilianId).invincible = godMode;
 	getElementFromId(civilianId).setProofs(godMode, godMode, godMode, godMode, godMode);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.gun", function(civilianId, weaponId, ammo, holdGun) {
+addNetworkHandler("sb.c.gun", function (civilianId, weaponId, ammo, holdGun) {
 	getElementFromId(civilianId).giveWeapon(weaponId, ammo, holdGun);
 });
 
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.waitstate", function(civilianId, waitState, time) {
+addNetworkHandler("sb.c.waitstate", function (civilianId, waitState, time) {
 	getElementFromId(civilianId).setWaitState(waitState, time);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.resurrect", function(civilianId) {
+addNetworkHandler("sb.c.resurrect", function (civilianId) {
 	getElementFromId(civilianId).resurrect();
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.c.jump", function(civilianId) {
+addNetworkHandler("sb.c.jump", function (civilianId) {
 	getElementFromId(civilianId).jumping = true;
 });
 
 // ----------------------------------------------------------------------------
 
 function makeCivilianWander(civilian, wanderPath) {
-	civilian.setWanderPath(wanderPath);
+	if (game.game == GAME_GTA_IV) {
+		natives.taskWanderStandard(civilian);
+	} else {
+		civilian.setWanderPath(wanderPath);
+		civilian.setWanderRandomly();
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -2292,8 +2360,8 @@ function makeCivilianSprintTo(civilian, position) {
 
 function getPedsIdsArray(peds) {
 	let tempArray = [];
-	for(let i in peds) {
-		tempArray.push((game.game == GAME_GTA_IV) ? natives.getPedIdFromVehicle(peds[i]) : peds[i].id);
+	for (let i in peds) {
+		tempArray.push((game.game == GAME_GTA_IV) ? natives.getNetworkIdFromPed(peds[i]) : peds[i].id);
 	}
 	return tempArray;
 }
