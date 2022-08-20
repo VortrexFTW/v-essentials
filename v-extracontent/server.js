@@ -79,32 +79,34 @@ class ServerSyncedGate {
 
 // ===========================================================================
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-    createAllServerObjects();
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+    if (game.game <= GAME_GTA_SA) {
+        createAllServerObjects();
+    }
     exportFunction("triggerServerGate", triggerServerGate);
 });
 
 // ===========================================================================
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
     collectAllGarbage();
 });
 
 // ===========================================================================
 
 function createAllServerObjects() {
-    for(let i in serverObjects) {
+    for (let i in serverObjects) {
         serverObjects[i].index = i;
         serverObjects[i].object = gta.createObject(serverObjects[i].modelId, serverObjects[i].position);
         serverObjects[i].object.rotation = serverObjects[i].rotation;
         serverObjects[i].object.streamInDistance = serverObjects[i].streamDistance;
-        serverObjects[i].object.streamOutDistance = serverObjects[i].streamDistance+50.0;
+        serverObjects[i].object.streamOutDistance = serverObjects[i].streamDistance + 50.0;
 
-        if(serverObjects[i].interior != -1) {
+        if (serverObjects[i].interior != -1) {
             serverObjects[i].object.interior = serverObjects[i].interior;
         }
 
-        if(serverObjects[i].dimension == -1) {
+        if (serverObjects[i].dimension == -1) {
             serverObjects[i].object.netFlags.onAllDimensions = true;
         } else {
             serverObjects[i].object.dimension = serverObjects[i].dimension;
@@ -112,20 +114,20 @@ function createAllServerObjects() {
         }
     }
 
-    for(let i in serverObjectGroups) {
+    for (let i in serverObjectGroups) {
         serverObjectGroups[i].index = i;
-        for(let j in serverObjectGroups[i].objects) {
+        for (let j in serverObjectGroups[i].objects) {
             serverObjectGroups[i].objects[j].index = i;
             serverObjectGroups[i].objects[j].object = gta.createObject(serverObjectGroups[i].objects[j].modelId, applyOffsetToVector(serverObjectGroups[i].position, serverObjectGroups[i].objects[j].position));
             serverObjectGroups[i].objects[j].object.rotation = applyOffsetToVector(serverObjectGroups[i].rotation, serverObjectGroups[i].objects[j].rotation);
             serverObjectGroups[i].objects[j].object.streamInDistance = serverObjectGroups[i].objects[j].streamDistance;
-            serverObjectGroups[i].objects[j].object.streamOutDistance = serverObjectGroups[i].objects[j].streamDistance+50.0;
+            serverObjectGroups[i].objects[j].object.streamOutDistance = serverObjectGroups[i].objects[j].streamDistance + 50.0;
 
-            if(serverObjectGroups[i].objects[j].interior != -1) {
+            if (serverObjectGroups[i].objects[j].interior != -1) {
                 serverObjectGroups[i].objects[j].object.interior = serverObjectGroups[i].objects[j].interior;
             }
 
-            if(serverObjectGroups[i].objects[j].dimension == -1) {
+            if (serverObjectGroups[i].objects[j].dimension == -1) {
                 serverObjectGroups[i].objects[j].object.netFlags.onAllDimensions = true;
             } else {
                 serverObjectGroups[i].objects[j].object.dimension = serverObjectGroups[i].dimension;
@@ -134,18 +136,18 @@ function createAllServerObjects() {
         }
     }
 
-    for(let i in serverGates) {
+    for (let i in serverGates) {
         serverGates[i].index = i;
         serverGates[i].object = gta.createObject(serverGates[i].modelId, serverGates[i].closedPosition);
         serverGates[i].object.rotation = serverGates[i].closedRotation;
         serverGates[i].object.streamInDistance = serverGates[i].streamDistance;
-        serverGates[i].object.streamOutDistance = serverGates[i].streamDistance+50.0;
+        serverGates[i].object.streamOutDistance = serverGates[i].streamDistance + 50.0;
 
-        if(serverGates[i].object.interior != -1) {
+        if (serverGates[i].object.interior != -1) {
             serverGates[i].object.interior = serverGates[i].interior;
         }
 
-        if(serverGates[i].dimension == -1) {
+        if (serverGates[i].dimension == -1) {
             serverGates[i].object.netFlags.onAllDimensions = true;
         } else {
             serverGates[i].object.dimension = serverGates[i].dimension;
@@ -157,25 +159,25 @@ function createAllServerObjects() {
 // ===========================================================================
 
 function degToRad(deg) {
-	return deg * Math.PI / 180;
+    return deg * Math.PI / 180;
 }
 
 // ===========================================================================
 
 function radToDeg(rad) {
-	return rad * 180 / Math.PI;
+    return rad * 180 / Math.PI;
 }
 
 // ===========================================================================
 
 function applyOffsetToVector(position, position2) {
-	return new Vec3(position.x+position2.x, position.y+position2.y, position.z+position2.z);
+    return new Vec3(position.x + position2.x, position.y + position2.y, position.z + position2.z);
 }
 
 // ===========================================================================
 
 function getOffsetFromVector(position2, position) {
-	return new Vec3(position.x-position2.x, position.y-position2.y, position.z-position2.z);
+    return new Vec3(position.x - position2.x, position.y - position2.y, position.z - position2.z);
 }
 
 // ===========================================================================
@@ -188,8 +190,8 @@ function triggerServerGate(gateName, force = false, open = true) {
 // ===========================================================================
 
 function getServerGateByName(gateName) {
-    for(let i in serverGates) {
-        if(serverGates[i].name.toLowerCase() == gateName.toLowerCase()) {
+    for (let i in serverGates) {
+        if (serverGates[i].name.toLowerCase() == gateName.toLowerCase()) {
             return i;
         }
     }
@@ -204,7 +206,7 @@ function moveServerGate(gateId, open = true, applyToSyncedGates = true) {
     let startRotation = (open) ? serverGates[gateId].closedRotation : applyOffsetToVector(serverGates[gateId].closedRotation, serverGates[gateId].openRotation);
     let endRotation = (open) ? applyOffsetToVector(serverGates[gateId].closedRotation, serverGates[gateId].openRotation) : serverGates[gateId].closedRotation;
 
-    if(serverGates[gateId].object.syncer == -1) {
+    if (serverGates[gateId].object.syncer == -1) {
         serverGates[gateId].object.position = endPosition;
         serverGates[gateId].object.setRotation(endPosition);
         return false;
@@ -213,9 +215,9 @@ function moveServerGate(gateId, open = true, applyToSyncedGates = true) {
     serverGates[gateId].opened = open;
     triggerNetworkEvent("moveGate", null, serverGates[gateId].object.id, gateId, startPosition, endPosition, startRotation, endRotation, serverGates[gateId].moveInterpolateIncrement, serverGates[gateId].rotateInterpolateIncrement);
 
-    if(applyToSyncedGates == true) {
-        for(let i in serverSyncedGates) {
-            if(serverSyncedGates[i].gate1 == serverGates[gateId].name) {
+    if (applyToSyncedGates == true) {
+        for (let i in serverSyncedGates) {
+            if (serverSyncedGates[i].gate1 == serverGates[gateId].name) {
                 moveServerGate(getServerGateByName(serverSyncedGates[i].gate2), open, false);
             }
         }
@@ -224,10 +226,16 @@ function moveServerGate(gateId, open = true, applyToSyncedGates = true) {
 
 // ===========================================================================
 
-addNetworkHandler("moveGateFinished", function(client, gateId) {
-    if(serverGates[gateId].object.syncer == client.index) {
+addNetworkHandler("moveGateFinished", function (client, gateId) {
+    if (serverGates[gateId].object.syncer == client.index) {
         serverGates[gateId].beingMoved = false;
     }
 });
+
+// ===========================================================================
+
+addCommandHandler("soundall", function (command, params, client) {
+
+}
 
 // ===========================================================================
