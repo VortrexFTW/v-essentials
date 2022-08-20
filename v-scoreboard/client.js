@@ -18,7 +18,7 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 		titleFont = lucasFont.createFont(fontStream, 22.0);
 		fontStream.close();
 	}
-	subTitleFont = lucasFont.createDefaultFont(14.0, "Roboto", "Light");
+	subTitleFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
 	listFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
 
 	if (typeof gta != "undefined") {
@@ -50,11 +50,11 @@ addEventHandler("OnDrawnHUD", function (event) {
 			let playersText = `PLAYERS`;
 			let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
 			let titleSize = titleFont.measure(playersText, listWidth, 0.0, 1.0, 10, false, false);
-			titleFont.render(playersText, [game.width / 2, scoreboardStart - 75], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
+			titleFont.render(playersText, [game.width / 2, scoreboardStart - 85], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
 
 			let playerCountText = `${getClients().length} connected`;
 			let subTitleSize = subTitleFont.measure(playerCountText, listWidth, 0.0, 1.0, 10, false, false);
-			subTitleFont.render(playerCountText, [game.width / 2, scoreboardStart - 45], 0, 0.5, 0.0, subTitleFont.size, COLOUR_WHITE, false, false, false, true);
+			subTitleFont.render(playerCountText, [game.width / 2, scoreboardStart - 55], 0, 0.5, 0.0, subTitleFont.size, COLOUR_WHITE, false, false, false, true);
 
 			titleSize = titleFont.measure("___________________________________", listWidth, 0.0, 1.0, 10, false, false);
 			titleFont.render("___________________________________", [game.width / 2, scoreboardStart - 35], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
