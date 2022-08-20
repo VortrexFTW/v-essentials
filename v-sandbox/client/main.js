@@ -7,16 +7,16 @@ let gameName = gameNames[game.game];
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	if(isConnected) {
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	if (isConnected) {
 		triggerNetworkEvent("sb.clientready");
 		triggerNetworkEvent("sb.w.sync");
 	} else {
 		resyncWorld();
 	}
 
-	if(game.game == GAME_GTA_IV) {
-		if(gta.ivGamemode == 8 || gta.ivGamemode == 30) {
+	if (game.game == GAME_GTA_IV) {
+		if (gta.ivGamemode == 8 || gta.ivGamemode == 30) {
 			natives.allowEmergencyServices(true);
 			natives.setCreateRandomCops(true);
 			natives.setMaxWantedLevel(0);
@@ -33,20 +33,28 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 		natives.requestAnims("DANCING");
 		natives.loadAllObjectsNow();
 
-		gta.startNewScript("ambnightclubm92");
-		gta.startNewScript("drinking");
+		//gta.startNewScript("ambnightclubm92");
+		//gta.startNewScript("drinking");
 		//bindKey(SDLK_m, KEYSTATE_UP, function() { natives.activateNetworkSettingsMenu(); });
+	}
+
+	godMode = false;
+	localPlayer.invincible = godMode;
+	if (gta.game < GAME_GTA_IV) {
+		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
+	} else {
+		natives.setCharProofs(localPlayer, godMode, godMode, godMode, godMode, godMode);
 	}
 });
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
 	unbindKey(SDLK_m);
 });
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("clear", function(cmdName, params, client) {
-	for(let i=0;i<=19;i++) {
+addCommandHandler("clear", function (cmdName, params, client) {
+	for (let i = 0; i <= 19; i++) {
 		global.message("", COLOUR_BLACK);
 	}
 	console.log(`[Sandbox] Chatbox cleared`);
@@ -55,7 +63,7 @@ addCommandHandler("clear", function(cmdName, params, client) {
 // ----------------------------------------------------------------------------
 
 function outputSandboxMessage(messageText) {
-	if(isConnected) {
+	if (isConnected) {
 		console.log(`[Sandbox] ${localClient.name} ${messageText}`);
 		triggerNetworkEvent("sb.msg", messageText);
 	} else {
