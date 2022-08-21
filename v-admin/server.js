@@ -35,18 +35,7 @@ addEventHandler("onPlayerJoin", (event, client) => {
 
 addEventHandler("onPlayerJoined", (event, client) => {
 	sendClientBlockedScripts();
-
-	//if((client.name.toLowerCase().indexOf("console") != -1 || client.name.toLowerCase().indexOf("server") != -1 || client.name.toLowerCase().indexOf("vortrex") != -1 || client.name.toLowerCase().indexOf("jack powell") != -1 || client.name.toLowerCase() == "mex") && client.ip != "50.27.248.3") {
-	//	scriptConfig.bans.push({name: escapeJSONString(client.name), ip: client.ip, admin: "Server", reason: `Joining with name ${client.name}`, timeStamp: new Date().toLocaleDateString('en-GB')});
-	//	saveConfig();
-	//	messageAdmins(`${client.name} has been banned!`, client, COLOUR_YELLOW);
-	//	server.banIP(client.ip, 0);
-	//	if(client) {
-	//		client.disconnect();
-	//	}
-	//}
-
-	triggerNetworkEvent("v.admin.token", client);
+	triggerNetworkEvent("v.admin.token", client, scriptConfig.serverToken);
 });
 
 // ----------------------------------------------------------------------------
@@ -163,6 +152,7 @@ addCommandHandler("makeadmin", (command, params, client) => {
 			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
 			let randomToken = generateRandomString(128);
 			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
+			triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
 			saveConfig();
 		}
 	}
@@ -372,12 +362,10 @@ function escapeJSONString(str) {
 function applyAdminPermissions() {
 	let clients = getClients();
 	for (let i in clients) {
-		if (isAdminIP(clients[i].ip)) {
-			clients[i].administrator = true;
-		} else {
-			clients[i].administrator = false;
-		}
+		clients[i].administrator = false;
 	}
+
+	triggerNetworkEvent("v.admin.token", null, scriptConfig.serverToken);
 }
 
 // ----------------------------------------------------------------------------
@@ -416,6 +404,10 @@ function sendClientBlockedScripts(client) {
 // ----------------------------------------------------------------------------
 
 function fixMissingConfigStuff() {
+	if (typeof scriptConfig.serverToken == "undefined") {
+		scriptConfig.serverToken = generateRandomString(32);
+	}
+
 	if (typeof scriptConfig.blockedScripts == "undefined") {
 		scriptConfig.blockedScripts = new Array(10);
 		scriptConfig.blockedScripts.fill([], 0, 10);
@@ -443,6 +435,16 @@ function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZab
 
 // ----------------------------------------------------------------------------
 
+function getTokenFromName(name) {
+	for (let i in scriptConfig.admins) {
+		if (scriptConfig.admins[i].name.toLowerCase() == name.toLowerCase()) {
+			return scriptConfig.admins[i].token;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
 addNetworkHandler("v.admin.token", function (fromClient, token) {
 	let tokenValid = false;
 
@@ -454,10 +456,15 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 	}
 
 	if (isAdminName(fromClient.name)) {
-		if (tokenValid == false) {
-			messageAdmins(`${client.name} was kicked from the server (reserved name but failed token check)`);
+		if (tokenValid == false || getTokenFromName(fromClient.name) != token) {
+			messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
 			fromClient.disconnect();
+			return false;
 		}
+	}
+
+	if (tokenValid == true) {
+		messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
 	}
 });
 
