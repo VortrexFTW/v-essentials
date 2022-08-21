@@ -111,7 +111,7 @@ addNetworkHandler("v.admin.token.save", function (token, serverToken) {
     }
 
     tokenData[serverToken] = token;
-    saveTextFile("token.json", JSON.stringify(tokenData));
+    saveTextFile("token.json", JSON.stringify(tokenData, null, '\t'));
 });
 
 // ----------------------------------------------------------------------------
