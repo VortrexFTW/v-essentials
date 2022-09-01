@@ -24,16 +24,16 @@ let gameAnnounceColours = [
 
 // ----------------------------------------------------------------------------
 
-if(serverGame == GAME_GTA_III) {
+if (serverGame == GAME_GTA_III) {
 	spawnScreenPedPosition = new Vec3(139.54, -903.00, 26.16);
 	spawnScreenPedHeading = 15.0;
-} else if(serverGame == GAME_GTA_VC) {
+} else if (serverGame == GAME_GTA_VC) {
 	spawnScreenPedPosition = new Vec3(-379.16, -535.27, 17.28);
 	spawnScreenPedHeading = 0.0;
-} else if(serverGame == GAME_GTA_SA) {
+} else if (serverGame == GAME_GTA_SA) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
-} else if(serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
+} else if (serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
 	spawnScreenPedHeading = -1.642;
 }
@@ -61,10 +61,14 @@ let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662];
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("onPedWasted", function(event, ped, attacker, weapon, pedPiece) {
-	if(ped.type == ELEMENT_PLAYER) {
+addEventHandler("onPedDeath", function (event, ped) {
+	if (server.game == 5) {
+		return false;
+	}
+
+	if (ped.type == ELEMENT_PLAYER) {
 		let client = getClientFromPed(ped);
-		if(client != null) {
+		if (client != null) {
 			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
 			destroyElement(ped);
 		}
@@ -73,10 +77,10 @@ addEventHandler("onPedWasted", function(event, ped, attacker, weapon, pedPiece) 
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("onPlayerJoined", function(event, client) {
-	if(spawnScreenEnabled) {
-		if(server.game < GAME_GTA_IV) {
-			setTimeout(function() {
+addEventHandler("onPlayerJoined", function (event, client) {
+	if (spawnScreenEnabled) {
+		if (server.game < GAME_GTA_IV) {
+			setTimeout(function () {
 				fadeCamera(client, true);
 				console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
 				spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
@@ -95,8 +99,8 @@ addEventHandler("onPlayerJoined", function(event, client) {
 
 function getClientFromPed(ped) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(clients[i].player == ped) {
+	for (let i in clients) {
+		if (clients[i].player == ped) {
 			return clients[i];
 		}
 	}
@@ -108,7 +112,7 @@ function getClientFromPed(ped) {
 
 function getSkinName(skinId) {
 	let sandboxResource = findResourceByName("sandbox");
-	if(sandboxResource && sandboxResource.isStarted) {
+	if (sandboxResource && sandboxResource.isStarted) {
 		return sandboxResource.exports.getSkinName(skinId);
 	}
 	return false;
@@ -116,7 +120,7 @@ function getSkinName(skinId) {
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	//if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
 	//	console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
 	//	thisResource.stop();
@@ -125,13 +129,13 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.ss.ivskinsel", function(client, skinId) {
+addNetworkHandler("v.ss.ivskinsel", function (client, skinId) {
 	spawnPlayer(client, spawnScreenPedPosition, spawnScreenPedHeading, skinId);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.ss.ivskinsel", function(client, skinId) {
+addNetworkHandler("v.ss.ivskinsel", function (client, skinId) {
 	spawnPlayer(client, spawnScreenPedPosition, spawnScreenPedHeading, skinId);
 });
 
