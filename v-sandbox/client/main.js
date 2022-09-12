@@ -16,7 +16,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	}
 
 	if (game.game == GAME_GTA_IV) {
-		if (gta.ivGamemode == 8 || gta.ivGamemode == 30) {
+		if (game.ivGamemode == 8 || game.ivGamemode == 30) {
 			natives.allowEmergencyServices(true);
 			natives.setCreateRandomCops(true);
 			natives.setMaxWantedLevel(0);
@@ -33,22 +33,24 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 		natives.requestAnims("DANCING");
 		natives.loadAllObjectsNow();
 
-		//gta.startNewScript("ambnightclubm92");
-		//gta.startNewScript("drinking");
+		//game.startNewScript("ambnightclubm92");
+		//game.startNewScript("drinking");
 		//bindKey(SDLK_m, KEYSTATE_UP, function() { natives.activateNetworkSettingsMenu(); });
 	}
 
 	godMode = false;
 	localPlayer.invincible = godMode;
-	if (gta.game < GAME_GTA_IV) {
+	if (game.game < GAME_GTA_IV) {
 		localPlayer.setProofs(godMode, godMode, godMode, godMode, godMode);
-	} else {
+	} else if (game.game == GAME_GTA_IV) {
 		natives.setCharProofs(localPlayer, godMode, godMode, godMode, godMode, godMode);
 	}
 });
 
+// ----------------------------------------------------------------------------
+
 bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
-	unbindKey(SDLK_m);
+	//unbindKey(SDLK_m);
 });
 
 // ----------------------------------------------------------------------------
