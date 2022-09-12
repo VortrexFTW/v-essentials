@@ -623,3 +623,15 @@ function getSkinName(skinId) {
 }
 
 // ----------------------------------------------------------------------------
+
+addEventHandler("onPedDeath", function (event, ped) {
+	if (server.game == 5) {
+		return false;
+	}
+
+	if (ped == localPlayer) {
+		localPlayer.wantedLevel = 0;
+	}
+});
+
+// ----------------------------------------------------------------------------
