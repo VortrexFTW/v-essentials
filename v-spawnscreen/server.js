@@ -36,6 +36,9 @@ if (serverGame == GAME_GTA_III) {
 } else if (serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
 	spawnScreenPedHeading = -1.642;
+} else if (serverGame == GAME_MAFIA_ONE) {
+	spawnScreenPedPosition = new Vec3(-1981.51, -4.66, 29.37);
+	spawnScreenPedHeading = 3.14;
 }
 
 // ----------------------------------------------------------------------------

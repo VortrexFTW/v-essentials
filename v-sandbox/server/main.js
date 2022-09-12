@@ -11,47 +11,47 @@ let gameName = gameNames[serverGame];
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.e.del", function(client, element) {
+addNetworkHandler("sb.e.del", function (client, element) {
 	destroyElement(element);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.e.syncer", function(client, element) {
+addNetworkHandler("sb.e.syncer", function (client, element) {
 	element.syncer = client.index;
 });
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	if(serverGame != GAME_GTA_IV && serverGame != GAME_GTA_IV_EFLC) {
-		gta.forceWeather(currentWeather[serverGame]);
-		gta.hour = timeLockHour[serverGame];
-		gta.minute = timeLockMinute[serverGame];
-		if(serverGame != GAME_GTA_VC) {
-			gta.trainsEnabled = trainsEnabled[serverGame];
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	if (serverGame != GAME_GTA_IV && serverGame != GAME_GTA_IV_EFLC && serverGame != GAME_MAFIA_ONE) {
+		game.forceWeather(currentWeather[serverGame]);
+		game.hour = timeLockHour[serverGame];
+		game.minute = timeLockMinute[serverGame];
+		if (serverGame != GAME_GTA_VC) {
+			game.trainsEnabled = trainsEnabled[serverGame];
 		}
-		gta.planesEnabled = planesEnabled[serverGame];
+		game.planesEnabled = planesEnabled[serverGame];
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnResourceStart", function(event, resource) {
+addEventHandler("OnResourceStart", function (event, resource) {
 	//console.warn("[Sandbox] Resource '" + resource.name + "' started!");
 });
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnResourceStop", function(event, resource) {
+addEventHandler("OnResourceStop", function (event, resource) {
 	//console.warn("[Sandbox] Resource '" + resource.name + "' stopping!!");
 	collectAllGarbage();
 });
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnProcess", function(event, deltaTime) {
-	if(timeLocked[serverGame]) {
+addEventHandler("OnProcess", function (event, deltaTime) {
+	if (timeLocked[serverGame]) {
 		gta.time.hour = timeLockHour[serverGame];
 		gta.time.minute = timeLockMinute[serverGame];
 	}
@@ -59,7 +59,7 @@ addEventHandler("OnProcess", function(event, deltaTime) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.clientready", function(client) {
+addNetworkHandler("sb.clientready", function (client) {
 	triggerNetworkEvent("sb.w.winter", client, isSnowing[serverGame], isWinter[serverGame]);
 });
 
@@ -67,8 +67,8 @@ addNetworkHandler("sb.clientready", function(client) {
 
 function getSyncerFromID(syncerID) {
 	let clients = getClients();
-	for(let i in clients) {
-		if(i == syncerID) {
+	for (let i in clients) {
+		if (i == syncerID) {
 			return clients[i];
 		}
 	}
@@ -76,7 +76,7 @@ function getSyncerFromID(syncerID) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.msg", function(client, messageText) {
+addNetworkHandler("sb.msg", function (client, messageText) {
 	console.log("[Sandbox] " + String(client.name) + " " + messageText);
 	outputSandboxMessage(client, messageText);
 });
@@ -89,14 +89,14 @@ function outputSandboxMessage(client, messageText) {
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPlayerQuit", function(event, client, disconnectReason) {
+addEventHandler("OnPlayerQuit", function (event, client, disconnectReason) {
 	setTimeout(beginSandboxCleanup, 5000);
 });
 
 // ----------------------------------------------------------------------------
 
 function beginSandboxCleanup() {
-	if(getClients().length == 0) {
+	if (getClients().length == 0) {
 		console.log(`[Sandbox] Server is empty. Restarting sandbox to clean up.`);
 		thisResource.restart();
 	}
