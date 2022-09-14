@@ -17,6 +17,9 @@ if (gta.game == GAME_GTA_III) {
 } else if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
 	spawnProtectPosition = new Vec3(-1166.20, 1873.51, 6.648);
 	spawnProtectRadius = 100.0;
+} else if (game.game == 10) { // Will be changed to GAME_MAFIA_ONE after next GTAC update
+	spawnProtectPosition = new Vec3(-1981.51, -4.66, 29.37);
+	spawnProtectRadius = 100.0;
 }
 
 // ----------------------------------------------------------------------------
@@ -26,8 +29,8 @@ addEventHandler("OnProcess", function (event, deltaTime) {
 		return false;
 	}
 
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		if (gta.ivGamemode == 8) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+		if (game.ivGamemode == 8) {
 			if (localPlayer.position.distance(spawnProtectPosition) <= spawnProtectRadius) {
 				//localPlayer.invincible = true;
 				natives.setCharProofs(localPlayer, true, true, true, true, true);
