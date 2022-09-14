@@ -36,6 +36,9 @@ if (serverGame == GAME_GTA_III) {
 } else if (serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
 	spawnScreenPedHeading = -1.642;
+} else if (serverGame == 10) { // Will be changed to GAME_MAFIA_ONE after next GTAC update
+	spawnScreenPedPosition = new Vec3(-1981.51, -4.66, 29.37);
+	spawnScreenPedHeading = 0.0;
 }
 
 // ----------------------------------------------------------------------------
@@ -57,7 +60,7 @@ let mainWorldDimension = 0;
 
 // ----------------------------------------------------------------------------
 
-let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662];
+let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662, null, null, null, "TommyCOATHAT.i3d"];
 
 // ----------------------------------------------------------------------------
 
@@ -69,7 +72,7 @@ addEventHandler("onPedDeath", function (event, ped) {
 	if (ped.type == ELEMENT_PLAYER) {
 		let client = getClientFromPed(ped);
 		if (client != null) {
-			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+			spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game]);
 			destroyElement(ped);
 		}
 	}
@@ -83,7 +86,7 @@ addEventHandler("onPlayerJoined", function (event, client) {
 			setTimeout(function () {
 				fadeCamera(client, true);
 				console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
-				spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+				spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game]);
 			}, 1000);
 		} else {
 			triggerNetworkEvent("v.spawn", client, spawnPoints[server.game], 0.0, spawnSkin[server.game]);
@@ -92,7 +95,7 @@ addEventHandler("onPlayerJoined", function (event, client) {
 
 	fadeCamera(client, true);
 	console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
-	spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game], 0, 0);
+	spawnPlayer(client, spawnPoints[serverGame], 0.0, spawnSkin[server.game]);
 });
 
 // ----------------------------------------------------------------------------
