@@ -34,7 +34,10 @@ addEventHandler("onPlayerJoin", (event, client) => {
 // ----------------------------------------------------------------------------
 
 addEventHandler("onPlayerJoined", (event, client) => {
-	sendClientBlockedScripts();
+	if (typeof gta != "undefined") {
+		sendClientBlockedScripts();
+	}
+
 	triggerNetworkEvent("v.admin.token", client, scriptConfig.serverToken);
 });
 
@@ -62,6 +65,11 @@ addCommandHandler("kick", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("scripts", (command, params, client) => {
+	if (typeof gta == "undefined") {
+		messageClient(`This command is only available on GTA Connected`, client, errorMessageColour);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (client.administrator || client.console) {
@@ -134,6 +142,11 @@ addCommandHandler("announce", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("blockscript", (command, params, client) => {
+	if (typeof gta == "undefined") {
+		messageClient(`This command is only available on GTA Connected`, client, errorMessageColour);
+		return false;
+	}
+
 	if (client.administrator) {
 		addBlockedScript(params);
 	} else {

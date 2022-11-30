@@ -2,11 +2,13 @@
 
 // ----------------------------------------------------------------------------
 
+let smallGameMessageFontFile = (typeof gta != "undefined") ? "pricedown.ttf" : "aurora-condensed-bold.ttf";
 let smallGameMessageFont = null;
 let smallGameMessageText = "";
 let smallGameMessageColour = COLOUR_WHITE;
 let smallGameMessageTimer = null;
 
+// GTA Connected only
 let blockedScripts = [];
 
 let tokenData = {};
@@ -14,7 +16,7 @@ let tokenData = {};
 // ----------------------------------------------------------------------------
 
 bindEventHandler("onResourceReady", thisResource, function (event, resource) {
-    let fontStream = openFile("pricedown.ttf");
+    let fontStream = openFile(smallGameMessageFontFile);
     if (fontStream != null) {
         smallGameMessageFont = lucasFont.createFont(fontStream, 20.0);
         fontStream.close();
@@ -24,9 +26,11 @@ bindEventHandler("onResourceReady", thisResource, function (event, resource) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function (event, deltaTime) {
-    blockedScripts.forEach((blockedScript) => {
-        gta.terminateScript(blockedScript);
-    });
+    if (typeof gta != "undefined") {
+        blockedScripts.forEach((blockedScript) => {
+            gta.terminateScript(blockedScript);
+        });
+    }
 });
 
 // ----------------------------------------------------------------------------
@@ -61,7 +65,9 @@ addNetworkHandler("smallGameMessage", function (text, colour, duration) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("requestGameScripts", function () {
-    triggerNetworkEvent("receiveGameScripts", gta.getActiveScripts());
+    if (typeof gta != "undefined") {
+        triggerNetworkEvent("receiveGameScripts", gta.getActiveScripts());
+    }
 });
 
 // ----------------------------------------------------------------------------
