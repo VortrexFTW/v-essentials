@@ -39,7 +39,11 @@ let projectData = [];
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-
+	if (typeof DEBUG_RESOURCE == "undefined") {
+		console.warn("The v-mexui-designer resource is not finished. Aborting resource start ...");
+		event.preventDefault();
+		return false;
+	}
 });
 
 // ----------------------------------------------------------------------------
