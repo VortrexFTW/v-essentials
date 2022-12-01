@@ -20,8 +20,8 @@ const V_SHIFT_POS_MULTIPLIER = 100;
 // ----------------------------------------------------------------------------
 
 class ProjectData {
-	constructor(filePath, data = null) {
-		this.filePath = filePath;
+	constructor(name, data = null) {
+		this.name = name;
 		this.data = data;
 		this.editingClient = null;
 
@@ -90,23 +90,39 @@ addNetworkHandler("v.guieditor.data", function (dataString) {
 // ----------------------------------------------------------------------------
 
 function createMexUIFromData(data) {
-	let app = {};
+	let editorApp = {};
 
-	for (let i in data) {
-		recursiveChildren(data);
+	editorApp.window = mexui.window(getPositionVec2(data.window.position), getSizeVec2(data.window.size), data.window.title, data.window.style);
+	editorApp.window.titleBarShown = data.window.shown;
+	editorApp.window.titleBarHeight = data.window.height;
+	editorApp.window.titleBarIconShown = data.window.shown;
+	editorApp.window.titleBarIconSize = getPositionVec2(data.window.position);
+
+	for (let i in data.elements) {
+		switch (data.elements[i].type) {
+			case "button":
+				editorApp.elements[i] = editorApp.window.button(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				editorApp.elements[i].callback = data.elements[i].callback;
+
+				break;
+
+			case "image":
+				editorApp.elements[i] = editorApp.window.image(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].imagePath, data.window.style);
+				editorApp.elements[i].callback = data.elements[i].callback;
+				break;
+
+			case "text":
+				editorApp.elements[i] = editorApp.window.text(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				break;
+
+			case "textInput":
+				editorApp.elements[i] = editorApp.window.textInput(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.window.style);
+				editorApp.elements[i].placeholder = data.elements[i].placeholder;
+				editorApp.elements[i].masked = data.elements[i].masked;
+				editorApp.elements[i].callback = data.elements[i].callback;
+				break;
+		}
 	}
-
-	// Loop through data object
-	//switch (tempObject.type) {
-	//	case "window":
-	//		break;
-	//
-	//	case "button":
-	//		break;
-	//
-	//	case "image":
-	//		break;
-	//}
 }
 
 // ----------------------------------------------------------------------------

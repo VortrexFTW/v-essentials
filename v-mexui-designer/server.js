@@ -9,7 +9,8 @@
 // ----------------------------------------------------------------------------
 
 class ProjectData {
-	constructor(filePath, data = null) {
+	constructor(name, filePath, data = null) {
+		this.name = name;
 		this.filePath = filePath;
 		this.data = data;
 		this.editingClient = null;
@@ -78,7 +79,9 @@ addCommandHandler("newgui", function (command, params, client) {
 		return false;
 	}
 
-	projectData[client.index] = new ProjectData(params, null);
+	let name = escapeJSONString(params);
+
+	projectData[client.index] = new ProjectData(name, `data/${name}.json`, null);
 
 	triggerNetworkEvent("v.guieditor.init", client);
 });
@@ -90,14 +93,39 @@ addCommandHandler("loadgui", function (command, params, client) {
 		return false;
 	}
 
+	let name = escapeJSONString(params);
+	let filePath = `data/${name}.json`;
+
+	let clients = getClients();
+	for (let i in clients) {
+		if (projectData[i].toLowerCase() == name.toLowerCase()) {
+			messageClient(`Somebody is already editing the ${name} GUI!`);
+			return false;
+		}
+	}
+
 	let dataString = loadDataFromFile(projectData[client.index].filePath);
 	let data = JSON.parse(dataString);
 
-	projectData[client.index] = new ProjectData(params, null);
-	projectData[client.index].data = data
+	projectData[client.index] = new ProjectData(name, filePath, null);
+	projectData[client.index].data = data;
+	projectData[client.index].editingClient = client;
 
 	// Restringify without the tabs to condense the string
 	triggerNetworkEvent("v.guieditor.init", client, JSON.stringify(projectData[client.index].data));
 });
+
+// ----------------------------------------------------------------------------
+
+function escapeJSONString(str) {
+	return str.replace(/\\n/g, "\\n")
+		.replace(/\\'/g, "\\'")
+		.replace(/\\"/g, '\\"')
+		.replace(/\\&/g, "\\&")
+		.replace(/\\r/g, "\\r")
+		.replace(/\\t/g, "\\t")
+		.replace(/\\b/g, "\\b")
+		.replace(/\\f/g, "\\f");
+}
 
 // ----------------------------------------------------------------------------
