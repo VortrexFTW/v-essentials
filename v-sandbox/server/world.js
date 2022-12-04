@@ -46,22 +46,6 @@ addNetworkHandler(`sb.w.minutedur`, function (client, minuteDuration) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.w.timelock`, function (client, state) {
-	if (!client.administrator) {
-		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
-		return false;
-	}
-
-	let outputMessage = ``;
-
-	timeLocked[server.game] = !!state;
-
-	outputMessage = String((timeLocked[server.game]) ? `enabled` : `disabled`) + ` time lock`;
-	outputSandboxMessage(client, outputMessage);
-});
-
-// ----------------------------------------------------------------------------
-
 addNetworkHandler(`sb.w.trains`, function (client, state) {
 	if (!client.administrator) {
 		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);

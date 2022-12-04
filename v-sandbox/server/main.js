@@ -48,15 +48,6 @@ addEventHandler("OnResourceStop", function (event, resource) {
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnProcess", function (event, deltaTime) {
-	if (timeLocked[serverGame]) {
-		gta.time.hour = timeLockHour[serverGame];
-		gta.time.minute = timeLockMinute[serverGame];
-	}
-});
-
-// ----------------------------------------------------------------------------
-
 addNetworkHandler("sb.clientready", function (client) {
 	triggerNetworkEvent("sb.w.winter", client, isSnowing[serverGame], isWinter[serverGame]);
 });

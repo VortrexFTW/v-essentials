@@ -26,36 +26,7 @@ addCommandHandler("time", function (command, params) {
 	} else {
 		game.time.hour = hour;
 		game.time.minute = minute;
-		if (timeLocked[gta.game]) {
-			timeLockHour[gta.game] = hour;
-			timeLockMinute[gta.game] = minute;
-		}
 		message(`The time is now set to ${makeReadableTime(hour, minute)}`, gameAnnounceColour);
-	}
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("timelock", function (command, params) {
-	if (isParamsInvalid(params)) {
-		message(`Time lock is currently turned ${getOnOffText(timeLocked[gta.game])}`, gameAnnounceColour);
-		message(`To turn time lock on or off, use /timelock <state 0/1>`, syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let timeLockState = Number(splitParams[0]) || 0;
-
-	if (isConnected) {
-		triggerNetworkEvent("sb.w.timelock", !!timeLockState);
-	} else {
-		timeLocked[gta.game] = !!timeLockState;
-		if (!!timeLockState) {
-			timeLockHour[gta.game] = gta.time.hour;
-			timeLockMinute[gta.game] = gta.time.minute;
-		}
-		message(`Time lock has been turned ${getOnOffText(timeLocked[gta.game])}`, gameAnnounceColour);
 	}
 	return true;
 });
