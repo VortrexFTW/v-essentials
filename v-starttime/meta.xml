@@ -1,5 +1,0 @@
-<meta>
-	<info title="v-starttime" author="Vortrex" version="1.0" description="Starts the server with a specific time set in server.xml" />
-
-	<script src="server.js" type="server" language="javascript" />
-</meta>

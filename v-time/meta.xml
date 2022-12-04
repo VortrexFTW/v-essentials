@@ -1,0 +1,5 @@
+<meta>
+	<info title="v-time" author="Vortrex" version="1.0" description="Sets the time with an 'hour' and 'minute' cvars set in server.xml" />
+
+	<script src="server.js" type="server" language="javascript" />
+</meta>
