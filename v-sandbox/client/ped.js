@@ -1,5 +1,3 @@
-"use strict";
-
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function (event, deltaTime) {

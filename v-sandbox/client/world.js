@@ -1,6 +1,4 @@
-﻿"use strict";
-
-// ----------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------
 
 addCommandHandler("time", function (command, params) {
 	if (isParamsInvalid(params)) {
@@ -64,40 +62,6 @@ addCommandHandler("timelock", function (command, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("weather", function (command, params) {
-	if (isParamsInvalid(params)) {
-		message(`The weather is currently: ${getWeatherName(currentWeather[gta.game])}`, gameAnnounceColour);
-		message(`To change the weather, use /weather <weather name/id> [force 0/1]`, syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let weatherId = (Number(splitParams[0]) || 0);
-	let weatherForce = (Number(splitParams[1]) || 1);
-
-	if (weatherId < 0 || weatherId > (weatherNames[gta.game].length - 1)) {
-		message(`The weather must be between 0 and ${weatherNames[gta.game].length - 1}!`, errorMessageColour);
-		return false;
-	}
-
-	if (isConnected) {
-		triggerNetworkEvent("sb.w.weather", weatherId, !!weatherForce);
-	} else {
-		currentWeather[gta.game] = weatherId;
-		if (!!weatherForce) {
-			gta.forceWeather(weatherId);
-			message(`The weather has been forced to ${getWeatherName(currentWeather[gta.game])}`, gameAnnounceColour);
-		} else {
-			gta.currentWeather = weatherId;
-			message(`The weather has been set to ${getWeatherName(currentWeather[gta.game])} `, gameAnnounceColour);
-		}
-	}
-
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
 addCommandHandler("garage", function (command, params) {
 	let outputText = "";
 
@@ -116,66 +80,6 @@ addCommandHandler("garage", function (command, params) {
 		outputText = `closed the ${getGarageNameFromId(garageId, gta.game)} garage in ${String(getGarageLocationFromId(garageId, gta.game))}`;
 		outputSandboxMessage(outputText);
 	}
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("winter", function (command, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message(`The /${command} command is not available on this game!`, errorMessageColour);
-		return false;
-	}
-
-	if (isParamsInvalid(params)) {
-		message(`Winter mode is currently turned ${getOnOffText(isWinter[gta.game])}`, gameAnnounceColour);
-		message(`To turn winter on or off, use /winter <winter state 0/1>`, syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let winterState = Number(splitParams[0]) || 0;
-
-	if (isConnected) {
-		triggerNetworkEvent("sb.w.winter", !!winterState);
-	} else {
-		if (typeof forceSnowing !== "undefined") {
-			isWinter[gta.game] = !!winterState;
-			forceSnowing(!!winterState);
-			message(`Winter mode has been turned ${getOnOffText(isWinter[gta.game])}`, gameAnnounceColour);
-		}
-	}
-
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addCommandHandler("snow", function (command, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		message(`The /${command} command is not available on this game!`, errorMessageColour);
-		return false;
-	}
-
-	if (isParamsInvalid(params)) {
-		message(`Snow is currently turned ${getOnOffText(isSnowing[gta.game])}`, gameAnnounceColour);
-		message(`To turn snow on or off, use /${command} <snow state 1/0>`, syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let snowState = Number(splitParams[0]) || 0;
-
-	if (isConnected) {
-		triggerNetworkEvent("sb.w.snow", !!snowState);
-	} else {
-		if (typeof snowing !== "undefined") {
-			isSnowing[gta.game] = !!snowState;
-			snowing = !!snowState;
-			message(`Snow has been turned ${getOnOffText(isSnowing[gta.game])}`, gameAnnounceColour);
-		}
-	}
-
 	return true;
 });
 
@@ -400,44 +304,6 @@ addCommandHandler("minutedur", function (command, params) {
 		message(`Minute duration has been set to ${timeMinuteDuration[gta.game]}`, gameAnnounceColour);
 	}
 	return true;
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnProcess", function () {
-	if (!isConnected) {
-		if (timeLocked[gta.game]) {
-			game.time.hour = timeLockHour[gta.game];
-			game.time.minute = timeLockMinute[gta.game];
-		}
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler("sb.w.winter", function (winter) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		return false;
-	}
-
-	if (gta.game < GAME_GTA_SA) {
-		isWinter[gta.game] = winter;
-		snow.force(winter);
-	}
-});
-
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler("sb.w.snow", function (snow) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
-		return false;
-	}
-
-	if (gta.game < GAME_GTA_SA) {
-		isSnowing[gta.game] = snow;
-		snow.enabled(winter);
-	}
 });
 
 // ----------------------------------------------------------------------------

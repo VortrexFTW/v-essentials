@@ -1,5 +1,3 @@
-"use strict";
-
 // ----------------------------------------------------------------------------
 
 let gameAnnounceColour = gameAnnounceColours[game.game];

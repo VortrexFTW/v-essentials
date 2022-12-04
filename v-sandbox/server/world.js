@@ -1,44 +1,3 @@
-`use strict`;
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler(`sb.w.weather`, function (client, weather, force) {
-	if (!client.administrator) {
-		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
-		return false;
-	}
-
-	let outputMessage = ``;
-
-	currentWeather[server.game] = weather;
-
-	if (force) {
-		gta.forceWeather(weather);
-		outputMessage = `forced the weather to ${weatherNames[server.game][weather]}`;
-	} else {
-		gta.weather = weather;
-		outputMessage = `set the weather to ${weatherNames[server.game][weather]}`;
-	}
-
-	outputSandboxMessage(client, outputMessage);
-});
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler(`sb.w.winter`, function (client, winter) {
-	if (!client.administrator) {
-		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
-		return false;
-	}
-
-	let outputMessage = ``;
-	isWinter[server.game] = winter;
-
-	triggerNetworkEvent(`sb.w.winter`, null, isWinter[server.game]);
-	outputMessage = `${(isWinter[server.game]) ? `enabled` : `disabled`} winter`;
-	outputSandboxMessage(client, outputMessage);
-});
-
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.w.garage`, function (client, garageId, state) {
@@ -47,23 +6,6 @@ addNetworkHandler(`sb.w.garage`, function (client, garageId, state) {
 	gameGarages[server.game][garageId][3] = state;
 
 	triggerNetworkEvent(`sb.w.garage`, null, garageId, gameGarages[server.game][garageId][3]);
-});
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler(`sb.w.snow`, function (client, snow) {
-	if (!client.administrator) {
-		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
-		return false;
-	}
-
-	let outputMessage = ``;
-
-	isSnowing[serverGame] = snow;
-
-	triggerNetworkEvent(`sb.w.snow`, null, server.getCVar("snowing"));
-	outputMessage = `${(isSnowing[server.game]) ? "enabled" : "disabled"} falling snow`;
-	outputSandboxMessage(client, outputMessage);
 });
 
 // ----------------------------------------------------------------------------

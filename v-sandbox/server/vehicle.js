@@ -1,5 +1,3 @@
-`use strict`;
-
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.v.add`, function (client, modelID, position, heading) {

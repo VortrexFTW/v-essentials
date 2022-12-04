@@ -10,25 +10,9 @@
 
 // ----------------------------------------------------------------------------
 
-// TIME INFORMATION:
-
-// timeLockHour and timeLockMinute will force the time to stay in the specified
-// hour and minute, IF time lock is enabled! Otherwise, it will set that hour
-// and minute on server start and time will advance as normal
-
 // OTHER NOTES
 // * trainsEnabled won't be used in GTA Vice City (obviously)
 // * ssvBridgeEnabled will only be used in GTA III (obviously)
-// * windSpeed is only used in GTA IV.
-// * Snow and winter values are only used in GTA III, Vice City, and San Andreas
-
-// ----------------------------------------------------------------------------
-
-// Time
-let timeLocked = [null, false, false, false, false, false, false];						// Locks the time to a specific hour/minute
-let timeLockHour = [null, 19, 12, 12, 12, 12, 12];										// If time is locked, hour will be forever locked to this number.
-let timeLockMinute = [null, 15, 0, 0, 0, 0, 0];											// If time is locked, the minute will be forever locked to this number.
-let timeMinuteDuration = [null, 1000, 1000, 1000, 1000, 1000, 1000];
 
 // ----------------------------------------------------------------------------
 
@@ -41,14 +25,6 @@ let trafficEnabled = [null, true, true, false, false, true, true];
 let trafficDensity = [null, 1, 1, 1, 1, 0, 0];
 let civilianDensity = [null, 1, 1, 1, 1, 0, 0];
 let ssvBridgeEnabled = [null, true, false, false, true, false, false];
-
-// ----------------------------------------------------------------------------
-
-// Weather and Snow
-let currentWeather = [null, 0, 0, 0, 0, 0, 0];
-let isSnowing = [null, false, false, false, false, false, false];
-let isWinter = [null, false, false, false, false, false, false];
-let windSpeed = [null, 0, 0, 0, 0, 0, 0];
 
 // ----------------------------------------------------------------------------
 
