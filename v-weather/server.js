@@ -3,9 +3,12 @@
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
-    if (typeof gta != "undefined") {
-        gta.weather.force(Number(server.getCVar("weather")));
+    if (server.game == 10) {
+        console.warn("Weather is not available on this game!");
+        event.preventDefault();
     }
+
+    gta.weather.force(Number(server.getCVar("weather")));
 });
 
 // ===========================================================================
