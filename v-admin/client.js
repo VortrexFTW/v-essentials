@@ -2,7 +2,7 @@
 
 // ----------------------------------------------------------------------------
 
-let smallGameMessageFontFile = (typeof gta != "undefined") ? "pricedown.ttf" : "aurora-condensed-bold.ttf";
+let smallGameMessageFontFile = (typeof gta != "undefined") ? "fonts/pricedown.ttf" : "fonts/aurora-condensed-bold.ttf";
 let smallGameMessageFont = null;
 let smallGameMessageText = "";
 let smallGameMessageColour = COLOUR_WHITE;

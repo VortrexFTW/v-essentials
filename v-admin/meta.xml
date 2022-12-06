@@ -3,5 +3,7 @@
 
 	<script src="server.js" type="server" language="javascript" />
 	<script src="client.js" type="client" language="javascript" />
-	<file src="pricedown.ttf" type="client" />
+
+	<file src="fonts/pricedown.ttf" type="client" />
+	<file src="fonts/aurora-bold-condensed.ttf" type="client" />
 </meta>
