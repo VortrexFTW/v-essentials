@@ -233,9 +233,3 @@ addNetworkHandler("moveGateFinished", function (client, gateId) {
 });
 
 // ===========================================================================
-
-addCommandHandler("soundall", function (command, params, client) {
-
-}
-
-// ===========================================================================
