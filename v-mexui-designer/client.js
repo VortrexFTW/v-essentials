@@ -89,6 +89,25 @@ addNetworkHandler("v.guieditor.data", function (dataString) {
 
 // ----------------------------------------------------------------------------
 
+function expandArrays(...args)
+{
+	let values = [];
+	args.forEach(arg =>
+	{
+		if(Array.isArray(arg))
+		{
+			arg.forEach(arg2 => values.push(arg2));
+		}
+		else
+		{
+			values.push(arg);
+		}
+	});
+	return values;
+}
+
+// ----------------------------------------------------------------------------
+
 function createMexUIFromData(data) {
 	let editorApp = {};
 
@@ -101,22 +120,26 @@ function createMexUIFromData(data) {
 	for (let i in data.elements) {
 		switch (data.elements[i].type) {
 			case "button":
-				editorApp.elements[i] = editorApp.window.button(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				editorApp.elements[i] = editorApp.window.button.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
 				editorApp.elements[i].callback = data.elements[i].callback;
+				break;
 
+			case "character":
+				editorApp.elements[i] = editorApp.window.character.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
+				editorApp.elements[i].callback = data.elements[i].callback;
 				break;
 
 			case "image":
-				editorApp.elements[i] = editorApp.window.image(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].imagePath, data.window.style);
+				editorApp.elements[i] = editorApp.window.image.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].imagePath, data.window.style));
 				editorApp.elements[i].callback = data.elements[i].callback;
 				break;
 
 			case "text":
-				editorApp.elements[i] = editorApp.window.text(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				editorApp.elements[i] = editorApp.window.text.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
 				break;
 
 			case "textInput":
-				editorApp.elements[i] = editorApp.window.textInput(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.window.style);
+				editorApp.elements[i] = editorApp.window.textInput.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.window.style));
 				editorApp.elements[i].placeholder = data.elements[i].placeholder;
 				editorApp.elements[i].masked = data.elements[i].masked;
 				editorApp.elements[i].callback = data.elements[i].callback;
