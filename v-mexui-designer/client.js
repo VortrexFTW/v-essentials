@@ -118,31 +118,33 @@ function createMexUIFromData(data) {
 	editorApp.window.titleBarIconSize = getPositionVec2(data.window.position);
 
 	for (let i in data.elements) {
-		switch (data.elements[i].type) {
+		let e = data.elements[i];
+
+		switch (e.type) {
 			case "button":
-				editorApp.elements[i] = editorApp.window.button.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
-				editorApp.elements[i].callback = data.elements[i].callback;
+				editorApp.elements[i] = editorApp.window.button.apply(editorApp.window, expandArrays(getPositionVec2(e.position), getSizeVec2(e.size), e.text, data.window.style));
+				editorApp.elements[i].callback = e.callback;
 				break;
 
 			case "character":
-				editorApp.elements[i] = editorApp.window.character.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
-				editorApp.elements[i].callback = data.elements[i].callback;
+				editorApp.elements[i] = editorApp.window.character.apply(editorApp.window, expandArrays(getPositionVec2(e.position), getSizeVec2(e.size), e.text, data.window.style));
+				editorApp.elements[i].callback = e.callback;
 				break;
 
 			case "image":
-				editorApp.elements[i] = editorApp.window.image.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].imagePath, data.window.style));
-				editorApp.elements[i].callback = data.elements[i].callback;
+				editorApp.elements[i] = editorApp.window.image.apply(editorApp.window, expandArrays(getPositionVec2(e.position), getSizeVec2(e.size), e.imagePath, data.window.style));
+				editorApp.elements[i].callback = e.callback;
 				break;
 
 			case "text":
-				editorApp.elements[i] = editorApp.window.text.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style));
+				editorApp.elements[i] = editorApp.window.text.apply(editorApp.window, expandArrays(getPositionVec2(e.position), getSizeVec2(e.size), e.text, data.window.style));
 				break;
 
 			case "textInput":
-				editorApp.elements[i] = editorApp.window.textInput.apply(editorApp.window, expandArrays(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.window.style));
-				editorApp.elements[i].placeholder = data.elements[i].placeholder;
-				editorApp.elements[i].masked = data.elements[i].masked;
-				editorApp.elements[i].callback = data.elements[i].callback;
+				editorApp.elements[i] = editorApp.window.textInput.apply(editorApp.window, expandArrays(getPositionVec2(e.position), getSizeVec2(e.size), data.window.style));
+				editorApp.elements[i].placeholder = e.placeholder;
+				editorApp.elements[i].masked = e.masked;
+				editorApp.elements[i].callback = e.callback;
 				break;
 		}
 	}
