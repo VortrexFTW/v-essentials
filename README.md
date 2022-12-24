@@ -11,7 +11,7 @@ Any player who joins with an admin's name but wrong IP will be automatically kic
 AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, it'll show "PAUSED" next to AFK players in the list. If `v-nametags` is loaded, the nametag will show a red "PAUSED" above AFK players heads.
 
 ### v-chat
-Custom chat. Converts emoji names (e.g. `:thumbsup:`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
+Custom chat. Converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
 
 ### v-deathmessages
 Shows messages when a player dies, with killer name.
@@ -41,6 +41,9 @@ Shows an image in the bottom right corner (default is GTAC/MafiaC logo)
 ### v-lookat
 Only works on GTA SA. Makes player heads turn to face where they are looking. Also syncs to other players
 
+### v-mexui-designer
+Simple GUI designer for MexUI. Not finished yet.
+
 ### v-nametags
 Alternative nametags for GTAC. The built-in ones are ugly.
 
@@ -62,11 +65,17 @@ Adds a scoreboard/player-list, shown when holding the TAB key
 ### v-servernames
 Changes the server name every X milliseconds (set in `config.json`), changing a random slogan/text on the end of your server name
 
+### v-snow
+Starts the server with snow enabled, configured with "snow" in `server.xml`
+
 ### v-spawnscreen
 Spawns your player at a specified place. GTA 3 spawns at Leone Mansion, Vice City at Vercetti Mansion, San Andreas at CJ's house in Grove Street, and IV at Happiness Island.
 
-### v-starttime
-Sets the server time to a specified hour and minute, configured with cvars "hour" and "minute" in `server.xml`
+### v-time
+Starts the server with a specified hour and minute, configured with cvars "hour" and "minute" in `server.xml`
 
 ### v-translate
 Obsolete. Only included for legacy purposes and archive. The translation functionality has been added to `v-chat`
+
+### v-weather
+Starts the server with a specified weather, configured with "weather" in `server.xml`
