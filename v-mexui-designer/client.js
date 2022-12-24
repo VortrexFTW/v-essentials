@@ -19,6 +19,7 @@ const V_SHIFT_POS_MULTIPLIER = 100;
 
 // ----------------------------------------------------------------------------
 
+// Unused
 class ProjectData {
 	constructor(name, data = null) {
 		this.name = name;
@@ -31,6 +32,7 @@ class ProjectData {
 
 // ----------------------------------------------------------------------------
 
+// Unused
 class ElementData {
 	constructor(type, name, id, data = null) {
 		this.type = type;
@@ -92,31 +94,30 @@ addNetworkHandler("v.guieditor.data", function (dataString) {
 function createMexUIFromData(data) {
 	let editorApp = {};
 
-	editorApp.window = mexui.window(getPositionVec2(data.window.position), getSizeVec2(data.window.size), data.window.title, data.window.style);
-	editorApp.window.titleBarShown = data.window.shown;
-	editorApp.window.titleBarHeight = data.window.height;
-	editorApp.window.titleBarIconShown = data.window.shown;
-	editorApp.window.titleBarIconSize = getPositionVec2(data.window.position);
+	editorApp.window = mexui.window(data.window.position.x, data.window.position.y, data.window.size.x, data.window.size.y, data.window.title, data.window.style);
+	editorApp.window.titleBarShown = data.window.titleBarShown;
+	editorApp.window.titleBarHeight = data.window.titleBarHeight;
+	editorApp.window.titleBarIconShown = data.window.titleBarIconShown;
+	editorApp.window.titleBarIconSize = [data.window.titleBarIconSize.x, data.window.titleBarIconSize.y];
 
 	for (let i in data.elements) {
 		switch (data.elements[i].type) {
 			case "button":
-				editorApp.elements[i] = editorApp.window.button(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				editorApp.elements[i] = editorApp.window.button(data.elements[i].position.x, data.elements[i].position.y, data.elements[i].size.x, data.elements[i].size.y, data.elements[i].text, data.window.style);
 				editorApp.elements[i].callback = data.elements[i].callback;
-
 				break;
 
 			case "image":
-				editorApp.elements[i] = editorApp.window.image(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].imagePath, data.window.style);
+				editorApp.elements[i] = editorApp.window.image(data.elements[i].position.x, data.elements[i].position.y, data.elements[i].size.x, data.elements[i].size.y, data.elements[i].imagePath, data.window.style);
 				editorApp.elements[i].callback = data.elements[i].callback;
 				break;
 
 			case "text":
-				editorApp.elements[i] = editorApp.window.text(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.elements[i].text, data.window.style);
+				editorApp.elements[i] = editorApp.window.text(data.elements[i].position.x, data.elements[i].position.y, data.elements[i].size.x, data.elements[i].size.y, data.elements[i].text, data.window.style);
 				break;
 
 			case "textInput":
-				editorApp.elements[i] = editorApp.window.textInput(getPositionVec2(data.elements[i].position), getSizeVec2(data.elements[i].size), data.window.style);
+				editorApp.elements[i] = editorApp.window.textInput(data.elements[i].position.x, data.elements[i].position.y, data.elements[i].size.x, data.elements[i].size.y, data.window.style);
 				editorApp.elements[i].placeholder = data.elements[i].placeholder;
 				editorApp.elements[i].masked = data.elements[i].masked;
 				editorApp.elements[i].callback = data.elements[i].callback;
@@ -313,63 +314,3 @@ function enterKey() {
 }
 
 // ----------------------------------------------------------------------------
-
-function traverseObject(object) {
-	for (let i in object) {
-		if (object[i] != undefined) {
-			if (object[i] && typeof object[i] === 'object') {
-				recurse(object[i], i);
-			} else {
-				applyObjectToMexUI(object[i]);
-			}
-		}
-	}
-}
-
-// ----------------------------------------------------------------------------
-
-function applyObjectToMexUI(object) {
-	switch (object.type) {
-		case "window":
-			object.element = mexui.window(object.position, object.size, object.text);
-			break;
-
-		case "image":
-			object.element = mexui.image(object.position, object.size);
-			break;
-
-		case "input":
-			break;
-
-		case "button":
-			break;
-
-		case "checkbox":
-			break;
-
-		case "dropdown":
-			break;
-
-		case "label":
-			break;
-	}
-}
-
-function getMexUIElementValue(element, values) {
-	switch (elementName) {
-		case "mainColour":
-			return toColour(values[0], values[1], values[2], values[3]);
-
-		case "textColour":
-			return toColour(values[0], values[1], values[2], values[3]);
-
-		case "position":
-			return new Vec2(values[0], values[1]);
-
-		case "size":
-			return new Vec2(values[0], values[1]);
-
-		default:
-			return "";
-	}
-}
