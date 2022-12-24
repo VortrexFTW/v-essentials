@@ -66,7 +66,7 @@ Adds a scoreboard/player-list, shown when holding the TAB key
 Changes the server name every X milliseconds (set in `config.json`), changing a random slogan/text on the end of your server name
 
 ### v-snow
-Starts the server with snow enabled, configured with "snow" in `server.xml`
+Starts the server with specified snowing states, configured with cvars "fallingsnow" and "groundsnow" in `server.xml`
 
 ### v-spawnscreen
 Spawns your player at a specified place. GTA 3 spawns at Leone Mansion, Vice City at Vercetti Mansion, San Andreas at CJ's house in Grove Street, and IV at Happiness Island.
