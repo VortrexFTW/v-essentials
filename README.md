@@ -1,4 +1,5 @@
-# Vortrex's GTAC Resources
+# Vortrex's Essential Resources (v-essentials)
+For GTA Connected and Mafia Connected
 Publicly available for anybody to use. I hope you find some of these useful.
 
 ## Resources
