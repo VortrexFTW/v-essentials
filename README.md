@@ -18,7 +18,7 @@ Custom chat. Converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the 
 Shows messages when a player dies, with killer name.
 
 ### v-events
-Adds custom scripting events for things that GTAC doesn't have built-in. These events can be used in any other resource with any language exactly like the built-in events. Some events that pertain to an element (ped, vehicle, etc) are bindable to that element to be used with bindEventHandler, but this is optional. You can use addEventHandler too.
+Adds custom scripting events for things that GTAC doesn't have built-in. These events can be used in any other resource with any language [exactly like the built-in events](https://wiki.gtaconnected.com/HowTo/Events). Some events that pertain to an element (ped, vehicle, etc) are bindable to that element to be used with bindEventHandler, but this is optional. You can use addEventHandler too.
 
 ### v-extracontent
 Makes it easy to add and use custom content on your server. Images audio files, fonts, DFF models, TXD textures, COL collisions, excluded snow models, removed building/world models, rendering images in the 3D game world, spawning server objects (both grouped and ungrouped) and moving gates/doors.
