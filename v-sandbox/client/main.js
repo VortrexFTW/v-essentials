@@ -8,7 +8,6 @@ let gameName = gameNames[game.game];
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	if (isConnected) {
 		triggerNetworkEvent("sb.clientready");
-		triggerNetworkEvent("sb.w.sync");
 	} else {
 		resyncWorld();
 	}
