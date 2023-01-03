@@ -2,4 +2,5 @@
 	<info title="v-snow" author="Vortrex" version="1.0" description="Sets the snow state from 'groundsnow' and 'fallingsnow' cvars in server.xml" />
 
 	<script src="server.js" type="server" language="javascript" />
+	<script src="client.js" type="client" language="javascript" />
 </meta>
