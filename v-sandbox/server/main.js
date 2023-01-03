@@ -48,12 +48,6 @@ addEventHandler("OnResourceStop", function (event, resource) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.clientready", function (client) {
-	triggerNetworkEvent("sb.w.winter", client, isSnowing[serverGame], isWinter[serverGame]);
-});
-
-// ----------------------------------------------------------------------------
-
 function getSyncerFromID(syncerID) {
 	let clients = getClients();
 	for (let i in clients) {
