@@ -1,3 +1,5 @@
+iErrorMessageColour <- toColour(237, 67, 55, 255);
+iSyntaxMessageColour <- toColour(200, 200, 200, 255);
 
 // ----------------------------------------------------------------------------
 
@@ -7,7 +9,7 @@ addCommandHandler("sse", function(szCommand, szParams, pClient) {
 	}
 
     if(!szParams || szParams == "") {
-        messageClient("Syntax: /sse <code>", pClient, findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game));
+        messageClient("Syntax: /sse <code>", pClient, iSyntaxMessageColour);
         return false;
     }
 
@@ -23,7 +25,7 @@ addCommandHandler("ssr", function(szCommand, szParams, pClient) {
 	}
 
     if(!szParams || szParams == "") {
-        messageClient("Syntax: /sse <code>", pClient, findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game));
+        messageClient("Syntax: /sse <code>", pClient, iSyntaxMessageColour);
         return false;
     }
 

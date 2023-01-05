@@ -1,9 +1,11 @@
+iErrorMessageColour <- toColour(237, 67, 55, 255);
+iSyntaxMessageColour <- toColour(200, 200, 200, 255);
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("sce", function(szCommand, szParams) {
     if(!szParams || szParams == "") {
-        message("Syntax: /sce <code>", findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game));
+        message("Syntax: /sce <code>", iSyntaxMessageColour);
         return false;
     }
 
@@ -15,7 +17,7 @@ addCommandHandler("sce", function(szCommand, szParams) {
 
 addCommandHandler("scr", function(szCommand, szParams) {
     if(!szParams || szParams == "") {
-        message("Syntax: /sce <code>", findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game));
+        message("Syntax: /sce <code>", iSyntaxMessageColour);
         return false;
     }
 

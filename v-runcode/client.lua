@@ -1,9 +1,11 @@
+local errorMessageColour = toColour(237, 67, 55, 255)
+local syntaxMessageColour = toColour(200, 200, 200, 255)
 
 -- ----------------------------------------------------------------------------
 
 addCommandHandler("lce", function(cmdName, params)
     if params ~= nil then
-        message("Syntax: /lce <code>", findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game))
+        message("Syntax: /lce <code>", syntaxMessageColour)
         return false;
     end
 
@@ -16,7 +18,7 @@ end)
 
 addCommandHandler("lcr", function(cmdName, params)
     if params ~= nil then
-        message("Syntax: /lcr <code>", findResourceByName("v-utils").exports.getSyntaxMessageColour(gta.game))
+        message("Syntax: /lcr <code>", syntaxMessageColour)
         return false;
     end
 
