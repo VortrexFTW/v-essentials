@@ -91,10 +91,6 @@ addEventHandler("OnDrawnHUD", function (event) {
 					name = clients[i].getData("v.name");
 				}
 
-				if (clients[i].getData("v.afk") != null) {
-					afk = clients[i].getData("v.name");
-				}
-
 				let listColumnData = [String(clients[i].index), name, String(clients[i].getData("v.ping"))];
 				if (typeof gta != "undefined") {
 					// Episode
