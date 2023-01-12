@@ -1,3 +1,5 @@
+"use strict";
+
 let lastVehicleSpawn = 0;
 
 // ----------------------------------------------------------------------------
@@ -114,8 +116,19 @@ function spawnVehicleCommand(cmdName, params) {
 				return false;
 			}
 		}
-	}
 
+		let spawnProtectionResource = findResourceByName("v-spawnprotect");
+		if (spawnProtectionResource != null) {
+			if (spawnProtectionResource.isStarted) {
+				if (spawnProtectionResource.exports.canSpawnVehiclesInProtectedArea() == true) {
+					if (spawnProtectionResource.exports.isPlayerInSpawnProtectionArea() == true) {
+						message("Leave the spawn area first!", errorMessageColour);
+						return false;
+					}
+				}
+			}
+		}
+	}
 
 	let thisVeh = false;
 	if (gta.game == GAME_GTA_IV) {
@@ -2203,7 +2216,7 @@ addNetworkHandler("sb.v.upgrade.del", function (vehicleIds, upgradeId) {
 addNetworkHandler("sb.v.paintjob", function (vehicleIds, paintJobId) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).setPaintJob(paintJobId);
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2211,7 +2224,7 @@ addNetworkHandler("sb.v.paintjob", function (vehicleIds, paintJobId) {
 addNetworkHandler("sb.v.colour1", function (vehicleIds, colour1) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).colour1 = colour1;
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2219,7 +2232,7 @@ addNetworkHandler("sb.v.colour1", function (vehicleIds, colour1) {
 addNetworkHandler("sb.v.colour2", function (vehicleIds, colour2) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).colour2 = colour2;
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2227,7 +2240,7 @@ addNetworkHandler("sb.v.colour2", function (vehicleIds, colour2) {
 addNetworkHandler("sb.v.colour3", function (vehicleIds, colour3) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).colour3 = colour3;
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2235,7 +2248,7 @@ addNetworkHandler("sb.v.colour3", function (vehicleIds, colour3) {
 addNetworkHandler("sb.v.colour4", function (vehicleIds, colour4) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).colour4 = colour4;
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2243,7 +2256,7 @@ addNetworkHandler("sb.v.colour4", function (vehicleIds, colour4) {
 addNetworkHandler("sb.v.enablegps", function (vehicles) {
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).enableGPS();
-	})
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -2272,7 +2285,7 @@ addNetworkHandler("sb.v.engineHealth", function (vehicleIds, engineHealth) {
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("sb.v.del2", function (vehicles) {
+addNetworkHandler("sb.v.del", function (vehicles) {
 	vehicles.forEach(function (vehicle) {
 		destroyElement(vehicle);
 	});
