@@ -49,15 +49,12 @@ addEventHandler("OnDrawnHUD", function (event) {
 		if (listFont != null && titleFont != null) {
 			let playersText = `PLAYERS`;
 			let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
-			let titleSize = titleFont.measure(playersText, listWidth, 0.0, 1.0, 10, false, false);
+			titleFont.measure(playersText, listWidth, 0.0, 1.0, 10, false, false);
 			titleFont.render(playersText, [game.width / 2, scoreboardStart - 85], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
 
 			let playerCountText = `${getClients().length} connected`;
-			let subTitleSize = subTitleFont.measure(playerCountText, listWidth, 0.0, 1.0, 10, false, false);
+			subTitleFont.measure(playerCountText, listWidth, 0.0, 1.0, 10, false, false);
 			subTitleFont.render(playerCountText, [game.width / 2, scoreboardStart - 55], 0, 0.5, 0.0, subTitleFont.size, COLOUR_WHITE, false, false, false, true);
-
-			titleSize = titleFont.measure("___________________________________", listWidth, 0.0, 1.0, 10, false, false);
-			titleFont.render("___________________________________", [game.width / 2, scoreboardStart - 35], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
 
 			let text = "";
 			let size = null;
@@ -74,22 +71,28 @@ addEventHandler("OnDrawnHUD", function (event) {
 			let columnWidth = Math.round(listWidth / listColumns.length);
 			let listLeft = Math.round(game.width / 2) - (listWidth / 2);
 
+			graphics.drawRectangle(null, [listLeft, scoreboardStart - 5], [listWidth + 50, 1], COLOUR_WHITE);
+
 			for (let i in listColumns) {
 				let columnLeft = Math.round(listLeft + (columnWidth * i));
-				size = listFont.measure(listColumns[i], columnWidth, 0.0, 1.0, 10, false, false);
-				listFont.render(listColumns[i], [columnLeft, scoreboardStart - 30], 0, 0.5, 0.0, listFont.size, COLOUR_WHITE, false, false, false, true);
+				size = listFont.measure(listColumns[i], columnWidth, 0.5, 1.0, 10, false, false);
+				listFont.render(listColumns[i], [columnLeft, scoreboardStart - 30], columnWidth, 0.5, 1.0, listFont.size, COLOUR_WHITE, false, false, false, true);
 			}
 
 			let clients = getClients();
 			for (let i in clients) {
 				let colour = COLOUR_WHITE;
-				if (clients[i].getData("v.colour")) {
+				if (clients[i].getData("v.colour") != null) {
 					colour = clients[i].getData("v.colour");
 				}
 
 				let name = clients[i].name;
-				if (clients[i].getData("v.name")) {
+				if (clients[i].getData("v.name") != null) {
 					name = clients[i].getData("v.name");
+				}
+
+				if (clients[i].getData("v.afk") != null) {
+					afk = clients[i].getData("v.name");
 				}
 
 				let listColumnData = [String(clients[i].index), name, String(clients[i].getData("v.ping"))];
@@ -103,8 +106,13 @@ addEventHandler("OnDrawnHUD", function (event) {
 
 				for (let j in listColumnData) {
 					let columnLeft = Math.round(listLeft + (columnWidth * j));
-					size = listFont.measure(listColumnData[j], columnWidth, 0.0, 1.0, 10, false, false);
-					listFont.render(listColumnData[j], [columnLeft, scoreboardStart + (i * 20)], 0, 0.5, 0.0, listFont.size, COLOUR_WHITE, false, false, false, true);
+					listFont.measure(listColumnData[j], columnWidth, 0.5, 1.0, 10, false, false);
+					listFont.render(listColumnData[j], [columnLeft, scoreboardStart + (i * 20)], columnWidth, 0.5, 1.0, listFont.size, colour, false, false, false, true);
+				}
+
+				if (clients[i].getData("v.afk") == true) {
+					listFont.measure("PAUSED", columnWidth, 0.5, 1.0, 10, false, false);
+					listFont.render("PAUSED", [listLeft + listWidth + 50, scoreboardStart + (i * 20)], columnWidth, 0.5, 1.0, listFont.size, colour, false, false, false, true);
 				}
 			}
 		}
