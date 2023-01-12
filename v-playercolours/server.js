@@ -2,19 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-let playerColours = [
-	toColour(51, 153, 255, 255),
-	toColour(252, 145, 58, 255),
-	toColour(186, 85, 211, 255),
-	toColour(144, 255, 96, 255),
-	toColour(255, 252, 127, 255),
-	toColour(131, 189, 209, 255),
-	toColour(237, 67, 55, 255),
-	toColour(255, 188, 218, 225),
-];
-
-// ----------------------------------------------------------------------------
-
 addEventHandler("OnPlayerJoined", function(event, client) {
 	client.setData("v.colour", getRandomColour(), true);
 });
