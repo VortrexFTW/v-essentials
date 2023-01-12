@@ -34,6 +34,7 @@ let spawnProtectionMessageColour = COLOUR_ORANGE;
 
 bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
     exportFunction("isPlayerInSpawnProtectionArea", isPlayerInSpawnProtectionArea);
+    exportFunction("canSpawnVehiclesInProtectedArea", canSpawnVehiclesInProtectedArea);
     spawnProtectionMessageFont = lucasFont.createDefaultFont(14.0, "Roboto", "Light");
 });
 
@@ -84,6 +85,16 @@ function isPlayerInSpawnProtectionArea() {
 
 // ----------------------------------------------------------------------------
 
+function canSpawnVehiclesInProtectedArea() {
+    if (scriptConfig == null) {
+        return false;
+    }
+
+    return scriptConfig.canSpawnVehiclesInProtectedArea;
+}
+
+// ----------------------------------------------------------------------------
+
 function loadConfig() {
     let configFile = loadTextFile("config.json");
     if (configFile == "") {
@@ -107,24 +118,18 @@ function loadConfig() {
 
 // ----------------------------------------------------------------------------
 
-function saveConfig() {
-    let configText = JSON.stringify(scriptConfig, null, '\t');
-    if (!configText) {
-        console.error(`Config file could not be stringified`);
-        return false;
-    }
-
-    saveTextFile("config.json", configText);
-}
-
-// ----------------------------------------------------------------------------
-
 function fixMissingConfigStuff() {
     if (typeof scriptConfig.spawnProtectionAreas == "undefined") {
         scriptConfig.spawnProtectionAreas = [];
     }
 
-    saveConfig();
+    if (typeof scriptConfig.canSpawnVehiclesInProtectedArea == "undefined") {
+        scriptConfig.canSpawnVehiclesInProtectedArea = false;
+    }
+
+    if (typeof scriptConfig.showSpawnProtectionMessage == "undefined") {
+        scriptConfig.showSpawnProtectionMessage = true;
+    }
 }
 
 // ----------------------------------------------------------------------------
