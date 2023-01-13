@@ -17,19 +17,3 @@ addEventHandler("OnFocus", (event) => {
 });
 
 // ----------------------------------------------------------------------------
-
-addEventHandler("OnMouseMove", (event, mouseId, absolute, position) => {
-	if(localClient.getData("v.afk") > 0) {
-		triggerNetworkEvent("v.afk", false);
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnKeyDown", (event, virtualKey, physicalKey, keyModifiers) => {
-	if(localClient.getData("v.afk") > 0) {
-		triggerNetworkEvent("v.afk", false);
-	}
-});
-
-// ----------------------------------------------------------------------------
