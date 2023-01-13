@@ -4,10 +4,6 @@ let isFocused = true;
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 addEventHandler("OnLostFocus", (event) => {
 	isFocused = false;
 	triggerNetworkEvent("v.afk", true);
