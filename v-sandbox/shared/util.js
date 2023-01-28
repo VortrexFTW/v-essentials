@@ -6543,7 +6543,7 @@ function killDeathRatio(kills, deaths) {
 	if (deaths == 0 || kills == 0) {
 		return 0.0;
 	}
-	return Float((iKills * 100 / iDeaths) * 0.01);
+	return Number((kills * 100 / deaths) * 0.01);
 }
 
 // ----------------------------------------------------------------------------
