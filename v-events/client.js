@@ -118,7 +118,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 							sphere = tempSphere;
 						}
 					} else {
-						if (sphere != null) {
+						if (sphere == tempSphere) {
 							triggerEvent("OnPedExitedSphereEx", entity, entity, tempSphere);
 							triggerNetworkEvent("OnPedExitedSphereEx", entity.id, tempSphere.id);
 							sphere = null;
