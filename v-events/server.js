@@ -53,5 +53,5 @@ addNetworkHandler("OnPedChangeAmmo", function (client, pedId, newAmmo, oldAmmo) 
 });
 
 addNetworkHandler("OnPickupPickedUp", function (client, pickupId, pedId) {
-	triggerEvent("OnPickupPickedUp", getElementFromId(pickupId), getElementFromId(pedId));
+	triggerEvent("OnPickupPickedUp", getElementFromId(pedId), getElementFromId(pickupId), getElementFromId(pedId));
 });
