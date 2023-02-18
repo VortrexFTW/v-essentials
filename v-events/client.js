@@ -124,7 +124,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 							sphere = tempSphere;
 						}
 					} else {
-						if (sphere != null) {
+						if (sphere == tempSphere) {
 							triggerEvent("OnPedExitedSphereEx", entity, entity, tempSphere);
 							triggerNetworkEvent("OnPedExitedSphereEx", entity.id, tempSphere.id);
 							sphere = null;
@@ -160,7 +160,6 @@ addEventHandler("OnPedExitingVehicle", function (event, ped, vehicle, seat) {
 	}
 });
 
-/*
 function getPedVehicleSeat(ped) {
 	for (let i = 0; i <= 3; i++) {
 		if (ped.vehicle.getOccupant(i) == ped) {
@@ -169,4 +168,3 @@ function getPedVehicleSeat(ped) {
 	}
 	return 0;
 }
-*/

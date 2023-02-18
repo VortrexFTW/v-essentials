@@ -22,7 +22,7 @@ function attachBlipToPed(ped) {
 			colour = client.getData("v.colour");
 		}
 	}
-	let blip = gta.createBlipAttachedTo(ped, 0, 2, colour, true, false);
+	let blip = gta.createBlipAttachedTo(ped, 0, 2, Number(colour), true, false);
 	blip.streamInDistance = 999998;
 	blip.streamOutDistance = 999999;
 	//blip.existsFor(client, false);
