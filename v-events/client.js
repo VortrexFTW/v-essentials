@@ -7,7 +7,7 @@ addEvent("OnPedEnterSniperMode", 1); // Called when ped starts aiming in sniper 
 addEvent("OnPedExitSniperMode", 1); // Called when ped stops aiming sniper scope, back to normal view
 addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
-addEvent("OnPedDeath", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
+addEvent("OnPedDeathEx", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
 
 let vehicle = null;
@@ -19,14 +19,18 @@ let weaponAmmo = 0;
 let busted = false;
 let sniperMode = false;
 
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+
+});
+
 addEventHandler("OnEntityProcess", function (event, entity) {
 	if (localPlayer != null) {
 		if (entity == localPlayer) {
 			if (entity.health <= 0) {
 				if (dead == false) {
 					dead = true;
-					triggerEvent("OnPedDeath", entity);
-					triggerNetworkEvent("OnPedDeath", entity.id);
+					triggerEvent("OnPedDeathEx", entity);
+					triggerNetworkEvent("OnPedDeathEx", entity.id);
 				}
 			} else {
 				if (dead == true) {
@@ -87,24 +91,26 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (entity.vehicle == null) {
-				if (vehicle != null) {
-					triggerEvent("OnPedExitedVehicleEx", entity, entity, vehicle, vehicleSeat);
-					triggerNetworkEvent("OnPedExitedVehicleEx", entity.id, vehicle.id, vehicleSeat);
-					vehicle = null;
-					vehicleSeat = -1;
-				}
-			} else {
-				if (vehicle == null) {
-					let seat = getPedVehicleSeat(entity);
-					triggerEvent("OnPedEnteredVehicleEx", entity, entity, entity.vehicle, seat);
-					triggerNetworkEvent("OnPedEnteredVehicleEx", entity.id, entity.vehicle.id, seat);
-					vehicle = entity.vehicle
-					vehicleSeat = seat;
+			if (game.game <= 5) {
+				if (entity.vehicle == null) {
+					if (vehicle != null) {
+						triggerEvent("OnPedExitedVehicleEx", entity, entity, vehicle, vehicleSeat);
+						triggerNetworkEvent("OnPedExitedVehicleEx", entity.id, vehicle.id, vehicleSeat);
+						vehicle = null;
+						vehicleSeat = -1;
+					}
+				} else {
+					if (vehicle == null) {
+						let seat = getPedVehicleSeat(entity);
+						triggerEvent("OnPedEnteredVehicleEx", entity, entity, entity.vehicle, seat);
+						triggerNetworkEvent("OnPedEnteredVehicleEx", entity.id, entity.vehicle.id, seat);
+						vehicle = entity.vehicle
+						vehicleSeat = seat;
+					}
 				}
 			}
 
-			if (typeof gta != "undefined") {
+			if (typeof ELEMENT_MARKER != "undefined") {
 				getElementsByType(ELEMENT_MARKER).forEach(function (tempSphere) {
 					let position = entity.position;
 					if (entity.vehicle) {
@@ -130,11 +136,31 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 	}
 });
 
-addEventHandler("OnPickupCollected", function (event, pickup, ped) {
-	triggerEvent("OnPickupPickedUp", pickup, pickup);
-	triggerNetworkEvent("OnPickupPickedUp", pickup.id, ped.id);
+addEventHandler("OnPedEnteredVehicle", function (event, ped, vehicle, seat) {
+	if (localPlayer == ped) {
+		triggerNetworkEvent("OnPedEnteredVehicleEx", ped.id, vehicle.id, seat);
+	}
 });
 
+addEventHandler("OnPedExitedVehicle", function (event, ped, vehicle, seat) {
+	if (localPlayer == ped) {
+		triggerNetworkEvent("OnPedExitingVehicleEx", ped.id, vehicle.id, seat);
+	}
+});
+
+addEventHandler("OnPedEnteringVehicle", function (event, ped, vehicle, seat) {
+	if (localPlayer == ped) {
+		triggerNetworkEvent("OnPedEnteringVehicleEx", ped.id, vehicle.id, seat);
+	}
+});
+
+addEventHandler("OnPedExitingVehicle", function (event, ped, vehicle, seat) {
+	if (localPlayer == ped) {
+		triggerNetworkEvent("OnPedExitedVehicleEx", ped.id, vehicle.id, seat);
+	}
+});
+
+/*
 function getPedVehicleSeat(ped) {
 	for (let i = 0; i <= 3; i++) {
 		if (ped.vehicle.getOccupant(i) == ped) {
@@ -143,3 +169,4 @@ function getPedVehicleSeat(ped) {
 	}
 	return 0;
 }
+*/
