@@ -1,0 +1,5 @@
+<meta>
+	<info title="mousecam" author="Lucas and Vortrex" version="1.0" description="Mouse camera like SA for III and VC" />
+
+	<script src="client.js" type="client" language="javascript" />
+</meta>
