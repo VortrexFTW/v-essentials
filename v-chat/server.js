@@ -186,7 +186,7 @@ cachedTranslations.fill(cachedTranslationFrom);
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPlayerJoined", function(event, client) {
+addEventHandler("OnPlayerJoined", function (event, client) {
 	let languageId = getPlayerLanguage(client.name);
 	client.setData("v.translate", languageId);
 });
@@ -196,7 +196,7 @@ addEventHandler("OnPlayerJoined", function(event, client) {
 bindEventHandler("OnResourceStart", thisResource, (event, client) => {
 	let configFile = loadTextFile("config.json");
 	scriptConfig = JSON.parse(configFile);
-	if(!scriptConfig) {
+	if (!scriptConfig) {
 		console.log("[V.CHAT] Could not load config.json. Resource stopping ...");
 		thisResource.stop();
 		return false;
@@ -204,12 +204,12 @@ bindEventHandler("OnResourceStart", thisResource, (event, client) => {
 
 	defaultLanguageId = getLanguageIdFromParams(scriptConfig.defaultLanguage) || 28;
 
-	getClients().forEach(function(client) {
-		let languageId = getPlayerLanguage(client.name);
-		client.setData("v.translate", languageId);
-	});
+	//getClients().forEach(function (client) {
+	//	let languageId = getPlayerLanguage(client.name);
+	//	client.setData("v.translate", languageId);
+	//});
 
-	runTranslatorTest();
+	//runTranslatorTest();
 
 	console.log(`[V.CHAT] Resource started! (Emoji ${(scriptConfig.enableEmoji) ? "enabled" : "disabled"}, Translator ${(scriptConfig.enableTranslator) ? "enabled" : "disabled"})`);
 });
@@ -217,7 +217,7 @@ bindEventHandler("OnResourceStart", thisResource, (event, client) => {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStop", thisResource, (event, resource) => {
-	getClients().forEach(function(client) {
+	getClients().forEach(function (client) {
 		client.removeData("v.translate");
 	});
 	console.log("[V.CHAT] Resource stopped!");
@@ -248,31 +248,33 @@ addEventHandler("OnPlayerChat", async (event, client, messageText) => {
 	event.preventDefault();
 
 	let colour = COLOUR_WHITE;
-	if(client.getData("v.colour") != null) {
+	if (client.getData("v.colour") != null) {
 		colour = client.getData("v.colour");
 	}
 
-	if(scriptConfig.enableEmoji) {
+	if (scriptConfig.enableEmoji) {
 		messageText = replaceEmojiInString(messageText);
 	}
 
-	let clients = getClients();
-	for(let i in clients) {
-		let translatedText;
-		translatedText = await translateMessage(messageText, client.getData("v.translate"), clients[i].getData("v.translate"));
+	//let clients = getClients();
+	//for (let i in clients) {
+	//	let translatedText;
+	//	translatedText = await translateMessage(messageText, client.getData("v.translate"), clients[i].getData("v.translate"));
+	//
+	//	let original = (client.getData("v.translate") == clients[i].getData("v.translate")) ? `` : ` [#AAAAAA](${messageText})`;
+	//	messageClient(`${client.name}: [#FFFFFF]${translatedText}${original}`, clients[i], colour);
+	//}
 
-		let original = (client.getData("v.translate") == clients[i].getData("v.translate")) ? `` : ` [#AAAAAA](${messageText})`;
-		messageClient(`${client.name}: [#FFFFFF]${translatedText}${original}`, clients[i], colour);
-	}
+	message(`${client.name}: [#FFFFFF]${messageText}`, colour);
 
-	console.log(`${client.name}: ${messageText}`)
+	console.log(`${client.name}: ${messageText}`);
 });
 
 // ----------------------------------------------------------------------------
 
 function replaceEmojiInString(messageText) {
-	if(messageText != null) {
-		for(let i in emojiReplaceString) {
+	if (messageText != null) {
+		for (let i in emojiReplaceString) {
 			messageText = messageText.replace(String(emojiReplaceString[i][0]), emojiReplaceString[i][1]);
 		}
 		return messageText;
@@ -284,15 +286,15 @@ function replaceEmojiInString(messageText) {
 
 function getLanguageIdFromParams(params) {
 	// Search locale abbreviations first (en, es, de, etc)
-	for(let i in translationLanguages) {
-		if(translationLanguages[i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in translationLanguages) {
+		if (translationLanguages[i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
 
 	// Search english-based language names next (English, Spanish, German, etc)
-	for(let i in translationLanguages) {
-		if(translationLanguages[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in translationLanguages) {
+		if (translationLanguages[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
@@ -302,14 +304,17 @@ function getLanguageIdFromParams(params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("lang", async function(command, params, client) {
-	if(!params) {
+addCommandHandler("lang", async function (command, params, client) {
+	messageClient("The translation service is unavailable now.", client, errorMessageColour);
+
+	/*
+	if (!params) {
 		messageClient(`/${command} <language name>`, client, syntaxMessageColour);
 		return false;
 	}
 
 	let languageId = getLanguageIdFromParams(params);
-	if(!languageId) {
+	if (!languageId) {
 		messageClient("That language was not found!", client, errorMessageColour);
 		return false;
 	}
@@ -322,6 +327,7 @@ addCommandHandler("lang", async function(command, params, client) {
 	let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
 	console.log(translatedMessage);
 	messageClient(translatedMessage, client, COLOUR_YELLOW);
+	*/
 });
 
 // ----------------------------------------------------------------------------
@@ -355,13 +361,13 @@ function setPlayerLanguage(name, languageId) {
 // ----------------------------------------------------------------------------
 
 async function translateMessage(messageText, translateFrom = defaultLanguageId, translateTo = defaultLanguageId) {
-	if(translateFrom == translateTo) {
+	if (translateFrom == translateTo) {
 		return messageText;
 	}
 
 	return new Promise(resolve => {
-		for(let i in cachedTranslations[translateFrom][translateTo]) {
-			if(cachedTranslations[translateFrom][translateTo][0] == messageText) {
+		for (let i in cachedTranslations[translateFrom][translateTo]) {
+			if (cachedTranslations[translateFrom][translateTo][0] == messageText) {
 				console.log("[Translate]: Using existing translation for " + translationLanguages[translateFrom][0] + " to " + translationLanguages[translateTo][0] + " - (" + messageText + "), (" + cachedTranslations[translateFrom][translateTo][1] + ")");
 				resolve(cachedTranslations[translateFrom][translateTo][1]);
 			}
@@ -371,14 +377,14 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 		httpGet(
 			thisTranslationURL,
 			"",
-			function(data) {
+			function (data) {
 				data = ab2str(data);
 				//tdata = data.substr(0, data.lastIndexOf("}")+1);
 				let translationData = JSON.parse(data);
 				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
 				resolve(translationData.responseData.translatedText);
 			},
-			function(data) {
+			function (data) {
 			}
 		);
 	});
@@ -386,9 +392,9 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 
 // ----------------------------------------------------------------------------
 
-String.prototype.format = function() {
+String.prototype.format = function () {
 	let a = this;
-	for(let i in arguments) {
+	for (let i in arguments) {
 		a = a.replace("{" + String(i) + "}", arguments[i]);
 	}
 	return a;
@@ -1258,11 +1264,11 @@ let emojiReplaceString = [
 	[":water_buffalo:", "🐃"],
 	[":neutral_face:", "😐"],
 	[":clock1230:", "🕧"],
-	[":P", "😛" ],
-	[":)", "🙂" ],
-	[":D", "😃" ],
-	[":o", "😮" ],
-	[":O", "😮" ],
-	[":(", "☹️" ],
-	[":|", "😐" ],
+	[":P", "😛"],
+	[":)", "🙂"],
+	[":D", "😃"],
+	[":o", "😮"],
+	[":O", "😮"],
+	[":(", "☹️"],
+	[":|", "😐"],
 ];
