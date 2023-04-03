@@ -197,7 +197,7 @@ addNetworkHandler(`sb.p.god`, function (client, clientID, godMode) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler(`underwater`, function (cmdName, params, client) {
-	if (gta.game == GAME_GTA_SA) {
+	if (game.game == GAME_GTA_SA) {
 		let skin = client.player.modelIndex;
 		destroyElement(client.player);
 		spawnPlayer(client, new Vec3(2729.91, -2592.13, -12.508), skin);

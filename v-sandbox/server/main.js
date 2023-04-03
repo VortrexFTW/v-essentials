@@ -23,13 +23,13 @@ addNetworkHandler("sb.e.syncer", function (client, element) {
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	if (serverGame != GAME_GTA_IV && serverGame != GAME_GTA_IV_EFLC) {
-		gta.forceWeather(currentWeather[serverGame]);
-		gta.hour = timeLockHour[serverGame];
-		gta.minute = timeLockMinute[serverGame];
+		game.forceWeather(currentWeather[serverGame]);
+		game.hour = timeLockHour[serverGame];
+		game.minute = timeLockMinute[serverGame];
 		if (serverGame != GAME_GTA_VC) {
-			gta.trainsEnabled = trainsEnabled[serverGame];
+			game.trainsEnabled = trainsEnabled[serverGame];
 		}
-		gta.planesEnabled = planesEnabled[serverGame];
+		game.planesEnabled = planesEnabled[serverGame];
 	}
 });
 

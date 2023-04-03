@@ -282,7 +282,7 @@ addCommandHandler("pedgrid", function (cmdName, params) {
 			for (let i = 1; i <= rows; i++) {
 				let position = getPosInFrontOfPos(getPosToRightOfPos(localPlayer.position, localPlayer.heading, k * rowGap), localPlayer.heading, i * colGap);
 				let heading = localPlayer.heading;
-				tempCiv = gta.createCivilian(skinId);
+				tempCiv = game.createCivilian(skinId);
 				tempCiv.position = position;
 				tempCiv.heading = heading;
 			}

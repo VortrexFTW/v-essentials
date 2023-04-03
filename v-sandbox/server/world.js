@@ -20,8 +20,8 @@ addNetworkHandler(`sb.w.time`, function (client, hour, minute) {
 
 	timeLockHour[server.game] = hour;
 	timeLockMinute[server.game] = minute;
-	gta.time.hour = hour;
-	gta.time.minute = minute;
+	game.time.hour = hour;
+	game.time.minute = minute;
 
 	outputMessage = `set the time to ${makeReadableTime(hour, minute)}`;
 	outputSandboxMessage(client, outputMessage);
@@ -55,7 +55,7 @@ addNetworkHandler(`sb.w.trains`, function (client, state) {
 	let outputMessage = ``;
 
 	trainsEnabled[server.game] = state;
-	gta.trainsEnabled = state;
+	game.trainsEnabled = state;
 
 	triggerNetworkEvent(`sb.w.trains`, null, state);
 
@@ -74,7 +74,7 @@ addNetworkHandler(`sb.w.planes`, function (client, state) {
 	let outputMessage = ``;
 
 	planesEnabled[server.game] = state;
-	gta.planesEnabled = state;
+	game.planesEnabled = state;
 
 	outputMessage = String((planesEnabled[server.game]) ? `enabled` : `disabled`) + ` airplanes`;
 	outputSandboxMessage(client, outputMessage);
@@ -91,7 +91,7 @@ addNetworkHandler(`sb.w.ssvbridge`, function (client, state) {
 	let outputMessage = ``;
 
 	ssvBridgeEnabled = state;
-	gta.ssvBridgeEnabled = state;
+	game.ssvBridgeEnabled = state;
 
 	outputMessage = String((state) ? `enabled` : `disabled`) + ` the Shoreside Vale bridge`;
 	outputSandboxMessage(client, outputMessage);

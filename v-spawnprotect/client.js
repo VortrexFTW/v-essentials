@@ -50,7 +50,7 @@ addEventHandler("OnDrawnHUD", function (event, deltaTime) {
     if (isPlayerInSpawnProtectionArea()) {
         if (scriptConfig.showSpawnProtectionMessage == true) {
             if (spawnProtectionMessageFont != null) {
-                spawnProtectionMessageFont.render(spawnProtectionMessageText, [0, gta.height - 30], gta.width, 0.5, 0.0, spawnProtectionMessageFont.size, spawnProtectionMessageColour, true, true, false, true);
+                spawnProtectionMessageFont.render(spawnProtectionMessageText, [0, game.height - 30], game.width, 0.5, 0.0, spawnProtectionMessageFont.size, spawnProtectionMessageColour, true, true, false, true);
             }
         }
         natives.setCharProofs(localPlayer, true, true, true, true, true);

@@ -21,33 +21,33 @@ let syncTimer = null;
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceReady", thisResource, function(event, resource) {
+bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 	syncTimer = setInterval(sendHeadLook, 2000);
 });
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
 	clearInterval(syncTimer);
 	collectAllGarbage();
 });
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnProcess", function(event, deltaTime) {
-	if(localPlayer != null) {
-		centerCameraPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, 0));
-		lookAtPos = getWorldFromScreenPosition(new Vec3(gta.width/2, gta.height/2, centerCameraPos.distance(localPlayer.position)+20));
+addEventHandler("OnProcess", function (event, deltaTime) {
+	if (localPlayer != null) {
+		centerCameraPos = getWorldFromScreenPosition(new Vec3(game.width / 2, game.height / 2, 0));
+		lookAtPos = getWorldFromScreenPosition(new Vec3(game.width / 2, game.height / 2, centerCameraPos.distance(localPlayer.position) + 20));
 		//localPlayer.lookAt(lookAtPos, 3000);
 	}
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("v.p.lookat", function(ped, position) {
-	if(typeof ped != "undefined") {
+addNetworkHandler("v.p.lookat", function (ped, position) {
+	if (typeof ped != "undefined") {
 		//if(ped != localPlayer) {
-			ped.lookAt(position, 3000);
+		ped.lookAt(position, 3000);
 		//}
 	}
 	console.log("Received head position from ID " + ped.id);

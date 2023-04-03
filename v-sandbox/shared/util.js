@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 
 // DONT TOUCH THIS
-let thisGame = (typeof server == "undefined") ? gta.game : server.game;
+let thisGame = (typeof server == "undefined") ? game.game : server.game;
 let isServer = (typeof server == "undefined") ? false : true;
 
 // ----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.v.add`, function (client, modelID, position, heading) {
-	let tempVehicle = gta.createVehicle(Number(modelID), position);
+	let tempVehicle = game.createVehicle(Number(modelID), position);
 	tempVehicle.heading = heading;
 	addToWorld(tempVehicle);
 

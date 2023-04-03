@@ -35,13 +35,13 @@ function VehicleJump(physical) {
 		physical = GetTargetPhysical();
 
 	if (physical.isSyncer) {
-		if (physical.isType(ELEMENT_TRAIN))
-			physical.derailed = true;
+		//if (physical.isType(ELEMENT_TRAIN))
+		//	physical.derailed = true;
 
 		let mat = physical.matrix;
 
 		let multiplier = 1.0;
-		if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC)
+		if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC)
 			multiplier = 20.0;
 		let velocity = physical.velocity;
 		velocity[0] += mat.getElement(1 * 4 + 0) * 0.3 * multiplier;

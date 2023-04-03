@@ -200,7 +200,7 @@ function initResource() {
             let textureName = `${customTextures[i].textureName}`;
             let txdFile = openFile(customTextures[i].filePath);
             if (txdFile != null) {
-                gta.loadTXD(textureName, txdFile);
+                game.loadTXD(textureName, txdFile);
                 txdFile.close();
             }
         }
@@ -208,7 +208,7 @@ function initResource() {
         for (let i in customModels) {
             let dffFile = openFile(customModels[i].filePath);
             if (dffFile != null) {
-                gta.loadDFF(customModels[i].modelId, dffFile);
+                game.loadDFF(customModels[i].modelId, dffFile);
                 dffFile.close();
             }
         }
@@ -216,7 +216,7 @@ function initResource() {
         for (let i in customCollisions) {
             let colFile = openFile(customCollisions[i].filePath);
             if (colFile != null) {
-                gta.loadCOL(colFile, customCollisions[i].objectId);
+                game.loadCOL(colFile, customCollisions[i].objectId);
                 colFile.close();
             }
         }
@@ -230,7 +230,7 @@ function initResource() {
         }
 
         for (let i in customGameTexts) {
-            gta.setCustomText(customGameTexts[i][0], customGameTexts[i][1]);
+            game.setCustomText(customGameTexts[i][0], customGameTexts[i][1]);
         }
     }
 
@@ -309,15 +309,15 @@ function renderCustomWorldGraphics() {
 
     for (let i in worldGraphicsRenderings) {
         if (getCustomImage(worldGraphicsRenderings[i].imageName) != false) {
-            gta.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATESRCBLEND, rwBLENDSRCALPHA);
-            gta.rwRenderStateSet(rwRENDERSTATEDESTBLEND, rwBLENDINVSRCALPHA);
-            gta.rwRenderStateSet(rwRENDERSTATETEXTURERASTER, getCustomImage(worldGraphicsRenderings[i].imageName));
-            gta.rwRenderStateSet(rwRENDERSTATETEXTUREFILTER, rwFILTERLINEAR);
-            gta.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
-            gta.rwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, rwTEXTUREADDRESSCLAMP);
+            game.rwRenderStateSet(rwRENDERSTATEFOGENABLE, 1);
+            game.rwRenderStateSet(rwRENDERSTATEZWRITEENABLE, 1);
+            game.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
+            game.rwRenderStateSet(rwRENDERSTATESRCBLEND, rwBLENDSRCALPHA);
+            game.rwRenderStateSet(rwRENDERSTATEDESTBLEND, rwBLENDINVSRCALPHA);
+            game.rwRenderStateSet(rwRENDERSTATETEXTURERASTER, getCustomImage(worldGraphicsRenderings[i].imageName));
+            game.rwRenderStateSet(rwRENDERSTATETEXTUREFILTER, rwFILTERLINEAR);
+            game.rwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, 1);
+            game.rwRenderStateSet(rwRENDERSTATETEXTUREADDRESS, rwTEXTUREADDRESSCLAMP);
 
             graphics.drawQuad3D(worldGraphicsRenderings[i].points[0], worldGraphicsRenderings[i].points[1], worldGraphicsRenderings[i].points[2], worldGraphicsRenderings[i].points[3], COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE, COLOUR_WHITE);
         }

@@ -8,7 +8,7 @@ bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
         event.preventDefault();
     }
 
-    gta.weather.force(Number(server.getCVar("weather")));
+    game.weather.force(Number(server.getCVar("weather")));
 });
 
 // ===========================================================================

@@ -28,7 +28,7 @@ bindEventHandler("onResourceReady", thisResource, function (event, resource) {
 addEventHandler("OnProcess", function (event, deltaTime) {
     if (typeof gta != "undefined") {
         blockedScripts.forEach((blockedScript) => {
-            gta.terminateScript(blockedScript);
+            game.terminateScript(blockedScript);
         });
     }
 });
@@ -38,7 +38,7 @@ addEventHandler("OnProcess", function (event, deltaTime) {
 addEventHandler("OnDrawnHUD", function (event) {
     if (smallGameMessageFont != null) {
         if (smallGameMessageText != "") {
-            smallGameMessageFont.render(smallGameMessageText, [0, gta.height - 50], gta.width, 0.5, 0.0, smallGameMessageFont.size, smallGameMessageColour, true, true, false, true);
+            smallGameMessageFont.render(smallGameMessageText, [0, game.height - 50], game.width, 0.5, 0.0, smallGameMessageFont.size, smallGameMessageColour, true, true, false, true);
         }
     }
 });
@@ -66,7 +66,7 @@ addNetworkHandler("smallGameMessage", function (text, colour, duration) {
 
 addNetworkHandler("requestGameScripts", function () {
     if (typeof gta != "undefined") {
-        triggerNetworkEvent("receiveGameScripts", gta.getActiveScripts());
+        triggerNetworkEvent("receiveGameScripts", game.getActiveScripts());
     }
 });
 

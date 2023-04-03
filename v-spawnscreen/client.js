@@ -9,22 +9,22 @@ let spawnScreenCamLookAtPosition = new Vec3(0.0, 0.0, 0.0);
 
 // ----------------------------------------------------------------------------
 
-if (gta.game == GAME_GTA_III) {
+if (game.game == GAME_GTA_III) {
 	spawnScreenPedPosition = new Vec3(139.54, -903.00, 26.16);
 	spawnScreenPedHeading = 15.0;
 	spawnScreenCamPosition = new Vec3(138.17, -909.90, 28.16);
 	spawnScreenCamLookAtPosition = new Vec3(139.54, -903.00, 26.16);
-} else if (gta.game == GAME_GTA_VC) {
+} else if (game.game == GAME_GTA_VC) {
 	spawnScreenPedPosition = new Vec3(-379.16, -535.27, 17.28);
 	spawnScreenPedHeading = 0.0;
 	spawnScreenCamPosition = new Vec3(-378.66, -524.57, 18.02);
 	spawnScreenCamLookAtPosition = new Vec3(-379.16, -535.27, 17.28);
-} else if (gta.game == GAME_GTA_SA) {
+} else if (game.game == GAME_GTA_SA) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
 	spawnScreenCamPosition = new Vec3(2494.54, -1677.83, 15.33);
 	spawnScreenCamLookAtPosition = spawnScreenPedPosition;
-} else if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+} else if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 	spawnScreenPedPosition = new Vec3(904.27, -498.00, 14.522);
 	spawnScreenPedHeading = 3.127;
 	spawnScreenCamPosition = new Vec3(908.48, -501.24, 15.146);
@@ -52,7 +52,7 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 
 	skinSelectExplainFont = lucasFont.createDefaultFont(12.0, "Roboto", "Light");
 
-	if (gta.game == GAME_GTA_IV) {
+	if (game.game == GAME_GTA_IV) {
 		localPlayer.setData("v.ss.ivskinindex", 0);
 	}
 
@@ -74,7 +74,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 		case SDLK_RIGHT:
 			if (inSpawnScreen) {
 				if (sdl.ticks - lastKeyPressTick >= keyPressDelay) {
-					if (gta.game == GAME_GTA_III) {
+					if (game.game == GAME_GTA_III) {
 						if (localPlayer.skin >= 122) {
 							localPlayer.skin = 0;
 						} else {
@@ -84,7 +84,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin++;
 							}
 						}
-					} else if (gta.game == GAME_GTA_VC) {
+					} else if (game.game == GAME_GTA_VC) {
 						if (localPlayer.skin >= 100) {
 							localPlayer.skin = 0;
 						} else {
@@ -96,13 +96,13 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin++;
 							}
 						}
-					} else if (gta.game == GAME_GTA_SA) {
+					} else if (game.game == GAME_GTA_SA) {
 						if (localPlayer.skin >= 288) {
 							localPlayer.skin = 0;
 						} else {
 							localPlayer.skin++;
 						}
-					} else if (gta.game == GAME_GTA_IV) {
+					} else if (game.game == GAME_GTA_IV) {
 						if (localPlayer.getData("v.ss.ivskinindex") >= gtaivSkinModels.length) {
 							localPlayer.setData("v.ss.ivskinindex", 0);
 							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
@@ -121,7 +121,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 		case SDLK_LEFT:
 			if (inSpawnScreen) {
 				if (sdl.ticks - lastKeyPressTick >= keyPressDelay) {
-					if (gta.game == GAME_GTA_III) {
+					if (game.game == GAME_GTA_III) {
 						if (localPlayer.skin <= 0) {
 							localPlayer.skin = 122;
 						} else {
@@ -131,7 +131,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin--;
 							}
 						}
-					} else if (gta.game == GAME_GTA_VC) {
+					} else if (game.game == GAME_GTA_VC) {
 						if (localPlayer.skin <= 0) {
 							localPlayer.skin = 100;
 						} else {
@@ -143,7 +143,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 								localPlayer.skin--;
 							}
 						}
-					} else if (gta.game == GAME_GTA_SA) {
+					} else if (game.game == GAME_GTA_SA) {
 						if (localPlayer.skin <= 0) {
 							localPlayer.skin = 313;
 						} else if (localPlayer.skin == 9) {
@@ -165,7 +165,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 						} else {
 							localPlayer.skin--;
 						}
-					} else if (gta.game == GAME_GTA_IV) {
+					} else if (game.game == GAME_GTA_IV) {
 						if (localPlayer.getData("v.ss.ivskinindex") <= 0) {
 							localPlayer.setData("v.ss.ivskinindex", 0);
 							triggerNetworkEvent("v.ss.ivskinsel", gtaivSkinModels[localPlayer.getData("v.ss.ivskinindex")][1]);
@@ -192,7 +192,7 @@ addEventHandler("OnKeyUp", function (event, keyCode, scanCode, mod) {
 					//	message("You spawned as " + skinName, gameAnnounceColour);
 					//}
 					lastKeyPressTick = sdl.ticks;
-					gta.setPlayerControl(true);
+					game.setPlayerControl(true);
 					gui.showCursor(false, true);
 				}
 			}
@@ -209,17 +209,17 @@ addNetworkHandler("v.spawn", function (position, heading, skin) {
 // ----------------------------------------------------------------------------
 
 function showSkinSelect() {
-	if (gta.game < GAME_GTA_IV) {
+	if (game.game < GAME_GTA_IV) {
 		localPlayer.collisionsEnabled = false;
 		localPlayer.stayInSamePlace = true;
 		localPlayer.skin = 0;
 	}
 
-	gta.setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);
+	game.setCameraLookAt(spawnScreenCamPosition, spawnScreenCamLookAtPosition, true);
 	setHUDEnabled(false);
 	inSpawnScreen = true;
-	gta.fadeCamera(true);
-	gta.setPlayerControl(false);
+	game.fadeCamera(true);
+	game.setPlayerControl(false);
 	gui.showCursor(true, false);
 	return true;
 }

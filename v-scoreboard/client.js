@@ -24,7 +24,7 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 	if (typeof gta != "undefined") {
 		if (updateGTAIVInfo == null) {
 			updateGTAIVInfo = setInterval(function () {
-				triggerNetworkEvent("v.ivinfo.", gta.ivEpisode, gta.ivGamemode);
+				triggerNetworkEvent("v.ivinfo.", game.ivEpisode, game.ivGamemode);
 			}, 2500);
 		}
 	}
@@ -36,7 +36,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	if (typeof gta != "undefined") {
 		if (updateGTAIVInfo == null) {
 			updateGTAIVInfo = setInterval(function () {
-				triggerNetworkEvent("v.ivinfo.", gta.ivEpisode, gta.ivGamemode);
+				triggerNetworkEvent("v.ivinfo.", game.ivEpisode, game.ivGamemode);
 			}, 2500);
 		}
 	}
@@ -63,7 +63,7 @@ addEventHandler("OnDrawnHUD", function (event) {
 			if (typeof gta != "undefined") {
 				// Episode
 				text = "Unknown";
-				if (gta.game == GAME_GTA_IV) {
+				if (game.game == GAME_GTA_IV) {
 					listColumns = ["ID", "Name", "Ping", "Episode", "Gamemode"];
 				}
 			}
@@ -95,7 +95,7 @@ addEventHandler("OnDrawnHUD", function (event) {
 				if (typeof gta != "undefined") {
 					// Episode
 					text = "Unknown";
-					if (gta.game == GAME_GTA_IV) {
+					if (game.game == GAME_GTA_IV) {
 						listColumnData = [String(clients[i].index), name, String(clients[i].getData("v.ping")), ivEpisodes[clients[i].getData("v.ivinfo")[0]], ivGamemodes[clients[i].getData("v.ivinfo")[1]]];
 					}
 				}

@@ -8,8 +8,8 @@ bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
         event.preventDefault();
     }
 
-    gta.time.hour = Number(server.getCVar("hour"));
-    gta.time.minute = Number(server.getCVar("minute"));
+    game.time.hour = Number(server.getCVar("hour"));
+    game.time.minute = Number(server.getCVar("minute"));
 });
 
 // ===========================================================================

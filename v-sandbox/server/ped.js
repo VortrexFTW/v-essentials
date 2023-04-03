@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.c.add`, function (client, modelId, position, heading) {
-	let civilian = gta.createCivilian(modelId, position);
+	let civilian = game.createCivilian(modelId, position);
 	civilian.heading = heading;
 	addToWorld(civilian);
 });

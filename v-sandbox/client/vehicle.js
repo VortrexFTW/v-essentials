@@ -23,21 +23,21 @@ function spawnVehicleCommand(cmdName, params) {
 	//	return false;
 	//}
 
-	let modelId = getVehicleModelIdFromParams(params, gta.game);
+	let modelId = getVehicleModelIdFromParams(params, game.game);
 	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
 	let heading = localPlayer.heading;
 
-	if (gta.game < GAME_GTA_IV) {
+	if (game.game < GAME_GTA_IV) {
 		if (!isValidVehicleModel(modelId)) {
 			message("Invalid vehicle model!", errorMessageColour);
 			return false;
 		}
 	}
 
-	if (gta.game == GAME_GTA_III) {
+	if (game.game == GAME_GTA_III) {
 		// Make sure boats only go in water!
 		if (modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_GHOST || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_SPEEDER) {
-			if (gta.findGroundZForCoord(position.x, position.y) != 20) {
+			if (game.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat!", errorMessageColour);
 				return false;
 			}
@@ -78,10 +78,10 @@ function spawnVehicleCommand(cmdName, params) {
 				return false;
 			}
 		}
-	} else if (gta.game == GAME_GTA_VC) {
+	} else if (game.game == GAME_GTA_VC) {
 		// Make sure boats only go in water!
 		if (modelId == MODELVEHICLE_BOAT_COASTG || modelId == MODELVEHICLE_BOAT_DINGHY || modelId == MODELVEHICLE_BOAT_JETMAX || modelId == MODELVEHICLE_BOAT_MARQUIS || modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_RIO || modelId == MODELVEHICLE_BOAT_SKIMMER || modelId == MODELVEHICLE_BOAT_SQUALO || modelId == MODELVEHICLE_BOAT_TROPIC) {
-			if (gta.findGroundZForCoord(position.x, position.y) != 20) {
+			if (game.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat or skimmer!", errorMessageColour);
 				return false;
 			}
@@ -102,7 +102,7 @@ function spawnVehicleCommand(cmdName, params) {
 				return false;
 			}
 		}
-	} else if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	} else if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		// Make sure it isn't a train
 		if (modelId == MODEL_SUBWAY_HI || modelId == MODEL_SUBWAY_LO || modelId == MODEL_CABLECAR) {
 			message("Use /train to spawn a train!", errorMessageColour);
@@ -131,7 +131,7 @@ function spawnVehicleCommand(cmdName, params) {
 	}
 
 	let thisVeh = false;
-	if (gta.game == GAME_GTA_IV) {
+	if (game.game == GAME_GTA_IV) {
 		thisVeh = createVehicle2(modelId, position, true);
 		thisVeh.heading = heading;
 		lastVehicleSpawn = getCurrentUnixTimestamp();
@@ -139,7 +139,7 @@ function spawnVehicleCommand(cmdName, params) {
 		if (isConnected) {
 			triggerNetworkEvent("sb.v.add", modelId, position, heading);
 		} else {
-			thisVeh = gta.createVehicle(modelId, position);
+			thisVeh = game.createVehicle(modelId, position, heading);
 			thisVeh.heading = heading;
 		}
 	}
@@ -806,7 +806,7 @@ addCommandHandler("veh_wheels", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_doors", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -850,7 +850,7 @@ addCommandHandler("veh_doors", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_god", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1115,7 +1115,7 @@ addCommandHandler("veh_dirtlevel", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_radio", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1145,9 +1145,9 @@ addCommandHandler("veh_radio", function (cmdName, params) {
 	}
 
 	if (vehicles.length > 1) {
-		outputText = "set " + String(vehicles.length) + " vehicle's radio stations to " + vehicleRadioStationNames[gta.game][radioStation];
+		outputText = "set " + String(vehicles.length) + " vehicle's radio stations to " + vehicleRadioStationNames[game.game][radioStation];
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[gta.game][radioStation] + " (using /veh_radio)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[game.game][radioStation] + " (using /veh_radio)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1157,7 +1157,7 @@ addCommandHandler("veh_radio", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_mission", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1187,9 +1187,9 @@ addCommandHandler("veh_mission", function (cmdName, params) {
 	}
 
 	if (vehicles.length > 1) {
-		outputText = "set " + String(vehicles.length) + " vehicle's missions to " + String(missionNames[gta.game][missionId]);
+		outputText = "set " + String(vehicles.length) + " vehicle's missions to " + String(missionNames[game.game][missionId]);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[gta.game][missionId]) + " (using /veh_mission)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[game.game][missionId]) + " (using /veh_mission)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1199,7 +1199,7 @@ addCommandHandler("veh_mission", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_rgb", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1320,7 +1320,7 @@ addCommandHandler("veh_colour2", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_colour3", function (cmdName, params) {
-	if (gta.game == GAME_GTA_III || gta.game == GAME_GTA_VC || gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	if (game.game == GAME_GTA_III || game.game == GAME_GTA_VC || game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 		message("Command: /" + String(cmdName) + " <vehicle> <colour id>", syntaxMessageColour);
 		return false;
 	}
@@ -1362,7 +1362,7 @@ addCommandHandler("veh_colour3", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_colour4", function (cmdName, params) {
-	if (gta.game == GAME_GTA_III || gta.game == GAME_GTA_VC || gta.game == GAME_GTA_SA || gta.game == GAME_GTA_UG) {
+	if (game.game == GAME_GTA_III || game.game == GAME_GTA_VC || game.game == GAME_GTA_SA || game.game == GAME_GTA_UG) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1404,7 +1404,7 @@ addCommandHandler("veh_colour4", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_collisions", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1446,7 +1446,7 @@ addCommandHandler("veh_collisions", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_cruisespeed", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1488,7 +1488,7 @@ addCommandHandler("veh_cruisespeed", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_drivingstyle", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1530,7 +1530,7 @@ addCommandHandler("veh_drivingstyle", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_livery", function (cmdName, params) {
-	if (gta.game != GAME_GTA_IV && gta.game != GAME_GTA_IV_EFLC) {
+	if (game.game != GAME_GTA_IV && game.game != GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1572,7 +1572,7 @@ addCommandHandler("veh_livery", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_handling", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1670,9 +1670,9 @@ addCommandHandler("veh_driveto", function (cmdName, params) {
 	}
 
 	let selectedLocation = false;
-	for (let i in gameLocations[gta.game]) {
-		if (gameLocations[gta.game][i][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
-			selectedLocation = gameLocations[gta.game][i];
+	for (let i in gameLocations[game.game]) {
+		if (gameLocations[game.game][i][0].toLowerCase().indexOf(locationName.toLowerCase()) != -1) {
+			selectedLocation = gameLocations[game.game][i];
 		}
 	}
 
@@ -1702,7 +1702,7 @@ addCommandHandler("veh_driveto", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_scale", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1744,7 +1744,7 @@ addCommandHandler("veh_scale", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_wander", function (cmdName, params) {
-	if (gta.game == GAME_GTA_IV || gta.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}

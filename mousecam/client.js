@@ -564,7 +564,7 @@ function update() {
 }
 
 addEventHandler("OnCameraProcess", (event) => {
-	//if(gta.standardControls) {
+	//if(game.standardControls) {
 	update();
 	event.preventDefault();
 	//}
