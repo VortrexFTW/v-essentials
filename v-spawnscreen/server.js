@@ -64,7 +64,7 @@ let spawnSkin = [null, 0, 0, 0, 0, -142386662, -142386662, null, null, null, "To
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("onPedDeath", function (event, ped) {
+addEventHandler("onPedDeathEx", function (event, ped) {
 	if (server.game == 5) {
 		return false;
 	}
