@@ -1,0 +1,7 @@
+<meta>
+	<info title="v-cursor" author="Vortrex" version="1.0" description="Draws a mouse cursor on games that don't support it. Can also be used for custom cursor." />
+
+	<script src="client.js" type="client" language="javascript" />
+
+	<file type="client" src="cursor.png" />
+</meta>
