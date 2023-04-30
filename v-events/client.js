@@ -132,6 +132,11 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 					}
 				});
 			}
+			
+			// Set sphere variable to null, to fix issue when markers were deleted/hidden before exiting them.
+			if (sphere && sphere.id == -1) {
+				sphere = null;
+			}
 		}
 	}
 });
