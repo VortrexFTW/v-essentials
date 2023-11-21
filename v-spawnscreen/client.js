@@ -24,7 +24,7 @@ if (game.game == GAME_GTA_III) {
 	spawnScreenPedHeading = 0.01;
 	spawnScreenCamPosition = new Vec3(2494.54, -1677.83, 15.33);
 	spawnScreenCamLookAtPosition = spawnScreenPedPosition;
-} else if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+} else if (game.game == GAME_GTA_IV) {
 	spawnScreenPedPosition = new Vec3(904.27, -498.00, 14.522);
 	spawnScreenPedHeading = 3.127;
 	spawnScreenCamPosition = new Vec3(908.48, -501.24, 15.146);

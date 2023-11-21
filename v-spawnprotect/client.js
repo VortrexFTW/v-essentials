@@ -69,7 +69,7 @@ function isPlayerInSpawnProtectionArea() {
     for (let i in scriptConfig.spawnProtectionAreas) {
         if (doesGameMatch(scriptConfig.spawnProtectionAreas[i][0]), game.game) {
             if (localPlayer.position.distance(scriptConfig.spawnProtectionAreas[i][1]) <= scriptConfig.spawnProtectionAreas[i][2]) {
-                if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+                if (game.game == GAME_GTA_IV) {
                     if (scriptConfig.spawnProtectionAreas[i][3] == game.ivGamemode) {
                         return true;
                     }

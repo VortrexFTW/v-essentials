@@ -84,7 +84,7 @@ addCommandHandler("gamespeed", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("planes", function (command, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message(`The /${command} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
@@ -113,7 +113,7 @@ addCommandHandler("planes", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("trains", function (command, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message(`The /${command} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
@@ -145,7 +145,7 @@ addCommandHandler("trains", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("traffic", function (command, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message(`The /${command} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
@@ -172,7 +172,7 @@ addCommandHandler("traffic", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civilians", function (command, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message(`The /${command} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
@@ -199,7 +199,7 @@ addCommandHandler("civilians", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("civdensity", function (command, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message(`The /${command} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
@@ -226,7 +226,7 @@ addCommandHandler("civdensity", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("trafficdensity", function (command, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message(`The /${command} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
@@ -253,7 +253,7 @@ addCommandHandler("trafficdensity", function (command, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("minutedur", function (command, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message(`The /${command} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
@@ -286,7 +286,7 @@ addNetworkHandler("sb.w.gamespeed", function (gameSpeed) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.civilians", function (state) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		return false;
 	}
 
@@ -307,7 +307,7 @@ addNetworkHandler("sb.w.civilians", function (state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.traffic", function (state) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		return false;
 	}
 
@@ -334,7 +334,7 @@ addNetworkHandler("sb.w.trains", function (state) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.w.minutedur", function (minuteDuration) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		return false;
 	}
 

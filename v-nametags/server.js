@@ -2,9 +2,9 @@
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
-		console.warn("The v-nametags resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	if (server.game == GAME_GTA_IV) {
+		console.warn("The v-nametags resource doesn't work on GTA IV. Stopping resource ...");
 		thisResource.stop();
 	}
 });
@@ -12,7 +12,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 // ----------------------------------------------------------------------------
 
 
-addNetworkHandler("armour", function(client, ped, armour) {
+addNetworkHandler("armour", function (client, ped, armour) {
 	triggerNetworkEvent("armour", null, ped, armour);
 });
 

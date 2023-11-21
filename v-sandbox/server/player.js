@@ -150,7 +150,7 @@ addCommandHandler(`gotopos`, function (cmdName, params, client) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.p.skin`, function (client, skinId, position, heading) {
-	if (server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
+	if (server.game == GAME_GTA_IV) {
 		spawnPlayer(client, position, heading, Number(skinId));
 	} else {
 		client.player.modelIndex = Number(skinId);

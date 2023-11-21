@@ -6134,7 +6134,7 @@ function getVehicleModelIdFromParams(params, gameId = thisGame) {
 
 		return modelId;
 	} else {
-		//if(gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
+		//if(gameId == GAME_GTA_IV) {
 		//	params = Number(params);
 		//	return gtaivVehicleModels[params][1];
 		//}
@@ -6170,7 +6170,7 @@ function getSkinIdFromParams(params, gameId = thisGame) {
 		return getSkinIdFromName(params, gameId);
 	} else {
 		params = Number(params);
-		if (gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
+		if (gameId == GAME_GTA_IV) {
 			return gtaivSkinModels[params][1];
 		} else {
 			return params;
@@ -6272,7 +6272,7 @@ function getVehicleUpgradeIdFromName(params, gameId = thisGame) {
 // ----------------------------------------------------------------------------
 
 function getSkinIdFromName(params, gameId = thisGame) {
-	if (gameId == GAME_GTA_IV || gameId == GAME_GTA_IV_EFLC) {
+	if (gameId == GAME_GTA_IV) {
 		for (let i in gtaivSkinModels) {
 			if (gtaivSkinModels[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 				return gtaivSkinModels[i][1];

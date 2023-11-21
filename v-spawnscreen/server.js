@@ -33,7 +33,7 @@ if (serverGame == GAME_GTA_III) {
 } else if (serverGame == GAME_GTA_SA) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
-} else if (serverGame == GAME_GTA_IV || serverGame == GAME_GTA_IV_EFLC) {
+} else if (serverGame == GAME_GTA_IV) {
 	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
 	spawnScreenPedHeading = -1.642;
 } else if (serverGame == 10) { // Will be changed to GAME_MAFIA_ONE after next GTAC update
@@ -124,7 +124,7 @@ function getSkinName(skinId) {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	//if(server.game == GAME_GTA_IV || server.game == GAME_GTA_IV_EFLC) {
+	//if(server.game == GAME_GTA_IV) {
 	//	console.warn("The v-spawnscreen resource doesn't work on GTA IV or Episodes From Liberty City (EFLC). Stopping resource ...");
 	//	thisResource.stop();
 	//}

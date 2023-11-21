@@ -22,7 +22,7 @@ addNetworkHandler("sb.e.syncer", function (client, element) {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	if (serverGame != GAME_GTA_IV && serverGame != GAME_GTA_IV_EFLC) {
+	if (serverGame != GAME_GTA_IV) {
 		game.forceWeather(currentWeather[serverGame]);
 		game.hour = timeLockHour[serverGame];
 		game.minute = timeLockMinute[serverGame];

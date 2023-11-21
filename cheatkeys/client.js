@@ -41,7 +41,7 @@ function VehicleJump(physical) {
 		let mat = physical.matrix;
 
 		let multiplier = 1.0;
-		if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC)
+		if (game.game == GAME_GTA_IV)
 			multiplier = 20.0;
 		let velocity = physical.velocity;
 		velocity[0] += mat.getElement(1 * 4 + 0) * 0.3 * multiplier;

@@ -102,7 +102,7 @@ function spawnVehicleCommand(cmdName, params) {
 				return false;
 			}
 		}
-	} else if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	} else if (game.game == GAME_GTA_IV) {
 		// Make sure it isn't a train
 		if (modelId == MODEL_SUBWAY_HI || modelId == MODEL_SUBWAY_LO || modelId == MODEL_CABLECAR) {
 			message("Use /train to spawn a train!", errorMessageColour);
@@ -806,7 +806,7 @@ addCommandHandler("veh_wheels", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_doors", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -850,7 +850,7 @@ addCommandHandler("veh_doors", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_god", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1115,7 +1115,7 @@ addCommandHandler("veh_dirtlevel", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_radio", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1157,7 +1157,7 @@ addCommandHandler("veh_radio", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_mission", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1199,7 +1199,7 @@ addCommandHandler("veh_mission", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_rgb", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1404,7 +1404,7 @@ addCommandHandler("veh_colour4", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_collisions", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1446,7 +1446,7 @@ addCommandHandler("veh_collisions", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_cruisespeed", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1488,7 +1488,7 @@ addCommandHandler("veh_cruisespeed", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_drivingstyle", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1530,7 +1530,7 @@ addCommandHandler("veh_drivingstyle", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_livery", function (cmdName, params) {
-	if (game.game != GAME_GTA_IV && game.game != GAME_GTA_IV_EFLC) {
+	if (game.game != GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1572,7 +1572,7 @@ addCommandHandler("veh_livery", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_handling", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1702,7 +1702,7 @@ addCommandHandler("veh_driveto", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_scale", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -1744,7 +1744,7 @@ addCommandHandler("veh_scale", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("veh_wander", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}

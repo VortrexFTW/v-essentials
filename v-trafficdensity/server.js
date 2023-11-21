@@ -7,7 +7,7 @@ let scriptConfig = null;
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
-    if (server.game != GAME_GTA_IV && server.game != GAME_GTA_IV_EFLC) {
+    if (server.game != GAME_GTA_IV) {
         console.error(`The v-trafficdensity resource only works on GTA IV`);
         event.preventDefault();
         thisResource.stop();

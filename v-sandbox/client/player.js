@@ -225,7 +225,7 @@ addCommandHandler("bikegod", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("mission", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC || game.game == GAME_MAFIA_ONE) {
+	if (game.game == GAME_GTA_IV || game.game == GAME_MAFIA_ONE) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -261,7 +261,7 @@ addCommandHandler("lastseen", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("endmission", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -390,7 +390,7 @@ addCommandHandler("input", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("collisions", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -454,7 +454,7 @@ addCommandHandler("money", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("interior", function (cmdName, params) {
-	//if(game.game == GAME_GTA_III || game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_III || game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -475,7 +475,7 @@ addCommandHandler("interior", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("armour", function (cmdName, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -505,7 +505,7 @@ addCommandHandler("armour", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("warpinveh", function (cmdName, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -533,7 +533,7 @@ addCommandHandler("warpinveh", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("warpinveh", function (cmdName, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -561,7 +561,7 @@ addCommandHandler("warpinveh", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("enterveh", function (cmdName, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -589,7 +589,7 @@ addCommandHandler("enterveh", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("stars", function (cmdName, params) {
-	//if(game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -619,7 +619,7 @@ addCommandHandler("stars", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("limb", function (cmdName, params) {
-	if (game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
@@ -648,7 +648,7 @@ addCommandHandler("limb", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("walkstyle", function (cmdName, params) {
-	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV) {
 	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 	//	return false;
 	//}
@@ -672,7 +672,7 @@ addCommandHandler("walkstyle", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("stamina", function (cmdName, params) {
-	if (game.game == GAME_GTA_III || game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV || game.game == GAME_GTA_IV_EFLC) {
+	if (game.game == GAME_GTA_III || game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV) {
 		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
 		return false;
 	}
