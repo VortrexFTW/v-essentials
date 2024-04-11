@@ -416,7 +416,7 @@ function applyAdminPermissions() {
 		clients[i].administrator = false;
 
 		if (typeof clients[i].trainers != "undefined") {
-			clients[i].trainers = false;
+			clients[i].trainers = server.getCVar("trainers");
 		}
 	}
 
@@ -512,7 +512,9 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 	let tokenValid = false;
 
 	fromClient.administrator = scriptConfig.admins.find((admin) => admin.token == token) ? true : false;
-	fromClient.trainers = scriptConfig.trainers.find((trainers) => trainers.token == token) ? true : false;
+
+	// Only enable trainers for this player if they have been given permission by an admin, or if the server CVar is set to true (meaning all players can use trainers)
+	fromClient.trainers = scriptConfig.trainers.find((trainers) => trainers.token == token) ? true : server.getCVar("trainers");
 
 	if (isAdminName(fromClient.name)) {
 		if (tokenValid == false || getTokenFromName(fromClient.name) != token) {
