@@ -14,6 +14,7 @@ bindEventHandler("onResourceStart", thisResource, (event, resource) => {
 	server.unbanAllIPs();
 	applyBansToServer();
 	applyAdminPermissions();
+	applyTrainerPermissions();
 	collectAllGarbage();
 });
 
@@ -165,6 +166,33 @@ addCommandHandler("makeadmin", (command, params, client) => {
 			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
 			let randomToken = generateRandomString(128);
 			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
+			triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
+			saveConfig();
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("trainers", (command, params, client) => {
+	if (server.game != GAME_GTA_IV) {
+		messageClient(`This command is only available on GTA IV`, client, errorMessageColour);
+		return false;
+	}
+
+	let targetClient = getClientFromParams(params);
+
+	if (client.administrator || client.console) {
+		if (targetClient) {
+			targetClient.trainers = !targetClient.trainers;
+			messageAdmins(`${client.name} ${(targetClient.trainers) ? "enabled" : "disabled"} trainers for ${targetClient.name}`);
+
+			let token = generateRandomString(128);
+			if (isPlayerAdmin(targetClient)) {
+				token = getTokenFromName(targetClient.name);
+			}
+
+			scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
 			triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
 			saveConfig();
 		}
@@ -342,6 +370,16 @@ function isAdminName(name) {
 
 // ----------------------------------------------------------------------------
 
+function isAdminToken(token) {
+	for (let i in scriptConfig.admins) {
+		if (token.toLowerCase().trim() == scriptConfig.admins[i].token.toLowerCase().trim()) {
+			return true;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+
 function applyBansToServer() {
 	removeBansFromServer();
 	for (let i in scriptConfig.bans) {
@@ -376,6 +414,10 @@ function applyAdminPermissions() {
 	let clients = getClients();
 	for (let i in clients) {
 		clients[i].administrator = false;
+
+		if (typeof clients[i].trainers != "undefined") {
+			clients[i].trainers = false;
+		}
 	}
 
 	triggerNetworkEvent("v.admin.token", null, scriptConfig.serverToken);
@@ -433,6 +475,12 @@ function fixMissingConfigStuff() {
 	if (typeof scriptConfig.bans == "undefined") {
 		scriptConfig.bans = [];
 	}
+
+	if (typeof scriptConfig.trainers == "undefined") {
+		scriptConfig.trainers = [];
+	}
+
+	saveConfig();
 }
 
 // ----------------------------------------------------------------------------
@@ -449,11 +497,13 @@ function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZab
 // ----------------------------------------------------------------------------
 
 function getTokenFromName(name) {
-	for (let i in scriptConfig.admins) {
-		if (scriptConfig.admins[i].name.toLowerCase() == name.toLowerCase()) {
-			return scriptConfig.admins[i].token;
-		}
-	}
+	return scriptConfig.admins.find((admin) => admin.name == name) ? admin.token : null;
+}
+
+// ----------------------------------------------------------------------------
+
+function getTokenFromIP(ip) {
+	return scriptConfig.admins.find((admin) => admin.ip == ip) ? admin.token : false;
 }
 
 // ----------------------------------------------------------------------------
@@ -461,12 +511,8 @@ function getTokenFromName(name) {
 addNetworkHandler("v.admin.token", function (fromClient, token) {
 	let tokenValid = false;
 
-	for (let i in scriptConfig.admins) {
-		if (scriptConfig.admins[i].token == token) {
-			fromClient.administrator = true;
-			tokenValid = true;
-		}
-	}
+	fromClient.administrator = scriptConfig.admins.find((admin) => admin.token == token) ? true : false;
+	fromClient.trainers = scriptConfig.trainers.find((trainers) => trainers.token == token) ? true : false;
 
 	if (isAdminName(fromClient.name)) {
 		if (tokenValid == false || getTokenFromName(fromClient.name) != token) {
