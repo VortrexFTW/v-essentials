@@ -14,7 +14,6 @@ bindEventHandler("onResourceStart", thisResource, (event, resource) => {
 	server.unbanAllIPs();
 	applyBansToServer();
 	applyAdminPermissions();
-	applyTrainerPermissions();
 	collectAllGarbage();
 });
 
