@@ -19,6 +19,8 @@ addCommandHandler("jse", function (command, params, client) {
     }
 
     eval(params);
+
+    console.log("JavaScript server code executed: " + String(params));
     messageClient("JavaScript server code executed: " + String(params), client, outputColor);
     return true;
 });
@@ -36,6 +38,10 @@ addCommandHandler("jsr", function (command, params, client) {
     }
 
     let returnVal = eval("(" + params + ")");
+
+    console.log("JavaScript server code executed: " + String(params));
+    console.log("Returns: " + returnVal);
+
     messageClient("JavaScript server code executed: " + String(params), client, outputColor);
     messageClient("Returns: " + returnVal, client, outputColor);
     return true;

@@ -15,6 +15,8 @@ addCommandHandler("lse", function(cmdName, params, client)
 
 	pcall(load(params))
 
+	print("Lua server code executed: " .. output)
+
 	messageClient("Lua server code executed: " .. params, client, COLOUR_AQUA)
 end)
 
@@ -31,6 +33,9 @@ addCommandHandler("lsr", function(cmdName, params, client)
     end
 
 	local output = pcall(load("return " .. params))
+
+	print("Lua server code executed: " .. output)
+	print("Returns: " .. output)
 
 	messageClient("Lua server code executed: " .. output, COLOUR_AQUA)
 	messageClient("Returns: " .. output, client, COLOUR_AQUA)
