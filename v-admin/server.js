@@ -47,7 +47,7 @@ addCommandHandler("kick", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
+		if (targetClient != null) {
 			if (targetClient.index != client.index) {
 				messageAdmins(`${targetClient.name} has been kicked!`, client, COLOUR_YELLOW);
 				targetClient.disconnect();
@@ -73,7 +73,7 @@ addCommandHandler("scripts", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
+		if (targetClient != null) {
 			returnScriptsToClient = client;
 			requestGameScripts(targetClient, client);
 		} else {
@@ -93,7 +93,7 @@ addCommandHandler("ban", (command, params, client) => {
 	let targetClient = getClientFromParams(targetParams);
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
+		if (targetClient != null) {
 			if (targetClient.index != client.index) {
 				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
 				saveConfig();
@@ -156,17 +156,25 @@ addCommandHandler("blockscript", (command, params, client) => {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("makeadmin", (command, params, client) => {
+addCommandHandler("admin", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
-			targetClient.administrator = true;
-			messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-			let randomToken = generateRandomString(128);
-			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
-			triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
-			saveConfig();
+		if (targetClient != null) {
+			if (targetClient.administrator == false) {
+				targetClient.administrator = true;
+				messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
+				let randomToken = generateRandomString(128);
+				scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
+				triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
+				saveConfig();
+			} else {
+				let playerToken = getTokenFromName(targetClient.name);
+				scriptConfig.admins = scriptConfig.admins.filter(admin => admin.token != token);
+				targetClient.administrator = false;
+				messageAdmins(`${client.name} removed ${targetClient.name} from administrators!`);
+				saveConfig();
+			}
 		}
 	}
 });
@@ -182,17 +190,22 @@ addCommandHandler("trainers", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
+		if (targetClient != null) {
 			targetClient.trainers = !targetClient.trainers;
 			messageAdmins(`${client.name} ${(targetClient.trainers) ? "enabled" : "disabled"} trainers for ${targetClient.name}`);
 
-			let token = generateRandomString(128);
-			if (isPlayerAdmin(targetClient)) {
-				token = getTokenFromName(targetClient.name);
+			if (targetClient.trainers == true) {
+				let token = generateRandomString(128);
+				if (isPlayerAdmin(targetClient)) {
+					token = getTokenFromName(targetClient.name);
+				}
+
+				scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
+				triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
+			} else {
+				scriptConfig.trainers = scriptConfig.trainers.filter(trainers => trainers.ip != targetClient.ip);
 			}
 
-			scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
-			triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
 			saveConfig();
 		}
 	}
@@ -203,7 +216,7 @@ addCommandHandler("trainers", (command, params, client) => {
 addCommandHandler("ip", (command, params, client) => {
 	if (client.administrator || client.console) {
 		let targetClient = getClientFromParams(params) || client;
-		if (targetClient) {
+		if (targetClient != null) {
 			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 		}
 	}
@@ -215,7 +228,7 @@ addCommandHandler("geoip", (command, params, client) => {
 	let targetClient = getClientFromParams(params) || client;
 
 	if (client.administrator || client.console) {
-		if (targetClient) {
+		if (targetClient != null) {
 			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 		}
 	}
@@ -285,7 +298,7 @@ function getClientFromParams(params) {
 		}
 	}
 
-	return false;
+	return null;
 }
 
 // ----------------------------------------------------------------------------
@@ -415,7 +428,7 @@ function applyAdminPermissions() {
 		clients[i].administrator = false;
 
 		if (typeof clients[i].trainers != "undefined") {
-			clients[i].trainers = server.getCVar("trainers");
+			clients[i].trainers = areTrainersEnabledForEverybody();
 		}
 	}
 
@@ -513,7 +526,9 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 	fromClient.administrator = scriptConfig.admins.find((admin) => admin.token == token) ? true : false;
 
 	// Only enable trainers for this player if they have been given permission by an admin, or if the server CVar is set to true (meaning all players can use trainers)
-	fromClient.trainers = scriptConfig.trainers.find((trainers) => trainers.token == token) ? true : server.getCVar("trainers");
+	if (typeof fromClient.trainers == "undefined") {
+		fromClient.trainers = (scriptConfig.trainers.find((trainers) => trainers.token == token) != null) ? true : areTrainersEnabledForEverybody();
+	}
 
 	if (isAdminName(fromClient.name)) {
 		if (tokenValid == false || getTokenFromName(fromClient.name) != token) {
@@ -527,5 +542,15 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 		messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
 	}
 });
+
+// ----------------------------------------------------------------------------
+
+function areTrainersEnabledForEverybody() {
+	if (server.getCVar("trainers") == null) {
+		return false;
+	} else {
+		return !!Number(server.getCVar("trainers")) == true;
+	}
+}
 
 // ----------------------------------------------------------------------------
