@@ -9,6 +9,11 @@ let scriptConfig = null;
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
+	console.warn("Using the v-servernames resource will get your server blocked from the list.");
+	console.warn("Shutting down the v-servernames resource ...");
+	thisResource.stop();
+	return false;
+
 	let scriptConfigFile = loadTextFile("config.json");
 	if (scriptConfigFile == null || scriptConfigFile == "") {
 		event.preventDefault();
