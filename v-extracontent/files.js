@@ -58,3 +58,12 @@ let worldGraphicsRenderings = [
 ];
 
 // ===========================================================================
+
+// Mafia 1 only
+let customGameFiles = [
+	// Both paths are relative. The game file path (1st arg) is relative to the game's main folder where game.exe is located.
+	// The custom file path (2nd arg) is relative to the resource's folder. The file must also be included in meta.xml so it gets downloaded to the client.
+	// Example: new CustomGameFile("MISSIONS\\FREERIDE\\scene2.bin", "files/missions/freeride/scene2.bin");
+];
+
+// ===========================================================================
