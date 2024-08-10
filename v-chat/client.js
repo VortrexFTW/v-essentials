@@ -54,7 +54,7 @@ function chatBoxScrollUp() {
 		if(isKeyDown(scrollFastKey)) {
 			tempScrollAmount *= scrollFastMultiplier;
 		}
-		bottomMessageIndex = bottomMessageIndex - scrollAmount;
+		bottomMessageIndex = bottomMessageIndex - tempScrollAmount;
 		updateChatBox();
 	}
 }
@@ -67,7 +67,7 @@ function chatBoxScrollDown() {
 		if(isKeyDown(scrollFastKey)) {
 			tempScrollAmount *= scrollFastMultiplier;
 		}
-		bottomMessageIndex = bottomMessageIndex + scrollAmount;
+		bottomMessageIndex = bottomMessageIndex + tempScrollAmount;
 		updateChatBox();
 	}
 }
