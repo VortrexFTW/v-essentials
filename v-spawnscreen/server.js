@@ -19,7 +19,11 @@ let gameAnnounceColours = [
 	COLOUR_ORANGE,					// GTA San Andreas
 	COLOUR_ORANGE,					// GTA Underground
 	COLOUR_SILVER,					// GTA IV
-	COLOUR_SILVER					// GTA IV (EFLC)
+	COLOUR_SILVER,					// GTA IV (EFLC)
+	COLOUR_BLACK,					// Invalid
+	COLOUR_BLACK,					// Invalid
+	COLOUR_BLACK,					// Invalid
+	COLOUR_RED,						// Mafia 1
 ];
 
 // ----------------------------------------------------------------------------
@@ -34,9 +38,9 @@ if (serverGame == GAME_GTA_III) {
 	spawnScreenPedPosition = new Vec3(2495.03, -1685.66, 13.51);
 	spawnScreenPedHeading = 0.01;
 } else if (serverGame == GAME_GTA_IV) {
-	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.044);
+	spawnScreenPedPosition = new Vec3(900.94, -506.06, 15.04);
 	spawnScreenPedHeading = -1.642;
-} else if (serverGame == 10) { // Will be changed to GAME_MAFIA_ONE after next GTAC update
+} else if (serverGame == GAME_MAFIA_ONE) { // Will be changed to GAME_MAFIA_ONE after next GTAC update
 	spawnScreenPedPosition = new Vec3(-1981.51, -4.66, 29.37);
 	spawnScreenPedHeading = 0.0;
 }
@@ -47,10 +51,14 @@ let spawnPoints = [
 	null,																	// GAME_UNKNOWN
 	new Vec3(1449.19, -197.21, 55.62), 										// GTA III
 	new Vec3(-379.16, -535.27, 17.28), 										// GTA Vice City
-	new Vec3(2495.1884765625, -1687.4456787109, 13.515254974365), 			// GTA San Andreas
-	new Vec3(2495.1884765625, -1687.4456787109, 13.515254974365), 			// GTA Underground
-	new Vec3(900.94, -506.06, 15.044),							 			// GTA IV
-	new Vec3(900.94, -506.06, 15.044),							 			// GTA IV: EFLC
+	new Vec3(2495.03, -1685.66, 13.51), 									// GTA San Andreas
+	new Vec3(2495.03, -1685.66, 13.51), 									// GTA Underground (Removed)
+	new Vec3(900.94, -506.06, 15.04),							 			// GTA IV
+	new Vec3(900.94, -506.06, 15.04),							 			// GTA IV: EFLC
+	null,
+	null,
+	null,
+	new Vec3(-1981.51, -4.66, 29.37),										// Mafia 1
 ];
 
 // ----------------------------------------------------------------------------
