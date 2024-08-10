@@ -18,29 +18,10 @@ addNetworkHandler(`sb.w.time`, function (client, hour, minute) {
 
 	let outputMessage = ``;
 
-	timeLockHour[server.game] = hour;
-	timeLockMinute[server.game] = minute;
 	game.time.hour = hour;
 	game.time.minute = minute;
 
 	outputMessage = `set the time to ${makeReadableTime(hour, minute)}`;
-	outputSandboxMessage(client, outputMessage);
-});
-
-// ----------------------------------------------------------------------------
-
-addNetworkHandler(`sb.w.minutedur`, function (client, minuteDuration) {
-	if (!client.administrator) {
-		messageClient(`You must be an administrator to change this!`, client, errorMessageColour);
-		return false;
-	}
-
-	let outputMessage = ``;
-
-	timeMinuteDuration[server.game] = minuteDuration;
-
-	triggerNetworkEvent(`sb.w.minutedur`, null, timeMinuteDuration[server.game]);
-	outputMessage = `set the minute duration to ${minuteDuration}`;
 	outputSandboxMessage(client, outputMessage);
 });
 

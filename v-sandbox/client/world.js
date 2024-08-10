@@ -252,33 +252,6 @@ addCommandHandler("trafficdensity", function (command, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("minutedur", function (command, params) {
-	if (game.game == GAME_GTA_IV) {
-		message(`The /${command} command is not available on this game!`, errorMessageColour);
-		return false;
-	}
-
-	if (isParamsInvalid(params)) {
-		message(`Minute duration is currently ${timeMinuteDuration[game.game]}`, gameAnnounceColour);
-		message(`To set the minute duration, use /${command} <time>`, syntaxMessageColour);
-		return false;
-	}
-
-	let splitParams = params.split(" ");
-	let minuteDuration = Number(splitParams[0]) || 0;
-
-	if (isConnected) {
-		triggerNetworkEvent("sb.w.minutedur", minuteDuration);
-	} else {
-		timeMinuteDuration[game.game] = minuteDuration;
-		game.time.minuteDuration = minuteDuration;
-		message(`Minute duration has been set to ${timeMinuteDuration[game.game]}`, gameAnnounceColour);
-	}
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
 addNetworkHandler("sb.w.gamespeed", function (gameSpeed) {
 	game.gameSpeed = gameSpeed;
 });

@@ -21,33 +21,6 @@ addNetworkHandler("sb.e.syncer", function (client, element) {
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	if (serverGame != GAME_GTA_IV) {
-		game.forceWeather(currentWeather[serverGame]);
-		game.hour = timeLockHour[serverGame];
-		game.minute = timeLockMinute[serverGame];
-		if (serverGame != GAME_GTA_VC) {
-			game.trainsEnabled = trainsEnabled[serverGame];
-		}
-		game.planesEnabled = planesEnabled[serverGame];
-	}
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnResourceStart", function (event, resource) {
-	//console.warn("[Sandbox] Resource '" + resource.name + "' started!");
-});
-
-// ----------------------------------------------------------------------------
-
-addEventHandler("OnResourceStop", function (event, resource) {
-	//console.warn("[Sandbox] Resource '" + resource.name + "' stopping!!");
-	collectAllGarbage();
-});
-
-// ----------------------------------------------------------------------------
-
 function getSyncerFromID(syncerID) {
 	let clients = getClients();
 	for (let i in clients) {

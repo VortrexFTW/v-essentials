@@ -34,7 +34,7 @@ addNetworkHandler(`sb.c.follow`, function (client, civilianIds, entityId) {
 
 addNetworkHandler(`sb.c.defend`, function (client, civilianIds, entity) {
 	civilianIds.forEach((civilianId) => {
-		civilian.setData(`sb.c.defending`, entity, true);
+		getElementFromId(civilianId).setData(`sb.c.defending`, entity, true);
 	});
 });
 
