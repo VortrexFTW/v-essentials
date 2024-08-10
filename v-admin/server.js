@@ -122,11 +122,10 @@ addCommandHandler("unban", (command, params, client) => {
 
 		saveConfig();
 		if(removedBans.length == 1) {
-			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[i].ip}) has been unbanned by ${client.name}!`, client, COLOUR_YELLOW);
+			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`, client, COLOUR_YELLOW);
 		} else {
 			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`, client);
 		}
-		
 	}
 });
 
