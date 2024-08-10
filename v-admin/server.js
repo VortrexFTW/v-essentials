@@ -170,17 +170,17 @@ addCommandHandler("admin", (command, params, client) => {
 			if (targetClient.administrator == false) {
 				targetClient.administrator = true;
 				messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-				let randomToken = generateRandomString(128);
-				scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: randomToken, addedBy: escapeJSONString(client.name) });
-				triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
-				saveConfig();
+				let token = generateRandomString(128);
+				scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
+				triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
 			} else {
-				let playerToken = getTokenFromName(targetClient.name);
-				scriptConfig.admins = scriptConfig.admins.filter(admin => admin.token != token);
+				let token = getTokenFromName(targetClient.name);
+				scriptConfig.admins = scriptConfig.admins.findIndex(admin => admin.token != token);
 				targetClient.administrator = false;
 				messageAdmins(`${client.name} removed ${targetClient.name} from administrators!`);
-				saveConfig();
 			}
+
+			saveConfig();
 		}
 	}
 });
@@ -207,7 +207,7 @@ addCommandHandler("trainers", (command, params, client) => {
 				}
 
 				scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
-				triggerNetworkEvent("v.admin.token.save", targetClient, randomToken, scriptConfig.serverToken);
+				triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
 			} else {
 				scriptConfig.trainers = scriptConfig.trainers.filter(trainers => trainers.ip != targetClient.ip);
 			}
