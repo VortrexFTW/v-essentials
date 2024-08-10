@@ -5,14 +5,14 @@ Publicly available for anybody to use. I hope you find some of these useful.
 ## Resources
 ### v-admin
 Server management and moderation. People added as admin can kick, ban, etc. Bans are saved with IP, reason, admin, and timestamp.
-Also has ability to block game scripts (some trainers and mods use these and blocking them will prevent them being used on your server.)
+Also has ability to block game trainers (GTA IV only) and built-in SCM/SCO game scripts (some trainers and mods use these and blocking them will prevent them being used on your server.)
 Any player who joins with an admin's name but wrong IP will be automatically kicked.
 
 ### v-afk
 AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, it'll show "PAUSED" next to AFK players in the list. If `v-nametags` is loaded, the nametag will show a red "PAUSED" above AFK players heads.
 
 ### v-chat
-Custom chat. Converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
+Enhanced chat features. Provides scrollable chat history, automatic translation, and converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
 
 ### v-deathmessages
 Shows messages when a player dies, with killer name.
@@ -46,13 +46,13 @@ Only works on GTA SA. Makes player heads turn to face where they are looking. Al
 Simple GUI designer for MexUI. Not finished yet.
 
 ### v-nametags
-Alternative nametags for GTAC. The built-in ones are ugly.
+Custom nametags. GTA Connected has built-in nametags but they're ugly. Mafia Connected doesn't provide nametags built-in.
 
 ### v-passenger
-Adds pressing the "G" key to enter as passenger
+Adds pressing the "G" key to enter as passenger. GTA Connected only.
 
 ### v-playerblips
-Adds blips that show where players are
+Adds blips that show where players are.
 
 ### v-playercolours
 Assigns a random colour to each player. This will also show player colours on other resources that use it (`v-chat`, `v-nametags`, `v-scoreboard`, etc)
@@ -70,7 +70,7 @@ Changes the server name every X milliseconds (set in `config.json`), changing a 
 Starts the server with specified snowing states, configured with cvars "fallingsnow" and "groundsnow" in `server.xml`
 
 ### v-spawnscreen
-Spawns your player at a specified place. GTA 3 spawns at Leone Mansion, Vice City at Vercetti Mansion, San Andreas at CJ's house in Grove Street, and IV at Happiness Island.
+Spawns your player at a specified place. GTA III spawns at Leone Mansion, GTA Vice City at Vercetti Mansion, GTA San Andreas at CJ's house in Grove Street, GTA IV at Happiness Island, and Mafia 1 at the freeride car lot near Salieri Bar.
 
 ### v-time
 Starts the server with a specified hour and minute, configured with cvars "hour" and "minute" in `server.xml`
