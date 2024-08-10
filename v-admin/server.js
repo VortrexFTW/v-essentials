@@ -49,16 +49,16 @@ addCommandHandler("kick", (command, params, client) => {
 	if (client.administrator || client.console) {
 		if (targetClient != null) {
 			if (targetClient.index != client.index) {
-				messageAdmins(`${targetClient.name} has been kicked!`, client, COLOUR_YELLOW);
+				messageAdmins(`${targetClient.name} has been kicked!`);
 				targetClient.disconnect();
 			} else {
-				messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they tried to kick themselves.`, client, COLOUR_YELLOW);
+				messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they tried to kick themselves.`);
 			}
 		} else {
-			messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`, client, COLOUR_YELLOW);
+			messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`);
 		}
 	} else {
-		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`, client, COLOUR_YELLOW);
+		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`);
 	}
 });
 
@@ -77,10 +77,10 @@ addCommandHandler("scripts", (command, params, client) => {
 			returnScriptsToClient = client;
 			requestGameScripts(targetClient, client);
 		} else {
-			messageAdmins(`${client.name} tried to get running scripts for '${params}' but failed because no player is connected with that name.`, client, COLOUR_YELLOW);
+			messageAdmins(`${client.name} tried to get running scripts for '${params}' but failed because no player is connected with that name.`);
 		}
 	} else {
-		messageAdmins(`${client.name} tried to get ${targetClient.name}'s running scripts but failed because they aren't an admin!`, client, COLOUR_YELLOW);
+		messageAdmins(`${client.name} tried to get ${targetClient.name}'s running scripts but failed because they aren't an admin!`);
 	}
 });
 
@@ -97,7 +97,7 @@ addCommandHandler("ban", (command, params, client) => {
 			if (targetClient.index != client.index) {
 				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
 				saveConfig();
-				messageAdmins(`${targetClient.name}[${targetClient.index}] (IP: ${targetClient.ip}) has been banned by ${client.name}!`, client, COLOUR_YELLOW);
+				messageAdmins(`${targetClient.name}[${targetClient.index}] (IP: ${targetClient.ip}) has been banned by ${client.name}!`);
 				server.banIP(targetClient.ip, 0);
 				if (targetClient) {
 					targetClient.disconnect();
@@ -122,9 +122,9 @@ addCommandHandler("unban", (command, params, client) => {
 
 		saveConfig();
 		if(removedBans.length == 1) {
-			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`, client, COLOUR_YELLOW);
+			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`);
 		} else {
-			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`, client);
+			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`);
 		}
 	}
 });
@@ -156,7 +156,7 @@ addCommandHandler("blockscript", (command, params, client) => {
 	if (client.administrator) {
 		addBlockedScript(params);
 	} else {
-		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin!`, client, COLOUR_YELLOW);
+		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin!`);
 	}
 });
 
