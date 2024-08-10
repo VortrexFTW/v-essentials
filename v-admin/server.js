@@ -97,7 +97,7 @@ addCommandHandler("ban", (command, params, client) => {
 			if (targetClient.index != client.index) {
 				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
 				saveConfig();
-				messageAdmins(`${targetClient.name} has been banned!`, client, COLOUR_YELLOW);
+				messageAdmins(`${targetClient.name}[${targetClient.index}] (IP: ${targetClient.ip}) has been banned by ${client.name}!`, client, COLOUR_YELLOW);
 				server.banIP(targetClient.ip, 0);
 				if (targetClient) {
 					targetClient.disconnect();
@@ -113,13 +113,20 @@ addCommandHandler("unban", (command, params, client) => {
 	if (client.administrator || client.console) {
 		let removedBans = [];
 		for (let i in scriptConfig.bans) {
-			if (scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase())) {
+			if (scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
 				server.unbanIP(scriptConfig.bans[i].ip);
-				removedBans.push(scriptConfig.bans.splice(i, 1));
+				let removedBan = scriptConfig.bans.splice(i, 1);
+				removedBans.push(removedBan);
 			}
 		}
 
-		messageClient(client, `${removedBans.length} bans removed!`);
+		saveConfig();
+		if(removedBans.length == 1) {
+			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[i].ip}) has been unbanned by ${client.name}!`, client, COLOUR_YELLOW);
+		} else {
+			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`, client);
+		}
+		
 	}
 });
 
