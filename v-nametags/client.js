@@ -127,7 +127,7 @@ function updateNametags(element) {
 	if (localPlayer != null) {
 		let playerPos = localPlayer.position;
 		let elementPos = element.position;
-		let client = getClientFromPlayer(element);
+		//let client = getClientFromPlayer(element);
 
 		elementPos[2] += 0.9;
 
