@@ -18,7 +18,16 @@ function enterVehicleAsPassenger() {
 	if(localPlayer.vehicle == null) {
 		let tempVehicle = getClosestVehicle(localPlayer.position);
 		if(tempVehicle != null) {
-			localPlayer.enterVehicle(tempVehicle, false);
+			if(game.game == GAME_GTA_SA) {
+				for (let seatIndex = 1; seatIndex < 8; seatIndex++) { //seat index starts from 1
+					if (tempVehicle.getOccupant(seatIndex) === null) {
+						localPlayer.warpIntoVehicle(tempVehicle, seatIndex);
+						break;
+					}
+				}
+			} else {
+				localPlayer.enterVehicle(tempVehicle, false);
+			}
 		}
 	}
 }
