@@ -6,14 +6,18 @@ let isFocused = true;
 
 addEventHandler("OnLostFocus", (event) => {
 	isFocused = false;
-	triggerNetworkEvent("v.afk", true);
+	if (isConnected) {
+		triggerNetworkEvent("v.afk", true);
+	}
 });
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnFocus", (event) => {
 	isFocused = true;
-	triggerNetworkEvent("v.afk", false);
+	if (isConnected) {
+		triggerNetworkEvent("v.afk", false);
+	}
 });
 
 // ----------------------------------------------------------------------------
