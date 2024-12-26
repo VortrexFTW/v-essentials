@@ -515,7 +515,8 @@ function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZab
 // ----------------------------------------------------------------------------
 
 function getTokenFromName(name) {
-	return scriptConfig.admins.find((admin) => admin.name == name) ? admin.token : null;
+    const matchedAdmin = scriptConfig.admins.find((admin) => admin.name === name);
+    return matchedAdmin ? matchedAdmin.token : null;
 }
 
 // ----------------------------------------------------------------------------
@@ -527,26 +528,31 @@ function getTokenFromIP(ip) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("v.admin.token", function (fromClient, token) {
-	let tokenValid = false;
+    let tokenValid = false;
+    const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
+    if (matchedAdmin) {
+        fromClient.administrator = true;
+        tokenValid = true;
+    } else {
+        fromClient.administrator = false;
+    }
 
-	fromClient.administrator = scriptConfig.admins.find((admin) => admin.token == token) ? true : false;
+    if (typeof fromClient.trainers === "undefined") {
+        const matchedTrainers = scriptConfig.trainers.find((t) => t.token === token);
+        fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
+    }
 
-	// Only enable trainers for this player if they have been given permission by an admin, or if the server CVar is set to true (meaning all players can use trainers)
-	if (typeof fromClient.trainers == "undefined") {
-		fromClient.trainers = (scriptConfig.trainers.find((trainers) => trainers.token == token) != null) ? true : areTrainersEnabledForEverybody();
-	}
+    if (isAdminName(fromClient.name)) {
+        if (!tokenValid || getTokenFromName(fromClient.name) !== token) {
+            messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
+            fromClient.disconnect();
+            return false;
+        }
+    }
 
-	if (isAdminName(fromClient.name)) {
-		if (tokenValid == false || getTokenFromName(fromClient.name) != token) {
-			messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
-			fromClient.disconnect();
-			return false;
-		}
-	}
-
-	if (tokenValid == true) {
-		messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
-	}
+    if (tokenValid) {
+        messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
+    }
 });
 
 // ----------------------------------------------------------------------------
