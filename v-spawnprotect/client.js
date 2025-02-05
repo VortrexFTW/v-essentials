@@ -103,7 +103,7 @@ function loadConfig() {
         return false;
     }
 
-    console.log("Loaded config file contents successfully.");
+    //console.log("Loaded config file contents successfully.");
 
     scriptConfig = JSON.parse(configFile);
     if (scriptConfig == null) {
@@ -113,7 +113,7 @@ function loadConfig() {
     }
 
     fixMissingConfigStuff();
-    console.log("Parsed config file successfully.");
+    //console.log("Parsed config file successfully.");
 }
 
 // ----------------------------------------------------------------------------

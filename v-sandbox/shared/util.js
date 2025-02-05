@@ -6351,7 +6351,7 @@ function arrayBufferToString(arrayBuffer) {
 
 function getVehicleNameFromModelId(modelId, gameId = thisGame) {
 	if (gameId >= GAME_GTA_IV) {
-		console.log(modelId);
+		//console.log(modelId);
 		for (let i in gtaivVehicleModels) {
 			if (gtaivVehicleModels[i][1] == modelId) {
 				return gtaivVehicleModels[i][0];

@@ -33,7 +33,7 @@ function getSyncerFromID(syncerID) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.msg", function (client, messageText) {
-	console.log("[Sandbox] " + String(client.name) + " " + messageText);
+	//console.log("[Sandbox] " + String(client.name) + " " + messageText);
 	outputSandboxMessage(client, messageText);
 });
 
@@ -53,7 +53,7 @@ addEventHandler("OnPlayerQuit", function (event, client, disconnectReason) {
 
 function beginSandboxCleanup() {
 	if (getClients().length == 0) {
-		console.log(`[Sandbox] Server is empty. Restarting sandbox to clean up.`);
+		//console.log(`[Sandbox] Server is empty. Restarting sandbox to clean up.`);
 		thisResource.restart();
 	}
 

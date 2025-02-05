@@ -183,16 +183,16 @@ cachedTranslations.fill(cachedTranslationFrom);
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("OnPlayerJoined", function(event, client) {
+addEventHandler("OnPlayerJoined", function (event, client) {
 	let languageId = getPlayerLanguage(client.name);
 	client.setData("v.translate", languageId);
 });
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	scriptConfig = loadResourceConfig();
-	if(!scriptConfig) {
+	if (!scriptConfig) {
 		console.log("[Translate] Resource config.json could not be loaded. Resource stopping ...");
 		thisResource.stop();
 		return false;
@@ -201,7 +201,7 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 	defaultLanguageId = getLanguageIdFromParams(scriptConfig.defaultLanguage) || 28;
 
 	let clients = getClients();
-	getClients().forEach(function(client) {
+	getClients().forEach(function (client) {
 		let languageId = getPlayerLanguage(client.name);
 		client.setData("v.translate", languageId);
 	});
@@ -218,9 +218,9 @@ bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
 
 // ----------------------------------------------------------------------------
 
-bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
+bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
 	let clients = getClients();
-	getClients().forEach(function(client) {
+	getClients().forEach(function (client) {
 		client.removeData("v.translate");
 	});
 
@@ -231,15 +231,15 @@ bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
 
 function getLanguageIdFromParams(params) {
 	// Search locale abbreviations first (en, es, de, etc)
-	for(let i in translationLanguages) {
-		if(translationLanguages[i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in translationLanguages) {
+		if (translationLanguages[i][1].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
 
 	// Search english-based language names next (English, Spanish, German, etc)
-	for(let i in translationLanguages) {
-		if(translationLanguages[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
+	for (let i in translationLanguages) {
+		if (translationLanguages[i][0].toLowerCase().indexOf(params.toLowerCase()) != -1) {
 			return Number(i);
 		}
 	}
@@ -249,14 +249,14 @@ function getLanguageIdFromParams(params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("lang", async function(command, params, client) {
-	if(!params) {
+addCommandHandler("lang", async function (command, params, client) {
+	if (!params) {
 		messageClient(`/${command} <language name>`, client, syntaxMessageColour);
 		return false;
 	}
 
 	let languageId = getLanguageIdFromParams(params);
-	if(!languageId) {
+	if (!languageId) {
 		messageClient("That language was not found!", client, errorMessageColour);
 		return false;
 	}
@@ -267,7 +267,7 @@ addCommandHandler("lang", async function(command, params, client) {
 
 	let outputString = "Your language has been set to " + translationLanguages[languageId][0];
 	let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
-	console.log(translatedMessage);
+	//console.log(translatedMessage);
 	messageClient(translatedMessage, client, COLOUR_YELLOW);
 });
 
@@ -302,13 +302,13 @@ function setPlayerLanguage(name, languageId) {
 // ----------------------------------------------------------------------------
 
 async function translateMessage(messageText, translateFrom = defaultLanguageId, translateTo = defaultLanguageId) {
-	if(translateFrom == translateTo) {
+	if (translateFrom == translateTo) {
 		return messageText;
 	}
 
 	return new Promise(resolve => {
-		for(let i in cachedTranslations[translateFrom][translateTo]) {
-			if(cachedTranslations[translateFrom][translateTo][0] == messageText) {
+		for (let i in cachedTranslations[translateFrom][translateTo]) {
+			if (cachedTranslations[translateFrom][translateTo][0] == messageText) {
 				console.log("[Translate]: Using existing translation for " + translationLanguages[translateFrom][0] + " to " + translationLanguages[translateTo][0] + " - (" + messageText + "), (" + cachedTranslations[translateFrom][translateTo][1] + ")");
 				resolve(cachedTranslations[translateFrom][translateTo][1]);
 			}
@@ -318,14 +318,14 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 		httpGet(
 			thisTranslationURL,
 			"",
-			function(data) {
+			function (data) {
 				data = ab2str(data);
 				//tdata = data.substr(0, data.lastIndexOf("}")+1);
 				let translationData = JSON.parse(data);
 				cachedTranslations[translateFrom][translateTo].push([messageText, translationData.responseData.translatedText]);
 				resolve(translationData.responseData.translatedText);
 			},
-			function(data) {
+			function (data) {
 			}
 		);
 	});
@@ -333,9 +333,9 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 
 // ----------------------------------------------------------------------------
 
-String.prototype.format = function() {
+String.prototype.format = function () {
 	let a = this;
-	for(let i in arguments) {
+	for (let i in arguments) {
 		a = a.replace("{" + String(i) + "}", arguments[i]);
 	}
 	return a;
@@ -347,7 +347,7 @@ function loadResourceConfig() {
 	let configFile = loadTextFile("config.json");
 
 	let tempScriptConfig = JSON.parse(configFile);
-	if(!tempScriptConfig) {
+	if (!tempScriptConfig) {
 		return false;
 	}
 
@@ -358,7 +358,7 @@ function loadResourceConfig() {
 
 async function runTranslatorTest() {
 	let translateTo = getLanguageIdFromParams("spanish");
-	console.log(translateTo);
+	//console.log(translateTo);
 	let translateTest = await translateMessage("Hello", defaultLanguageId, translateTo);
 	console.log("[Translate] Testing translator (EN/ES): Hello / " + String(translateTest));
 }

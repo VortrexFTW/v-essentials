@@ -777,7 +777,7 @@ addCommandHandler("pos", function (cmdName, params) {
 	}
 	let output = '["' + params + '", [' + localPlayer.position.x.toFixed(2) + ', ' + localPlayer.position.y.toFixed(2) + ', ' + localPlayer.position.z.toFixed(3) + '], ' + localPlayer.heading.toFixed(3) + ']';
 	message(output.toString(), gameAnnounceColour);
-	console.log(output.toString());
+	//console.log(output.toString());
 	return true;
 });
 
@@ -791,8 +791,8 @@ addCommandHandler("vw", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.p.limb", function (client, bodyPartId) {
-	console.log(client);
-	console.log(bodyPartId);
+	//console.log(client);
+	//console.log(bodyPartId);
 	if (client.player) {
 		client.player.removeBodyPart(bodyPartId);
 	} else {
@@ -932,7 +932,7 @@ addNetworkHandler("sb.p.scale", function (playerId, scaleFactor) {
 	let playerPosition = player.position;
 	player.matrix = playerMatrix;
 	player.position = playerPosition;
-	console.log("Scale: " + String(scaleFactor));
+	//console.log("Scale: " + String(scaleFactor));
 });
 
 // ----------------------------------------------------------------------------

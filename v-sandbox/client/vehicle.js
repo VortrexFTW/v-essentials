@@ -2197,7 +2197,7 @@ addNetworkHandler("sb.v.god", function (vehicleIds, godMode) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("sb.v.upgrade.add", function (vehicleIds, upgradeId) {
-	console.log(vehicles);
+	//console.log(vehicles);
 	vehicleIds.forEach(function (vehicleId) {
 		getVehicleFromId(vehicleId).addUpgrade(upgradeId);
 	});

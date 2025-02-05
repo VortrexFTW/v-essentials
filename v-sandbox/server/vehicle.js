@@ -71,7 +71,7 @@ addNetworkHandler(`sb.v.wheels`, function (client, vehicleIds, wheelState) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler(`sb.v.upgrade.add`, function (client, vehicleIds, upgradeId) {
-	console.log(vehicles);
+	//console.log(vehicles);
 	triggerNetworkEvent(`sb.v.upgrade.add`, null, vehicleIds, upgradeId);
 });
 
