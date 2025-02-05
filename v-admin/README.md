@@ -5,7 +5,7 @@
 * Put the `v-admin` resource into your server `resources` folder.
 * Add the `v-admin` resource to your server config and start the server
 * Start your GTAC client and go in-game.
-* Alt+Tab to switch to the server console, and use `makeadmin <your_name>` (no slash!)
+* Alt+Tab to switch to the server console, and use `admin <your_name>` (no slash!)
 * You have admin!
 
 ### Commands
@@ -13,7 +13,7 @@
 * `/kick <name/id> <reason>` - Kicks a player from the server
 * `/ban <name/id> <reason>` - Bans a player from the server. Partial matches are allowed. Case insensitive.
 * `/unban <name/id>` - Unbans a player from the server. Partial matches are allowed. Case insensitive.
-* `/makeadmin <name/id>` - Makes a player an admin. Partial matches are allowed. Case insensitive.
+* `/admin <name/id>` - Makes a player an admin. Partial matches are allowed. Case insensitive.
 * `/scripts <name/id>` - Shows what scripts a player's game is running (**not** resources!)
 
 ### Config
