@@ -97,7 +97,6 @@ addEventHandler("OnProcess", function (deltaTime) {
 						game.fadeCamera(false, 0.5, toColour(0, 0, 0, 255));
 						currentEntryPoint = i;
 						setTimeout(switchInteriorAndFadeIn, 500, entryPoints[game.game][i][3]);
-						console.log(i);
 					}
 				} else {
 					// A second position is provided. Fade, set interior and position
