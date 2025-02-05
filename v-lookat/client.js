@@ -50,7 +50,7 @@ addNetworkHandler("v.p.lookat", function (ped, position) {
 		ped.lookAt(position, 3000);
 		//}
 	}
-	console.log("Received head position from ID " + ped.id);
+	//console.log("Received head position from ID " + ped.id);
 });
 
 // ----------------------------------------------------------------------------
