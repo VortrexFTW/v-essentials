@@ -404,7 +404,7 @@ String.prototype.format = function () {
 
 async function runTranslatorTest() {
 	let translateTo = getLanguageIdFromParams("ES");
-	console.log(translateTo);
+	//console.log(translateTo);
 	let translateTest = await translateMessage("Hello", defaultLanguageId, translateTo);
 	console.log("[Translate] Testing translator (EN/ES): Hello / " + String(translateTest));
 }
