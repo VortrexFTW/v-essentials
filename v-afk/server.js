@@ -29,13 +29,13 @@ addNetworkHandler("v.afk", (client, state) => {
 		client.setData("v.afk", 1, true);
 		if (client.player != null) {
 			client.player.setData("v.afk", 1, true);
-			triggerEvent("OnPlayerGameDefocused", client);
+			triggerEvent("OnPlayerGameDefocused", client, client);
 		}
 	} else {
 		client.setData("v.afk", 0, true);
 		if (client.player != null) {
 			client.player.setData("v.afk", 0, true);
-			triggerEvent("OnPlayerGameFocused", client);
+			triggerEvent("OnPlayerGameFocused", client, client);
 		}
 	}
 });
