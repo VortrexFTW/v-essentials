@@ -17,11 +17,11 @@ Enhanced chat features. Provides scrollable chat history, automatic translation,
 ### v-deathmessages
 Shows messages when a player dies, with killer name.
 
-### v-events
-Adds custom scripting events for things that GTAC doesn't have built-in. These events can be used in any other resource with any language [exactly like the built-in events](https://wiki.gtaconnected.com/HowTo/Events). Some events that pertain to an element (ped, vehicle, etc) are bindable to that element to be used with bindEventHandler, but this is optional. You can use addEventHandler too.
-
 ### v-extracontent
 Makes it easy to add and use custom content on your server. Images audio files, fonts, DFF models, TXD textures, COL collisions, excluded snow models, removed building/world models, rendering images in the 3D game world, spawning server objects (both grouped and ungrouped) and moving gates/doors.
+
+### v-fixes
+Adds custom scripting events and workarounds for things that GTAC doesn't have built-in. The events can be used in any other resource with any language [exactly like the built-in events](https://wiki.gtaconnected.com/HowTo/Events). Some events that pertain to an element (ped, vehicle, etc) are bindable to that element to be used with bindEventHandler, but this is optional. You can use addEventHandler too. Also adds syncing some element properties that GTAC doesn't sync by default. See the resource's README for more info.
 
 ### v-help
 Shows commands and info for all the resources here that the server is running. Detects which resources are running and only shows commands for those.
@@ -69,8 +69,8 @@ Changes the server name every X milliseconds (set in `config.json`), changing a 
 ### v-snow
 Starts the server with specified snowing states, configured with cvars "fallingsnow" and "groundsnow" in `server.xml`
 
-### v-spawnscreen
-Spawns your player at a specified place. GTA III spawns at Leone Mansion, GTA Vice City at Vercetti Mansion, GTA San Andreas at CJ's house in Grove Street, GTA IV at Happiness Island, and Mafia 1 at the freeride car lot near Salieri Bar.
+### v-spawn
+Spawns your player. Custom spawn points can be added by server admins using /addspawn.
 
 ### v-time
 Starts the server with a specified hour and minute, configured with cvars "hour" and "minute" in `server.xml`
