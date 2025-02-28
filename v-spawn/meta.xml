@@ -1,5 +1,4 @@
 <meta>
 	<script src="server.js" type="server" language="javascript" />
-	<dependency src="v-events" />
-	<file src="pricedown.ttf" type="client" />
+	<dependency src="v-fixes" />
 </meta>

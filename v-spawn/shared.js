@@ -16,54 +16,6 @@ let gameAnnounceColours = [
 
 // ----------------------------------------------------------------------------
 
-let spawnPoints = [
-	null,																	// GAME_UNKNOWN
-	new Vec3(1449.19, -197.21, 55.62), 										// GTA III
-	new Vec3(-379.16, -535.27, 17.28), 										// GTA Vice City
-	new Vec3(2495.03, -1685.66, 13.51), 									// GTA San Andreas
-	new Vec3(2495.03, -1685.66, 13.51), 									// GTA Underground (Removed)
-	new Vec3(900.94, -506.06, 15.04),							 			// GTA IV
-	new Vec3(900.94, -506.06, 15.04),							 			// GTA IV: EFLC
-	null,
-	null,
-	null,
-	new Vec3(-1981.51, -4.66, 29.37),										// Mafia 1
-];
-
-// ----------------------------------------------------------------------------
-
-let spawnCameraPositions = [
-	null,																	// GAME_UNKNOWN
-	new Vec3(138.17, -909.90, 28.16), 										// GTA III
-	new Vec3(-378.66, -524.57, 18.02), 										// GTA Vice City
-	new Vec3(2494.54, -1677.83, 15.33), 									// GTA San Andreas
-	new Vec3(2494.54, -1677.83, 15.33), 									// GTA Underground (Removed)
-	new Vec3(908.48, -501.24, 15.146),							 			// GTA IV
-	new Vec3(908.48, -501.24, 15.146),							 			// GTA IV: EFLC
-	null,
-	null,
-	null,
-	new Vec3(-1981.51, -4.66, 29.37),										// Mafia 1
-];
-
-// ----------------------------------------------------------------------------
-
-let spawnSkins = [
-	null, 
-	0, 
-	0, 
-	0, 
-	0, 
-	-142386662, 
-	-142386662, 
-	null, 
-	null, 
-	null, 
-	"TommyCOATHAT.i3d"
-];
-
-// ----------------------------------------------------------------------------
-
 // Mafia 1 only
 let mapSpawnPoints = {
 	"FREERIDE": new Vec3(-1981.51, -4.66, 29.37),
@@ -100,8 +52,14 @@ let mapSpawnPoints = {
 
 // ----------------------------------------------------------------------------
 
+function getRandomSkin(gameId) {
+	return skins[gameId][Math.floor(Math.random() * skins[gameId].length)][0];
+}
+
+// ----------------------------------------------------------------------------
+
 let skins = {
-	[V_GAME_GTA_III]: [
+	[GAME_GTA_III]: [
 		[0, "Claude", false],
 		[1, "Police Officer", false],
 		[2, "SWAT Officer", false],
@@ -225,7 +183,7 @@ let skins = {
 		[125, "Busker 3", false],
 		[125, "Busker 4", false],
 	],
-	[V_GAME_GTA_VC]: [
+	[GAME_GTA_VC]: [
 		[0, "Tommy Vercetti", false],
 		[1, "Police Officer", false],
 		[2, "SWAT Officer", false],
@@ -414,7 +372,7 @@ let skins = {
 		[186, "Kent Paul", true],
 		[187, "Big Head Taxi Driver", false],
 	],
-	[V_GAME_GTA_SA]: [
+	[GAME_GTA_SA]: [
 		[0, "Carl 'CJ' Johnson", false],
 		[1, "The Truth", true],
 		[2, "Maccer", true],
@@ -716,7 +674,7 @@ let skins = {
 		[312, "Army Guy", true],
 		[313, "Barry 'Big Bear' Thorne (Fat)", true],
 	],
-	[V_GAME_GTA_IV]: [
+	[GAME_GTA_IV]: [
 		[-2020305438, "Male Multiplayer", false],
 		[-641875910, "Female Multiplayer", false],
 		[-1370810922, "MODEL_SUPERLOD", false],
@@ -1063,7 +1021,7 @@ let skins = {
 		[-1139941790, "Tough Guy", true],
 		[809067472, "Male Tourist", true]
 	],
-	[V_GAME_MAFIA_ONE]: [
+	[GAME_MAFIA_ONE]: [
 		["Tommy.i3d", "Tommy Angelo", true],
 		["TommyBOXER.i3d", "Tommy Angelo", true],
 		["TommyCOAT.i3d", "Tommy Angelo", false],
