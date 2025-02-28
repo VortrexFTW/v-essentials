@@ -63,3 +63,9 @@ addNetworkHandler("OnPedChangeAmmo", function (client, pedId, newAmmo, oldAmmo) 
 addNetworkHandler("OnPickupPickedUp", function (client, pedId, pickupId) {
 	triggerEvent("OnPickupPickedUp", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(pickupId));
 });
+
+addNetworkHandler("OnAddIVNetworkEvent", function (client, type, name, data, data2) {
+	getClients().filter(c => c.index != client.index).forEach(c => {
+		triggerNetworkEvent("ReceiveIVNetworkEvent", c, type, name, data, data2, client.index);
+	});
+});

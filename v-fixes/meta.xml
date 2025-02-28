@@ -1,5 +1,5 @@
 <meta>
-	<info title="v-events" author="Vortrex" version="1.0" description="Adds more scripting events" />
+	<info title="v-fixes" author="Vortrex" version="1.0" description="Fixes and workarounds for GTA Connected" />
 
 	<script src="server.js" type="server" language="javascript" />
 	<script src="client.js" type="client" language="javascript" />
