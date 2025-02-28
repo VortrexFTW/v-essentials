@@ -50,6 +50,7 @@ addNetworkHandler("OnPedExitSniperMode", function (client, pedId) {
 
 addNetworkHandler("OnPedDeathEx", function (client, pedId) {
 	triggerEvent("OnPedDeathEx", getElementFromId(pedId), getElementFromId(pedId));
+	triggerEvent("OnPlayerDeathEx", client);
 });
 
 addNetworkHandler("OnPedChangeWeapon", function (client, pedId, newWeapon, oldWeapon) {
