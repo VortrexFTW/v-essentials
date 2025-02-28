@@ -56,24 +56,26 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 
 // ----------------------------------------------------------------------------
 
-addEventHandler("onPedDeathEx", function (event, ped) {
+addEventHandler("onPlayerDeathEx", function (event, client) {
 	if (server.game == 5) {
-		return false;
-	}
-
-	if (ped.type == ELEMENT_PLAYER) {
-		let client = getClientFromPed(ped);
-		if (client != null) {
-			spawnPlayer(client, spawnPoints[server.game], 0.0, spawnSkin[server.game]);
-			destroyElement(ped);
+		if (game.ivGamemode != -1 && game.ivGamemode != 33) {
+			return false;
 		}
 	}
+
+	setTimeout(function () {
+		fadeCamera(client, false, scriptConfig.fadeCameraTime);
+		setTimeout(function () {
+			spawnPlayerEx(client);
+			fadeCamera(client, true, scriptConfig.fadeCameraTime);
+		}, 1000);
+	}, 1000);
 });
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("onPlayerJoined", function (event, client) {
-	fadeCamera(client, true);
+	fadeCamera(client, true, scriptConfig.fadeCameraTime);
 	spawnPlayerEx(client);
 });
 
@@ -147,6 +149,10 @@ function saveScriptConfig() {
 
 function fixMissingConfigStuff() {
 	let oldConfig = JSON.stringify(scriptConfig, null, '\t');
+
+	if (typeof scriptConfig.fadeCameraTime == "undefined") {
+		scriptConfig.fadeCameraTime = 0.5; // In seconds
+	}
 
 	if (typeof scriptConfig.spawns == "undefined") {
 		scriptConfig.spawns = {};
