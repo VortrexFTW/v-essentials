@@ -121,7 +121,7 @@ addCommandHandler("unban", (command, params, client) => {
 		}
 
 		saveConfig();
-		if(removedBans.length == 1) {
+		if (removedBans.length == 1) {
 			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`);
 		} else {
 			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`);
@@ -477,6 +477,8 @@ function sendClientBlockedScripts(client) {
 // ----------------------------------------------------------------------------
 
 function fixMissingConfigStuff() {
+	let oldConfig = JSON.stringify(scriptConfig, null, '\t');
+
 	if (typeof scriptConfig.serverToken == "undefined") {
 		scriptConfig.serverToken = generateRandomString(32);
 	}
@@ -498,7 +500,11 @@ function fixMissingConfigStuff() {
 		scriptConfig.trainers = [];
 	}
 
-	saveConfig();
+	let newConfig = JSON.stringify(scriptConfig, null, '\t');
+	if (oldConfig != newConfig) {
+		console.log("[V.ADMIN] Fixed missing config stuff");
+		saveConfig();
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -515,8 +521,8 @@ function generateRandomString(length, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZab
 // ----------------------------------------------------------------------------
 
 function getTokenFromName(name) {
-    const matchedAdmin = scriptConfig.admins.find((admin) => admin.name === name);
-    return matchedAdmin ? matchedAdmin.token : null;
+	const matchedAdmin = scriptConfig.admins.find((admin) => admin.name === name);
+	return matchedAdmin ? matchedAdmin.token : null;
 }
 
 // ----------------------------------------------------------------------------
@@ -528,31 +534,31 @@ function getTokenFromIP(ip) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("v.admin.token", function (fromClient, token) {
-    let tokenValid = false;
-    const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
-    if (matchedAdmin) {
-        fromClient.administrator = true;
-        tokenValid = true;
-    } else {
-        fromClient.administrator = false;
-    }
+	let tokenValid = false;
+	const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
+	if (matchedAdmin) {
+		fromClient.administrator = true;
+		tokenValid = true;
+	} else {
+		fromClient.administrator = false;
+	}
 
-    if (typeof fromClient.trainers === "undefined") {
-        const matchedTrainers = scriptConfig.trainers.find((t) => t.token === token);
-        fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
-    }
+	if (typeof fromClient.trainers === "undefined") {
+		const matchedTrainers = scriptConfig.trainers.find((t) => t.token === token);
+		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
+	}
 
-    if (isAdminName(fromClient.name)) {
-        if (!tokenValid || getTokenFromName(fromClient.name) !== token) {
-            messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
-            fromClient.disconnect();
-            return false;
-        }
-    }
+	if (isAdminName(fromClient.name)) {
+		if (!tokenValid || getTokenFromName(fromClient.name) !== token) {
+			messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
+			fromClient.disconnect();
+			return false;
+		}
+	}
 
-    if (tokenValid) {
-        messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
-    }
+	if (tokenValid) {
+		messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
+	}
 });
 
 // ----------------------------------------------------------------------------
