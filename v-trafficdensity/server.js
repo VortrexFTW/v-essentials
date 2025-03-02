@@ -22,28 +22,28 @@ addEventHandler("OnPlayerJoined", (event, client) => {
 // ----------------------------------------------------------------------------
 
 function sendDataToPlayer(client) {
-    if (server.getCVar("V_CarDensity") != null) {
-        triggerNetworkEvent("v.cardensity", client, server.getCVar("V_CarDensity"));
+    if (server.getCVar("CarDensity") != null) {
+        triggerNetworkEvent("v.cardensity", client, server.getCVar("CarDensity"));
     }
 
-    if (server.getCVar("V_PedDensity") != null) {
-        triggerNetworkEvent("v.peddensity", client, server.getCVar("V_PedDensity"));
+    if (server.getCVar("PedDensity") != null) {
+        triggerNetworkEvent("v.peddensity", client, server.getCVar("PedDensity"));
     }
 
-    if (server.getCVar("V_ParkedCarDensity") != null) {
-        triggerNetworkEvent("v.parkedcardensity", client, server.getCVar("V_ParkedCarDensity"));
+    if (server.getCVar("ParkedCarDensity") != null) {
+        triggerNetworkEvent("v.parkedcardensity", client, server.getCVar("ParkedCarDensity"));
     }
 
-    if (server.getCVar("V_OverrideNumberOfParkedCars") != null) {
-        triggerNetworkEvent("v.parkedcarnum", client, server.getCVar("V_OverrideNumberOfParkedCars"));
+    if (server.getCVar("OverrideNumberOfParkedCars") != null) {
+        triggerNetworkEvent("v.parkedcarnum", client, server.getCVar("OverrideNumberOfParkedCars"));
     }
 
-    if (server.getCVar("V_ForceCarsToParkTooClose") != null) {
-        triggerNetworkEvent("v.forcecloseparkedcars", client, server.getCVar("V_ForceCarsToParkTooClose"));
+    if (server.getCVar("ForceCarsToParkTooClose") != null) {
+        triggerNetworkEvent("v.forcecloseparkedcars", client, server.getCVar("ForceCarsToParkTooClose"));
     }
 
-    if (server.getCVar("V_DontSuppressAnyCarModels") != null) {
-        triggerNetworkEvent("v.dontsuppresscarmodels", client, server.getCVar("V_DontSuppressAnyCarModels"));
+    if (server.getCVar("DontSuppressAnyCarModels") != null) {
+        triggerNetworkEvent("v.dontsuppresscarmodels", client, server.getCVar("DontSuppressAnyCarModels"));
     }
 }
 
