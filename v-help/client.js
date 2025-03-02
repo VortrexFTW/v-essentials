@@ -2,10 +2,6 @@
 
 // ----------------------------------------------------------------------------
 
-setErrorMode(RESOURCEERRORMODE_STRICT);
-
-// ----------------------------------------------------------------------------
-
 addCommandHandler("help", function (command, params) {
 	if (!params || params == "") {
 		showMainHelpList();
