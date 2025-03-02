@@ -1,5 +1,5 @@
 <meta>
-	<info author="Vortrex" version="1.0" description="Command lists for Vortrex's Freeroam Server" />
+	<info author="Vortrex" version="2.0.0" description="Command lists for Vortrex's Essential Resources" />
 
 	<script src="client.js" type="client" language="javascript" />
 </meta>
