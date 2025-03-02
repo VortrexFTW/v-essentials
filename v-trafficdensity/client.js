@@ -2,38 +2,38 @@
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("peddensity", (amount) => {
-    natives.setPedDensityMultiplier(amount/100);
+addNetworkHandler("v.peddensity", (amount) => {
+    natives.setPedDensityMultiplier(amount / 100);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("cardensity", (amount) => {
-    natives.setRandomCarDensityMultiplier(amount/100);
-    natives.setCarDensityMultiplier(amount/100);
+addNetworkHandler("v.cardensity", (amount) => {
+    natives.setRandomCarDensityMultiplier(amount / 100);
+    natives.setCarDensityMultiplier(amount / 100);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("parkedcardensity", (amount) => {
-    natives.setParkedCarDensityMultiplier(amount/100);
+addNetworkHandler("v.parkedcardensity", (amount) => {
+    natives.setParkedCarDensityMultiplier(amount / 100);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("parkedcarnum", (amount) => {
+addNetworkHandler("v.parkedcarnum", (amount) => {
     natives.overrideNumberOfParkedCars(amount);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("forcecloseparkedcars", (state) => {
+addNetworkHandler("v.forcecloseparkedcars", (state) => {
     natives.forceGenerateParkedCarsTooCloseToOthers(state);
 });
 
 // ----------------------------------------------------------------------------
 
-addNetworkHandler("dontsuppresscarmodels", (state) => {
+addNetworkHandler("v.dontsuppresscarmodels", (state) => {
     natives.dontSuppressAnyCarModels(state);
 });
 

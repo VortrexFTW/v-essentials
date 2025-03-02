@@ -2,65 +2,49 @@
 
 // ----------------------------------------------------------------------------
 
-let scriptConfig = null;
-
-// ----------------------------------------------------------------------------
-
 bindEventHandler("OnResourceStart", thisResource, (event, resource) => {
     if (server.game != GAME_GTA_IV) {
         console.error(`The v-trafficdensity resource only works on GTA IV`);
         event.preventDefault();
         thisResource.stop();
+        return false;
     }
 
-    let configFile = loadTextFile("config.json");
-    if (configFile == "" || configFile == null) {
-        console.error(`Traffic density config could not be loaded! Resource stopping ...`);
-        thisResource.stop();
-    }
-    scriptConfig = JSON.parse(configFile);
-
-    triggerNetworkEvent("cardensity", null, scriptConfig.carDensity);
-    triggerNetworkEvent("peddensity", null, scriptConfig.pedDensity);
-    triggerNetworkEvent("parkedcardensity", null, scriptConfig.parkedCarDensity);
-    triggerNetworkEvent("parkedcarnum", null, scriptConfig.overrideNumberOfParkedCars);
-    triggerNetworkEvent("forcecloseparkedcars", null, scriptConfig.forceCarsToParkTooClose);
-    triggerNetworkEvent("dontsuppresscarmodels", null, scriptConfig.dontSuppressAnyCarModels);
-});
-
-// ----------------------------------------------------------------------------
-
-bindEventHandler("OnResourceStop", thisResource, (event, resource) => {
-    triggerNetworkEvent("cardensity", null, 100);
-    triggerNetworkEvent("peddensity", null, 100);
-    triggerNetworkEvent("parkedcardensity", null, 100);
-    triggerNetworkEvent("parkedcarnum", null, 100);
-    triggerNetworkEvent("forcecloseparkedcars", null, false);
-    triggerNetworkEvent("dontsuppresscarmodels", null, false);
-
-    collectAllGarbage();
+    sendDataToPlayer(null);
 });
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPlayerJoined", (event, client) => {
-    triggerNetworkEvent("cardensity", client, scriptConfig.carDensity);
-    triggerNetworkEvent("peddensity", client, scriptConfig.pedDensity);
-    triggerNetworkEvent("parkedcardensity", client, scriptConfig.parkedCarDensity);
-    triggerNetworkEvent("parkedcarnum", client, scriptConfig.overrideNumberOfParkedCars);
-    triggerNetworkEvent("forcecloseparkedcars", client, scriptConfig.forceCarsToParkTooClose);
-    triggerNetworkEvent("dontsuppresscarmodels", client, scriptConfig.dontSuppressAnyCarModels);
+    sendDataToPlayer(client);
 });
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("density", (command, params, client) => {
-    triggerNetworkEvent("cardensity", null, scriptConfig.carDensity);
-    triggerNetworkEvent("peddensity", null, scriptConfig.pedDensity);
-    triggerNetworkEvent("parkedcardensity", null, scriptConfig.parkedCarDensity);
-    triggerNetworkEvent("parkedcarnum", null, scriptConfig.overrideNumberOfParkedCars);
-    triggerNetworkEvent("forcecloseparkedcars", null, scriptConfig.forceCarsToParkTooClose);
-    triggerNetworkEvent("dontsuppresscarmodels", null, scriptConfig.dontSuppressAnyCarModels);
-});
+function sendDataToPlayer(client) {
+    if (server.getCVar("V_CarDensity") != null) {
+        triggerNetworkEvent("v.cardensity", client, server.getCVar("V_CarDensity"));
+    }
+
+    if (server.getCVar("V_PedDensity") != null) {
+        triggerNetworkEvent("v.peddensity", client, server.getCVar("V_PedDensity"));
+    }
+
+    if (server.getCVar("V_ParkedCarDensity") != null) {
+        triggerNetworkEvent("v.parkedcardensity", client, server.getCVar("V_ParkedCarDensity"));
+    }
+
+    if (server.getCVar("V_OverrideNumberOfParkedCars") != null) {
+        triggerNetworkEvent("v.parkedcarnum", client, server.getCVar("V_OverrideNumberOfParkedCars"));
+    }
+
+    if (server.getCVar("V_ForceCarsToParkTooClose") != null) {
+        triggerNetworkEvent("v.forcecloseparkedcars", client, server.getCVar("V_ForceCarsToParkTooClose"));
+    }
+
+    if (server.getCVar("V_DontSuppressAnyCarModels") != null) {
+        triggerNetworkEvent("v.dontsuppresscarmodels", client, server.getCVar("V_DontSuppressAnyCarModels"));
+    }
+}
 
 // ----------------------------------------------------------------------------

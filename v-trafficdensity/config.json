@@ -1,8 +1,0 @@
-{
-    "pedDensity": 200,
-    "carDensity": 200,
-    "parkedCarDensity": 200,
-    "overrideNumberOfParkedCars": true,
-    "forceCarsToParkTooClose": true,
-    "dontSuppressAnyCarModels": true
-}

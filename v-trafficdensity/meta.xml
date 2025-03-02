@@ -1,5 +1,5 @@
 <meta>
-	<info author="Vortrex" version="1.0.0" description="Custom ped and traffic density for GTA IV" />
+	<info author="Vortrex" version="2.0.0" description="Custom ped and traffic density for GTA IV" />
 
     <script src="server.js" type="server" language="javascript" />
 	<script src="client.js" type="client" language="javascript" />
