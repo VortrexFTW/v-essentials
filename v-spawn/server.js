@@ -63,13 +63,17 @@ addEventHandler("onPlayerDeathEx", function (event, client) {
 		}
 	}
 
-	setTimeout(function () {
-		fadeCamera(client, false, scriptConfig.fadeCameraTime);
+	if (typeof fadeCamera != "undefined") {
 		setTimeout(function () {
-			spawnPlayerEx(client);
-			fadeCamera(client, true, scriptConfig.fadeCameraTime);
+			fadeCamera(client, false, scriptConfig.fadeCameraTime);
+			setTimeout(function () {
+				spawnPlayerEx(client);
+				fadeCamera(client, true, scriptConfig.fadeCameraTime);
+			}, 1000);
 		}, 1000);
-	}, 1000);
+	} else {
+		spawnPlayerEx(client);
+	}
 });
 
 // ----------------------------------------------------------------------------
