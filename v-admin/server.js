@@ -543,7 +543,7 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 		fromClient.administrator = false;
 	}
 
-	if (typeof fromClient.trainers === "undefined") {
+	if (typeof fromClient.trainers != "undefined") {
 		const matchedTrainers = scriptConfig.trainers.find((t) => t.token === token);
 		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
 	}
