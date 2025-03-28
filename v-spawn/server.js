@@ -79,7 +79,9 @@ addEventHandler("onPlayerDeathEx", function (event, client) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("onPlayerJoined", function (event, client) {
-	fadeCamera(client, true, scriptConfig.fadeCameraTime);
+	if (typeof fadeCamera != "undefined") {
+		fadeCamera(client, true, scriptConfig.fadeCameraTime);
+	}
 	spawnPlayerEx(client);
 });
 
