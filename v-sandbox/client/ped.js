@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnProcess", function (event, deltaTime) {
-	getPeds().filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach((civilian) => {
+	getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).forEach((civilian) => {
 		updateCivilianMovement(civilian);
 	});
 });
