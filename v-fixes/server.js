@@ -18,10 +18,12 @@ addNetworkHandler("OnPedBusted", function (client, pedId) {
 });
 
 addNetworkHandler("OnPedEnteredVehicleEx", function (client, pedId, vehicleId, seat) {
+	getElementFromId(pedId).setData("v.seat", seat);
 	triggerEvent("OnPedEnteredVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 
 addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId, vehicleId, seat) {
+	getElementFromId(pedId).removeData("v.seat");
 	triggerEvent("OnPedExitedVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
 });
 

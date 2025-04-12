@@ -147,6 +147,8 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 	}
 });
 
+// ===========================================================================
+
 addEventHandler("OnPedEnteredVehicle", function (event, ped, vehicle, seat) {
 	triggerNetworkEvent("OnPedEnteredVehicleEx", ped.id, vehicle.id, seat);
 });
@@ -154,7 +156,7 @@ addEventHandler("OnPedEnteredVehicle", function (event, ped, vehicle, seat) {
 // ===========================================================================
 
 addEventHandler("OnPedExitedVehicle", function (event, ped, vehicle, seat) {
-	triggerNetworkEvent("OnPedExitingVehicleEx", ped.id, vehicle.id, seat);
+	triggerNetworkEvent("OnPedExitedVehicleEx", ped.id, vehicle.id, seat);
 });
 
 // ===========================================================================
@@ -166,7 +168,7 @@ addEventHandler("OnPedEnteringVehicle", function (event, ped, vehicle, seat) {
 // ===========================================================================
 
 addEventHandler("OnPedExitingVehicle", function (event, ped, vehicle, seat) {
-	triggerNetworkEvent("OnPedExitedVehicleEx", ped.id, vehicle.id, seat);
+	triggerNetworkEvent("OnPedExitingVehicleEx", ped.id, vehicle.id, seat);
 });
 
 // ===========================================================================
