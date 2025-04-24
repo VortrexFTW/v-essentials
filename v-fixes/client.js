@@ -24,7 +24,42 @@ let sniperMode = false;
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	if (localPlayer.vehicle != null) {
+		let seat = getPedVehicleSeat(localPlayer);
+		vehicle = localPlayer.vehicle;
+		vehicleSeat = seat;
+	}
 
+	if (typeof localPlayer.weapon != "undefined") {
+		weapon = localPlayer.weapon;
+	}
+
+	if (typeof localPlayer.weaponAmmo != "undefined") {
+		weaponAmmo = localPlayer.weaponAmmo;
+	}
+
+	if (game.game == 1) {
+		if (localPlayer.state == 51) {
+			busted = true;
+		}
+
+		if (localPlayer.state == 12) {
+			sniperMode = true;
+		}
+	}
+
+	if (typeof ELEMENT_MARKER != "undefined") {
+		getElementsByType(ELEMENT_MARKER).forEach(function (tempSphere) {
+			let position = localPlayer.position;
+			if (localPlayer.vehicle) {
+				position = localPlayer.vehicle.position;
+			}
+
+			if (tempSphere.position.distance(position) <= tempSphere.radius) {
+				sphere = tempSphere;
+			}
+		});
+	}
 });
 
 // ===========================================================================
@@ -100,6 +135,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (game.game <= 5) {
 				if (entity.vehicle == null) {
 					if (vehicle != null) {
+						console.log(`[V-FIXES] OnPedEnteredVehicleEx: Ped: ${entity.id}, Vehicle: ${vehicle.id}, Seat: ${vehicleSeat}`);
 						triggerEvent("OnPedExitedVehicleEx", entity, entity, vehicle, vehicleSeat);
 						triggerNetworkEvent("OnPedExitedVehicleEx", entity.id, vehicle.id, vehicleSeat);
 						vehicle = null;
@@ -108,9 +144,10 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				} else {
 					if (vehicle == null) {
 						let seat = getPedVehicleSeat(entity);
+						console.log(`[V-FIXES] OnPedEnteredVehicleEx: Ped: ${entity.id}, Vehicle: ${entity.vehicle.id}, Seat: ${seat}`);
 						triggerEvent("OnPedEnteredVehicleEx", entity, entity, entity.vehicle, seat);
 						triggerNetworkEvent("OnPedEnteredVehicleEx", entity.id, entity.vehicle.id, seat);
-						vehicle = entity.vehicle
+						vehicle = entity.vehicle;
 						vehicleSeat = seat;
 					}
 				}
