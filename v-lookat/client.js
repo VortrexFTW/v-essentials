@@ -22,6 +22,10 @@ let syncTimer = null;
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
+	if (game.game != GAME_GTA_SA) {
+		event.preventDefault();
+		return false;
+	}
 	syncTimer = setInterval(sendHeadLook, 2000);
 });
 
