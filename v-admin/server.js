@@ -46,20 +46,23 @@ addEventHandler("onPlayerJoined", (event, client) => {
 addCommandHandler("kick", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			if (targetClient.index != client.index) {
-				messageAdmins(`${targetClient.name} has been kicked!`);
-				targetClient.disconnect();
-			} else {
-				messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they tried to kick themselves.`);
-			}
-		} else {
-			messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`);
-		}
-	} else {
-		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`);
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	if (targetClient.index == client.index) {
+		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they tried to kick themselves.`);
+		return false;
+	}
+
+	messageAdmins(`${targetClient.name} has been kicked!`);
+	targetClient.disconnect();
 });
 
 // ----------------------------------------------------------------------------
@@ -72,16 +75,18 @@ addCommandHandler("scripts", (command, params, client) => {
 
 	let targetClient = getClientFromParams(params);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			returnScriptsToClient = client;
-			requestGameScripts(targetClient, client);
-		} else {
-			messageAdmins(`${client.name} tried to get running scripts for '${params}' but failed because no player is connected with that name.`);
-		}
-	} else {
-		messageAdmins(`${client.name} tried to get ${targetClient.name}'s running scripts but failed because they aren't an admin!`);
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to running scripts for '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to get running scripts for ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	returnScriptsToClient = client;
+	requestGameScripts(targetClient, client);
 });
 
 // ----------------------------------------------------------------------------
@@ -92,40 +97,54 @@ addCommandHandler("ban", (command, params, client) => {
 	let reasonParams = splitParams.slice(1).join(" ");
 	let targetClient = getClientFromParams(targetParams);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			if (targetClient.index != client.index) {
-				scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
-				saveConfig();
-				messageAdmins(`${targetClient.name}[${targetClient.index}] (IP: ${targetClient.ip}) has been banned by ${client.name}!`);
-				server.banIP(targetClient.ip, 0);
-				if (targetClient) {
-					targetClient.disconnect();
-				}
-			}
-		}
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to ban '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
+	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to ban ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	scriptConfig.bans.push({ name: escapeJSONString(targetClient.name), ip: targetClient.ip, admin: escapeJSONString(client.name), reason: escapeJSONString(reasonParams), timeStamp: new Date().toLocaleDateString('en-GB') });
+	saveConfig();
+	messageAdmins(`${targetClient.name}[${targetClient.index}] (IP: ${targetClient.ip}) has been banned by ${client.name}!`);
+	server.banIP(targetClient.ip, 0);
+	if (targetClient) {
+		targetClient.disconnect();
 	}
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("unban", (command, params, client) => {
-	if (client.administrator || client.console) {
-		let removedBans = [];
-		for (let i in scriptConfig.bans) {
-			if (scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-				server.unbanIP(scriptConfig.bans[i].ip);
-				let removedBan = scriptConfig.bans.splice(i, 1);
-				removedBans.push(removedBan);
-			}
-		}
+	let targetClient = getClientFromParams(params);
 
-		saveConfig();
-		if (removedBans.length == 1) {
-			messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`);
-		} else {
-			messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`);
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to unban '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
+	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to unban ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	let removedBans = [];
+	for (let i in scriptConfig.bans) {
+		if (scriptConfig.bans[i].ip.indexOf(params) != -1 || scriptConfig.bans[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
+			server.unbanIP(scriptConfig.bans[i].ip);
+			let removedBan = scriptConfig.bans.splice(i, 1);
+			removedBans.push(removedBan);
 		}
+	}
+
+	saveConfig();
+	if (removedBans.length == 1) {
+		messageAdmins(`${removedBans[0].name} (IP: ${removedBans[0].ip}) has been unbanned by ${client.name}!`);
+	} else {
+		messageAdmins(`${removedBans.length} bans matching '${params}' removed by ${client.name}!`);
 	}
 });
 
@@ -153,36 +172,43 @@ addCommandHandler("blockscript", (command, params, client) => {
 		return false;
 	}
 
-	if (client.administrator) {
-		addBlockedScript(params);
-	} else {
-		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin!`);
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin.`);
+		return false;
 	}
+
+	addBlockedScript(params);
 });
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("admin", (command, params, client) => {
+addCommandHandler("makeadmin", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			if (targetClient.administrator == false) {
-				targetClient.administrator = true;
-				messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-				let token = generateRandomString(128);
-				scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
-				triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
-			} else {
-				let token = getTokenFromName(targetClient.name);
-				scriptConfig.admins = scriptConfig.admins.findIndex(admin => admin.token != token);
-				targetClient.administrator = false;
-				messageAdmins(`${client.name} removed ${targetClient.name} from administrators!`);
-			}
-
-			saveConfig();
-		}
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to change admin status for '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to change admin status for ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	if (targetClient.administrator == false) {
+		targetClient.administrator = true;
+		messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
+		let token = generateRandomString(128);
+		scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
+		triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
+	} else {
+		let token = getTokenFromName(targetClient.name);
+		scriptConfig.admins = scriptConfig.admins.splice(scriptConfig.admins.findIndex(admin => admin.token != token), 1);
+		targetClient.administrator = false;
+		messageAdmins(`${client.name} removed ${targetClient.name} from administrators!`);
+	}
+
+	saveConfig();
 });
 
 // ----------------------------------------------------------------------------
@@ -195,49 +221,87 @@ addCommandHandler("trainers", (command, params, client) => {
 
 	let targetClient = getClientFromParams(params);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			targetClient.trainers = !targetClient.trainers;
-			messageAdmins(`${client.name} ${(targetClient.trainers) ? "enabled" : "disabled"} trainers for ${targetClient.name}`);
-
-			if (targetClient.trainers == true) {
-				let token = generateRandomString(128);
-				if (isPlayerAdmin(targetClient)) {
-					token = getTokenFromName(targetClient.name);
-				}
-
-				scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
-				triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
-			} else {
-				scriptConfig.trainers = scriptConfig.trainers.filter(trainers => trainers.ip != targetClient.ip);
-			}
-
-			saveConfig();
-		}
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to change trainer state for '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to change trainer state for ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	targetClient.trainers = !targetClient.trainers;
+	messageAdmins(`${client.name} ${(targetClient.trainers) ? "enabled" : "disabled"} trainers for ${targetClient.name}`);
+
+	if (targetClient.trainers == true) {
+		let token = generateRandomString(128);
+		if (isPlayerAdmin(targetClient)) {
+			token = getTokenFromName(targetClient.name);
+		}
+
+		scriptConfig.trainers.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
+		triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
+	} else {
+		scriptConfig.trainers = scriptConfig.trainers.filter(trainers => trainers.ip != targetClient.ip);
+	}
+
+	saveConfig();
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ip", (command, params, client) => {
-	if (client.administrator || client.console) {
-		let targetClient = getClientFromParams(params) || client;
-		if (targetClient != null) {
-			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
-		}
+	let targetClient = getClientFromParams(params);
+
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to get IP address for '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to get IP address for ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	messageAdmin(`${targetClient.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 });
 
 // ----------------------------------------------------------------------------
 
 addCommandHandler("geoip", (command, params, client) => {
-	let targetClient = getClientFromParams(params) || client;
+	let targetClient = getClientFromParams(params);
 
-	if (client.administrator || client.console) {
-		if (targetClient != null) {
-			messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
-		}
+	if (targetClient == null) {
+		messageAdmins(`${client.name} tried to get GeoIP (location) information for '${params}' but failed because no player is connected with that name/ID.`);
+		return false;
 	}
+
+	if (!client.administrator && !client.console) {
+		messageAdmins(`${client.name} tried to get GeoIP (location) information for ${targetClient.name} but failed because they aren't an admin.`);
+		return false;
+	}
+
+	if (targetClient.ip.slice(0, 7) == "127.0.0" || targetClient.ip.slice(0, 7) == "192.168") {
+		messageAdmins(`${client.name} tried to get GeoIP (location) information for ${targetClient.name} but failed because the IP address is a localhost or LAN IP`);
+		return false;
+	}
+
+	let countryName = "Unknown";
+	let subDivisionName = "Unknown";
+	let cityName = "Unknown";
+
+	try {
+		countryName = module.geoip.getCountryName(scriptConfig.geoip.countryFile, targetClient);
+		subDivisionName = module.geoip.getSubdivisionName(scriptConfig.geoip.subDivisionFile, targetClient);
+		cityName = module.geoip.getCityName(scriptConfig.geoip.countryFile, targetClient);
+
+		messageAdmin(`${targetClient.name}'s location is ${cityName}, ${subDivisionName}, ${countryName}`, client, COLOUR_YELLOW);
+	} catch (err) {
+		messageAdmin(`There was an error getting the geoip information for ${targetClient.name}`, client, errorMessageColour);
+	}
+
+	messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 });
 
 // ----------------------------------------------------------------------------
