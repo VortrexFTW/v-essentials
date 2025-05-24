@@ -353,20 +353,7 @@ function messageAdmin(messageText, client, colour) {
 // ----------------------------------------------------------------------------
 
 function getClientFromParams(params) {
-	let clients = getClients();
-	for (let i in clients) {
-		if (clients[i].index == Number(params)) {
-			return clients[i];
-		}
-	}
-
-	for (let i in clients) {
-		if (clients[i].name.toLowerCase().indexOf(params.toLowerCase()) != -1) {
-			return clients[i];
-		}
-	}
-
-	return null;
+	return getClients().find((client) => client.name.toLowerCase() == params.toLowerCase() || client.index == params || client.ip == params) || null;
 }
 
 // ----------------------------------------------------------------------------
