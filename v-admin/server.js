@@ -294,14 +294,12 @@ addCommandHandler("geoip", (command, params, client) => {
 	try {
 		countryName = module.geoip.getCountryName(scriptConfig.geoip.countryFile, targetClient);
 		subDivisionName = module.geoip.getSubdivisionName(scriptConfig.geoip.subDivisionFile, targetClient);
-		cityName = module.geoip.getCityName(scriptConfig.geoip.countryFile, targetClient);
+		cityName = module.geoip.getCityName(scriptConfig.geoip.cityFile, targetClient);
 
 		messageAdmin(`${targetClient.name}'s location is ${cityName}, ${subDivisionName}, ${countryName}`, client, COLOUR_YELLOW);
 	} catch (err) {
 		messageAdmin(`There was an error getting the geoip information for ${targetClient.name}`, client, errorMessageColour);
 	}
-
-	messageAdmin(`${client.name}'s IP is ${targetClient.ip}`, client, COLOUR_YELLOW);
 });
 
 // ----------------------------------------------------------------------------
@@ -545,6 +543,14 @@ function fixMissingConfigStuff() {
 
 	if (typeof scriptConfig.serverToken == "undefined") {
 		scriptConfig.serverToken = generateRandomString(32);
+	}
+
+	if (typeof scriptConfig.geoip == "undefined") {
+		scriptConfig.geoip = {
+			countryFile: "geoip/GeoLite2-Country.mmdb",
+			subDivisionFile: "geoip/GeoLite2-City.mmdb",
+			cityFile: "geoip/GeoLite2-City.mmdb"
+		};
 	}
 
 	if (typeof scriptConfig.blockedScripts == "undefined") {
