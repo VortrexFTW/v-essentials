@@ -47,7 +47,7 @@ addCommandHandler("kick", (command, params, client) => {
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
-		messageAdmins(`${client.name} tried to kick params but failed because no player is connected with that name.`);
+		messageAdmins(`${client.name} tried to kick ${params} but failed because no player is connected with that name.`);
 		return false;
 	}
 
@@ -353,7 +353,7 @@ function messageAdmin(messageText, client, colour) {
 // ----------------------------------------------------------------------------
 
 function getClientFromParams(params) {
-	return getClients().find((client) => client.name.toLowerCase() == params.toLowerCase() || client.index == params || client.ip == params) || null;
+	return getClients().find((client) => client.name.toLowerCase().indexOf(params.toLowerCase()) || client.index == params || client.ip == params) || null;
 }
 
 // ----------------------------------------------------------------------------
