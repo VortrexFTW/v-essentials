@@ -89,3 +89,43 @@ addNetworkHandler("OnAddIVNetworkEvent", function (client, type, name, data, dat
 		triggerNetworkEvent("ReceiveIVNetworkEvent", c, type, name, data, data2, client.index);
 	});
 });
+
+addNetworkHandler("OnVehicleHealthChanged", function (client, vehicleId, health) {
+	if (getElementFromId(vehicleId) == null) {
+		return;
+	}
+
+	triggerEvent("OnVehicleHealthChanged", getElementFromId(vehicleId), health);
+});
+
+addNetworkHandler("OnVehicleLightsChanged", function (client, vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return;
+	}
+
+	triggerEvent("OnVehicleLightsChanged", getElementFromId(vehicleId), state);
+});
+
+addNetworkHandler("OnVehicleSirenChanged", function (client, vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return;
+	}
+
+	triggerEvent("OnVehicleSirenChanged", getElementFromId(vehicleId), state);
+});
+
+addNetworkHandler("OnVehicleLockedStatusChanged", function (client, vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return;
+	}
+
+	triggerEvent("OnVehicleLockedStatusChanged", getElementFromId(vehicleId), state);
+});
+
+addNetworkHandler("OnVehicleTaxiLightChanged", function (client, vehicleId, state) {
+	if (getElementFromId(vehicleId) == null) {
+		return;
+	}
+
+	triggerEvent("OnVehicleTaxiLightChanged", getElementFromId(vehicleId), state);
+});
