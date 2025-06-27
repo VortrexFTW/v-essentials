@@ -24,6 +24,10 @@ bindEventHandler("onResourceStop", thisResource, (event, resource) => {
 	saveConfig();
 	removeBansFromServer();
 	collectAllGarbage();
+
+	getClients().forEach((client) => {
+		client.removeData("v.admin"); // Remove admin data from all players
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -323,7 +327,7 @@ addCommandHandler("geoip", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("reloadadmins", (command, params, client) => {
-	if (client.administrator) {
+	if (getPlayerAdminLevel(client) >= getLevelForCommand(command)) {
 		loadConfig();
 		applyAdminPermissions();
 	}
@@ -332,7 +336,7 @@ addCommandHandler("reloadadmins", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("reloadbans", (command, params, client) => {
-	if (client.administrator) {
+	if (getPlayerAdminLevel(client) >= getLevelForCommand(command)) {
 		loadConfig();
 		removeBansFromServer();
 		applyBansToServer();
@@ -343,7 +347,7 @@ addCommandHandler("reloadbans", (command, params, client) => {
 
 function messageAdmins(messageText) {
 	getClients().forEach((client) => {
-		if (client.administrator) {
+		if (getPlayerAdminLevel(client) > 0) {
 			messageClient(`[ADMIN] [#FFFFFF]${messageText}`, client, COLOUR_ORANGE);
 		}
 	});
@@ -436,48 +440,36 @@ function loadConfig() {
 // ----------------------------------------------------------------------------
 
 function isAdminIP(ip) {
-	for (let i in scriptConfig.admins) {
-		if (ip == scriptConfig.admins[i].ip) {
-			return true;
-		}
-	}
+	return scriptConfig.admins.some((admin) => admin.ip === ip);
 }
 
 // ----------------------------------------------------------------------------
 
 function isAdminName(name) {
-	for (let i in scriptConfig.admins) {
-		if (name.toLowerCase().trim() == scriptConfig.admins[i].name.toLowerCase().trim()) {
-			return true;
-		}
-	}
+	return scriptConfig.admins.some((admin) => admin.name.toLowerCase().trim() === name.toLowerCase().trim());
 }
 
 // ----------------------------------------------------------------------------
 
 function isAdminToken(token) {
-	for (let i in scriptConfig.admins) {
-		if (token.toLowerCase().trim() == scriptConfig.admins[i].token.toLowerCase().trim()) {
-			return true;
-		}
-	}
+	return scriptConfig.admins.some((admin) => admin.token.toLowerCase().trim() === token.toLowerCase().trim());
 }
 
 // ----------------------------------------------------------------------------
 
 function applyBansToServer() {
 	removeBansFromServer();
-	for (let i in scriptConfig.bans) {
-		server.banIP(scriptConfig.bans[i].ip, 0);
-	}
+	scriptConfig.bans.forEach((ban) => {
+		server.banIP(ban.ip, 0);
+	});
 }
 
 // ----------------------------------------------------------------------------
 
 function removeBansFromServer() {
-	for (let i in scriptConfig.bans) {
-		server.unbanIP(scriptConfig.bans[i].ip);
-	}
+	scriptConfig.bans.forEach((ban) => {
+		server.unbanIP(ban.ip);
+	});
 }
 
 // ----------------------------------------------------------------------------
@@ -496,14 +488,13 @@ function escapeJSONString(str) {
 // ----------------------------------------------------------------------------
 
 function applyAdminPermissions() {
-	let clients = getClients();
-	for (let i in clients) {
-		clients[i].administrator = false;
+	getClients().forEach((client) => {
+		client.setData("v.admin", 0, true); // Reset admin level
 
-		if (typeof clients[i].trainers != "undefined") {
-			clients[i].trainers = areTrainersEnabledForEverybody();
+		if (typeof client.trainers != "undefined") {
+			client.trainers = areTrainersEnabledForEverybody();
 		}
-	}
+	});
 
 	triggerNetworkEvent("v.admin.token", null, scriptConfig.serverToken);
 }
