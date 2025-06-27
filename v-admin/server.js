@@ -188,7 +188,7 @@ addCommandHandler("blockscript", (command, params, client) => {
 
 addCommandHandler("makeadmin", (command, params, client) => {
 	let splitParams = params.split(" ");
-	let targetClient = getClientFromParams(splitParams.slice(0, -1).join(" "));
+	let targetClient = getClientFromParams(splitParams.slice(0, -2).join(" "));
 	let level = parseInt(splitParams.slice(-1)[0]);
 
 	if (targetClient == null) {
