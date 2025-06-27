@@ -51,8 +51,8 @@ addCommandHandler("kick", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to kick ${targetClient.name} but failed because they aren't high enough level.`);
 		return false;
 	}
 
@@ -80,8 +80,8 @@ addCommandHandler("scripts", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to get running scripts for ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to get running scripts for ${targetClient.name} but failed because they aren't high enough level.`);
 		return false;
 	}
 
@@ -102,8 +102,8 @@ addCommandHandler("ban", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to ban ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to ban ${targetClient.name} but failed because they aren't high enough level.`);
 		return false;
 	}
 
@@ -126,8 +126,8 @@ addCommandHandler("unban", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to unban ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to unban ${targetClient.name} but failed because they aren't high enough level.`);
 		return false;
 	}
 
@@ -151,7 +151,7 @@ addCommandHandler("unban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("a", (command, params, client) => {
-	if (client.administrator) {
+	if (client.getData("v.admin") >= getLevelForCommand(command)) {
 		messageAdmins(`${client.name}: ${params}`);
 	}
 });
@@ -159,7 +159,7 @@ addCommandHandler("a", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("announce", (command, params, client) => {
-	if (client.administrator) {
+	if (client.getData("v.admin") >= getLevelForCommand(command)) {
 		messageAnnounce(params);
 	}
 });
@@ -172,8 +172,8 @@ addCommandHandler("blockscript", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't an admin.`);
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to block game script '${params}' but failed because they aren't high enough level.`);
 		return false;
 	}
 
@@ -183,29 +183,47 @@ addCommandHandler("blockscript", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("makeadmin", (command, params, client) => {
-	let targetClient = getClientFromParams(params);
+	let splitParams = params.split(" ");
+	let targetClient = getClientFromParams(splitParams.slice(0, -1).join(" "));
+	let level = parseInt(splitParams.slice(-1)[0]);
 
 	if (targetClient == null) {
 		messageAdmins(`${client.name} tried to change admin status for '${params}' but failed because no player is connected with that name/ID.`);
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to change admin status for ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") <= getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to change admin status for ${targetClient.name} but failed because they don't have the required level (${scriptConfig.commandLevels[command.toLowerCase()]}).`);
 		return false;
 	}
 
-	if (targetClient.administrator == false) {
-		targetClient.administrator = true;
-		messageAdmins(`${client.name} made ${targetClient.name} an administrator!`);
-		let token = generateRandomString(128);
-		scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), token: token, addedBy: escapeJSONString(client.name) });
-		triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
+	if (level > getPlayerAdminLevel(client)) {
+		messageAdmins(`${client.name} tried to change admin status for ${targetClient.name} but failed because they tried to set a higher level (${level}) than their own (${getPlayerAdminLevel(client)}).`);
+		return false;
+	}
+
+	if (level > 0) {
+		if (isAdminName(targetClient.name)) {
+			let token = getTokenFromName(targetClient.name);
+			targetClient.setData("v.admin", level, true);
+			let index = scriptConfig.admins.findIndex(admin => admin.token == token);
+			scriptConfig.admins[index].level = level;
+			scriptConfig.admins[index].addedBy = escapeJSONString(client.name);
+			scriptConfig.admins[index].ip = targetClient.ip; // Update the IP address in the config
+
+			messageAdmins(`${client.name} changed ${targetClient.name}'s admin level to ${level}!`);
+			triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
+		} else {
+			targetClient.setData("v.admin", level, true);
+			messageAdmins(`${client.name} made ${targetClient.name} a level ${level} admin!`);
+			let token = generateRandomString(128);
+			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), level: level, token: token, addedBy: escapeJSONString(client.name) });
+		}
 	} else {
 		let token = getTokenFromName(targetClient.name);
 		scriptConfig.admins = scriptConfig.admins.splice(scriptConfig.admins.findIndex(admin => admin.token != token), 1);
-		targetClient.administrator = false;
-		messageAdmins(`${client.name} removed ${targetClient.name} from administrators!`);
+		targetClient.removeData("v.admin");
+		messageAdmins(`${client.name} removed ${targetClient.name} from admin!`);
 	}
 
 	saveConfig();
@@ -226,8 +244,8 @@ addCommandHandler("trainers", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
-		messageAdmins(`${client.name} tried to change trainer state for ${targetClient.name} but failed because they aren't an admin.`);
+	if (client.getData("v.admin") <= getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to change trainer state for ${targetClient.name} but failed because they don't have the required level (${scriptConfig.commandLevels[command.toLowerCase()]}).`);
 		return false;
 	}
 
@@ -259,7 +277,7 @@ addCommandHandler("ip", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
+	if (client.getData("v.admin") <= getLevelForCommand(command)) {
 		messageAdmins(`${client.name} tried to get IP address for ${targetClient.name} but failed because they aren't an admin.`);
 		return false;
 	}
@@ -277,7 +295,7 @@ addCommandHandler("geoip", (command, params, client) => {
 		return false;
 	}
 
-	if (!client.administrator && !client.console) {
+	if (client.getData("v.admin") <= getLevelForCommand(command)) {
 		messageAdmins(`${client.name} tried to get GeoIP (location) information for ${targetClient.name} but failed because they aren't an admin.`);
 		return false;
 	}
@@ -532,6 +550,26 @@ function fixMissingConfigStuff() {
 		scriptConfig.serverToken = generateRandomString(32);
 	}
 
+	if (typeof scriptConfig.commandLevels == "undefined") {
+		// Default level for user is 0.
+		// The default values below are based on 1 being a basic admin level, and 2 being an super admin level.
+		scriptConfig.commandLevels = {
+			"kick": 1,
+			"scripts": 1,
+			"ban": 1,
+			"unban": 1,
+			"a": 1,
+			"announce": 1,
+			"blockscript": 1,
+			"makeadmin": 2, // Make this one higher than the rest
+			"trainers": 1,
+			"ip": 1,
+			"geoip": 1,
+			"reloadadmins": 1,
+			"reloadbans": 1
+		}
+	}
+
 	if (typeof scriptConfig.geoip == "undefined") {
 		scriptConfig.geoip = {
 			countryFile: "geoip/GeoLite2-Country.mmdb",
@@ -555,6 +593,19 @@ function fixMissingConfigStuff() {
 
 	if (typeof scriptConfig.trainers == "undefined") {
 		scriptConfig.trainers = [];
+	}
+
+	for (let i in scriptConfig.admins) {
+		if (typeof scriptConfig.admins[i].token == "undefined") {
+			logWarn(`Removed admin '${scriptConfig.admins[i].name}' at index ${Number(i) + 1} because it was missing a token.`);
+			scriptConfig.admins.splice(i, 1);
+			continue;
+		}
+
+		if (typeof scriptConfig.admins[i].level == "undefined") {
+			logWarn(`Setting admin '${scriptConfig.admins[i].name}' level to 1 because it was missing a level.`);
+			scriptConfig.admins[i].level = 1;
+		}
 	}
 
 	let newConfig = JSON.stringify(scriptConfig, null, '\t');
@@ -592,29 +643,38 @@ function getTokenFromIP(ip) {
 
 addNetworkHandler("v.admin.token", function (fromClient, token) {
 	let tokenValid = false;
-	const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
-	if (matchedAdmin) {
-		fromClient.administrator = true;
-		tokenValid = true;
-	} else {
-		fromClient.administrator = false;
-	}
 
 	if (typeof fromClient.trainers != "undefined") {
 		const matchedTrainers = scriptConfig.trainers.find((t) => t.token === token);
 		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
 	}
 
+	const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
+
 	if (isAdminName(fromClient.name)) {
 		if (!tokenValid || getTokenFromName(fromClient.name) !== token) {
-			messageAdmins(`${fromClient.name} was kicked from the server (reserved name but failed token check)`);
+			messageAdmins(`${fromClient.name} was kicked from the server because they have an admin's name but invalid token.`);
+			messageAdmins(`Either it's somebody trying to impersonate an admin, or it's a legit admin using a new/different computer.`);
 			fromClient.disconnect();
 			return false;
 		}
 	}
 
+	if (matchedAdmin) {
+		fromClient.setData("v.admin", matchedAdmin.level || 1, true);
+		tokenValid = true;
+	} else {
+		fromClient.setData("v.admin", 0, true);
+	}
+
 	if (tokenValid) {
 		messageAdmins(`${fromClient.name} passed the token check and was given admin permissions!`);
+
+		if (matchedAdmin.ip != fromClient.ip) {
+			logWarn(`Admin ${fromClient.name} has a different IP address (${fromClient.ip}) than the one in config.json (${matchedAdmin.ip}). Updating config ...`);
+			matchedAdmin.ip = fromClient.ip; // Update the IP address in the config
+			saveConfig();
+		}
 	}
 });
 
@@ -626,6 +686,28 @@ function areTrainersEnabledForEverybody() {
 	} else {
 		return !!Number(server.getCVar("trainers")) == true;
 	}
+}
+
+// ----------------------------------------------------------------------------
+
+function getLevelForCommand(command) {
+	if (typeof scriptConfig.commandLevels[command.toLowerCase()] == "undefined") {
+		logWarn(`Command level for '${command}' is not defined in config.json`);
+		return 0;
+	}
+
+	return scriptConfig.commandLevels[command.toLowerCase()];
+}
+
+// ----------------------------------------------------------------------------
+
+function getPlayerAdminLevel(client) {
+	if (client.getData("v.admin") == null) {
+		return 0;
+	}
+
+	return client.getData("v.admin");
+
 }
 
 // ----------------------------------------------------------------------------
