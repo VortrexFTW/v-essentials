@@ -693,12 +693,15 @@ function getLevelForCommand(command) {
 // ----------------------------------------------------------------------------
 
 function getPlayerAdminLevel(client) {
+	if (client.console == true) {
+		return 99999999;
+	}
+
 	if (client.getData("v.admin") == null) {
 		return 0;
 	}
 
 	return client.getData("v.admin");
-
 }
 
 // ----------------------------------------------------------------------------
