@@ -38,7 +38,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 		weaponAmmo = localPlayer.weaponAmmo;
 	}
 
-	if (game.game == 1) {
+	if (game.game == GAME_GTA_III) {
 		if (localPlayer.state == 51) {
 			busted = true;
 		}
@@ -182,6 +182,101 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			}
 		}
 	}
+
+	if (entity.type == ELEMENT_VEHICLE) {
+		if (entity.isSyncer) {
+			// Tell server about some vehicle properties that are not synced by default
+			if (typeof entity.lights != "undefined") {
+				if (entity.getData("v.lights") != entity.lights) {
+					triggerNetworkEvent("OnVehicleLightsChanged", entity.id, entity.lights);
+				}
+			}
+
+			if (typeof entity.siren != "undefined") {
+				if (entity.getData("v.siren") != entity.siren) {
+					triggerNetworkEvent("OnVehicleSirenChanged", entity.id, entity.siren);
+				}
+			}
+
+			if (typeof entity.hazardLights != "undefined") {
+				if (entity.getData("v.hazardLights") != entity.hazardLights) {
+					triggerNetworkEvent("OnVehicleHazardLightsChanged", entity.id, entity.hazardLights);
+				}
+			}
+
+			if (typeof entity.interiorLight != "undefined") {
+				if (entity.getData("v.interiorLight") != entity.interiorLight) {
+					triggerNetworkEvent("OnVehicleInteriorLightChanged", entity.id, entity.interiorLight);
+				}
+			}
+
+			if (game.game <= GAME_GTA_IV) {
+				if (typeof entity.lockedStatus != "undefined") {
+					if (entity.getData("v.locked") != entity.lockedStatus) {
+						triggerNetworkEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
+					}
+				}
+
+				if (typeof entity.taxiLight != "undefined") {
+					if (entity.getData("v.taxiLight") != entity.taxiLight) {
+						triggerNetworkEvent("OnVehicleTaxiLightChanged", entity.id, entity.taxiLight);
+					}
+				}
+			}
+
+			if (typeof vehicle.health != "undefined") {
+				if (entity.getData("v.health") != entity.health) {
+					triggerNetworkEvent("OnVehicleHealthChanged", entity.id, entity.health);
+				}
+			}
+
+			if (game.game == V_GAME_GTA_IV) {
+				if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
+					triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
+				}
+
+				let tireStates = entity.getData("v.rp.tires");
+				let updatedTireStates = [];
+				for (let i = 0; i < 4; i++) {
+					if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
+						updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
+					}
+				}
+
+				if (updatedTireStates.length > 0) {
+					triggerNetworkEvent("OnVehicleTireStatesChanged", entity.id, updatedTireStates);
+				}
+
+
+				/*
+				let doorStates = entity.getData("v.rp.doorStates");
+				let updatedDoorStates = [];
+				for (let i = 0; i < 4; i++) {
+					if (doorStates[i] != natives.isCarDoorDamaged(entity, i)) {
+						updatedDoorStates.push([i, natives.isCarDoorDamaged(entity, i)]);
+					}
+				}
+
+				if (updatedDoorStates.length > 0) {
+					triggerNetworkEvent("OnVehicleDoorStatesChanged", entity.id, updatedDoorStates);
+				}
+				*/
+			}
+
+			if (doesEntityDataExist(vehicle, "v.rp.tires")) {
+				let tireStates = getEntityData(vehicle, "v.rp.tires");
+				for (let i = 0; i < tireStates.length; i++) {
+					setVehicleTireState(vehicle, i, state);
+				}
+			}
+
+			if (isGameFeatureSupported("vehicleUpgrades")) {
+				if (doesEntityDataExist(vehicle, "v.rp.upgrades")) {
+					setVehicleUpgrades(vehicle, getEntityData(vehicle, "v.rp.upgrades"));
+				}
+			}
+		}
+	}
 });
 
 // ===========================================================================
@@ -319,12 +414,11 @@ function syncElementProperties(element) {
 // ===========================================================================
 
 function syncPedProperties(ped) {
-	if (ped == null) {
-		return false;
+	if (typeof ped == "number") {
+		ped = getElementFromId(ped);
 	}
 
-	// Check if ped is a server element
-	if (ped.id == -1) {
+	if (ped == null) {
 		return false;
 	}
 
@@ -416,9 +510,9 @@ function syncPedProperties(ped) {
 		setPedWeapon(ped.id, weapon[0], weapon[1], weapon[2], weapon[3]);
 
 		if (game.game == GAME_MAFIA_ONE) {
-			getElementFromId(pedId).giveWeapon(weapon[0], weapon[2], weapon[1]);
+			ped.giveWeapon(weapon[0], weapon[2], weapon[1]);
 		} else {
-			getElementFromId(pedId).giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
+			ped.giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
 		}
 	}
 
