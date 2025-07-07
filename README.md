@@ -2,6 +2,40 @@
 For GTA Connected and Mafia Connected
 Publicly available for anybody to use. I hope you find some of these useful.
 
+## Setup
+1. Add these resources to your server's `resources` folder. If the `resources` folder does not exist, create it in your server's main folder.
+2. Add the resources you want to use to your [server's config file](https://wiki.gtaconnected.com/ServerConfiguration) inside the `<resources>` section. The default file is server.xml, but you can use any file with the `-config` command line argument when starting the server. Here is a handy copy-paste, just remove the lines you don't need:
+```xml
+<resource src="cheatkeys" />
+<resource src="mousecam" />
+<resource src="v-admin" />
+<resource src="v-afk" />
+<resource src="v-chat" />
+<resource src="v-cursor" />
+<resource src="v-deathmessages" />
+<resource src="v-extracontent" />
+<resource src="v-fixes" />
+<resource src="v-help" />
+<resource src="v-hudtoggle" />
+<resource src="v-interiors" />
+<resource src="v-joinquit" />
+<resource src="v-logo" />
+<resource src="v-lookat" />
+<resource src="v-nametags" />
+<resource src="v-passenger" />
+<resource src="v-playerblips" />
+<resource src="v-playercolours" />
+<resource src="v-runcode" />
+<resource src="v-sandbox">
+<resource src="v-scoreboard" />
+<resource src="v-servernames" />
+<resource src="v-snow" />
+<resource src="v-spawn" />
+<resource src="v-time" />
+<resource src="v-translate" />
+<resource src="v-weather" />
+```
+
 ## Resources
 ### v-admin
 Server management and moderation. People added as admin can kick, ban, etc. Bans are saved with IP, reason, admin, and timestamp.
@@ -13,6 +47,9 @@ AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, i
 
 ### v-chat
 Enhanced chat features. Provides scrollable chat history, automatic translation, and converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
+
+### v-cursor
+Adds a custom mouse cursor. Mafia Connected doesn't have a mouse cursor by default, so this is useful for that. It also works on GTA Connected but will be shown along with the default cursor. You can use a different cursor image by editing or replacing the `cursor.png` image file.
 
 ### v-deathmessages
 Shows messages when a player dies, with killer name.
@@ -42,9 +79,6 @@ Shows an image in the bottom right corner (default is GTAC/MafiaC logo)
 ### v-lookat
 Only works on GTA SA. Makes player heads turn to face where they are looking. Also syncs to other players
 
-### v-mexui-designer
-Simple GUI designer for MexUI. Not finished yet.
-
 ### v-nametags
 Custom nametags. GTA Connected has built-in nametags but they're ugly. Mafia Connected doesn't provide nametags built-in.
 
@@ -58,7 +92,10 @@ Adds blips that show where players are.
 Assigns a random colour to each player. This will also show player colours on other resources that use it (`v-chat`, `v-nametags`, `v-scoreboard`, etc)
 
 ### v-runcode
-**Caution** - Adds commands to run code, available on both server and client. Allowing players to run server-side code in-game may pose a security risk. I don't recommend leaving it running all the time, only when you need to use it.
+**Caution** - *Allowing players to run server-side code in-game may pose a security risk!*. Adds commands to run code, available on both server and client. I don't recommend leaving it running all the time, only when you need to use it.
+
+### v-sandbox
+Adds a lot of commands to spawn and manipulate elements in the game world. Includes spawning vehicles, peds, objects, and more. It also has commands to manipulate the game world, such as changing the weather, time, etc. Basically provides a sandbox environment to do whatever you want.
 
 ### v-scoreboard
 Adds a scoreboard/player-list, shown when holding the TAB key
