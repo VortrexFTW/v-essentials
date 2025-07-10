@@ -1,0 +1,8 @@
+{
+	"startHour": 12,
+	"startMinute": 0,
+
+	"useRealTime": true,
+	"timeZone": "America/New_York",
+	"locale": "en-US"
+}

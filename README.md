@@ -38,9 +38,8 @@ Publicly available for anybody to use. I hope you find some of these useful.
 
 ## Resources
 ### v-admin
-Server management and moderation. People added as admin can kick, ban, etc. Bans are saved with IP, reason, admin, and timestamp.
-Also has ability to block game trainers (GTA IV only) and built-in SCM/SCO game scripts (some trainers and mods use these and blocking them will prevent them being used on your server.)
-Any player who joins with an admin's name but wrong IP will be automatically kicked.
+Server management and moderation. People added as admin can kick, ban, etc. Bans are saved with IP, token, reason, admin, and timestamp.
+Also has ability to block game trainers (GTA IV only) and built-in SCM/SCO game scripts (some trainers and mods use these and blocking them will prevent them being used on your server). Any player who joins with an admin's name but wrong token will be automatically kicked.
 
 ### v-afk
 AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, it'll show "PAUSED" next to AFK players in the list. If `v-nametags` is loaded, the nametag will show a red "PAUSED" above AFK players heads.
@@ -110,10 +109,10 @@ Starts the server with specified snowing states, configured with cvars "fallings
 Spawns your player. Custom spawn points can be added by server admins using /addspawn.
 
 ### v-time
-Starts the server with a specified hour and minute, configured with cvars "hour" and "minute" in `server.xml`
+Real world time for your server. It can use real-world time or a custom time set in `config.json`.
 
 ### v-translate
 Obsolete. Only included for legacy purposes and archive. The translation functionality has been added to `v-chat`
 
 ### v-weather
-Starts the server with a specified weather, configured with "weather" in `server.xml`
+Real world weather for your server. It can use real-world weather or a custom weather set in `config.json`. Uses the WeatherAPI service to get real-world weather data.

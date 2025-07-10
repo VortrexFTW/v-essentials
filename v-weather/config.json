@@ -1,0 +1,8 @@
+{
+	"useRealWorldWeather": true,
+	"startWeather": "Clear",
+	"weatherAPIKey": "",
+	"weatherLocation": "New York City",
+	"extraParams": "aqi=no",
+	"updateInterval": 600000
+}
