@@ -1,5 +1,5 @@
 <meta>
-	<info title="v-weather" author="Vortrex" version="1.0" description="Sets the weather from a 'weather' cvar set in server.xml" />
+	<info title="v-weather" author="Vortrex" version="1.0" description="Real world or custom weather state" />
 
 	<script src="server.js" type="server" language="javascript" />
 </meta>
