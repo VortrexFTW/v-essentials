@@ -219,8 +219,6 @@ class MovingGate {
 // ===========================================================================
 
 bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
-	exportFunction("isCustomContentResource", function () { return true; });
-
 	resourceReady = true;
 	if (resourceStarted && !resourceInit) {
 		initResource();
@@ -230,7 +228,7 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	exportFunction("isCustomResource", function () { return true; });
+	exportFunction("isCustomContentResource", function () { return true; });
 
 	resourceStarted = true;
 	if (resourceReady && !resourceInit) {
@@ -353,7 +351,7 @@ addEventHandler("OnResourceStart", function (event, resource) {
 	let resources = getResources();
 	for (let i in resources) {
 		if (resources[i].isStarted && resources[i].isReady && resources[i].name != thisResource.name) {
-			if (resources[i].getExport("isCustomResource")) {
+			if (typeof resources[i].exports.isCustomContentResource != "undefined") {
 				if (!otherContentResources.includes(resources[i].name)) {
 					otherContentResources.push(resources[i].name);
 				}
