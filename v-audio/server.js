@@ -19,9 +19,9 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 
 // ===========================================================================
 
-addNetworkHandler("v.startTime", function (client, event) {
+addNetworkHandler("v.audio.startTime", function (client, event) {
 	// Client is asking for start time
-	triggerNetworkEvent("v.startTime", client, startTime);
+	triggerNetworkEvent("v.audio.startTime", client, startTime);
 });
 
 // ===========================================================================
