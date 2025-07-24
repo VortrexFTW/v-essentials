@@ -41,92 +41,222 @@ addNetworkHandler("OnPedBusted", function (client, pedId) {
 // ===========================================================================
 
 addNetworkHandler("OnPedEnteredVehicleEx", function (client, pedId, vehicleId, seat) {
-	if (getElementFromId(pedId) == null) {
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
 		return;
 	}
 
-	if (getElementFromId(vehicleId) == null) {
+	if (ped.syncer != client) {
 		return;
 	}
 
-	getElementFromId(pedId).setData("v.seat", seat);
-	triggerEvent("OnPedEnteredVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return;
+	}
+
+	ped.setData("v.seat", seat);
+	triggerEvent("OnPedEnteredVehicleEx", ped, ped, vehicle, seat);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId, vehicleId, seat) {
-	if (getElementFromId(pedId) == null) {
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
 		return;
 	}
 
-	if (getElementFromId(vehicleId) == null) {
+	if (ped.syncer != client) {
 		return;
 	}
 
-	getElementFromId(pedId).removeData("v.seat");
-	triggerEvent("OnPedExitedVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return;
+	}
+
+	ped.removeData("v.seat");
+	triggerEvent("OnPedExitedVehicleEx", ped, ped, vehicle, seat);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedEnteringVehicleEx", function (client, pedId, vehicleId, seat) {
-	triggerEvent("OnPedEnteringVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return;
+	}
+
+	triggerEvent("OnPedEnteringVehicleEx", ped, ped, vehicle, seat);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedExitingVehicleEx", function (client, pedId, vehicleId, seat) {
-	triggerEvent("OnPedExitingVehicleEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(vehicleId), seat);
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return;
+	}
+
+	triggerEvent("OnPedExitingVehicleEx", ped, ped, vehicle, seat);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedEnteredSphereEx", function (client, pedId, sphereId) {
-	triggerEvent("OnPedEnteredSphereEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	let sphere = getElementFromId(sphereId);
+	if (sphere == null) {
+		return;
+	}
+
+	triggerEvent("OnPedEnteredSphereEx", ped, ped, sphere);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedExitedSphereEx", function (client, pedId, sphereId) {
-	triggerEvent("OnPedExitedSphereEx", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(sphereId));
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	let sphere = getElementFromId(sphereId);
+	if (sphere == null) {
+		return;
+	}
+
+	triggerEvent("OnPedExitedSphereEx", ped, ped, sphere);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedEnterSniperMode", function (client, pedId) {
-	triggerEvent("OnPedEnterSniperMode", getElementFromId(pedId), getElementFromId(pedId));
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	triggerEvent("OnPedEnterSniperMode", ped, ped);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedExitSniperMode", function (client, pedId) {
-	triggerEvent("OnPedExitSniperMode", getElementFromId(pedId), getElementFromId(pedId));
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	triggerEvent("OnPedExitSniperMode", ped, ped);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedDeathEx", function (client, pedId) {
-	triggerEvent("OnPedDeathEx", getElementFromId(pedId), getElementFromId(pedId));
-	triggerEvent("OnPlayerDeathEx", client, client);
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	triggerEvent("OnPedDeathEx", ped, ped);
+
+	if (ped.isType(ELEMENT_PLAYER)) {
+		triggerEvent("OnPlayerDeathEx", client, client);
+	}
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedChangeWeapon", function (client, pedId, newWeapon, oldWeapon) {
-	triggerEvent("OnPedChangeWeapon", getElementFromId(pedId), getElementFromId(pedId), newWeapon, oldWeapon);
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	triggerEvent("OnPedChangeWeapon", ped, ped, newWeapon, oldWeapon);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPedChangeAmmo", function (client, pedId, newAmmo, oldAmmo) {
-	triggerEvent("OnPedChangeAmmo", getElementFromId(pedId), newAmmo, oldAmmo);
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	triggerEvent("OnPedChangeAmmo", ped, ped, newAmmo, oldAmmo);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnPickupPickedUp", function (client, pedId, pickupId) {
-	triggerEvent("OnPickupPickedUp", getElementFromId(pedId), getElementFromId(pedId), getElementFromId(pickupId));
+	let ped = getElementFromId(pedId);
+	if (ped == null) {
+		return;
+	}
+
+	if (ped.syncer != client) {
+		return;
+	}
+
+	let pickup = getElementFromId(pickupId);
+	if (pickup == null) {
+		return;
+	}
+
+	triggerEvent("OnPickupPickedUp", ped, ped, pickup);
 });
 
 // ===========================================================================
@@ -171,52 +301,114 @@ addEventHandler("OnAddIVNetworkEvent", function (client, type, name, data, data2
 
 // ===========================================================================
 
-addNetworkHandler("OnVehicleHealthChanged", function (client, vehicleId, health) {
-	if (getElementFromId(vehicleId) == null) {
-		return;
+addNetworkHandler("OnVehicleHealthChanged", function (client, vehicleId, oldHealth, newHealth) {
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
 	}
 
-	triggerEvent("OnVehicleHealthChanged", getElementFromId(vehicleId), health);
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.health", newHealth, true);
+	triggerEvent("OnVehicleHealthChanged", vehicle, vehicle, oldHealth, newHealth);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnVehicleLightsChanged", function (client, vehicleId, state) {
-	if (getElementFromId(vehicleId) == null) {
-		return;
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
 	}
 
-	triggerEvent("OnVehicleLightsChanged", getElementFromId(vehicleId), state);
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.lights", state, true);
+	triggerEvent("OnVehicleLightsChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnVehicleSirenChanged", function (client, vehicleId, state) {
-	if (getElementFromId(vehicleId) == null) {
-		return;
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
 	}
 
-	triggerEvent("OnVehicleSirenChanged", getElementFromId(vehicleId), state);
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.siren", state, true);
+	triggerEvent("OnVehicleSirenChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnVehicleLockedStatusChanged", function (client, vehicleId, state) {
-	if (getElementFromId(vehicleId) == null) {
-		return;
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
 	}
 
-	triggerEvent("OnVehicleLockedStatusChanged", getElementFromId(vehicleId), state);
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.locked", state, true);
+	triggerEvent("OnVehicleLockedStatusChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================
 
 addNetworkHandler("OnVehicleTaxiLightChanged", function (client, vehicleId, state) {
-	if (getElementFromId(vehicleId) == null) {
-		return;
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
 	}
 
-	triggerEvent("OnVehicleTaxiLightChanged", getElementFromId(vehicleId), state);
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.taxiLight", state, true);
+	triggerEvent("OnVehicleTaxiLightChanged", vehicle, vehicle, state);
+});
+
+// ===========================================================================
+
+addNetworkHandler("OnVehicleHazardLightsChanged", function (client, vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.hazardLights", state, true);
+	triggerEvent("OnVehicleHazardLightsChanged", vehicle, vehicle, state);
+});
+
+// ===========================================================================
+
+addNetworkHandler("OnVehicleInteriorLightChanged", function (client, vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	vehicle.setData("v.interiorLight", state, true);
+	triggerEvent("OnVehicleInteriorLightChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================

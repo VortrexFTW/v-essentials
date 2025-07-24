@@ -18,7 +18,9 @@ addEvent("OnVehicleLightsChanged", 2); // Called when vehicle lights are toggled
 addEvent("OnVehicleSirenChanged", 2); // Called when vehicle siren is toggled
 addEvent("OnVehicleLockedStatusChanged", 2); // Called when vehicle locked status is toggled
 addEvent("OnVehicleTaxiLightChanged", 2); // Called when vehicle taxi light is toggled
-addEvent("OnVehicleHealthChanged", 2); // Called when vehicle health changes
+addEvent("OnVehicleInteriorLightChanged", 2); // Called when vehicle interior light is toggled
+addEvent("OnVehicleHazardLightsChanged", 2); // Called when vehicle hazard light is toggled
+addEvent("OnVehicleHealthChanged", 3); // Called when vehicle health changes
 
 // ===========================================================================
 
@@ -198,7 +200,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			// Tell server about some vehicle properties that are not synced by default
 			if (typeof entity.lights != "undefined") {
 				if (entity.getData("v.lights") != entity.lights) {
-					triggerEvent("OnVehicleLightsChanged", entity.id, entity.lights);
+					triggerEvent("OnVehicleLightsChanged", entity, entity, entity.lights);
 					triggerNetworkEvent("OnVehicleLightsChanged", entity.id, entity.lights);
 				}
 			}
@@ -206,7 +208,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (game.game == GAME_GTA_IV) {
 				if (typeof entity.siren != "undefined") {
 					if (entity.getData("v.siren") != entity.siren) {
-						triggerEvent("OnVehicleSirenChanged", entity.id, entity.siren);
+						triggerEvent("OnVehicleSirenChanged", entity, entity, entity.siren);
 						triggerNetworkEvent("OnVehicleSirenChanged", entity.id, entity.siren);
 					}
 				}
@@ -214,14 +216,14 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 
 			if (typeof entity.hazardLights != "undefined") {
 				if (entity.getData("v.hazardLights") != entity.hazardLights) {
-					triggerEvent("OnVehicleHazardLightsChanged", entity.id, entity.hazardLights);
+					triggerEvent("OnVehicleHazardLightsChanged", entity, entity, entity.hazardLights);
 					triggerNetworkEvent("OnVehicleHazardLightsChanged", entity.id, entity.hazardLights);
 				}
 			}
 
 			if (typeof entity.interiorLight != "undefined") {
 				if (entity.getData("v.interiorLight") != entity.interiorLight) {
-					triggerEvent("OnVehicleInteriorLightChanged", entity.id, entity.interiorLight);
+					triggerEvent("OnVehicleInteriorLightChanged", entity, entity, entity.interiorLight);
 					triggerNetworkEvent("OnVehicleInteriorLightChanged", entity.id, entity.interiorLight);
 				}
 			}
@@ -229,32 +231,34 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (game.game <= GAME_GTA_IV) {
 				if (typeof entity.lockedStatus != "undefined") {
 					if (entity.getData("v.locked") != entity.lockedStatus) {
-						triggerEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
+						triggerEvent("OnVehicleLockedStatusChanged", entity, entity, entity.lockedStatus);
 						triggerNetworkEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
 					}
 				}
 
 				if (typeof entity.taxiLight != "undefined") {
 					if (entity.getData("v.taxiLight") != entity.taxiLight) {
-						triggerEvent("OnVehicleTaxiLightChanged", entity.id, entity.taxiLight);
+						triggerEvent("OnVehicleTaxiLightChanged", entity, entity, entity.taxiLight);
 						triggerNetworkEvent("OnVehicleTaxiLightChanged", entity.id, entity.taxiLight);
 					}
 				}
 			}
 
-			if (typeof vehicle.health != "undefined") {
+			if (typeof entity.health != "undefined") {
 				if (entity.getData("v.health") != entity.health) {
-					triggerNetworkEvent("OnVehicleHealthChanged", entity.id, entity.health);
+					triggerEvent("OnVehicleHealthChanged", entity, entity, entity.getData("v.health"), entity.health);
+					triggerNetworkEvent("OnVehicleHealthChanged", entity.id, entity.getData("v.health"), entity.health);
 				}
 			}
 
-			if (game.game <= V_GAME_GTA_IV) {
-				if (game.game == GAME_GTA_IV) {
-					if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
-						triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
-					}
+			if (game.game == GAME_GTA_IV) {
+				if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
+					triggerEvent("OnVehicleLockChanged", entity, entity, natives.getCarDoorLockStatus(entity));
+					triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
 				}
+			}
 
+			if (game.game <= GAME_GTA_IV) {
 				let tireStates = entity.getData("v.rp.tires");
 				let updatedTireStates = [];
 				for (let i = 0; i < 4; i++) {
