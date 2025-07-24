@@ -10,6 +10,8 @@ let customWorldGraphicsReady = false;
 
 let movingGates = [];
 
+let otherContentResources = [];
+
 // ===========================================================================
 
 const STREAM_DISTANCE_EXTREME = 1000.0;
@@ -33,12 +35,12 @@ exportFunction("getCustomFont", getCustomFont);
 
 // ===========================================================================
 
-class CustomAudio {
-    constructor(file, loop = false, volume = 1, effects = []) {
-        this.filePath = file,
-            this.loop = loop,
-            this.volume = volume,
-            this.effects = effects;
+class CustomSound {
+    constructor(file, loop = false, volume = 1, length = 0) {
+        this.filePath = file;
+        this.loop = loop;
+        this.volume = volume;
+        this.length = length; // In seconds
         this.object = null;
     }
 }
@@ -126,10 +128,10 @@ class CustomWorldGraphicsRendering {
 
 // MAFIA 1 ONLY
 class CustomGameFile {
-	constructor(gameFilePath, customFilePath) {
-		this.gameFilePath = gameFilePath;
-		this.customFilePath = customFilePath;
-	}
+    constructor(gameFilePath, customFilePath) {
+        this.gameFilePath = gameFilePath;
+        this.customFilePath = customFilePath;
+    }
 }
 
 // ===========================================================================
@@ -217,6 +219,8 @@ class MovingGate {
 // ===========================================================================
 
 bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
+    exportFunction("isCustomResource", function () { return true; });
+
     resourceReady = true;
     if (resourceStarted && !resourceInit) {
         initResource();
@@ -226,6 +230,8 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+    exportFunction("isCustomResource", function () { return true; });
+
     resourceStarted = true;
     if (resourceReady && !resourceInit) {
         initResource();
@@ -235,15 +241,24 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
-    game.undoEntityInvisibilitySettings();
-    groundSnow.clearModelExclusions();
-    collectAllGarbage();
+    if (game.game <= GAME_GTA_VC) {
+        game.undoEntityInvisibilitySettings();
+        groundSnow.clearModelExclusions();
+    }
+
+    if (typeof game.removeCustomGameFile != "undefined") {
+        for (let i in customGameFiles) {
+            game.removeCustomGameFile(customGameFiles[i].filePath);
+        }
+    }
 });
 
 // ===========================================================================
 
 addEventHandler("OnDrawHUD", function (event) {
-    renderCustomWorldGraphics();
+    if (game.game <= GAME_GTA_SA) {
+        renderCustomWorldGraphics();
+    }
 });
 
 // ===========================================================================
@@ -257,147 +272,196 @@ addNetworkHandler("moveGate", function (gateObjectId, gateId, startPosition, end
 function initResource() {
     resourceInit = true;
 
-	// GTA and Mafia Connected both have limits on how many audio files can be open at any time (12 iirc)
-	// So don't load them at the start, instead only load them when we need them to play.
-    //for(let i in customAudios) {
-    //    let audioFile = openFile(customAudios[i].file);
-    //    if(audioFile != null) {
-    //        customAudios[i].object = audio.createSound(audioFile, customAudios[i].loop);
-    //        audioFile.close();
-    //    }
-    //}
+    let configFile = loadTextFile("config.json");
+    scriptConfig = JSON.parse(configFile);
+    if (!scriptConfig) {
+        console.log(`[${thisResource.name}] Could not load config.json. Resource stopping ...`);
+        thisResource.stop();
+        return false;
+    }
 
-    for (let i in customImages) {
-        let imageFile = openFile(customImages[i].filePath);
+    for (let i in scriptConfig.images) {
+        let customImage = new CustomImage(scriptConfig.images[i][0], scriptConfig.images[i][1], scriptConfig.images[i][2], scriptConfig.images[i][3]);
+        let imageFile = openFile(customImage.filePath);
+        scriptConfig.images[i].object = null;
         if (imageFile != null) {
             if (customImages[i].fileType == IMAGE_TYPE_BMP) {
-                customImages[i].object = drawing.loadBMP(imageFile);
+                scriptConfig.images[i].object = drawing.loadBMP(imageFile);
             } else {
-                customImages[i].object = drawing.loadPNG(imageFile);
+                scriptConfig.images[i].object = drawing.loadPNG(imageFile);
             }
             imageFile.close();
         }
     }
 
     if (typeof game.loadTXD != "undefined") {
-        for (let i in customTextures) {
-            let textureName = `${customTextures[i].textureName}`;
-            let txdFile = openFile(customTextures[i].filePath);
+        for (let i in scriptConfig.textures) {
+            let customTexture = new CustomTexture(scriptConfig.textures[i][0], scriptConfig.textures[i][1]);
+            scriptConfig.textures[i].object = customTexture;
+            let textureName = `${customTexture.textureName}`;
+            let txdFile = openFile(customTexture.filePath);
             if (txdFile != null) {
                 game.loadTXD(textureName, txdFile);
                 txdFile.close();
             }
         }
-	}
+    }
 
-	if (typeof game.loadDFF != "undefined") {
-        for (let i in customModels) {
-            let dffFile = openFile(customModels[i].filePath);
+    if (typeof game.loadDFF != "undefined") {
+        for (let i in scriptConfig.models) {
+            let customModel = new CustomModel(scriptConfig.models[i][0], scriptConfig.models[i][1]);
+            scriptConfig.models[i].object = customModel;
+            let dffFile = openFile(customModel.filePath);
             if (dffFile != null) {
-                game.loadDFF(customModels[i].modelId, dffFile);
+                game.loadDFF(customModel.modelId, dffFile);
                 dffFile.close();
             }
         }
-	}
+    }
 
-	if (typeof game.loadCOL != "undefined") {
-        for (let i in customCollisions) {
-            let colFile = openFile(customCollisions[i].filePath);
+    if (typeof game.loadCOL != "undefined") {
+        for (let i in scriptConfig.collisions) {
+            let customCollision = new CustomCollision(scriptConfig.collisions[i][0], scriptConfig.collisions[i][1]);
+            scriptConfig.collisions[i].object = customCollision;
+            let colFile = openFile(customCollision.filePath);
             if (colFile != null) {
-                game.loadCOL(colFile, customCollisions[i].objectId);
+                game.loadCOL(colFile, customCollision.objectId);
                 colFile.close();
             }
         }
-	}
+    }
 
-	if(typeof game.removeWorldObject != "undefined") {
-        for (let i in removedWorldObjects) {
-            game.removeWorldObject(removedWorldObjects[i].modelName, removedWorldObjects[i].position, removedWorldObjects[i].radius);
-        }
-	}
-
-	if(typeof groundSnow != "undefined") {
-		if(typeof groundSnow.excludeModel != "undefined") {
-			for (let i in excludedSnowModels) {
-				groundSnow.excludeModel(excludedSnowModels[i]);
-			}
-	}
-
-	if(typeof game.setCustomText != "undefined")
-		for (let i in customGameTexts) {
-            game.setCustomText(customGameTexts[i][0], customGameTexts[i][1]);
+    if (typeof game.removeWorldObject != "undefined") {
+        for (let i in scriptConfig.removedWorldObjects) {
+            let removedObject = new RemovedWorldObject(scriptConfig.removedWorldObjects[i].modelName, scriptConfig.removedWorldObjects[i].position.x, scriptConfig.removedWorldObjects[i].position.y, scriptConfig.removedWorldObjects[i].position.z, scriptConfig.removedWorldObjects[i].radius);
+            scriptConfig.removedWorldObjects[i].object = removedObject;
+            game.removeWorldObject(removedObject.modelName, removedObject.position, removedObject.radius);
         }
     }
 
-	// Mafia 1
-	if(typeof game.addCustomGameFile != "undefined") {
-		for(let i in customGameFiles) {
-			game.addCustomGameFile(customGameFiles[i].filePath, customGameFiles[i].gameFilePath);
-		}
-	}
+    if (typeof groundSnow != "undefined") {
+        if (typeof groundSnow.excludeModel != "undefined") {
+            for (let i in scriptConfig.excludedSnowModels) {
+                groundSnow.excludeModel(scriptConfig.excludedSnowModels[i]);
+            }
+        }
+    }
+
+    if (typeof game.setCustomText != "undefined") {
+        for (let i in scriptConfig.texts) {
+            game.setCustomText(scriptConfig.texts[i][0], scriptConfig.texts[i][1]);
+        }
+    }
+
+    // Mafia 1
+    if (typeof game.addCustomGameFile != "undefined") {
+        for (let i in scriptConfig.customGameFiles) {
+            let customGameFile = new CustomGameFile(scriptConfig.customGameFiles[i].gameFilePath, scriptConfig.customGameFiles[i].filePath);
+            scriptConfig.customGameFiles[i].object = customGameFile;
+            game.addCustomGameFile(customGameFile.filePath, customGameFile.gameFilePath);
+        }
+    }
 
     customWorldGraphicsReady = true;
+    createAllServerObjects();
 }
+
+// ===========================================================================
+
+addEventHandler("OnResourceStart", function (event, resource) {
+    let resources = getResources();
+    for (let i in resources) {
+        if (resources[i].isStarted && resources[i].isReady && resources[i].name != thisResource.name) {
+            if (resources[i].getExport("isCustomResource")) {
+                if (!otherContentResources.includes(resources[i].name)) {
+                    otherContentResources.push(resources[i].name);
+                }
+            } else {
+                if (otherContentResources.includes(resources[i].name)) {
+                    otherContentResources.splice(otherContentResources.indexOf(resources[i].name), 1);
+                }
+            }
+        }
+    }
+});
 
 // ===========================================================================
 
 function getCustomAudio(soundName) {
-	if (typeof customAudios[soundName] != "undefined") {
-		let audioFile = openFile(customAudios[soundName].filePath);
-		if (audioFile != null) {
-			let audioObject = audio.createSound(audioFile, (loop == null) ? customAudios[soundName].loop : loop);
-			audioFile.close();
-			return audioObject;
-		} else {
-			return null;
-		}
-	}
+    let sound = scriptConfig.sounds.find(s => s.name === soundName);
+    if (sound !== undefined) {
+        let audioFile = openFile(sound.filePath);
+        if (audioFile != null) {
+            let audioObject = null;
+            if (sound.length > 0) {
+                audioObject = audio.createSound(audioFile, sound.loop);
+            } else {
+                audioObject = audio.createSoundFromURL(sound.filePath, sound.loop);
+            }
+            audioFile.close();
+            return audioObject;
+        } else {
+            return null;
+        }
+    }
+
     return false;
 }
 
 // ===========================================================================
 
-function playCustomAudio(soundName, volume = 0.5, loop = false) {
-	let audioObject = getCustomAudio(soundName, loop);
+function getCustomAudioLength(soundName) {
+    let sound = scriptConfig.sounds.find(s => s.name === soundName)
+    if (sound !== undefined) {
+        return sound.length; // Return the length in seconds
+    }
+    return 0;
+}
 
-	if (audioObject != null) {
-		audioObject.volume = volume;
-		audioObject.play();
-		return audioObject;
-	}
+// ===========================================================================
+
+function playCustomAudio(soundName) {
+    let audioObject = getCustomAudio(soundName);
+
+    if (audioObject != null) {
+        audioObject.volume = volume;
+        audioObject.play();
+        return audioObject;
+    }
     return false;
 }
 
+// ===========================================================================
 
 function setCustomAudioVolume(soundName, volume = 0.5) {
-	let audioObject = getCustomAudio(soundName);
+    let audioObject = getCustomAudio(soundName);
 
-	if (audioObject != null) {
-		audioObject.volume = volume;
-	}
-	return false;
+    if (audioObject != null) {
+        audioObject.volume = volume;
+    }
+    return false;
 }
 
 // ===========================================================================
 
 function setCustomAudioPosition(soundName, position = 0) {
-	let audioObject = getCustomAudio(soundName);
+    let audioObject = getCustomAudio(soundName);
 
-	if (audioObject != null) {
-		audioObject.position = position;
-	}
-	return false;
+    if (audioObject != null) {
+        audioObject.position = position;
+    }
+    return false;
 }
 
 // ===========================================================================
 
 function stopCustomAudio(soundName) {
-	let audioObject = getCustomAudio(soundName);
+    let audioObject = getCustomAudio(soundName);
 
-	if (audioObject != null) {
-		audioObject.stop();
-	}
-	return false;
+    if (audioObject != null) {
+        audioObject.stop();
+    }
+    return false;
 }
 
 // ===========================================================================
@@ -620,6 +684,15 @@ addNetworkHandler("moveGateFinished", function (client, gateId) {
     if (serverGates[gateId].object.syncer == client.index) {
         serverGates[gateId].beingMoved = false;
     }
+});
+
+// ===========================================================================
+
+addNetworkHandler("v.extraContent.thisContentResource", function (client, fromResource) {
+    if (extraContentResources.includes(fromResource)) {
+        return false; // Already added this resource
+    }
+    extraContentResources.push(fromResource);
 });
 
 // ===========================================================================

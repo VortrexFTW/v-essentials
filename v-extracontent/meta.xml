@@ -4,7 +4,10 @@
 	<!-- Scripts -->
 	<script src="client.js" type="client" language="javascript" />
 
-	<!-- Content Lists -->
-	<script src="files.js" type="client" language="javascript" />
-	<script src="objects.js" type="client" language="javascript" />
+	<file src="config.json" type="client" />
+
+	<!-- Add custom files to be downloaded to client -->
+	<!-- ------------------------------------------- -->
+	<!-- <file src="files/audio/foo.mp3" type="client" /> -->
+	<!-- <file src="files/images/bar.png" type="client" /> -->
 </meta>
