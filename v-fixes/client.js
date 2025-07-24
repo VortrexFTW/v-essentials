@@ -1,3 +1,7 @@
+"use strict";
+
+// ===========================================================================
+
 addEvent("OnPedEnteredSphereEx", 2);
 addEvent("OnPedExitedSphereEx", 2);
 addEvent("OnPedEnteredVehicleEx", 3); // Called when ped finishes entering vehicle (built-in onPedEnterVehicle is called when they start entering)
@@ -9,6 +13,12 @@ addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
 addEvent("OnPedDeathEx", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
+
+addEvent("OnVehicleLightsChanged", 2); // Called when vehicle lights are toggled
+addEvent("OnVehicleSirenChanged", 2); // Called when vehicle siren is toggled
+addEvent("OnVehicleLockedStatusChanged", 2); // Called when vehicle locked status is toggled
+addEvent("OnVehicleTaxiLightChanged", 2); // Called when vehicle taxi light is toggled
+addEvent("OnVehicleHealthChanged", 2); // Called when vehicle health changes
 
 // ===========================================================================
 
@@ -188,24 +198,30 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			// Tell server about some vehicle properties that are not synced by default
 			if (typeof entity.lights != "undefined") {
 				if (entity.getData("v.lights") != entity.lights) {
+					triggerEvent("OnVehicleLightsChanged", entity.id, entity.lights);
 					triggerNetworkEvent("OnVehicleLightsChanged", entity.id, entity.lights);
 				}
 			}
 
-			if (typeof entity.siren != "undefined") {
-				if (entity.getData("v.siren") != entity.siren) {
-					triggerNetworkEvent("OnVehicleSirenChanged", entity.id, entity.siren);
+			if (game.game == GAME_GTA_IV) {
+				if (typeof entity.siren != "undefined") {
+					if (entity.getData("v.siren") != entity.siren) {
+						triggerEvent("OnVehicleSirenChanged", entity.id, entity.siren);
+						triggerNetworkEvent("OnVehicleSirenChanged", entity.id, entity.siren);
+					}
 				}
 			}
 
 			if (typeof entity.hazardLights != "undefined") {
 				if (entity.getData("v.hazardLights") != entity.hazardLights) {
+					triggerEvent("OnVehicleHazardLightsChanged", entity.id, entity.hazardLights);
 					triggerNetworkEvent("OnVehicleHazardLightsChanged", entity.id, entity.hazardLights);
 				}
 			}
 
 			if (typeof entity.interiorLight != "undefined") {
 				if (entity.getData("v.interiorLight") != entity.interiorLight) {
+					triggerEvent("OnVehicleInteriorLightChanged", entity.id, entity.interiorLight);
 					triggerNetworkEvent("OnVehicleInteriorLightChanged", entity.id, entity.interiorLight);
 				}
 			}
@@ -213,12 +229,14 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (game.game <= GAME_GTA_IV) {
 				if (typeof entity.lockedStatus != "undefined") {
 					if (entity.getData("v.locked") != entity.lockedStatus) {
+						triggerEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
 						triggerNetworkEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
 					}
 				}
 
 				if (typeof entity.taxiLight != "undefined") {
 					if (entity.getData("v.taxiLight") != entity.taxiLight) {
+						triggerEvent("OnVehicleTaxiLightChanged", entity.id, entity.taxiLight);
 						triggerNetworkEvent("OnVehicleTaxiLightChanged", entity.id, entity.taxiLight);
 					}
 				}
@@ -230,49 +248,49 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (game.game == V_GAME_GTA_IV) {
-				if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
-					triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
+			if (game.game <= V_GAME_GTA_IV) {
+				if (game.game == GAME_GTA_IV) {
+					if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
+						triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
+					}
 				}
 
 				let tireStates = entity.getData("v.rp.tires");
 				let updatedTireStates = [];
 				for (let i = 0; i < 4; i++) {
-					if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
-						updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
+					if (game.game == GAME_GTA_IV) {
+						if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
+							updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
+						}
+					} else if (game.game <= GAME_GTA_VC) {
+						if (tireStates[i] != entity.getWheelStatus(i)) {
+							updatedTireStates.push([i, entity.getWheelStatus(i)]);
+						}
+					}
+
+					if (updatedTireStates.length > 0) {
+						triggerNetworkEvent("OnVehicleTireStatesChanged", entity.id, updatedTireStates);
 					}
 				}
 
-				if (updatedTireStates.length > 0) {
-					triggerNetworkEvent("OnVehicleTireStatesChanged", entity.id, updatedTireStates);
-				}
-
-
-				/*
-				let doorStates = entity.getData("v.rp.doorStates");
+				let doorStates = entity.getData("v.rp.doors");
 				let updatedDoorStates = [];
 				for (let i = 0; i < 4; i++) {
-					if (doorStates[i] != natives.isCarDoorDamaged(entity, i)) {
-						updatedDoorStates.push([i, natives.isCarDoorDamaged(entity, i)]);
+					if (game.game <= GAME_GTA_VC) {
+						if (doorStates[i] != entity.getDoorStatus(i)) {
+							updatedDoorStates.push([i, entity.getDoorStatus(i)]);
+						}
 					}
 				}
 
-				if (updatedDoorStates.length > 0) {
-					triggerNetworkEvent("OnVehicleDoorStatesChanged", entity.id, updatedDoorStates);
-				}
-				*/
-			}
-
-			if (doesEntityDataExist(vehicle, "v.rp.tires")) {
-				let tireStates = getEntityData(vehicle, "v.rp.tires");
-				for (let i = 0; i < tireStates.length; i++) {
-					setVehicleTireState(vehicle, i, state);
-				}
-			}
-
-			if (isGameFeatureSupported("vehicleUpgrades")) {
-				if (doesEntityDataExist(vehicle, "v.rp.upgrades")) {
-					setVehicleUpgrades(vehicle, getEntityData(vehicle, "v.rp.upgrades"));
+				let panelStatus = entity.getData("v.rp.panels");
+				let updatedPanelStates = [];
+				for (let i = 0; i < 4; i++) {
+					if (game.game <= GAME_GTA_VC) {
+						if (panelStatus[i] != entity.getPanelStatus(i)) {
+							updatedPanelStates.push([i, entity.getPanelStatus(i)]);
+						}
+					}
 				}
 			}
 		}
@@ -641,8 +659,12 @@ function syncVehicleProperties(vehicle) {
 	}
 }
 
+// ===========================================================================
+
 addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, fromClientIndex) => {
 	if (fromClientIndex != localClient.index) {
-		gta.receiveNetworkEvent(0, from, type, 0, data, data2);
+		gta.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
 	}
 });
+
+// ===========================================================================
