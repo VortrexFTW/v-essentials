@@ -14,7 +14,7 @@ let extraContentResources = [];
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	console.log(`[v-audio] Resource started: ${thisResource.name}`);
+	console.log(`[${thisResource.name}] Resource started: ${thisResource.name}`);
 
 	if (isConnected) {
 		if (startTime == 0 && thisResource.isReady) {
@@ -48,23 +48,23 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 // ===========================================================================
 
 addEventHandler("OnResourceStart", function (event, resource) {
-	console.log(`[v-audio] Resource started: ${resource.name}. Checking for custom content resources ...`);
+	console.log(`[${thisResource.name}] Resource started: ${resource.name}. Checking for custom content resources ...`);
 	let resources = getResources();
-	console.log(`[v-audio] ${resources.length} resources total.`);
+	console.log(`[${thisResource.name}] ${resources.length} resources total.`);
 	for (let i in resources) {
 		if (resources[i] != null) {
-			console.log(`[v-audio] Checking resource ${resources[i].name}: isStarted=${resources[i].isStarted}, isReady=${resources[i].isReady}`);
+			console.log(`[${thisResource.name}] Checking resource ${resources[i].name}: isStarted=${resources[i].isStarted}, isReady=${resources[i].isReady}`);
 			if (resources[i].isStarted && resources[i].isReady) {
 				if (typeof resources[i].exports.isCustomContentResource != "undefined") {
-					console.log(`[v-audio] Resource ${resources[i].name} is a custom content resource.`);
+					console.log(`[${thisResource.name}] Resource ${resources[i].name} is a custom content resource.`);
 					if (!extraContentResources.includes(resources[i].name)) {
-						console.log(`[v-audio] Adding resource ${resources[i].name} to extraContentResources.`);
+						console.log(`[${thisResource.name}] Adding resource ${resources[i].name} to extraContentResources.`);
 						extraContentResources.push(resources[i].name);
 					}
 				} else {
-					console.log(`[v-audio] Resource ${resources[i].name} is not a custom content resource.`);
+					console.log(`[${thisResource.name}] Resource ${resources[i].name} is not a custom content resource.`);
 					if (extraContentResources.includes(resources[i].name)) {
-						console.log(`[v-audio] Removing resource ${resources[i].name} from extraContentResources.`);
+						console.log(`[${thisResource.name}] Removing resource ${resources[i].name} from extraContentResources.`);
 						extraContentResources.splice(extraContentResources.indexOf(resources[i].name), 1);
 					}
 				}
@@ -125,16 +125,16 @@ addEventHandler("OnProcess", function (event, deltaTime) {
 		}
 
 		if (audioSounds[entity.id] == null) {
-			console.error(`[CRP.Radio] No radio sound found for entity ${entity.id}. This should not happen!`);
+			console.error(`[${thisResource.name}] No radio sound found for entity ${entity.id}. This should not happen!`);
 			return false;
 		}
 
 		if (entity.getData("v.audio")[1] <= 0) {
 			audioSounds[entity.id].volume = audioVolume / 100;
 		} else {
-			if (entity.position.distance(getLocalPlayerPosition()) <= entity.getData("v.audio")[2]) {
+			if (entity.position.distance(getLocalPlayerPosition()) <= entity.getData("v.audio")[1]) {
 				let distance = entity.position.distance(getLocalPlayerPosition());
-				let distancePercent = (entity.getData("v.audio")[2] - distance) / entity.getData("v.audio")[2];
+				let distancePercent = (entity.getData("v.audio")[1] - distance) / entity.getData("v.audio")[1];
 				audioSounds[entity.id].volume = (audioVolume / 100) * distancePercent;
 			} else {
 				audioSounds[entity.id].volume = 0;
@@ -170,11 +170,6 @@ function setElementAudio(element, url) {
 		return false;
 	}
 
-	if (findResourceByName(extraContentResource).exports == null) {
-		console.error(`[v-audio] Extra content resource "${extraContentResource}" is not available. Cannot load audio file: ${url}`);
-		return false;
-	}
-
 	if (typeof element === "number") {
 		element = getElementFromId(element);
 	}
@@ -195,48 +190,47 @@ function setElementAudio(element, url) {
 	let audioFile = null;
 	let extraContentResource = null;
 	for (let i in extraContentResources) {
-		if (extraContentResources[i].getExport("getCustomAudio")) {
-			audioFile = extraContentResources[i].exports.getCustomAudio(url);
-			if (audioFile != null) {
-				extraContentResource = extraContentResources[i];
-				break; // Found the resource that provides the audio file
+		if (extraContentResources[i] != null) {
+			if (extraContentResources[i].isReady && extraContentResources[i].isStarted) {
+				console.log(`[${thisResource.name}] Checking extra content resource: ${extraContentResources[i].name} for audio file: ${url}`);
+				if (typeof extraContentResources[i].exports.getCustomAudio != "undefined") {
+					audioFile = extraContentResources[i].exports.getCustomAudio(url);
+					if (audioFile != null) {
+						console.log(`[${thisResource.name}] Found audio file ${url} in resource: ${extraContentResources[i].name}`);
+						extraContentResource = extraContentResources[i];
+						break; // Found the resource that provides the audio file
+					}
+				}
 			}
 		}
 	}
 
 	if (audioFile == null) {
-		console.error(`[v-audio] Could not get audio file for URL: ${url}`);
+		console.error(`[${thisResource.name}] Could not get audio file for URL: ${url}`);
 		return false;
 	}
 
 	audioSounds[element.id] = audioFile;
 
 	if (audioSounds[element.id] == null) {
-		console.error(`[v-audio] Could not create audio sound for element ${element.id} with URL: ${url}`);
+		console.error(`[${thisResource.name}] Could not create audio sound for element ${element.id} with URL: ${url}`);
 		return false;
 	}
 
 	audioSounds[element.id].volume = 0;
 	let fileLength = 0;
-	if (extraContentResource.getExport("getAudioFileLength") == null) {
-		console.error(`[v-audio] Extra content resource "${extraContentResource}" does not export getAudioFileLength! Without an audio file length, the audio will NOT be synced together for all players!`);
+	if (typeof extraContentResource.exports.getAudioFileLength == "undefined") {
+		console.error(`[${thisResource.name}] Extra content resource "${extraContentResource.name}" does not export getAudioFileLength! Without an audio file length, the audio will NOT be synced together for all players!`);
 	}
 
 	fileLength = extraContentResource.exports.getAudioFileLength(url);
 
 	if (fileLength != 0) {
 		let position = (new Date().getTime() / 1000 - serverStartTime) % fileLength;
-		console.log(`[v-audio] Setting audio seek position for element ${element.id} to ${position}/${fileLength}`);
+		console.log(`[${thisResource.name}] Setting audio seek position for element ${element.id} to ${position}/${fileLength}`);
 		audioSounds[element.id].position = position;
 	}
 	audioSounds[element.id].play();
 }
 
 // ===========================================================================
-
-addNetworkHandler("v.extraContent.thisContentResource", function (client, fromResource) {
-	if (extraContentResources.includes(fromResource)) {
-		return false; // Already added this resource
-	}
-	extraContentResources.push(fromResource);
-});
