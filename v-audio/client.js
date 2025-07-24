@@ -14,8 +14,10 @@ let extraContentResources = [];
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	console.log(`[v-audio] Resource started: ${thisResource.name}`);
+
 	if (isConnected) {
-		if (startTime == 0 && thisResource.isStarted) {
+		if (startTime == 0 && thisResource.isReady) {
 			triggerNetworkEvent("v.audio.startTime");
 		}
 	} else {
@@ -34,37 +36,9 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
-	let configFile = loadTextFile("config.json");
-	scriptConfig = JSON.parse(configFile);
-	if (!scriptConfig) {
-		console.error("[V.Audio] Could not load config.json! Custom audio will not work.");
-	}
-
-	if (scriptConfig.extraContentResource == null || scriptConfig.extraContentResource == "") {
-		console.error("[V.Audio] No extra content resource specified in config.json! Custom audio will not work.");
-		return false;
-	}
-
-	extraContentResource = findResourceByName(scriptConfig.extraContentResource);
-
-	if (extraContentResource == null || extraContentResource.isStarted == false) {
-		console.error("[V.Audio] Extra content resource not found or not started! Custom audio will not work.");
-		return false;
-	}
-
-	if (extraContentResource == null || extraContentResource.isStarted == false) {
-		console.error("[V.Audio] Extra content resource not started! Custom audio will not work.");
-		return false;
-	}
-
-	if (extraContentResource.getExport("getCustomAudio") == null) {
-		console.error("[V.Audio] Extra content resource does not export getCustomAudio! Custom audio will not work.");
-		return false;
-	}
-
 	if (isConnected) {
 		if (startTime == 0 && thisResource.isStarted) {
-			triggerNetworkEvent("v.startTime");
+			triggerNetworkEvent("v.audio.startTime");
 		}
 	} else {
 		startTime = Date.now() / 1000; // Fallback to current time if not connected
@@ -74,16 +48,25 @@ bindEventHandler("OnResourceReady", thisResource, function (event, resource) {
 // ===========================================================================
 
 addEventHandler("OnResourceStart", function (event, resource) {
+	console.log(`[v-audio] Resource started: ${resource.name}. Checking for custom content resources ...`);
 	let resources = getResources();
+	console.log(`[v-audio] ${resources.length} resources total.`);
 	for (let i in resources) {
-		if (resources[i].isStarted && resources[i].isReady) {
-			if (resources[i].getExport("isCustomResource")) {
-				if (!otherContentResources.includes(resources[i].name)) {
-					otherContentResources.push(resources[i].name);
-				}
-			} else {
-				if (otherContentResources.includes(resources[i].name)) {
-					otherContentResources.splice(otherContentResources.indexOf(resources[i].name), 1);
+		if (resources[i] != null) {
+			console.log(`[v-audio] Checking resource ${resources[i].name}: isStarted=${resources[i].isStarted}, isReady=${resources[i].isReady}`);
+			if (resources[i].isStarted && resources[i].isReady) {
+				if (typeof resources[i].exports.isCustomContentResource != "undefined") {
+					console.log(`[v-audio] Resource ${resources[i].name} is a custom content resource.`);
+					if (!extraContentResources.includes(resources[i].name)) {
+						console.log(`[v-audio] Adding resource ${resources[i].name} to extraContentResources.`);
+						extraContentResources.push(resources[i].name);
+					}
+				} else {
+					console.log(`[v-audio] Resource ${resources[i].name} is not a custom content resource.`);
+					if (extraContentResources.includes(resources[i].name)) {
+						console.log(`[v-audio] Removing resource ${resources[i].name} from extraContentResources.`);
+						extraContentResources.splice(extraContentResources.indexOf(resources[i].name), 1);
+					}
 				}
 			}
 		}
