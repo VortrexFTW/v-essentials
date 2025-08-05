@@ -4,22 +4,15 @@
 
 let startTime = 0;
 
-let scriptConfig = null;
-
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	if (typeof ELEMENT_DUMMY === "undefined") {
-		event.preventDefault();
-		return false; // Ensure ELEMENT_DUMMY is defined before proceeding
-	}
-
 	startTime = Date.now() / 1000;
 });
 
 // ===========================================================================
 
-addNetworkHandler("v.audio.startTime", function (client, event) {
+addNetworkHandler("v.audio.startTime", function (client) {
 	// Client is asking for start time
 	triggerNetworkEvent("v.audio.startTime", client, startTime);
 });
