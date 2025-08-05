@@ -25,11 +25,13 @@ const IMAGE_TYPE_BMP = 2;
 
 // ===========================================================================
 
-exportFunction("getCustomAudio", getCustomAudio);
-exportFunction("stopCustomAudio", stopCustomAudio);
-exportFunction("playCustomAudio", playCustomAudio);
-exportFunction("setCustomAudioVolume", setCustomAudioVolume);
-exportFunction("setCustomAudioPosition", setCustomAudioPosition);
+exportFunction("getCustomSound", getCustomSound);
+exportFunction("stopCustomSound", stopCustomSound);
+exportFunction("playCustomSound", playCustomSound);
+exportFunction("setCustomSoundVolume", setCustomSoundVolume);
+exportFunction("setCustomSoundPosition", setCustomSoundPosition);
+exportFunction("getCustomSoundLength", getCustomSoundLength);
+exportFunction("doesCustomSoundExist", doesCustomSoundExist);
 exportFunction("getCustomImage", getCustomImage);
 exportFunction("getCustomFont", getCustomFont);
 
@@ -366,21 +368,45 @@ addEventHandler("OnResourceStart", function (event, resource) {
 
 // ===========================================================================
 
-function getCustomAudio(soundName) {
-	if (typeof customAudios[soundName] != "undefined") {
-		let audioFile = openFile(customAudios[soundName].filePath);
-		if (audioFile != null) {
-			let audioObject = null;
-			if (customAudios[soundName].length > 0) {
-				audioObject = audio.createSound(audioFile, customAudios[soundName].loop);
-			} else {
-				audioObject = audio.createSoundFromURL(customAudios[soundName].filePath, customAudios[soundName].loop);
-			}
-			audioFile.close();
-			return audioObject;
-		} else {
+function getCustomSound(soundName) {
+	if (typeof customSounds[soundName] == "undefined") {
+		return null;
+	}
+
+	let soundFile = openFile(customSounds[soundName].filePath);
+	if (soundFile == null) {
+		console.error(`[${thisResource.name}] Could not open sound file: ${customSounds[soundName].filePath}`);
+		return null;
+	}
+
+	let soundObject = null;
+	if (customSounds[soundName].length > 0) {
+		try {
+			soundObject = audio.createSound(soundFile, customSounds[soundName].loop);
+		} catch (error) {
+			console.error(`[${thisResource.name}] Error creating sound object from URL: ${error.message}`);
+			soundFile.close();
 			return null;
 		}
+	} else {
+		try {
+			soundObject = audio.createSoundFromURL(customSounds[soundName].filePath, customSounds[soundName].loop);
+		} catch (error) {
+			console.error(`[${thisResource.name}] Error creating sound object from URL: ${error.message}`);
+			soundFile.close();
+			return null;
+		}
+	}
+
+	soundFile.close();
+	return soundObject;
+}
+
+// ===========================================================================
+
+function doesCustomSoundExist(soundName) {
+	if (typeof customSounds[soundName] != "undefined") {
+		return true;
 	}
 
 	return false;
@@ -388,55 +414,55 @@ function getCustomAudio(soundName) {
 
 // ===========================================================================
 
-function getCustomAudioLength(soundName) {
-	if (typeof customAudios[soundName] != "undefined") {
-		return customAudios[soundName].length; // Return the length in seconds
+function getCustomSoundLength(soundName) {
+	if (typeof customSounds[soundName] != "undefined") {
+		return customSounds[soundName].length; // Return the length in seconds
 	}
 	return 0;
 }
 
 // ===========================================================================
 
-function playCustomAudio(soundName) {
-	let audioObject = getCustomAudio(soundName);
+function playCustomSound(soundName) {
+	let soundObject = getCustomSound(soundName);
 
-	if (audioObject != null) {
-		audioObject.volume = volume;
-		audioObject.play();
-		return audioObject;
+	if (soundObject != null) {
+		soundObject.volume = volume;
+		soundObject.play();
+		return soundObject;
 	}
 	return false;
 }
 
 // ===========================================================================
 
-function setCustomAudioVolume(soundName, volume = 0.5) {
-	let audioObject = getCustomAudio(soundName);
+function setCustomSoundVolume(soundName, volume = 0.5) {
+	let soundObject = getCustomSound(soundName);
 
-	if (audioObject != null) {
-		audioObject.volume = volume;
+	if (soundObject != null) {
+		soundObject.volume = volume;
+	}
+	return volume;
+}
+
+// ===========================================================================
+
+function setCustomSoundPosition(soundName, position = 0) {
+	let soundObject = getCustomSound(soundName);
+
+	if (soundObject != null) {
+		soundObject.position = position;
 	}
 	return false;
 }
 
 // ===========================================================================
 
-function setCustomAudioPosition(soundName, position = 0) {
-	let audioObject = getCustomAudio(soundName);
+function stopCustomSound(soundName) {
+	let soundObject = getCustomSound(soundName);
 
-	if (audioObject != null) {
-		audioObject.position = position;
-	}
-	return false;
-}
-
-// ===========================================================================
-
-function stopCustomAudio(soundName) {
-	let audioObject = getCustomAudio(soundName);
-
-	if (audioObject != null) {
-		audioObject.stop();
+	if (soundObject != null) {
+		soundObject.stop();
 	}
 	return false;
 }

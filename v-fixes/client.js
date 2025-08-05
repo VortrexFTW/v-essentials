@@ -13,10 +13,9 @@ addEvent("OnPedChangeWeapon", 3); // Called on switch weapon
 addEvent("OnPedChangeAmmo", 3); // Called when ammo changes for any reason (shooting, reloading, etc)
 addEvent("OnPedDeathEx", 1); // Called when ped dies. Some games don't have onPedWasted yet. This one doesn't have killer or anything but it's better than nothing
 addEvent("OnPickupPickedUp", 1); // Called when a pickup is picked up
-
 addEvent("OnVehicleLightsChanged", 2); // Called when vehicle lights are toggled
 addEvent("OnVehicleSirenChanged", 2); // Called when vehicle siren is toggled
-addEvent("OnVehicleLockedStatusChanged", 2); // Called when vehicle locked status is toggled
+addEvent("OnVehicleLockChanged", 2); // Called when vehicle locked status is toggled
 addEvent("OnVehicleTaxiLightChanged", 2); // Called when vehicle taxi light is toggled
 addEvent("OnVehicleInteriorLightChanged", 2); // Called when vehicle interior light is toggled
 addEvent("OnVehicleHazardLightsChanged", 2); // Called when vehicle hazard light is toggled
@@ -36,6 +35,10 @@ let sniperMode = false;
 // ===========================================================================
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
+	if (localPlayer == null) {
+		return;
+	}
+
 	if (localPlayer.vehicle != null) {
 		let seat = getPedVehicleSeat(localPlayer);
 		vehicle = localPlayer.vehicle;
@@ -82,7 +85,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (entity.health <= 0) {
 				if (dead == false) {
 					dead = true;
-					triggerEvent("OnPedDeathEx", entity);
+					triggerEvent("OnPedDeathEx", entity, entity);
 					triggerNetworkEvent("OnPedDeathEx", entity.id);
 				}
 			} else {
@@ -231,8 +234,8 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			if (game.game <= GAME_GTA_IV) {
 				if (typeof entity.lockedStatus != "undefined") {
 					if (entity.getData("v.locked") != entity.lockedStatus) {
-						triggerEvent("OnVehicleLockedStatusChanged", entity, entity, entity.lockedStatus);
-						triggerNetworkEvent("OnVehicleLockedStatusChanged", entity.id, entity.lockedStatus);
+						triggerEvent("OnVehicleLockChanged", entity, entity, entity.lockedStatus);
+						triggerNetworkEvent("OnVehicleLockChanged", entity.id, entity.lockedStatus);
 					}
 				}
 
@@ -260,39 +263,47 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 
 			if (game.game <= GAME_GTA_IV) {
 				let tireStates = entity.getData("v.rp.tires");
-				let updatedTireStates = [];
-				for (let i = 0; i < 4; i++) {
-					if (game.game == GAME_GTA_IV) {
-						if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
-							updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
-						}
-					} else if (game.game <= GAME_GTA_VC) {
-						if (tireStates[i] != entity.getWheelStatus(i)) {
-							updatedTireStates.push([i, entity.getWheelStatus(i)]);
-						}
-					}
+				if (typeof tireStates != "undefined" && tireStates != null) {
+					let updatedTireStates = [];
+					for (let i = 0; i < 4; i++) {
+						if (typeof tireStates[i] != "undefined") {
+							if (game.game == GAME_GTA_IV) {
+								if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
+									updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
+								}
+							} else if (game.game <= GAME_GTA_VC) {
+								if (tireStates[i] != entity.getWheelStatus(i)) {
+									updatedTireStates.push([i, entity.getWheelStatus(i)]);
+								}
+							}
 
-					if (updatedTireStates.length > 0) {
-						triggerNetworkEvent("OnVehicleTireStatesChanged", entity.id, updatedTireStates);
+							if (updatedTireStates.length > 0) {
+								triggerNetworkEvent("OnVehicleTireStatesChanged", entity.id, updatedTireStates);
+							}
+						}
 					}
 				}
 
 				let doorStates = entity.getData("v.rp.doors");
-				let updatedDoorStates = [];
-				for (let i = 0; i < 4; i++) {
-					if (game.game <= GAME_GTA_VC) {
-						if (doorStates[i] != entity.getDoorStatus(i)) {
-							updatedDoorStates.push([i, entity.getDoorStatus(i)]);
+				if (typeof doorStates != "undefined") {
+					let updatedDoorStates = [];
+					for (let i = 0; i < 4; i++) {
+						if (game.game <= GAME_GTA_VC) {
+							if (doorStates[i] != entity.getDoorStatus(i)) {
+								updatedDoorStates.push([i, entity.getDoorStatus(i)]);
+							}
 						}
 					}
 				}
 
-				let panelStatus = entity.getData("v.rp.panels");
-				let updatedPanelStates = [];
-				for (let i = 0; i < 4; i++) {
-					if (game.game <= GAME_GTA_VC) {
-						if (panelStatus[i] != entity.getPanelStatus(i)) {
-							updatedPanelStates.push([i, entity.getPanelStatus(i)]);
+				let panelStates = entity.getData("v.rp.panels");
+				if (typeof panelStates != "undefined") {
+					let updatedPanelStates = [];
+					for (let i = 0; i < 4; i++) {
+						if (game.game <= GAME_GTA_VC) {
+							if (panelStates[i] != entity.getPanelStatus(i)) {
+								updatedPanelStates.push([i, entity.getPanelStatus(i)]);
+							}
 						}
 					}
 				}
@@ -354,7 +365,6 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
 // ===========================================================================
 
 addEventHandler("OnElementStreamIn", function (event, element) {
-
 
 });
 
@@ -669,6 +679,13 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, fromClientI
 	if (fromClientIndex != localClient.index) {
 		gta.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
 	}
+});
+
+// ===========================================================================
+
+addEventHandler("OnMapLoaded", function (event, mapName) {
+	console.log(`[${thisResource.name}] OnMapLoaded: ${mapName}`);
+	triggerNetworkEvent("OnPlayerMapLoaded", mapName);
 });
 
 // ===========================================================================

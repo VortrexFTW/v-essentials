@@ -2,16 +2,6 @@
 
 // ===========================================================================
 
-let supportedGames = [
-	GAME_GTA_III,
-	GAME_GTA_VC,
-	GAME_GTA_SA,
-	GAME_GTA_IV,
-	GAME_MAFIA_ONE,
-];
-
-// ===========================================================================
-
 addEvent("OnPedEnteredSphereEx", 2);
 addEvent("OnPedExitedSphereEx", 2);
 addEvent("OnPedEnteredVehicleEx", 3); // Called when ped finishes entering vehicle
@@ -28,9 +18,10 @@ addEvent("OnPlayerDeathEx", 1); // Called when a player dies. Some games don't h
 addEvent("OnPickupPickedUp", 2); // Called when a pickup is picked up
 addEvent("OnVehicleLightsChanged", 2); // Called when vehicle lights are toggled
 addEvent("OnVehicleSirenChanged", 2); // Called when vehicle siren is toggled
-addEvent("OnVehicleLockedStatusChanged", 2); // Called when vehicle locked status is toggled
+addEvent("OnVehicleLockChanged", 2); // Called when vehicle locked status is toggled
 addEvent("OnVehicleTaxiLightChanged", 2); // Called when vehicle taxi light is toggled
 addEvent("OnVehicleHealthChanged", 2); // Called when vehicle health changes
+addEvent("OnPlayerMapLoaded", 2); // Called when a map is loaded, used for Mafia 1
 
 // ===========================================================================
 
@@ -349,7 +340,7 @@ addNetworkHandler("OnVehicleSirenChanged", function (client, vehicleId, state) {
 
 // ===========================================================================
 
-addNetworkHandler("OnVehicleLockedStatusChanged", function (client, vehicleId, state) {
+addNetworkHandler("OnVehicleLockChanged", function (client, vehicleId, state) {
 	let vehicle = getElementFromId(vehicleId);
 	if (vehicle == null) {
 		return false;
@@ -360,7 +351,7 @@ addNetworkHandler("OnVehicleLockedStatusChanged", function (client, vehicleId, s
 	}
 
 	vehicle.setData("v.locked", state, true);
-	triggerEvent("OnVehicleLockedStatusChanged", vehicle, vehicle, state);
+	triggerEvent("OnVehicleLockChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================
@@ -409,6 +400,13 @@ addNetworkHandler("OnVehicleInteriorLightChanged", function (client, vehicleId, 
 
 	vehicle.setData("v.interiorLight", state, true);
 	triggerEvent("OnVehicleInteriorLightChanged", vehicle, vehicle, state);
+});
+
+// ===========================================================================
+
+addNetworkHandler("OnPlayerMapLoaded", function (client, mapName) {
+	console.log(`[${thisResource.name}] OnPlayerMapLoaded: ${client.name} has loaded map: ${mapName}`);
+	triggerEvent("OnPlayerMapLoaded", client, client, mapName);
 });
 
 // ===========================================================================
