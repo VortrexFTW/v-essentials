@@ -82,7 +82,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 async function updateWeather() {
     if (scriptConfig.useRealWorldWeather !== true) {
         let gtaWeatherData = weather[server.game].find(w => w.name.toLowerCase().includes(scriptConfig.startWeather.toLowerCase()));
-        gta.forceWeather(gtaWeatherData.weatherId);
+        game.forceWeather(gtaWeatherData.weatherId);
         return;
     }
 
@@ -112,7 +112,7 @@ async function updateWeather() {
         }
 
         console.log(`[v.weather] Updating in-game weather to: ${gtaWeatherData.name} (${gtaWeatherData.weatherId})`);
-        gta.forceWeather(gtaWeatherData.weatherId);
+        game.forceWeather(gtaWeatherData.weatherId);
     });
 }
 

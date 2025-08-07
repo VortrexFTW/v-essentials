@@ -359,7 +359,7 @@ addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2)
 // ===========================================================================
 
 addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
-	gta.receiveNetworkEvent(0, from, type, 0, data, data2);
+	game.receiveNetworkEvent(0, from, type, 0, data, data2);
 });
 
 // ===========================================================================
@@ -677,7 +677,7 @@ function syncVehicleProperties(vehicle) {
 
 addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, fromClientIndex) => {
 	if (fromClientIndex != localClient.index) {
-		gta.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
+		game.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
 	}
 });
 

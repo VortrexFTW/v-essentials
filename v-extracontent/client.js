@@ -554,7 +554,7 @@ function checkMovingGates() {
 function createAllServerObjects() {
 	for (let i in serverObjects) {
 		serverObjects[i].index = i;
-		serverObjects[i].object = gta.createObject(serverObjects[i].modelId, serverObjects[i].position);
+		serverObjects[i].object = game.createObject(serverObjects[i].modelId, serverObjects[i].position);
 		serverObjects[i].object.rotation = serverObjects[i].rotation;
 		serverObjects[i].object.streamInDistance = serverObjects[i].streamDistance;
 		serverObjects[i].object.streamOutDistance = serverObjects[i].streamDistance + 50.0;
@@ -575,7 +575,7 @@ function createAllServerObjects() {
 		serverObjectGroups[i].index = i;
 		for (let j in serverObjectGroups[i].objects) {
 			serverObjectGroups[i].objects[j].index = i;
-			serverObjectGroups[i].objects[j].object = gta.createObject(serverObjectGroups[i].objects[j].modelId, applyOffsetToVector(serverObjectGroups[i].position, serverObjectGroups[i].objects[j].position));
+			serverObjectGroups[i].objects[j].object = game.createObject(serverObjectGroups[i].objects[j].modelId, applyOffsetToVector(serverObjectGroups[i].position, serverObjectGroups[i].objects[j].position));
 			serverObjectGroups[i].objects[j].object.rotation = applyOffsetToVector(serverObjectGroups[i].rotation, serverObjectGroups[i].objects[j].rotation);
 			serverObjectGroups[i].objects[j].object.streamInDistance = serverObjectGroups[i].objects[j].streamDistance;
 			serverObjectGroups[i].objects[j].object.streamOutDistance = serverObjectGroups[i].objects[j].streamDistance + 50.0;
@@ -595,7 +595,7 @@ function createAllServerObjects() {
 
 	for (let i in serverGates) {
 		serverGates[i].index = i;
-		serverGates[i].object = gta.createObject(serverGates[i].modelId, serverGates[i].closedPosition);
+		serverGates[i].object = game.createObject(serverGates[i].modelId, serverGates[i].closedPosition);
 		serverGates[i].object.rotation = serverGates[i].closedRotation;
 		serverGates[i].object.streamInDistance = serverGates[i].streamDistance;
 		serverGates[i].object.streamOutDistance = serverGates[i].streamDistance + 50.0;
