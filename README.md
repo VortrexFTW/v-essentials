@@ -3,11 +3,9 @@ For GTA Connected and Mafia Connected
 Publicly available for anybody to use. I hope you find some of these useful.
 
 ## Donating
-These resources will always be free to use, but your support is greatly appreciated! If you would like to support me, you can do so with one of these options:
+These resources will always be free to use, but your support is greatly appreciated! If you would like to support me, you can do so with any of these options:
 * https://www.patreon.com/vortrexftw
 * https://www.paypal.me/adrianbram
-* https://www.buymeacoffee.com/vortrexftw
-* https://ko-fi.com/vortrexftw
 
 ## Setup
 1. Add these resources to your server's `resources` folder. If the `resources` folder does not exist, create it in your server's main folder.
@@ -65,7 +63,7 @@ Adds a custom mouse cursor. Mafia Connected doesn't have a mouse cursor by defau
 Shows messages when a player dies, with killer name.
 
 ### v-extracontent
-Makes it easy to add and use custom content on your server. Images audio files, fonts, DFF models, TXD textures, COL collisions, excluded snow models, removed building/world models, rendering images in the 3D game world, spawning server objects (both grouped and ungrouped) and moving gates/doors.
+Makes it easy to add and use custom content on your server. Images, audio files, fonts, DFF models, TXD textures, COL collisions, excluded snow models, removed building/world models, rendering images in the 3D game world, spawning objects (both grouped and ungrouped) and moving gates/doors. **This resource is modular, and can be duplicated and any number of copies of this resource can be running at any time**. This is useful if you want to serve different content on different servers, or some content across multiple servers to avoid forcing clients to re-download the same content when connecting to your other servers. Other resources that rely on files served by a `v-extracontent` template will use the first one it finds that has the content file (i.e. `v-audio` will use the first `v-extracontent` resource it finds that has the audio file).
 
 ### v-fixes
 Adds custom scripting events and workarounds for things that GTAC doesn't have built-in. The events can be used in any other resource with any language [exactly like the built-in events](https://wiki.gtaconnected.com/HowTo/Events). Some events that pertain to an element (ped, vehicle, etc) are bindable to that element to be used with bindEventHandler, but this is optional. You can use addEventHandler too. Also adds syncing some element properties that GTAC doesn't sync by default. See the resource's README for more info.
