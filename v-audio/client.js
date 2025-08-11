@@ -106,12 +106,12 @@ addEventHandler("OnElementDestroy", function (event, element) {
 
 // ===========================================================================
 
-addEventHandler("OnProcess", function (event, deltaTime) {
+addEventHandler("OnEntityProcess", function (event, deltaTime) {
 	if (startTime == 0) {
 		return false;
 	}
 
-	updateAudioSounds();
+	updateAudioSounds(entity);
 });
 
 // ===========================================================================
@@ -204,30 +204,18 @@ function setElementAudio(element, url) {
 
 // ===========================================================================
 
-function updateAudioSounds() {
-	let elements = getElementsByType(ELEMENT_VEHICLE);
-	if (typeof ELEMENT_DUMMY != "undefined") {
-		elements = elements.concat(getElementsByType(ELEMENT_DUMMY));
-	}
-
-	elements.forEach(function (entity) {
-		if (entity.getData("v.audio") == null || entity.getData("v.audio")[0] == "") {
-			if (typeof audioSounds[entity.id] != "undefined") {
-				audioSounds[entity.id].stop();
-				audioSounds[entity.id] = null;
-			}
-			return false;
-		} else {
-			if (typeof audioSounds[entity.id] == "undefined" || audioSounds[entity.id] == null) {
-				if (!setElementAudio(entity, entity.getData("v.audio")[0])) {
-					return false;
-				}
-			}
+function updateAudioSounds(entity) {
+	if (entity.getData("v.audio") == null || entity.getData("v.audio")[0] == "") {
+		if (typeof audioSounds[entity.id] != "undefined") {
+			audioSounds[entity.id].stop();
+			audioSounds[entity.id] = null;
 		}
-
+		return false;
+	} else {
 		if (typeof audioSounds[entity.id] == "undefined" || audioSounds[entity.id] == null) {
-			//console.error(`[${thisResource.name}] No radio sound found for entity ${entity.id}. This should not happen!`);
-			return false;
+			if (!setElementAudio(entity, entity.getData("v.audio")[0])) {
+				return false;
+			}
 		}
 
 		if (entity.getData("v.audio")[1] <= 0) {
@@ -242,5 +230,7 @@ function updateAudioSounds() {
 				audioSounds[entity.id].volume = 0;
 			}
 		}
-	});
+	}
 }
+
+// ===========================================================================
