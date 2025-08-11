@@ -2,6 +2,13 @@
 For GTA Connected and Mafia Connected
 Publicly available for anybody to use. I hope you find some of these useful.
 
+## Donating
+These resources will always be free to use, but your support is greatly appreciated! If you would like to support me, you can do so with one of these options:
+* https://www.patreon.com/vortrexftw
+* https://www.paypal.me/adrianbram
+* https://www.buymeacoffee.com/vortrexftw
+* https://ko-fi.com/vortrexftw
+
 ## Setup
 1. Add these resources to your server's `resources` folder. If the `resources` folder does not exist, create it in your server's main folder.
 2. Add the resources you want to use to your [server's config file](https://wiki.gtaconnected.com/ServerConfiguration) inside the `<resources>` section. The default file is server.xml, but you can use any file with the `-config` command line argument when starting the server. Here is a handy copy-paste, just remove the lines you don't need:
@@ -10,6 +17,7 @@ Publicly available for anybody to use. I hope you find some of these useful.
 <resource src="mousecam" />
 <resource src="v-admin" />
 <resource src="v-afk" />
+<resource src="v-audio" />
 <resource src="v-chat" />
 <resource src="v-cursor" />
 <resource src="v-deathmessages" />
@@ -43,6 +51,9 @@ Also has ability to block game trainers (GTA IV only) and built-in SCM/SCO game 
 
 ### v-afk
 AFK detection using game focus/defocus (alt+tab). If `v-scoreboard` is loaded, it'll show "PAUSED" next to AFK players in the list. If `v-nametags` is loaded, the nametag will show a red "PAUSED" above AFK players heads.
+
+### v-audio
+Attach audio sounds to any element, including peds and players. Audio volume is based on distance to the element and a max volume defined by your scripts. Playback time is synced to all players so all players within range will hear the same part of the audio at the same time. Requires an instance of `v-customcontent` running to serve the audio files.
 
 ### v-chat
 Enhanced chat features. Provides scrollable chat history, automatic translation, and converts emoji names or symbols (e.g. `:thumbsup:` or `:)`) to the actual emoji. If the `v-playercolours` resource is loaded, names in chat will show the player's colour, otherwise the names will be white.
