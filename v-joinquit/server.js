@@ -60,11 +60,6 @@ let gameAnnounceColour = [
 
 // ----------------------------------------------------------------------------
 
-let connectionID = Array(128);
-connectionID.fill(-1);
-
-// ----------------------------------------------------------------------------
-
 addEventHandler("OnPlayerJoined", function (event, client) {
 	client.setData("connectTime", new Date().getTime());
 	messageClient(`Welcome to ${server.name}!`, client, welcomeMessageColour);
