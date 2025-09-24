@@ -106,7 +106,7 @@ addEventHandler("OnElementDestroy", function (event, element) {
 
 // ===========================================================================
 
-addEventHandler("OnEntityProcess", function (event, deltaTime) {
+addEventHandler("OnEntityProcess", function (event, entity) {
 	if (startTime == 0) {
 		return false;
 	}
