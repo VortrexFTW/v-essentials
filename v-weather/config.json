@@ -1,8 +1,20 @@
 {
 	"useRealWorldWeather": true,
-	"startWeather": "Clear",
+	"weatherOnStartup": "Clear",
 	"weatherAPIKey": "",
 	"weatherLocation": "New York City",
 	"extraParams": "aqi=no",
-	"updateInterval": 600000
+	"updateInterval": 600000,
+	"fallingSnowOnStartup": false,
+    "groundSnowOnStartup": false,
+    "heavySnowOnStartup": false,
+    "snowRainbowColours": false,
+    "snowBumpiness": 1.0,
+	"commandLevels": {
+		"fallingsnow": 1,
+		"groundSnow": 1,
+		"heavysnow": 1,
+		"rainbowsnow": 1,
+		"snowbumpiness": 1
+	}
 }
