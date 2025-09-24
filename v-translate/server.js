@@ -193,14 +193,13 @@ addEventHandler("OnPlayerJoined", function (event, client) {
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	scriptConfig = loadResourceConfig();
 	if (!scriptConfig) {
-		console.log("[Translate] Resource config.json could not be loaded. Resource stopping ...");
+		console.log(`[${thisResource.name}]: Resource config.json could not be loaded. Resource stopping ...`);
 		thisResource.stop();
 		return false;
 	}
 
 	defaultLanguageId = getLanguageIdFromParams(scriptConfig.defaultLanguage) || 28;
 
-	let clients = getClients();
 	getClients().forEach(function (client) {
 		let languageId = getPlayerLanguage(client.name);
 		client.setData("v.translate", languageId);
@@ -211,7 +210,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	exportFunction("getPlayerLanguage", getPlayerLanguage);
 	exportFunction("setPlayerLanguage", setPlayerLanguage);
 
-	console.log("[Translate] Resource started!");
+	console.log(`[${thisResource.name}]: Resource started!`);
 
 	runTranslatorTest();
 });
@@ -219,12 +218,11 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
-	let clients = getClients();
 	getClients().forEach(function (client) {
 		client.removeData("v.translate");
 	});
 
-	console.log("[Translate] Resource stopped!");
+	console.log(`[${thisResource.name}]: Resource stopped!`);
 });
 
 // ----------------------------------------------------------------------------
@@ -261,14 +259,13 @@ addCommandHandler("lang", async function (command, params, client) {
 		return false;
 	}
 
-	let tempLanguageId = client.getData("v.translate");
 	client.setData("v.translate", languageId);
 	setPlayerLanguage(client.name, languageId);
 
-	let outputString = "Your language has been set to " + translationLanguages[languageId][0];
-	let translatedMessage = await translateMessage(outputString, getLanguageIdFromParams("EN"), languageId);
-	//console.log(translatedMessage);
-	messageClient(translatedMessage, client, COLOUR_YELLOW);
+	let outputString = `Your language has been set to ${translationLanguages[languageId][0]}`;
+	translateMessage(outputString, getLanguageIdFromParams("EN"), languageId).then(translatedMessage => {
+		messageClient(translatedMessage, client, COLOUR_YELLOW);
+	});
 });
 
 // ----------------------------------------------------------------------------
@@ -309,7 +306,7 @@ async function translateMessage(messageText, translateFrom = defaultLanguageId, 
 	return new Promise(resolve => {
 		for (let i in cachedTranslations[translateFrom][translateTo]) {
 			if (cachedTranslations[translateFrom][translateTo][0] == messageText) {
-				console.log("[Translate]: Using existing translation for " + translationLanguages[translateFrom][0] + " to " + translationLanguages[translateTo][0] + " - (" + messageText + "), (" + cachedTranslations[translateFrom][translateTo][1] + ")");
+				console.log(`[${thisResource.name}]: Using existing translation for ${translationLanguages[translateFrom][0]} to ${translationLanguages[translateTo][0]} - (${messageText}), (${cachedTranslations[translateFrom][translateTo][1]})`);
 				resolve(cachedTranslations[translateFrom][translateTo][1]);
 			}
 		}
@@ -359,8 +356,9 @@ function loadResourceConfig() {
 async function runTranslatorTest() {
 	let translateTo = getLanguageIdFromParams("spanish");
 	//console.log(translateTo);
-	let translateTest = await translateMessage("Hello", defaultLanguageId, translateTo);
-	console.log("[Translate] Testing translator (EN/ES): Hello / " + String(translateTest));
+	translateMessage("Hello", defaultLanguageId, translateTo).then((result) => {
+		console.log(`[${thisResource.name}]: Testing translator (EN/ES): Hello / ${result}`);
+	});
 }
 
 // ----------------------------------------------------------------------------
