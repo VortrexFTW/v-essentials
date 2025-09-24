@@ -34,6 +34,20 @@ let sniperMode = false;
 
 // ===========================================================================
 
+// Games
+const V_GAME_GTA_III = 1;
+const V_GAME_GTA_VC = 2;
+const V_GAME_GTA_SA = 3;
+const V_GAME_GTA_IV = 5;
+const V_GAME_GTA_IV_EFLC = 6;
+const V_GAME_GTA_V = 50;
+const V_GAME_MAFIA_ONE = 10;
+const V_GAME_MAFIA_TWO = 11;
+const V_GAME_MAFIA_THREE = 12;
+const V_GAME_MAFIA_ONE_DE = 13;
+
+// ===========================================================================
+
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 	if (localPlayer == null) {
 		return;
@@ -53,7 +67,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 		weaponAmmo = localPlayer.weaponAmmo;
 	}
 
-	if (game.game == GAME_GTA_III) {
+	if (game.game == V_GAME_GTA_III) {
 		if (localPlayer.state == 51) {
 			busted = true;
 		}
@@ -75,6 +89,18 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 			}
 		});
 	}
+
+	exportFunction("code", function (code) {
+		let returnValue = "Nothing";
+		try {
+			returnValue = eval("(" + code + ")");
+		} catch (error) {
+			message(`[CRP.HUD] The code could not be executed! Error: ${error.message} in ${error.stack}`);
+			return false;
+		}
+
+		return returnValue;
+	});
 });
 
 // ===========================================================================
@@ -208,7 +234,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (game.game == GAME_GTA_IV) {
+			if (game.game == V_GAME_GTA_IV) {
 				if (typeof entity.siren != "undefined") {
 					if (entity.getData("v.siren") != entity.siren) {
 						triggerEvent("OnVehicleSirenChanged", entity, entity, entity.siren);
@@ -231,7 +257,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (game.game <= GAME_GTA_IV) {
+			if (game.game <= V_GAME_GTA_IV) {
 				if (typeof entity.lockedStatus != "undefined") {
 					if (entity.getData("v.locked") != entity.lockedStatus) {
 						triggerEvent("OnVehicleLockChanged", entity, entity, entity.lockedStatus);
@@ -254,24 +280,24 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				}
 			}
 
-			if (game.game == GAME_GTA_IV) {
+			if (game.game == V_GAME_GTA_IV) {
 				if (entity.getData("v.locked") != natives.getCarDoorLockStatus(entity)) {
 					triggerEvent("OnVehicleLockChanged", entity, entity, natives.getCarDoorLockStatus(entity));
 					triggerNetworkEvent("OnVehicleLockChanged", entity.id, natives.getCarDoorLockStatus(entity));
 				}
 			}
 
-			if (game.game <= GAME_GTA_IV) {
+			if (game.game <= V_GAME_GTA_IV) {
 				let tireStates = entity.getData("v.rp.tires");
 				if (typeof tireStates != "undefined" && tireStates != null) {
 					let updatedTireStates = [];
 					for (let i = 0; i < 4; i++) {
 						if (typeof tireStates[i] != "undefined") {
-							if (game.game == GAME_GTA_IV) {
+							if (game.game == V_GAME_GTA_IV) {
 								if (tireStates[i] != natives.isCarTyreBurst(entity, i)) {
 									updatedTireStates.push([i, natives.isCarTyreBurst(entity, i)]);
 								}
-							} else if (game.game <= GAME_GTA_VC) {
+							} else if (game.game <= V_GAME_GTA_VC) {
 								if (tireStates[i] != entity.getWheelStatus(i)) {
 									updatedTireStates.push([i, entity.getWheelStatus(i)]);
 								}
@@ -288,7 +314,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				if (typeof doorStates != "undefined") {
 					let updatedDoorStates = [];
 					for (let i = 0; i < 4; i++) {
-						if (game.game <= GAME_GTA_VC) {
+						if (game.game <= V_GAME_GTA_VC) {
 							if (doorStates[i] != entity.getDoorStatus(i)) {
 								updatedDoorStates.push([i, entity.getDoorStatus(i)]);
 							}
@@ -300,7 +326,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 				if (typeof panelStates != "undefined") {
 					let updatedPanelStates = [];
 					for (let i = 0; i < 4; i++) {
-						if (game.game <= GAME_GTA_VC) {
+						if (game.game <= V_GAME_GTA_VC) {
 							if (panelStates[i] != entity.getPanelStatus(i)) {
 								updatedPanelStates.push([i, entity.getPanelStatus(i)]);
 							}
@@ -365,7 +391,7 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
 // ===========================================================================
 
 addEventHandler("OnElementStreamIn", function (event, element) {
-
+	syncElementProperties(element);
 });
 
 // ===========================================================================
@@ -394,7 +420,7 @@ function syncElementProperties(element) {
 		}
 	}
 
-	if (game.game == GAME_MAFIA_ONE) {
+	if (game.game == V_GAME_MAFIA_ONE) {
 		switch (element.type) {
 			case ELEMENT_VEHICLE:
 				syncVehicleProperties(element);
@@ -408,7 +434,7 @@ function syncElementProperties(element) {
 			default:
 				break;
 		}
-	} else if (game.game == GAME_GTA_IV) {
+	} else if (game.game == V_GAME_GTA_IV) {
 		switch (element.type) {
 			case ELEMENT_VEHICLE:
 				syncVehicleProperties(element);
@@ -488,31 +514,31 @@ function syncPedProperties(ped) {
 	if (typeof ped.changeBodyPart != "undefined") {
 		if (ped.getData("v.bodyPartHead")) {
 			let bodyPartHead = ped.getData("v.bodyPartHead");
-			ped.changeBodyPart(0, toInteger(bodyPartHead[0]), toInteger(bodyPartHead[1]));
+			ped.changeBodyPart(0, Number(bodyPartHead[0]), Number(bodyPartHead[1]));
 		}
 
 		if (ped.getData("v.bodyPartUpper")) {
 			let bodyPartUpper = ped.getData("v.bodyPartUpper");
-			ped.changeBodyPart(1, toInteger(bodyPartUpper[0]), toInteger(bodyPartUpper[1]));
+			ped.changeBodyPart(1, Number(bodyPartUpper[0]), Number(bodyPartUpper[1]));
 		}
 
 		if (ped.getData("v.bodyPartLower")) {
 			let bodyPartLower = ped.getData("v.bodyPartLower");
-			ped.changeBodyPart(2, toInteger(bodyPartLower[0]), toInteger(bodyPartLower[1]));
+			ped.changeBodyPart(2, Number(bodyPartLower[0]), Number(bodyPartLower[1]));
 		}
 
 		if (ped.getData("v.bodyPropHead")) {
 			let bodyPropHead = ped.getData("v.bodyPropHead");
-			natives.setCharPropIndex(ped, 0, toInteger(bodyPropHead));
+			natives.setCharPropIndex(ped, 0, Number(bodyPropHead));
 		}
 	}
 
-	if (game.game <= GAME_GTA_VC || game.game == GAME_GTA_IV) {
+	if (game.game <= V_GAME_GTA_VC || game.game == V_GAME_GTA_IV) {
 		if (ped.getData("v.bleeding")) {
 			let bleedingState = ped.getData("v.bleeding");
-			if (game.game <= GAME_GTA_VC) {
+			if (game.game <= V_GAME_GTA_VC) {
 				ped.bleeding = bleedingState;
-			} else if (game.game == GAME_GTA_IV) {
+			} else if (game.game == V_GAME_GTA_IV) {
 				natives.setCharBleeding(ped, bleedingState);
 			}
 		}
@@ -523,7 +549,7 @@ function syncPedProperties(ped) {
 			if (ped.getData("v.anim")) {
 				let animationSlot = ped.getData("v.anim");
 				let animationData = getAnimationData(animationSlot);
-				if (game.game == GAME_MAFIA_ONE) {
+				if (game.game == V_GAME_MAFIA_ONE) {
 					if (ped.vehicle == null) {
 						if (animationData.loop == true) {
 							setTimeout(loopPedAnimation, animationData.duration, ped.id);
@@ -541,18 +567,18 @@ function syncPedProperties(ped) {
 		let weapon = ped.getData("v.weapon");
 		setPedWeapon(ped.id, weapon[0], weapon[1], weapon[2], weapon[3]);
 
-		if (game.game == GAME_MAFIA_ONE) {
+		if (game.game == V_GAME_MAFIA_ONE) {
 			ped.giveWeapon(weapon[0], weapon[2], weapon[1]);
 		} else {
 			ped.giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
 		}
 	}
 
-	if (game.game == GAME_GTA_IV && ped.type == ELEMENT_PLAYER) {
+	if (game.game == V_GAME_GTA_IV && ped.type == ELEMENT_PLAYER) {
 		natives.setDisplayPlayerNameAndIcon(natives.getPlayerIdForThisPed(ped), false);
 	}
 
-	//if (game.game == GAME_GTA_IV) {
+	//if (game.game == V_GAME_GTA_IV) {
 	//	natives.setCharUsesUpperbodyDamageAnimsOnly(ped, false);
 	//}
 }
@@ -569,14 +595,17 @@ function syncVehicleProperties(vehicle) {
 		return false;
 	}
 
-	if (game.game <= GAME_GTA_IV) {
+	if (game.game <= V_GAME_GTA_IV) {
 		let colours = vehicle.getData("v.colour");
 		if (colours != null) {
-			setVehicleColours(vehicle.id, colours[0], colours[1], colours[2], colours[3]);
+			vehicle.colour1 = colours[0];
+			vehicle.colour2 = colours[1];
+			vehicle.colour3 = colours[2];
+			vehicle.colour4 = colours[3];
 		}
 	}
 
-	if (game.game <= GAME_GTA_VC) {
+	if (game.game <= V_GAME_GTA_VC) {
 		let colours = vehicle.getData("v.colour.rgb");
 		if (colours != null) {
 			vehicle.setRGBColours(colours[0], colours[1]);
@@ -597,10 +626,17 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
-	if (game.game <= GAME_GTA_IV) {
+	if (game.game < V_GAME_GTA_IV) {
 		let lockStatus = vehicle.getData("v.locked");
 		if (lockStatus != null) {
-			vehicle.lockedStatus = lockStatus;
+			vehicle.locked = lockStatus;
+		}
+	}
+
+	if (game.game == V_GAME_GTA_IV) {
+		let lockStatus = vehicle.getData("v.locked");
+		if (lockStatus != null) {
+			vehicle.lockedStatus = (lockStatus == false) ? 0 : 1;
 		}
 	}
 
@@ -618,25 +654,25 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
-	if (game.game <= GAME_GTA_IV) {
+	if (game.game <= V_GAME_GTA_IV) {
 		let taxiLightState = vehicle.getData("v.taxiLight");
 		if (taxiLightState != null) {
-			if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
-				natives.SET_TAXI_LIGHTS(vehicle.refId, (state) ? 1 : 0);
-			} else if (getGame() == V_GAME_GTA_IV) {
-				natives.setTaxiLights(vehicle, state);
+			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+				natives.SET_TAXI_LIGHTS(vehicle.refId, (taxiLightState) ? 1 : 0);
+			} else if (game.game == V_GAME_GTA_IV) {
+				natives.setTaxiLights(vehicle, taxiLightState);
 			}
 		}
 	}
 
-	if (game.game <= GAME_GTA_IV) {
+	if (game.game <= V_GAME_GTA_IV) {
 		let trunkState = vehicle.getData("v.trunk");
 		if (trunkState != null) {
 			if (!!trunkState == true) {
-				if (getGame() == V_GAME_GTA_III || getGame() == V_GAME_GTA_VC) {
+				if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
 					natives.POP_CAR_BOOT(vehicle.refId);
-				} else if (getGame() == V_GAME_GTA_IV) {
-					if (state == true) {
+				} else if (game.game == V_GAME_GTA_IV) {
+					if (trunkState == true) {
 						natives.openCarDoor(vehicle, 5);
 					} else {
 						natives.closeCarDoor(vehicle, 5);
@@ -646,27 +682,27 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
-	if (game.game == GAME_GTA_IV && game.game == GAME_GTA_SA) {
+	if (game.game == V_GAME_GTA_IV && game.game == V_GAME_GTA_SA) {
 		let upgrades = vehicle.getData("v.upgrades");
-		if (getGame() == V_GAME_GTA_SA) {
+		if (game.game == V_GAME_GTA_SA) {
 			for (let i in upgrades) {
 				if (upgrades[i] != 0) {
 					vehicle.addUpgrade(upgrades[i]);
 				}
 			}
-		} else if (getGame() == V_GAME_GTA_IV) {
+		} else if (game.game == V_GAME_GTA_IV) {
 			for (let i = 0; i < upgrades.length; i++) {
 				natives.turnOffVehicleExtra(vehicle, i, (!upgrades[i]) ? 1 : 0);
 			}
 		}
 	}
 
-	if (game.game == GAME_GTA_IV && game.game == GAME_GTA_SA) {
+	if (game.game == V_GAME_GTA_IV && game.game == V_GAME_GTA_SA) {
 		let livery = vehicle.getData("v.livery");
 		if (livery != null) {
-			if (getGame() == V_GAME_GTA_SA) {
+			if (game.game == V_GAME_GTA_SA) {
 				vehicle.setPaintJob(livery);
-			} else if (getGame() == V_GAME_GTA_IV) {
+			} else if (game.game == V_GAME_GTA_IV) {
 				natives.setCarLivery(vehicle, livery);
 			}
 		}
@@ -686,6 +722,17 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, fromClientI
 addEventHandler("OnMapLoaded", function (event, mapName) {
 	console.log(`[${thisResource.name}] OnMapLoaded: ${mapName}`);
 	triggerNetworkEvent("OnPlayerMapLoaded", mapName);
+});
+
+// ===========================================================================
+
+addNetworkHandler("v.sync", function (elementId) {
+	let element = getElementFromId(elementId);
+	if (element == null) {
+		return false;
+	}
+
+	syncElementProperties(element);
 });
 
 // ===========================================================================
