@@ -3,8 +3,8 @@
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
-	if (game.game == GAME_GTA_III) {
-		console.error("[Interiors] Interiors are not available on this game!");
+	if (game.game != GAME_GTA_VC) {
+		console.error("[Interiors] This script only supports GTA Vice City!");
 		console.log("[Interiors] This resource will now stop.");
 		thisResource.stop();
 	}
