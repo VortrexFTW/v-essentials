@@ -21,6 +21,8 @@ addEvent("OnVehicleInteriorLightChanged", 2); // Called when vehicle interior li
 addEvent("OnVehicleHazardLightsChanged", 2); // Called when vehicle hazard light is toggled
 addEvent("OnVehicleHealthChanged", 3); // Called when vehicle health changes
 
+exportFunction("syncElementProperties", syncElementProperties);
+
 // ===========================================================================
 
 let vehicle = null;
@@ -288,7 +290,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 			}
 
 			if (game.game <= V_GAME_GTA_IV) {
-				let tireStates = entity.getData("v.rp.tires");
+				let tireStates = entity.getData("v.tires");
 				if (typeof tireStates != "undefined" && tireStates != null) {
 					let updatedTireStates = [];
 					for (let i = 0; i < 4; i++) {
@@ -310,7 +312,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 					}
 				}
 
-				let doorStates = entity.getData("v.rp.doors");
+				let doorStates = entity.getData("v.doors");
 				if (typeof doorStates != "undefined") {
 					let updatedDoorStates = [];
 					for (let i = 0; i < 4; i++) {
@@ -322,7 +324,7 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 					}
 				}
 
-				let panelStates = entity.getData("v.rp.panels");
+				let panelStates = entity.getData("v.panels");
 				if (typeof panelStates != "undefined") {
 					let updatedPanelStates = [];
 					for (let i = 0; i < 4; i++) {
@@ -409,7 +411,7 @@ function syncElementProperties(element) {
 	if (typeof element.interior != "undefined") {
 		if (element.getData("v.interior")) {
 			if (typeof element.interior != "undefined") {
-				element.interior = getEntityData(element, "v.interior");
+				element.interior = element.getData("v.interior");
 			}
 		}
 	}
@@ -485,18 +487,6 @@ function syncPedProperties(ped) {
 		ped.heading = heading;
 	}
 
-	if (typeof ped.matrix != "undefined") {
-		if (ped.getData("v.scale")) {
-			let scaleFactor = ped.getData("v.scale");
-			let tempMatrix = ped.matrix;
-			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
-			let tempPosition = ped.position;
-			ped.matrix = tempMatrix;
-			tempPosition.z += scaleFactor.z;
-			ped.position = tempPosition;
-		}
-	}
-
 	if (typeof ped.setFightStyle != "undefined") {
 		if (ped.getData("v.fightStyle")) {
 			let fightStyle = ped.getData("v.fightStyle");
@@ -544,25 +534,6 @@ function syncPedProperties(ped) {
 		}
 	}
 
-	if (typeof ped.addAnimation != "undefined") {
-		setTimeout(function () {
-			if (ped.getData("v.anim")) {
-				let animationSlot = ped.getData("v.anim");
-				let animationData = getAnimationData(animationSlot);
-				if (game.game == V_GAME_MAFIA_ONE) {
-					if (ped.vehicle == null) {
-						if (animationData.loop == true) {
-							setTimeout(loopPedAnimation, animationData.duration, ped.id);
-						}
-						ped.addAnimation(animationData.animId);
-					}
-				} else {
-					ped.addAnimation(animationData.groupId, animationData.animId);
-				}
-			}
-		}, 500);
-	}
-
 	if (ped.getData("v.weapon")) {
 		let weapon = ped.getData("v.weapon");
 		setPedWeapon(ped.id, weapon[0], weapon[1], weapon[2], weapon[3]);
@@ -574,13 +545,15 @@ function syncPedProperties(ped) {
 		}
 	}
 
-	if (game.game == V_GAME_GTA_IV && ped.type == ELEMENT_PLAYER) {
-		natives.setDisplayPlayerNameAndIcon(natives.getPlayerIdForThisPed(ped), false);
+	if (game.game == V_GAME_GTA_IV) {
+		if (ped.type != ELEMENT_PLAYER) {
+			if (ped.getData("v.wander") == null) {
+				natives.taskStandStill(ped, 9999999);
+			} else {
+				natives.taskWanderStandard(ped);
+			}
+		}
 	}
-
-	//if (game.game == V_GAME_GTA_IV) {
-	//	natives.setCharUsesUpperbodyDamageAnimsOnly(ped, false);
-	//}
 }
 
 // ===========================================================================
@@ -658,7 +631,7 @@ function syncVehicleProperties(vehicle) {
 		let taxiLightState = vehicle.getData("v.taxiLight");
 		if (taxiLightState != null) {
 			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-				natives.SET_TAXI_LIGHTS(vehicle.refId, (taxiLightState) ? 1 : 0);
+				natives.SET_TAXI_LIGHTS(vehicle.ref, (taxiLightState) ? 1 : 0);
 			} else if (game.game == V_GAME_GTA_IV) {
 				natives.setTaxiLights(vehicle, taxiLightState);
 			}
@@ -670,7 +643,7 @@ function syncVehicleProperties(vehicle) {
 		if (trunkState != null) {
 			if (!!trunkState == true) {
 				if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-					natives.POP_CAR_BOOT(vehicle.refId);
+					natives.POP_CAR_BOOT(vehicle.ref);
 				} else if (game.game == V_GAME_GTA_IV) {
 					if (trunkState == true) {
 						natives.openCarDoor(vehicle, 5);
@@ -707,6 +680,14 @@ function syncVehicleProperties(vehicle) {
 			}
 		}
 	}
+
+	if (game.game <= V_GAME_GTA_IV) {
+		let alarm = vehicle.getData("v.alarm");
+		if (game.game == V_GAME_GTA_IV) {
+			natives.setVehAlarmDuration(vehicle, alarm);
+			natives.setVehAlarm(vehicle, (alarm > 0) ? true : false);
+		}
+	}
 }
 
 // ===========================================================================
@@ -734,5 +715,27 @@ addNetworkHandler("v.sync", function (elementId) {
 
 	syncElementProperties(element);
 });
+
+// ===========================================================================
+
+function syncObjectProperties(element) {
+	if (typeof element.matrix != "undefined" && game.game < V_GAME_GTA_IV) {
+		if (element.getData("v.scale")) {
+			let scaleFactor = element.getData("v.scale");
+			let tempMatrix = element.matrix;
+			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
+			let tempPosition = element.position;
+			element.matrix = tempMatrix;
+			tempPosition.z += scaleFactor.z;
+			element.position = tempPosition;
+		}
+	}
+
+	if (typeof element.collisionsEnabled != "undefined" && game < V_GAME_GTA_IV) {
+		if (element.getData("v.scale")) {
+			element.collisionsEnabled = element.getData("v.scale");
+		}
+	}
+}
 
 // ===========================================================================

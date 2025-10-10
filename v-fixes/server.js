@@ -318,8 +318,8 @@ addNetworkHandler("OnVehicleLightsChanged", function (client, vehicleId, state) 
 		return false;
 	}
 
-	vehicle.setData("v.lights", state, true);
-	triggerEvent("OnVehicleLightsChanged", vehicle, vehicle, state);
+	//vehicle.setData("v.lights", state, true);
+	//triggerEvent("OnVehicleLightsChanged", vehicle, vehicle, state);
 });
 
 // ===========================================================================
