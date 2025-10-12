@@ -97,7 +97,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 		try {
 			returnValue = eval("(" + code + ")");
 		} catch (error) {
-			message(`[CRP.HUD] The code could not be executed! Error: ${error.message} in ${error.stack}`);
+			message(`${thisResource.name} The code could not be executed! Error: ${error.message} in ${error.stack}`);
 			return false;
 		}
 
@@ -108,6 +108,11 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 // ===========================================================================
 
 addEventHandler("OnEntityProcess", function (event, entity) {
+	if (entity == null) {
+		console.error(`${thisResource.name} Vehicle process failed for vehicle ${entity} (${entity.id}). Vehicle is null`);
+		return false;
+	}
+
 	if (localPlayer != null) {
 		if (entity == localPlayer) {
 			if (entity.health <= 0) {
@@ -393,6 +398,10 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
 // ===========================================================================
 
 addEventHandler("OnElementStreamIn", function (event, element) {
+	if (element == null) {
+		return false;
+	}
+
 	syncElementProperties(element);
 });
 
@@ -497,6 +506,7 @@ function syncPedProperties(ped) {
 	if (typeof ped.walkStyle != "undefined") {
 		if (ped.getData("v.walkStyle")) {
 			let walkStyle = ped.getData("v.walkStyle");
+			console.log(`[${thisResource.name}] Setting ped walk style to ${walkStyle}`);
 			ped.walkStyle = walkStyle;
 		}
 	}
@@ -527,8 +537,10 @@ function syncPedProperties(ped) {
 		if (ped.getData("v.bleeding")) {
 			let bleedingState = ped.getData("v.bleeding");
 			if (game.game <= V_GAME_GTA_VC) {
+				console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
 				ped.bleeding = bleedingState;
 			} else if (game.game == V_GAME_GTA_IV) {
+				console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
 				natives.setCharBleeding(ped, bleedingState);
 			}
 		}
@@ -536,11 +548,11 @@ function syncPedProperties(ped) {
 
 	if (ped.getData("v.weapon")) {
 		let weapon = ped.getData("v.weapon");
-		setPedWeapon(ped.id, weapon[0], weapon[1], weapon[2], weapon[3]);
-
 		if (game.game == V_GAME_MAFIA_ONE) {
+			console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[2]}, ${weapon[1]}`);
 			ped.giveWeapon(weapon[0], weapon[2], weapon[1]);
 		} else {
+			console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[1]}, ${weapon[2]}`);
 			ped.giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
 		}
 	}
@@ -548,6 +560,7 @@ function syncPedProperties(ped) {
 	if (game.game == V_GAME_GTA_IV) {
 		if (ped.type != ELEMENT_PLAYER) {
 			if (ped.getData("v.wander") == null) {
+				console.log(`[${thisResource.name}] Setting ped to wander`);
 				natives.taskStandStill(ped, 9999999);
 			} else {
 				natives.taskWanderStandard(ped);
@@ -571,6 +584,7 @@ function syncVehicleProperties(vehicle) {
 	if (game.game <= V_GAME_GTA_IV) {
 		let colours = vehicle.getData("v.colour");
 		if (colours != null) {
+			console.log(`[${thisResource.name}] Setting vehicle colour to ${colours.join(", ")}`);
 			vehicle.colour1 = colours[0];
 			vehicle.colour2 = colours[1];
 			vehicle.colour3 = colours[2];
@@ -581,6 +595,7 @@ function syncVehicleProperties(vehicle) {
 	if (game.game <= V_GAME_GTA_VC) {
 		let colours = vehicle.getData("v.colour.rgb");
 		if (colours != null) {
+			console.log(`[${thisResource.name}] Setting vehicle RGB colours to ${colours[0]}, ${colours[1]}`);
 			vehicle.setRGBColours(colours[0], colours[1]);
 		}
 	}
@@ -588,6 +603,7 @@ function syncVehicleProperties(vehicle) {
 	if (typeof vehicle.light != "undefined") {
 		let lightStatus = vehicle.getData("v.lights");
 		if (lightStatus != null) {
+			console.log(`[${thisResource.name}] Setting vehicle lights to ${lightStatus}`);
 			vehicle.lights = lightStatus;
 		}
 	}
@@ -595,6 +611,7 @@ function syncVehicleProperties(vehicle) {
 	if (typeof vehicle.siren != "undefined") {
 		let sirenStatus = vehicle.getData("v.siren");
 		if (sirenStatus != null) {
+			console.log(`[${thisResource.name}] Setting vehicle siren to ${sirenStatus}`);
 			vehicle.siren = sirenStatus;
 		}
 	}
@@ -602,6 +619,7 @@ function syncVehicleProperties(vehicle) {
 	if (game.game < V_GAME_GTA_IV) {
 		let lockStatus = vehicle.getData("v.locked");
 		if (lockStatus != null) {
+			console.log(`[${thisResource.name}] Setting vehicle locked to ${lockStatus}`);
 			vehicle.locked = lockStatus;
 		}
 	}
@@ -609,6 +627,7 @@ function syncVehicleProperties(vehicle) {
 	if (game.game == V_GAME_GTA_IV) {
 		let lockStatus = vehicle.getData("v.locked");
 		if (lockStatus != null) {
+			console.log(`[${thisResource.name}] Setting vehicle lock status to ${lockStatus}`);
 			vehicle.lockedStatus = (lockStatus == false) ? 0 : 1;
 		}
 	}
@@ -616,6 +635,7 @@ function syncVehicleProperties(vehicle) {
 	if (typeof vehicle.hazardLights != "undefined") {
 		let hazardLightsState = vehicle.getData("v.hazardLights");
 		if (hazardLightsState != null) {
+			console.log(`[${thisResource.name}] Setting vehicle hazard lights to ${hazardLightsState}`);
 			vehicle.hazardLights = hazardLightsState;
 		}
 	}
@@ -623,6 +643,7 @@ function syncVehicleProperties(vehicle) {
 	if (typeof vehicle.interiorLight != "undefined") {
 		let interiorLightState = vehicle.getData("v.interiorLight");
 		if (interiorLightState != null) {
+			console.log(`[${thisResource.name}] Setting vehicle interior light to ${interiorLightState}`);
 			vehicle.interiorLight = interiorLightState;
 		}
 	}
@@ -631,8 +652,10 @@ function syncVehicleProperties(vehicle) {
 		let taxiLightState = vehicle.getData("v.taxiLight");
 		if (taxiLightState != null) {
 			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+				console.log(`[${thisResource.name}] Setting vehicle taxi lights to ${taxiLightState}`);
 				natives.SET_TAXI_LIGHTS(vehicle.ref, (taxiLightState) ? 1 : 0);
 			} else if (game.game == V_GAME_GTA_IV) {
+				console.log(`[${thisResource.name}] Setting vehicle taxi lights to ${taxiLightState}`);
 				natives.setTaxiLights(vehicle, taxiLightState);
 			}
 		}
@@ -643,8 +666,10 @@ function syncVehicleProperties(vehicle) {
 		if (trunkState != null) {
 			if (!!trunkState == true) {
 				if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+					console.log(`[${thisResource.name}] Setting vehicle trunk to ${trunkState}`);
 					natives.POP_CAR_BOOT(vehicle.ref);
 				} else if (game.game == V_GAME_GTA_IV) {
+					console.log(`[${thisResource.name}] Setting vehicle trunk to ${trunkState}`);
 					if (trunkState == true) {
 						natives.openCarDoor(vehicle, 5);
 					} else {
@@ -658,12 +683,14 @@ function syncVehicleProperties(vehicle) {
 	if (game.game == V_GAME_GTA_IV && game.game == V_GAME_GTA_SA) {
 		let upgrades = vehicle.getData("v.upgrades");
 		if (game.game == V_GAME_GTA_SA) {
+			console.log(`[${thisResource.name}] Setting vehicle upgrades to ${upgrades.join(", ")}`);
 			for (let i in upgrades) {
 				if (upgrades[i] != 0) {
 					vehicle.addUpgrade(upgrades[i]);
 				}
 			}
 		} else if (game.game == V_GAME_GTA_IV) {
+			console.log(`[${thisResource.name}] Setting vehicle upgrades to ${upgrades.join(", ")}`);
 			for (let i = 0; i < upgrades.length; i++) {
 				natives.turnOffVehicleExtra(vehicle, i, (!upgrades[i]) ? 1 : 0);
 			}
@@ -674,8 +701,10 @@ function syncVehicleProperties(vehicle) {
 		let livery = vehicle.getData("v.livery");
 		if (livery != null) {
 			if (game.game == V_GAME_GTA_SA) {
+				console.log(`[${thisResource.name}] Setting vehicle livery to ${livery}`);
 				vehicle.setPaintJob(livery);
 			} else if (game.game == V_GAME_GTA_IV) {
+				console.log(`[${thisResource.name}] Setting vehicle livery to ${livery}`);
 				natives.setCarLivery(vehicle, livery);
 			}
 		}
@@ -684,8 +713,12 @@ function syncVehicleProperties(vehicle) {
 	if (game.game <= V_GAME_GTA_IV) {
 		let alarm = vehicle.getData("v.alarm");
 		if (game.game == V_GAME_GTA_IV) {
+			console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
 			natives.setVehAlarmDuration(vehicle, alarm);
 			natives.setVehAlarm(vehicle, (alarm > 0) ? true : false);
+		} else if (game.game <= V_GAME_GTA_VC) {
+			console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
+			vehicle.alarm = alarm;
 		}
 	}
 }
@@ -723,7 +756,7 @@ function syncObjectProperties(element) {
 		if (element.getData("v.scale")) {
 			let scaleFactor = element.getData("v.scale");
 			let tempMatrix = element.matrix;
-			tempMatrix.setScale(toVector3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
+			tempMatrix.setScale(new Vec3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
 			let tempPosition = element.position;
 			element.matrix = tempMatrix;
 			tempPosition.z += scaleFactor.z;
