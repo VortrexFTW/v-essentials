@@ -252,42 +252,10 @@ addNetworkHandler("OnPickupPickedUp", function (client, pedId, pickupId) {
 
 // ===========================================================================
 
-addEventHandler("OnAddIVNetworkEvent", function (client, type, name, data, data2) {
-	/*
-	0 - REQUEST_CONTROL_EVENT
-	1 - GIVE_CONTROL_EVENT
-	2 - OBJECT_ID_FREED_EVENT
-	3 - WEAPON_DAMAGE_EVENT
-	4 - REQUEST_PICKUP_EVENT
-	5 - GAME_CLOCK_AND_WEATHER_EVENT
-	6 - RESURRECT_PLAYER_EVENT
-	7 - RESURRECTED_LOCAL_PLAYER_EVENT
-	8 - GIVE_WEAPON_EVENT
-	9 - REMOVE_WEAPON_EVENT
-	10 - REMOVE_ALL_WEAPONS_EVENT
-	11 - VEHICLE_COMPONENT_CONTROL_EVENT
-	12 - REQUEST_FIRE_EVENT
-	13 - START_FIRE_EVENT
-	14 - REQUEST_EXPLOSION_EVENT
-	15 - START_EXPLOSION_EVENT
-	16 - START_PROJECTILE_EVENT
-	17 - SESSION_SETTINGS_CHANGED_EVENT
-	18 - ALTER_WANTED_LEVEL_EVENT
-	19 - CREATE_PICKUP_EVENT
-	20 - CHANGE_RADIO_STATION_EVENT
-	21 - UPDATE_GPS_EVENT
-	22 - RAGDOLL_REQUEST_EVENT
-	23 - MARK_AS_NO_LONGER_NEEDED_EVENT
-	24 - PLAYER_TAUNT_EVENT
-	25 - DOOR_BREAK_EVENT
-	26 - HOST_VARIABLES_VERIFY_EVENT
-	*/
-
-	//if (type == 3) {
+addEventHandler("OnAddIVNetworkEvent", function (event, client, type, name, data, data2) {
 	getClients().filter(c => c.index != client.index).forEach(c => {
 		triggerNetworkEvent("ReceiveIVNetworkEvent", c, type, name, data, data2, client.index);
 	});
-	//}
 });
 
 // ===========================================================================
