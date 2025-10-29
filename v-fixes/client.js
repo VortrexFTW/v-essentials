@@ -512,24 +512,28 @@ function syncPedProperties(ped) {
 	}
 
 	if (typeof ped.changeBodyPart != "undefined") {
-		if (ped.getData("v.bodyPartHead")) {
+		if (ped.getData("v.bodyPartHead") != null) {
 			let bodyPartHead = ped.getData("v.bodyPartHead");
+			//console.log(`[${thisResource.name}] Setting ped ${ped.id} head to ${bodyPartHead[0]}, ${bodyPartHead[1]}`);
 			ped.changeBodyPart(0, Number(bodyPartHead[0]), Number(bodyPartHead[1]));
 		}
 
-		if (ped.getData("v.bodyPartUpper")) {
+		if (ped.getData("v.bodyPartUpper") != null) {
 			let bodyPartUpper = ped.getData("v.bodyPartUpper");
+			//console.log(`[${thisResource.name}] Setting ped ${ped.id} upper body to ${bodyPartUpper[0]}, ${bodyPartUpper[1]}`);
 			ped.changeBodyPart(1, Number(bodyPartUpper[0]), Number(bodyPartUpper[1]));
 		}
 
-		if (ped.getData("v.bodyPartLower")) {
+		if (ped.getData("v.bodyPartLower") != null) {
 			let bodyPartLower = ped.getData("v.bodyPartLower");
+			//console.log(`[${thisResource.name}] Setting ped ${ped.id} lower body to ${bodyPartLower[0]}, ${bodyPartLower[1]}`);
 			ped.changeBodyPart(2, Number(bodyPartLower[0]), Number(bodyPartLower[1]));
 		}
 
-		if (ped.getData("v.bodyPropHead")) {
-			let bodyPropHead = ped.getData("v.bodyPropHead");
-			natives.setCharPropIndex(ped, 0, Number(bodyPropHead));
+		if (ped.getData("v.bodyPropHat") != null) {
+			let bodyPropHat = ped.getData("v.bodyPropHat");
+			//console.log(`[${thisResource.name}] Setting ped ${ped.id} hat to ${bodyPropHat}`);
+			natives.setCharPropIndex(ped, 0, Number(bodyPropHat));
 		}
 	}
 
@@ -537,10 +541,10 @@ function syncPedProperties(ped) {
 		if (ped.getData("v.bleeding")) {
 			let bleedingState = ped.getData("v.bleeding");
 			if (game.game <= V_GAME_GTA_VC) {
-				console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
+				//console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
 				ped.bleeding = bleedingState;
 			} else if (game.game == V_GAME_GTA_IV) {
-				console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
+				//console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
 				natives.setCharBleeding(ped, bleedingState);
 			}
 		}
@@ -549,10 +553,10 @@ function syncPedProperties(ped) {
 	if (ped.getData("v.weapon")) {
 		let weapon = ped.getData("v.weapon");
 		if (game.game == V_GAME_MAFIA_ONE) {
-			console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[2]}, ${weapon[1]}`);
+			//console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[2]}, ${weapon[1]}`);
 			ped.giveWeapon(weapon[0], weapon[2], weapon[1]);
 		} else {
-			console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[1]}, ${weapon[2]}`);
+			//console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[1]}, ${weapon[2]}`);
 			ped.giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
 		}
 	}
@@ -560,7 +564,7 @@ function syncPedProperties(ped) {
 	if (game.game == V_GAME_GTA_IV) {
 		if (ped.type != ELEMENT_PLAYER) {
 			if (ped.getData("v.wander") == null) {
-				console.log(`[${thisResource.name}] Setting ped to wander`);
+				//console.log(`[${thisResource.name}] Setting ped to wander`);
 				natives.taskStandStill(ped, 9999999);
 			} else {
 				natives.taskWanderStandard(ped);
@@ -712,13 +716,15 @@ function syncVehicleProperties(vehicle) {
 
 	if (game.game <= V_GAME_GTA_IV) {
 		let alarm = vehicle.getData("v.alarm");
-		if (game.game == V_GAME_GTA_IV) {
-			console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
-			natives.setVehAlarmDuration(vehicle, alarm);
-			natives.setVehAlarm(vehicle, (alarm > 0) ? true : false);
-		} else if (game.game <= V_GAME_GTA_VC) {
-			console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
-			vehicle.alarm = alarm;
+		if (alarm != null) {
+			if (game.game == V_GAME_GTA_IV) {
+				console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
+				natives.setVehAlarmDuration(vehicle, alarm);
+				natives.setVehAlarm(vehicle, (alarm > 0) ? true : false);
+			} else if (game.game <= V_GAME_GTA_VC) {
+				console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
+				vehicle.alarm = alarm;
+			}
 		}
 	}
 }
@@ -769,6 +775,59 @@ function syncObjectProperties(element) {
 			element.collisionsEnabled = element.getData("v.scale");
 		}
 	}
+}
+
+// ===========================================================================
+
+addNetworkHandler("v.heading", function (element, heading) {
+	if (typeof element == "number") {
+		element = getElementFromId(element);
+	}
+
+	if (element == null) {
+		return false;
+	}
+
+	element.heading = heading;
+});
+
+// ===========================================================================
+
+addNetworkHandler("v.holsterWeapon", function (ped) {
+	if (typeof element == "number") {
+		element = getElementFromId(element);
+	}
+
+	if (element == null) {
+		return false;
+	}
+
+	if (typeof ped.holsterWeapon != "undefined") {
+		ped.holsterWeapon();
+	}
+});
+
+// ===========================================================================
+
+addEventHandler("OnPedSpawn", function (event, ped) {
+	waitUntil(localPlayer != null).then(function () {
+		syncPedProperties(localPlayer);
+	});
+});
+
+// ===========================================================================
+
+async function waitUntil(condition) {
+	return new Promise((resolve) => {
+		let interval = setInterval(() => {
+			if (!(condition)) {
+				return;
+			}
+
+			clearInterval(interval);
+			resolve();
+		}, 1);
+	});
 }
 
 // ===========================================================================
