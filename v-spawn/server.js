@@ -47,7 +47,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 			fixesResource.start();
 		}
 	} else {
-		console.warn("The v-spawnscreen needs the v-fixes resource for death respawn to work properly.");
+		console.warn(`The ${thisResource.name} needs the v-fixes resource for death respawn to work properly.`);
 	}
 
 	loadScriptConfig();
@@ -112,10 +112,10 @@ function getSkinName(skinId) {
 
 addNetworkHandler("OnMapLoaded", function (client, mapName) {
 	if (typeof mapSpawnPoints[mapName] !== "undefined") {
-		console.log(`[V.SPAWNSCREEN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
+		console.log(`[${thisResource.name}] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
 		spawnPlayer(client, mapSpawnPoints[server.game], 0.0, spawnSkin[server.game]);
 	} else {
-		console.log(`[V.SPAWNSCREEN] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
+		console.log(`[${thisResource.name}] ${client.name} spawned as ${getSkinName(spawnSkin[server.game])}`);
 		spawnPlayer(client, spawnPoints[server.game], 0.0, spawnSkin[server.game]);
 	}
 });
@@ -143,12 +143,12 @@ function loadScriptConfig() {
 function saveScriptConfig() {
 	let configText = JSON.stringify(scriptConfig, null, '\t');
 	if (!configText) {
-		console.log(`[V.SPAWNSCREEN] Config file could not be stringified`);
+		console.log(`[${thisResource.name}] Config file could not be stringified`);
 		return false;
 	}
 
 	saveTextFile("config.json", configText);
-	console.log(`[V.SPAWNSCREEN] Config file saved`);
+	console.log(`[${thisResource.name}] Config file saved`);
 }
 
 // ----------------------------------------------------------------------------
@@ -201,7 +201,7 @@ function fixMissingConfigStuff() {
 
 	let newConfig = JSON.stringify(scriptConfig, null, '\t');
 	if (oldConfig != newConfig) {
-		console.log("[V.SPAWNSCREEN] Fixed missing config stuff");
+		console.log(`[${thisResource.name}] Fixed missing config stuff`);
 		saveScriptConfig();
 	}
 }
@@ -295,7 +295,7 @@ function spawnPlayerEx(client) {
 		Number(skinId)
 	);
 
-	console.log(`[SPAWN] ${client.name} spawned as ${getSkinName(skinId)}(${skinId}) at ${spawnData.name}`);
+	console.log(`[${thisResource.name}] ${client.name} spawned as ${getSkinName(skinId)}(${skinId}) at ${spawnData.name}`);
 }
 
 // ----------------------------------------------------------------------------
