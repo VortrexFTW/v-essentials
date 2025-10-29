@@ -98,7 +98,7 @@ function canSpawnVehiclesInProtectedArea() {
 function loadConfig() {
     let configFile = loadTextFile("config.json");
     if (configFile == "") {
-        console.error("Could not load config.json. Resource stopping ...");
+        console.error(`[${thisResource.name}] Could not load config.json. Resource stopping ...`);
         thisResource.stop();
         return false;
     }
@@ -107,7 +107,7 @@ function loadConfig() {
 
     scriptConfig = JSON.parse(configFile);
     if (scriptConfig == null) {
-        console.error("Could not parse config.json. Resource stopping ...");
+        console.error(`[${thisResource.name}] Could not parse config.json. Resource stopping ...`);
         thisResource.stop();
         return false;
     }
