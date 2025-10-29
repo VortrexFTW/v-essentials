@@ -796,7 +796,7 @@ addNetworkHandler("sb.p.limb", function (client, bodyPartId) {
 	if (client.player) {
 		client.player.removeBodyPart(bodyPartId);
 	} else {
-		console.warn("Could not remove " + client.name + "'s " + pedComponents[game.game][bodyPartId] + "! Player object doesn't exist!");
+		console.warn(`[${thisResource.name}] Could not remove ${client.name}'s ${pedComponents[game.game][bodyPartId]}! Player object doesn't exist!`);
 	}
 	return true;
 });

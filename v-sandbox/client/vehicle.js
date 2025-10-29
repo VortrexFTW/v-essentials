@@ -1249,8 +1249,6 @@ addCommandHandler("veh_colour1", function (cmdName, params) {
 		return false;
 	}
 
-	console.log(localPlayer.vehicle);
-
 	let splitParams = params.split(" ");
 	let vehicles = getVehiclesFromParams(splitParams[0]);
 	let colourId = Number(splitParams[1]) || 0;

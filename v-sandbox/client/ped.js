@@ -60,7 +60,7 @@ function updateCivilianMovement(civilian) {
 					}
 				}
 			} else {
-				console.error("Ped " + String(civilian.id) + "'s entity following data is set, but the entity could not be found. Removing data.");
+				console.error(`[${thisResource.name}] Ped ${civilian.id}'s entity following data is set, but the entity could not be found. Removing data.`);
 				triggerNetworkEvent("sb.c.stopfollowing", civilian);
 			}
 		}
@@ -72,7 +72,7 @@ function updateCivilianMovement(civilian) {
 			if (facingPlayer != null) {
 				civilian.heading = getHeadingFromPosToPos(facingPlayer.position, facingPlayer.position);
 			} else {
-				console.error(`Ped ${civilian.id}'s entity facing data is set, but the entity doesn't exist. Removing data.`);
+				console.error(`[${thisResource.name}] Ped ${civilian.id}'s entity facing data is set, but the entity doesn't exist. Removing data.`);
 				triggerNetworkEvent("sb.c.stopfacing", civilian);
 			}
 		}
@@ -1950,8 +1950,6 @@ addCommandHandler("ped_aimatplr", function (cmdName, params) {
 
 	let civilians = getCiviliansFromParams(splitParams[0]);
 	let targetClient = getClientFromParams(splitParams.slice(1).join(" "));
-	console.log(`ARG ${splitParams.slice(1).join(" ")}`);
-	console.log(`SELECTING ${targetClient.name}`);
 
 	let outputText = "";
 

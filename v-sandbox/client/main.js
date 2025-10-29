@@ -15,7 +15,7 @@ addCommandHandler("clear", function (cmdName, params, client) {
 	for (let i = 0; i <= 19; i++) {
 		global.message("", COLOUR_BLACK);
 	}
-	console.log(`[Sandbox] Chatbox cleared`);
+	console.log(`[${thisResource.name}] Chatbox cleared`);
 });
 
 // ----------------------------------------------------------------------------
