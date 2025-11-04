@@ -253,9 +253,7 @@ addNetworkHandler("OnPickupPickedUp", function (client, pedId, pickupId) {
 // ===========================================================================
 
 addEventHandler("OnAddIVNetworkEvent", function (event, client, type, name, data, data2) {
-	getClients().filter(c => c.index != client.index).forEach(c => {
-		triggerNetworkEvent("ReceiveIVNetworkEvent", c, type, name, data, data2, client.index);
-	});
+	triggerNetworkEvent("ReceiveIVNetworkEvent", c, type, name, data, data2, client.index);
 });
 
 // ===========================================================================
