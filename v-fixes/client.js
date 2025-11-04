@@ -632,7 +632,7 @@ function syncVehicleProperties(vehicle) {
 		let lockStatus = vehicle.getData("v.locked");
 		if (lockStatus != null) {
 			console.log(`[${thisResource.name}] Setting vehicle lock status to ${lockStatus}`);
-			vehicle.lockedStatus = (lockStatus == false) ? 0 : 1;
+			vehicle.lockedStatus = (lockStatus == false) ? 1 : 2;
 		}
 	}
 
@@ -731,7 +731,7 @@ function syncVehicleProperties(vehicle) {
 
 // ===========================================================================
 
-addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, fromClientIndex) => {
+addNetworkHandler("ReceiveIVNetworkEvent", function (type, name, data, data2, fromClientIndex) {
 	if (fromClientIndex != localClient.index) {
 		game.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
 	}
