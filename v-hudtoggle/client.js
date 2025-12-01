@@ -34,11 +34,20 @@ function toggleHUD() {
 	if (game.game == GAME_GTA_IV) {
 		natives.displayCash(hudEnabled);
 		natives.displayAmmo(hudEnabled);
-		natives.displayHud(hudEnabled);
+		//natives.displayHud(hudEnabled);
 		natives.displayRadar(hudEnabled);
 		natives.displayAreaName(hudEnabled);
+		natives.displayPlayerNames(hudEnabled);
+		natives.setDisplayPlayerNameAndIcon(natives.getPlayerId(), false);
+		triggerNetworkEvent("sb.msg", " has " + (hudEnabled?"🚨SHOWN🚨":"hidden") + " their HUD");
+		triggerNetworkEvent("sb.hidename", natives.getPlayerId(), hudEnabled);
 	}
 }
+
+addNetworkHandler(`sb.hidename`, function (id, enabled) {
+	console.log("Hiding name for ID: " + id) ;
+	natives.setDisplayPlayerNameAndIcon(id, enabled);
+});
 
 // ----------------------------------------------------------------------------
 
