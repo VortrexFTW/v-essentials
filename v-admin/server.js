@@ -643,7 +643,7 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 	const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
 
 	if (isAdminName(fromClient.name)) {
-		if (!tokenValid || getTokenFromName(fromClient.name) !== token) {
+		if (getTokenFromName(fromClient.name) !== token) {
 			messageAdmins(`${fromClient.name} was kicked from the server because they have an admin's name but invalid token.`);
 			messageAdmins(`Either it's somebody trying to impersonate an admin, or it's a legit admin using a new/different computer.`);
 			fromClient.disconnect();

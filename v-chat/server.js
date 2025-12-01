@@ -272,10 +272,16 @@ addEventHandler("OnPlayerChat", async (event, client, messageText) => {
 
 // ----------------------------------------------------------------------------
 
+// Largely inspired from https://stackoverflow.com/a/62825372
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+
 function replaceEmojiInString(messageText) {
 	if (messageText != null) {
 		for (let i in emojiReplaceString) {
-			messageText = messageText.replace(String(emojiReplaceString[i][0]), emojiReplaceString[i][1]);
+			messageText = messageText.replace(new RegExp(escapeRegExp(String(emojiReplaceString[i][0])), 'g'), emojiReplaceString[i][1]);
 		}
 		return messageText;
 	}
