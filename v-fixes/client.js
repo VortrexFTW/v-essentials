@@ -414,9 +414,11 @@ addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
 // ===========================================================================
 
 addEventHandler("OnElementStreamIn", function (event, element) {
-	if (element == null) {
-		return false;
-	}
+	//if (element == null) {
+	//	return false;
+	//}
+
+	console.log(`[${thisResource.name}] OnElementStreamIn for element ${element.id}`);
 
 	syncElementProperties(element);
 });
@@ -424,14 +426,14 @@ addEventHandler("OnElementStreamIn", function (event, element) {
 // ===========================================================================
 
 function syncElementProperties(element) {
-	if (element == null) {
-		return false;
-	}
+	//if (element == null) {
+	//	return false;
+	//}
 
 	// Check if element is a server element
-	if (element.id == -1) {
-		return false;
-	}
+	//if (element.id == -1) {
+	//	return false;
+	//}
 
 	if (typeof element.interior != "undefined") {
 		if (element.getData("v.interior")) {
@@ -585,6 +587,8 @@ function syncPedProperties(ped) {
 			} else {
 				natives.taskWanderStandard(ped);
 			}
+		} else {
+			natives.setDisplayPlayerNameAndIcon(getClientFromPlayerElement(ped).index, false);
 		}
 	}
 }
@@ -651,23 +655,23 @@ function syncVehicleProperties(vehicle) {
 		let lockStatus = vehicle.getData("v.locked");
 		if (lockStatus != null) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} lock status to ${lockStatus}`);
-			vehicle.lockedStatus = (!lockStatus) ? 1 : 2;
+			vehicle.lockedStatus = (lockStatus == true) ? 2 : 1;
 		}
 	}
 
-	if (typeof vehicle.hazardLights != "undefined") {
+	if (game.game == V_GAME_GTA_IV) {
 		let hazardLightsState = vehicle.getData("v.hazardLights");
 		if (hazardLightsState != null) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} hazard lights to ${hazardLightsState}`);
-			vehicle.hazardLights = hazardLightsState;
+			natives.setVehHazardlights(vehicle, !!hazardLightsState);
 		}
 	}
 
-	if (typeof vehicle.interiorLight != "undefined") {
+	if (game.game == V_GAME_GTA_IV) {
 		let interiorLightState = vehicle.getData("v.interiorLight");
 		if (interiorLightState != null) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} interior light to ${interiorLightState}`);
-			vehicle.interiorLight = interiorLightState;
+			natives.setVehInteriorlight(vehicle, !!interiorLightState);
 		}
 	}
 
@@ -675,10 +679,10 @@ function syncVehicleProperties(vehicle) {
 		let taxiLightState = vehicle.getData("v.taxiLight");
 		if (taxiLightState != null) {
 			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi lights to ${taxiLightState}`);
+				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi light to ${taxiLightState}`);
 				natives.SET_TAXI_LIGHTS(vehicle.ref, (taxiLightState) ? 1 : 0);
 			} else if (game.game == V_GAME_GTA_IV) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi lights to ${taxiLightState}`);
+				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi light to ${taxiLightState}`);
 				natives.setTaxiLights(vehicle, taxiLightState);
 			}
 		}
@@ -686,25 +690,24 @@ function syncVehicleProperties(vehicle) {
 
 	if (game.game <= V_GAME_GTA_IV) {
 		let trunkState = vehicle.getData("v.trunk");
-		if (trunkState != null) {
-			if (!!trunkState == true) {
-				if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-					console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
-					natives.POP_CAR_BOOT(vehicle.ref);
-				} else if (game.game == V_GAME_GTA_IV) {
-					console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
-					if (trunkState == true) {
-						natives.openCarDoor(vehicle, 5);
-					} else {
-						natives.closeCarDoor(vehicle, 5);
-					}
-				}
+		if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+			if (trunkState == true) {
+				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
+				natives.POP_CAR_BOOT(vehicle.ref);
+			}
+		} else if (game.game == V_GAME_GTA_IV) {
+			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
+			if (trunkState == true) {
+				natives.openCarDoor(vehicle, 5);
+			} else {
+				natives.shutCarDoor(vehicle, 5);
 			}
 		}
 	}
 
-	if (game.game == V_GAME_GTA_IV && game.game == V_GAME_GTA_SA) {
+	if (game.game == V_GAME_GTA_IV || game.game == V_GAME_GTA_SA) {
 		let upgrades = vehicle.getData("v.upgrades");
+		console.log(`[${thisResource.name}] Vehicle ${vehicle.id} upgrades`);
 		if (game.game == V_GAME_GTA_SA) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} upgrades to ${upgrades.join(", ")}`);
 			for (let i in upgrades) {
@@ -715,12 +718,12 @@ function syncVehicleProperties(vehicle) {
 		} else if (game.game == V_GAME_GTA_IV) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} upgrades to ${upgrades.join(", ")}`);
 			for (let i = 0; i < upgrades.length; i++) {
-				natives.turnOffVehicleExtra(vehicle, i, !!!upgrades[i]);
+				natives.turnOffVehicleExtra(vehicle, i, (upgrades[i] == 1) ? false : true);
 			}
 		}
 	}
 
-	if (game.game == V_GAME_GTA_IV && game.game == V_GAME_GTA_SA) {
+	if (game.game == V_GAME_GTA_IV || game.game == V_GAME_GTA_SA) {
 		let livery = vehicle.getData("v.livery");
 		if (livery != null) {
 			if (game.game == V_GAME_GTA_SA) {
@@ -752,6 +755,22 @@ function syncVehicleProperties(vehicle) {
 				console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
 				vehicle.alarm = alarm;
 			}
+		}
+	}
+
+	if (game.game == V_GAME_GTA_IV) {
+		let towedByVehicleId = vehicle.getData("v.tow");
+		if (towedByVehicleId != null) {
+			let towedByVehicle = getElementFromId(towedByVehicleId);
+			if (towedByVehicle != null) {
+				let towOffsets = natives.getOffsetsForAttachCarToCar(vehicle, towedByVehicle);
+				let dimensions = natives.getModelDimensions(natives.getCarModel(vehicle));
+				natives.attachCarToCar(vehicle, towedByVehicle, 0, new Vec3(0.0, (dimensions[0].y / 2), 0.7), towOffsets[1]);
+			} else {
+				natives.detachCar(vehicle);
+			}
+		} else {
+			natives.detachCar(vehicle);
 		}
 	}
 }
@@ -820,24 +839,31 @@ addNetworkHandler("v.heading", function (element, heading) {
 
 // ===========================================================================
 
-addNetworkHandler("v.holsterWeapon", function (ped) {
+// This is for Mafia 1 only.
+addNetworkHandler("v.holsterWeapon", function (element) {
+	console.log(`[${thisResource.name}] Attempting to force ped ${element} to holster weapon.`);
+
 	if (typeof element == "number") {
 		element = getElementFromId(element);
 	}
 
 	if (element == null) {
+		console.warn(`[${thisResource.name}] Aborting ped.holsterWeapon() because ped is null.`);
 		return false;
 	}
 
-	if (typeof ped.holsterWeapon != "undefined") {
-		ped.holsterWeapon();
+	if (typeof element.holsterWeapon != "undefined") {
+		if (element.holsterWeapon()) {
+			console.log(`[${thisResource.name}] Forced ped ${element} to holster weapon.`);
+		}
 	}
 });
 
 // ===========================================================================
 
+// This is for GTA IV only. Changes the ticker text display in Star Junction (IRL Times Square)
 addNetworkHandler("v.news", function (newsText) {
-	if (game.game == 5) {
+	if (game.game == V_GAME_GTA_IV) {
 		natives.clearNewsScrollbar();
 		natives.addStringToNewsScrollbar(newsText);
 	}
