@@ -81,7 +81,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 
 async function updateWeather() {
 	if (scriptConfig.useRealWorldWeather !== true) {
-		let gtaWeatherData = weather[server.game].find(w => w.name.toLowerCase().includes(scriptConfig.startWeather.toLowerCase()));
+		let gtaWeatherData = weather[server.game].find(w => w.name.toLowerCase().includes(scriptConfig.weatherOnStartup.toLowerCase()));
 		game.forceWeather(gtaWeatherData.weatherId);
 		return;
 	}

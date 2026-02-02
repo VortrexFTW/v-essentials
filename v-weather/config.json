@@ -1,5 +1,5 @@
 {
-	"useRealWorldWeather": true,
+	"useRealWorldWeather": false,
 	"weatherOnStartup": "Clear",
 	"weatherAPIKey": "",
 	"weatherLocation": "New York City",
