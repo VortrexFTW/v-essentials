@@ -123,10 +123,9 @@ addCommandHandler("ban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("unban", (command, params, client) => {
-	let targetClient = getClientFromParams(params);
 
-	if (targetClient == null) {
-		messageAdmins(`${client.name} tried to unban '${params}' but failed because no player is connected with that name/ID.`);
+	if(params.length === 0) {
+		messageAdmin(`You must input an ip or a username.`, client, errorMessageColour);
 		return false;
 	}
 
