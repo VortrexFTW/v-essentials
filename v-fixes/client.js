@@ -398,12 +398,12 @@ function getPedVehicleSeat(ped) {
 
 // ===========================================================================
 
-addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2) {
-	console.log(`IV Network event: ${name} with type ${type} dataLength: ${data.byteLength}`);
-	if (type == 3) {
-		triggerNetworkEvent("OnAddIVNetworkEvent", type, name, data, data2);
-	}
-});
+//addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2) {
+//	console.log(`IV Network event: ${name} with type ${type} dataLength: ${data.byteLength}`);
+//	if (type == 3) {
+//		triggerNetworkEvent("OnAddIVNetworkEvent", type, name, data, data2);
+//	}
+//});
 
 // ===========================================================================
 
@@ -588,7 +588,10 @@ function syncPedProperties(ped) {
 				natives.taskWanderStandard(ped);
 			}
 		} else {
-			natives.setDisplayPlayerNameAndIcon(getClientFromPlayerElement(ped).index, false);
+			let playerClient = getClientFromPlayerElement(ped);
+			if (playerClient != null) {
+				natives.setDisplayPlayerNameAndIcon(playerClient.index, false);
+			}
 		}
 	}
 }
@@ -773,22 +776,37 @@ function syncVehicleProperties(vehicle) {
 			natives.detachCar(vehicle);
 		}
 	}
+
+	//if (game.game == V_GAME_MAFIA_ONE) {
+	//	let fuel = vehicle.getData("v.fuel");
+	//	if (fuel != null) {
+	//		console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} fuel to ${fuel} (${typeof fuel})`);
+	//		setTimeout(function () {
+	//			vehicle.fuel = fuel;
+	//		}, 1000);
+	//	}
+	//}
 }
 
 // ===========================================================================
 
-addNetworkHandler("ReceiveIVNetworkEvent", function (type, name, data, data2, fromClientIndex) {
-	if (fromClientIndex != localClient.index) {
-		game.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
-	}
-});
+if (game.game == V_GAME_GTA_IV) {
+	addNetworkHandler("ReceiveIVNetworkEvent", function (type, name, data, data2, fromClientIndex) {
+		if (fromClientIndex != localClient.index) {
+			game.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
+		}
+	});
+}
 
 // ===========================================================================
 
-addEventHandler("OnMapLoaded", function (event, mapName) {
-	console.log(`[${thisResource.name}] OnMapLoaded: ${mapName}`);
-	triggerNetworkEvent("OnPlayerMapLoaded", mapName);
-});
+if (game.game == V_GAME_MAFIA_ONE) {
+	addEventHandler("OnMapLoaded", function (event, mapName) {
+		console.log(`[${thisResource.name}] OnMapLoaded: ${mapName}`);
+		// Server doesn't receive a packet when a player's map loads, so we'll need to do it manually.
+		triggerNetworkEvent("OnPlayerMapLoaded", mapName);
+	});
+}
 
 // ===========================================================================
 
@@ -871,11 +889,43 @@ addNetworkHandler("v.news", function (newsText) {
 
 // ===========================================================================
 
+addNetworkHandler("v.elementInterior", function (element, interior) {
+	console.log(`[${thisResource.name}] Attempting to set element ${element} interior to ${interior}.`);
+
+	if (typeof element == "number") {
+		element = getElementFromId(element);
+	}
+
+	if (element == null) {
+		console.warn(`[${thisResource.name}] Aborting setting element ${element} interior to ${interior} because element is null.`);
+		return false;
+	}
+
+	element.interior = interior;
+});
+
+// ===========================================================================
+
+addNetworkHandler("v.interior", function (interior) {
+	//console.log(`[${thisResource.name}] Attempting to set element ${element} interior to ${interior}.`);
+
+	localPlayer.interior = interior;
+	game.cameraInterior = interior;
+
+	getElementsByType(ELEMENT_VEHICLE).filter(veh => veh.getData("v.interior")).forEach(veh => {
+		veh.interior = veh.getData("v.interior");
+	});
+});
+
+// ===========================================================================
+
 addEventHandler("OnPedSpawn", function (event, ped) {
 	waitUntil(localPlayer != null).then(function () {
 		syncPedProperties(localPlayer);
 	});
 });
+
+
 
 // ===========================================================================
 
