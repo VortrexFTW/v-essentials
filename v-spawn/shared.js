@@ -1021,7 +1021,7 @@ let skins = {
 		[-1139941790, "Tough Guy", true],
 		[809067472, "Male Tourist", true]
 	],
-	[GAME_MAFIA_ONE]: [
+	[10]: [
 		["Tommy.i3d", "Tommy Angelo", true],
 		["TommyBOXER.i3d", "Tommy Angelo", true],
 		["TommyCOAT.i3d", "Tommy Angelo", false],

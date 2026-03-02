@@ -9,7 +9,7 @@ let gameIdentifierStrings = {
 	[GAME_GTA_VC]: "gta:vc",
 	[GAME_GTA_SA]: "gta:sa",
 	[GAME_GTA_IV]: "gta:iv",
-	[GAME_MAFIA_ONE]: "mafia:one",
+	[10]: "mafia:one",
 };
 
 // ----------------------------------------------------------------------------
