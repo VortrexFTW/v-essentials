@@ -123,7 +123,6 @@ addCommandHandler("ban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("unban", (command, params, client) => {
-
 	if(params.length === 0) {
 		messageAdmin(`You must input an ip or a username.`, client, errorMessageColour);
 		return false;
@@ -598,6 +597,11 @@ function fixMissingConfigStuff() {
 		}
 	}
 
+	if (typeof scriptConfig.levelToUseBuiltInCommands == "undefined") {
+		// Set default to the highest in existing command levels
+		scriptConfig.levelToUseBuiltInCommands = Math.max(...Object.values(scriptConfig.commandLevels));
+	}
+
 	let newConfig = JSON.stringify(scriptConfig, null, '\t');
 	if (oldConfig != newConfig) {
 		console.log("[V.ADMIN] Fixed missing config stuff");
@@ -639,6 +643,14 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
 	}
 
+	console.warn(fromClient.ip);
+	if(fromClient.ip == "127.0.0.1") {
+		messageAdmins(`${fromClient.name} is connecting from localhost and has full admin permissions!`);
+		fromClient.setData("v.admin", 9999999, true);
+		fromClient.administrator = true;
+		return true;
+	}
+
 	const matchedAdmin = scriptConfig.admins.find((admin) => admin.token === token);
 
 	if (isAdminName(fromClient.name)) {
@@ -652,6 +664,10 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 
 	if (matchedAdmin) {
 		fromClient.setData("v.admin", matchedAdmin.level || 1, true);
+		if(matchedAdmin.level >= scriptConfig.levelToUseBuiltInCommands) {
+			fromClient.administrator = true;
+		}
+
 		tokenValid = true;
 	} else {
 		fromClient.setData("v.admin", 0, true);
