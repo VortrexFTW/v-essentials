@@ -163,9 +163,10 @@ function setElementAudio(element, url) {
 		return false;
 	}
 
+	let extraContentResource = null
 	let soundFile = null;
 	if (url.toLowerCase().indexOf("http://") == -1 && url.toLowerCase().indexOf("https://") == -1) {
-		let extraContentResource = getResources()
+		extraContentResource = getResources()
 			.filter(resource => resource != null)
 			.filter(resource => resource.isStarted == true && resource.isReady == true && typeof resource.exports.isCustomContentResource != "undefined")
 			.filter(resource => typeof resource.exports.getCustomSound != "undefined")
