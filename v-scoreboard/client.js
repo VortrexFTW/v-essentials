@@ -45,7 +45,7 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnDrawnHUD", function (event) {
-	if (isKeyDown(SDLK_TAB)) {
+	if ((isKeyDown(SDLK_TAB) && game.game < 10) || (isKeyDown(SDLK_F5) && game.game == 10)) {
 		if (listFont != null && titleFont != null) {
 			let playersText = `PLAYERS`;
 			let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
