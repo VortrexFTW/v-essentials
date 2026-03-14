@@ -264,5 +264,3 @@ addNetworkHandler(`sb.p.veh.enter`, function (client, vehicleID, driver) {
 addNetworkHandler(`sb.p.fatness`, function (client, player, fatness) {
 	triggerNetworkEvent(`sb.p.fatness`, null, player, fatness);
 });
-
-// ----------------------------------------------------------------------------

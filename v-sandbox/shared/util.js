@@ -6,6 +6,19 @@
 let thisGame = (typeof server == "undefined") ? game.game : server.game;
 let isServer = (typeof server == "undefined") ? false : true;
 
+// ===========================================================================
+
+class VehicleType {
+	constructor(model, name, data = {}) {
+		this.model = model;
+		this.name = name;
+
+		// GTA IV
+		this.ivEpisode = (typeof data.ivEpisode != "undefined") ? data.ivEpisode : 0;
+		this.canBeSpawned = (typeof data.canBeSpawned != "undefined") ? data.canBeSpawned : true;
+	}
+}
+
 // ----------------------------------------------------------------------------
 
 exportFunction("getSkinName", getSkinNameFromId);
@@ -559,15 +572,13 @@ let weaponNames = [
 
 // ----------------------------------------------------------------------------
 
-let gameAnnounceColours = [
-	COLOUR_BLACK,					// Invalid
-	COLOUR_SILVER,					// GTA III
-	COLOUR_AQUA,					// GTA Vice City
-	COLOUR_ORANGE,					// GTA San Andreas
-	COLOUR_ORANGE,					// GTA Underground
-	COLOUR_SILVER,					// GTA IV
-	COLOUR_SILVER					// GTA IV (EFLC)
-];
+let gameAnnounceColours = {
+	[GAME_GTA_III]: COLOUR_BLUE,
+	[GAME_GTA_VC]: COLOUR_AQUA,
+	[GAME_GTA_SA]: COLOUR_ORANGE,
+	[GAME_GTA_IV]: COLOUR_SILVER,
+	[10]: COLOUR_YELLOW
+}
 
 // ----------------------------------------------------------------------------
 
@@ -1863,6 +1874,718 @@ let vehicleModelIdStart = [
 ];
 
 // ----------------------------------------------------------------------------
+
+let vehicles = {
+	[GAME_GTA_III]: [
+		new VehicleType(90, "Landstalker"),
+		new VehicleType(91, "Idaho"),
+		new VehicleType(92, "Stinger"),
+		new VehicleType(93, "Linerunner"),
+		new VehicleType(94, "Perennial"),
+		new VehicleType(95, "Sentinel"),
+		new VehicleType(96, "Patriot"),
+		new VehicleType(97, "Fire Truck"),
+		new VehicleType(98, "Trashmaster"),
+		new VehicleType(99, "Stretch"),
+		new VehicleType(100, "Manana"),
+		new VehicleType(101, "Infernus"),
+		new VehicleType(102, "Blista"),
+		new VehicleType(103, "Pony"),
+		new VehicleType(104, "Mule"),
+		new VehicleType(105, "Cheetah"),
+		new VehicleType(106, "Ambulance"),
+		new VehicleType(107, "FBI Car"),
+		new VehicleType(108, "Moonbeam"),
+		new VehicleType(109, "Esperanto"),
+		new VehicleType(110, "Taxi"),
+		new VehicleType(111, "Kuruma"),
+		new VehicleType(112, "Bobcat"),
+		new VehicleType(113, "Mr. Whoopee"),
+		new VehicleType(114, "BF Injection"),
+		new VehicleType(115, "Manana (Corpse)"),
+		new VehicleType(116, "Police Car"),
+		new VehicleType(117, "Enforcer"),
+		new VehicleType(118, "Securicar"),
+		new VehicleType(119, "Banshee"),
+		new VehicleType(120, "Predator", { isBoat: true }),
+		new VehicleType(121, "Bus"),
+		new VehicleType(122, "Rhino"),
+		new VehicleType(123, "Barracks OL"),
+		new VehicleType(124, "Train", { canBeSpawned: false }),
+		new VehicleType(125, "Police Helicopter"),
+		new VehicleType(126, "Dodo"),
+		new VehicleType(127, "Coach"),
+		new VehicleType(128, "Cabbie"),
+		new VehicleType(129, "Stallion"),
+		new VehicleType(130, "Rumpo"),
+		new VehicleType(131, "RC Bandit"),
+		new VehicleType(132, "Bellyup"),
+		new VehicleType(133, "Mr. Wongs"),
+		new VehicleType(134, "Mafia Sentinel"),
+		new VehicleType(135, "Yardie Lobo"),
+		new VehicleType(136, "Yakuza Stinger"),
+		new VehicleType(137, "Diablo Stallion"),
+		new VehicleType(138, "Cartel Cruiser"),
+		new VehicleType(139, "Hoods Rumpo XL"),
+		new VehicleType(140, "Air Train", { canBeSpawned: false }),
+		new VehicleType(141, "Dead Dodo", { canBeSpawned: false }),
+		new VehicleType(142, "Speeder", { isBoat: true }),
+		new VehicleType(143, "Reefer", { isBoat: true }),
+		new VehicleType(144, "Panlantic"),
+		new VehicleType(145, "Flatbed"),
+		new VehicleType(146, "Yankee"),
+		new VehicleType(147, "Escape", { canBeSpawned: false }),
+		new VehicleType(148, "Borgnine Taxi"),
+		new VehicleType(149, "Toyz Van"),
+		new VehicleType(150, "Ghost", { canBeSpawned: false }),
+	],
+	[GAME_GTA_VC]: [// GTA VC
+		new VehicleType(130, "Landstalker"),
+		new VehicleType(131, "Idaho"),
+		new VehicleType(132, "Stinger"),
+		new VehicleType(133, "Linerunner"),
+		new VehicleType(134, "Perennial"),
+		new VehicleType(135, "Sentinel"),
+		new VehicleType(136, "Rio"),
+		new VehicleType(137, "Firetruck"),
+		new VehicleType(138, "Trashmaster"),
+		new VehicleType(139, "Stretch"),
+		new VehicleType(140, "Manana"),
+		new VehicleType(141, "Infernus"),
+		new VehicleType(142, "Voodoo"),
+		new VehicleType(143, "Pony"),
+		new VehicleType(144, "Mule"),
+		new VehicleType(145, "Cheetah"),
+		new VehicleType(146, "Ambulance"),
+		new VehicleType(147, "FBI Washington"),
+		new VehicleType(148, "Moonbeam"),
+		new VehicleType(149, "Esperanto"),
+		new VehicleType(150, "Taxi"),
+		new VehicleType(151, "Washington 2"),
+		new VehicleType(152, "Bobcat"),
+		new VehicleType(153, "Mr.Whoopee"),
+		new VehicleType(154, "BF-Injection"),
+		new VehicleType(155, "Hunter"),
+		new VehicleType(156, "Police Car"),
+		new VehicleType(157, "Enforcer"),
+		new VehicleType(158, "Securicar"),
+		new VehicleType(159, "Banshee"),
+		new VehicleType(160, "Predator", { isBoat: true }),
+		new VehicleType(161, "Bus"),
+		new VehicleType(162, "Rhino"),
+		new VehicleType(163, "Barracks OL"),
+		new VehicleType(164, "Cuban Hermes"),
+		new VehicleType(165, "Helicopter"),
+		new VehicleType(166, "Angel"),
+		new VehicleType(167, "Coach"),
+		new VehicleType(168, "Cabbie"),
+		new VehicleType(169, "Stallion"),
+		new VehicleType(170, "Rumpo"),
+		new VehicleType(171, "RC Bandit"),
+		new VehicleType(172, "Romero's Hearse"),
+		new VehicleType(173, "Packer"),
+		new VehicleType(174, "Sentinel XS"),
+		new VehicleType(175, "Admiral"),
+		new VehicleType(176, "Squalo"),
+		new VehicleType(177, "Sea Sparrow"),
+		new VehicleType(178, "Pizza Boy"),
+		new VehicleType(179, "Gang Burrito"),
+		new VehicleType(180, "Airtrain", { canBeSpawned: false }),
+		new VehicleType(181, "Deaddodo", { canBeSpawned: false }),
+		new VehicleType(182, "Speeder"),
+		new VehicleType(183, "Reefer"),
+		new VehicleType(184, "Tropic"),
+		new VehicleType(185, "Flatbed"),
+		new VehicleType(186, "Yankee"),
+		new VehicleType(187, "Caddy"),
+		new VehicleType(188, "Zebra Cab"),
+		new VehicleType(189, "Top Fun"),
+		new VehicleType(190, "Skimmer", { isBoat: true, isAircraft: true }),
+		new VehicleType(191, "PCJ-600"),
+		new VehicleType(192, "Faggio"),
+		new VehicleType(193, "Freeway"),
+		new VehicleType(194, "RC Varon"),
+		new VehicleType(195, "RC Raider"),
+		new VehicleType(196, "Glendale"),
+		new VehicleType(197, "Oceanic"),
+		new VehicleType(198, "Sanchez"),
+		new VehicleType(199, "Sparrow"),
+		new VehicleType(200, "Patriot"),
+		new VehicleType(201, "Love Fist"),
+		new VehicleType(202, "Coast Guard", { isBoat: true }),
+		new VehicleType(203, "Dinghy", { isBoat: true }),
+		new VehicleType(204, "Hermes"),
+		new VehicleType(205, "Sabre"),
+		new VehicleType(206, "Sabre Turbo"),
+		new VehicleType(207, "Phoenix"),
+		new VehicleType(208, "Walton"),
+		new VehicleType(209, "Regina"),
+		new VehicleType(210, "Comet"),
+		new VehicleType(211, "Deluxo"),
+		new VehicleType(212, "Burrito"),
+		new VehicleType(213, "Spand Express"),
+		new VehicleType(214, "Marquis", { isBoat: true }),
+		new VehicleType(215, "Baggage Handler"),
+		new VehicleType(216, "Kaufman Cab"),
+		new VehicleType(217, "Maverick"),
+		new VehicleType(218, "VCN Maverick"),
+		new VehicleType(219, "Rancher"),
+		new VehicleType(220, "FBI Rancher"),
+		new VehicleType(221, "Virgo"),
+		new VehicleType(222, "Greenwood"),
+		new VehicleType(223, "Cuban Jetmax", { isBoat: true }),
+		new VehicleType(224, "Hotring Racer 1"),
+		new VehicleType(225, "Sandking"),
+		new VehicleType(226, "Blista Compact"),
+		new VehicleType(227, "Police Maverick"),
+		new VehicleType(228, "Boxville"),
+		new VehicleType(229, "Benson"),
+		new VehicleType(230, "Mesa Grande"),
+		new VehicleType(231, "RC Goblin"),
+		new VehicleType(232, "Hotring Racer 2"),
+		new VehicleType(233, "Hotring Racer 3"),
+		new VehicleType(234, "Bloodring Banger 1"),
+		new VehicleType(235, "Bloodring Banger 2"),
+		new VehicleType(236, "VCPD Cheetah"),
+	],
+	[GAME_GTA_SA]: [ // GTA San Andreas
+		new VehicleType(400, "Landstalker"),
+		new VehicleType(401, "Bravura"),
+		new VehicleType(402, "Buffalo"),
+		new VehicleType(403, "Linerunner"),
+		new VehicleType(404, "Pereniel"),
+		new VehicleType(405, "Sentinel"),
+		new VehicleType(406, "Dumper"),
+		new VehicleType(407, "Firetruck"),
+		new VehicleType(408, "Trashmaster"),
+		new VehicleType(409, "Stretch"),
+		new VehicleType(410, "Manana"),
+		new VehicleType(411, "Infernus"),
+		new VehicleType(412, "Voodoo"),
+		new VehicleType(413, "Pony"),
+		new VehicleType(414, "Mule"),
+		new VehicleType(415, "Cheetah"),
+		new VehicleType(416, "Ambulance"),
+		new VehicleType(417, "Leviathan"),
+		new VehicleType(418, "Moonbeam"),
+		new VehicleType(419, "Esperanto"),
+		new VehicleType(420, "Taxi"),
+		new VehicleType(421, "Washington"),
+		new VehicleType(422, "Bobcat"),
+		new VehicleType(423, "Mr Whoopee"),
+		new VehicleType(424, "BF Injection"),
+		new VehicleType(425, "Hunter"),
+		new VehicleType(426, "Premier"),
+		new VehicleType(427, "Enforcer"),
+		new VehicleType(428, "Securicar"),
+		new VehicleType(429, "Banshee"),
+		new VehicleType(430, "Predator", { isBoat: true }),
+		new VehicleType(431, "Bus"),
+		new VehicleType(432, "Rhino"),
+		new VehicleType(433, "Barracks"),
+		new VehicleType(434, "Hotknife"),
+		new VehicleType(435, "Box Trailer"),
+		new VehicleType(436, "Previon"),
+		new VehicleType(437, "Coach"),
+		new VehicleType(438, "Cabbie"),
+		new VehicleType(439, "Stallion"),
+		new VehicleType(440, "Rumpo"),
+		new VehicleType(441, "RC Bandit"),
+		new VehicleType(442, "Romero"),
+		new VehicleType(443, "Packer"),
+		new VehicleType(444, "Monster"),
+		new VehicleType(445, "Admiral"),
+		new VehicleType(446, "Squalo", { isBoat: true }),
+		new VehicleType(447, "Seasparrow", { isBoat: true, isAircraft: true }),
+		new VehicleType(448, "Pizzaboy"),
+		new VehicleType(449, "Tram"),
+		new VehicleType(450, "Grain Trailer"),
+		new VehicleType(451, "Turismo"),
+		new VehicleType(452, "Speeder", { isBoat: true }),
+		new VehicleType(453, "Reefer", { isBoat: true }),
+		new VehicleType(454, "Tropic"),
+		new VehicleType(455, "Flatbed", { isBoat: true }),
+		new VehicleType(456, "Yankee"),
+		new VehicleType(457, "Caddy"),
+		new VehicleType(458, "Solair"),
+		new VehicleType(459, "Berkley's RC Van"),
+		new VehicleType(460, "Skimmer", { isBoat: true, isAircraft: true }),
+		new VehicleType(461, "PCJ-600"),
+		new VehicleType(462, "Faggio"),
+		new VehicleType(463, "Freeway"),
+		new VehicleType(464, "RC Baron"),
+		new VehicleType(465, "RC Raider"),
+		new VehicleType(466, "Glendale"),
+		new VehicleType(467, "Oceanic"),
+		new VehicleType(468, "Sanchez"),
+		new VehicleType(469, "Sparrow"),
+		new VehicleType(470, "Patriot"),
+		new VehicleType(471, "Quad"),
+		new VehicleType(472, "Coastguard", { isBoat: true }),
+		new VehicleType(473, "Dinghy", { isBoat: true }),
+		new VehicleType(474, "Hermes"),
+		new VehicleType(475, "Sabre"),
+		new VehicleType(476, "Rustler"),
+		new VehicleType(477, "ZR-350"),
+		new VehicleType(478, "Walton"),
+		new VehicleType(479, "Regina"),
+		new VehicleType(480, "Comet"),
+		new VehicleType(481, "BMX"),
+		new VehicleType(482, "Burrito"),
+		new VehicleType(483, "Camper"),
+		new VehicleType(484, "Marquis", { isBoat: true }),
+		new VehicleType(485, "Baggage"),
+		new VehicleType(486, "Dozer"),
+		new VehicleType(487, "Maverick"),
+		new VehicleType(488, "News Maverick"),
+		new VehicleType(489, "Rancher"),
+		new VehicleType(490, "FBI Rancher"),
+		new VehicleType(491, "Virgo"),
+		new VehicleType(492, "Greenwood"),
+		new VehicleType(493, "Jetmax", { isBoat: true }),
+		new VehicleType(494, "Hotring-Racer A"),
+		new VehicleType(495, "Sandking"),
+		new VehicleType(496, "Blista"),
+		new VehicleType(497, "Police Maverick"),
+		new VehicleType(498, "Boxville"),
+		new VehicleType(499, "Benson"),
+		new VehicleType(500, "Mesa"),
+		new VehicleType(501, "RC Goblin"),
+		new VehicleType(502, "Hotring-Racer B"),
+		new VehicleType(503, "Hotring-Racer C"),
+		new VehicleType(504, "Bloodring-Banger"),
+		new VehicleType(505, "Rancher"),
+		new VehicleType(506, "Super-GT"),
+		new VehicleType(507, "Elegant"),
+		new VehicleType(508, "Journey"),
+		new VehicleType(509, "Bike"),
+		new VehicleType(510, "Mountain Bike"),
+		new VehicleType(511, "Beagle"),
+		new VehicleType(512, "Cropduster"),
+		new VehicleType(513, "Stunt"),
+		new VehicleType(514, "Tanker"),
+		new VehicleType(515, "RoadTrain"),
+		new VehicleType(516, "Nebula"),
+		new VehicleType(517, "Majestic"),
+		new VehicleType(518, "Buccaneer"),
+		new VehicleType(519, "Shamal"),
+		new VehicleType(520, "Hydra"),
+		new VehicleType(521, "FCR-900"),
+		new VehicleType(522, "NRG-500"),
+		new VehicleType(523, "HPV1000"),
+		new VehicleType(524, "Cement Truck"),
+		new VehicleType(525, "Tow Truck"),
+		new VehicleType(526, "Fortune"),
+		new VehicleType(527, "Cadrona"),
+		new VehicleType(528, "FBI Truck"),
+		new VehicleType(529, "Willard"),
+		new VehicleType(530, "Forklift"),
+		new VehicleType(531, "Tractor"),
+		new VehicleType(532, "Combine"),
+		new VehicleType(533, "Feltzer"),
+		new VehicleType(534, "Remington"),
+		new VehicleType(535, "Slamvan"),
+		new VehicleType(536, "Blade"),
+		new VehicleType(537, "Freight"),
+		new VehicleType(538, "Streak"),
+		new VehicleType(539, "Vortex"),
+		new VehicleType(540, "Vincent"),
+		new VehicleType(541, "Bullet"),
+		new VehicleType(542, "Clover"),
+		new VehicleType(543, "Sadler"),
+		new VehicleType(544, "Firetruck"),
+		new VehicleType(545, "Hustler"),
+		new VehicleType(546, "Intruder"),
+		new VehicleType(547, "Primo"),
+		new VehicleType(548, "Cargobob"),
+		new VehicleType(549, "Tampa"),
+		new VehicleType(550, "Sunrise"),
+		new VehicleType(551, "Merit"),
+		new VehicleType(552, "Utility"),
+		new VehicleType(553, "Nevada"),
+		new VehicleType(554, "Yosemite"),
+		new VehicleType(555, "Windsor"),
+		new VehicleType(556, "Monster Truck A"),
+		new VehicleType(557, "Monster Truck B"),
+		new VehicleType(558, "Uranus"),
+		new VehicleType(559, "Jester"),
+		new VehicleType(560, "Sultan"),
+		new VehicleType(561, "Stratum"),
+		new VehicleType(562, "Elegy"),
+		new VehicleType(563, "Raindance"),
+		new VehicleType(564, "RC Tiger"),
+		new VehicleType(565, "Flash"),
+		new VehicleType(566, "Tahoma"),
+		new VehicleType(567, "Savanna"),
+		new VehicleType(568, "Bandito"),
+		new VehicleType(569, "Freight"),
+		new VehicleType(570, "Trailer"),
+		new VehicleType(571, "Kart"),
+		new VehicleType(572, "Mower"),
+		new VehicleType(573, "Duneride"),
+		new VehicleType(574, "Sweeper"),
+		new VehicleType(575, "Broadway"),
+		new VehicleType(576, "Tornado"),
+		new VehicleType(577, "AT-400"),
+		new VehicleType(578, "DFT-30"),
+		new VehicleType(579, "Huntley"),
+		new VehicleType(580, "Stafford"),
+		new VehicleType(581, "BF-400"),
+		new VehicleType(582, "Newsvan"),
+		new VehicleType(583, "Tug"),
+		new VehicleType(584, "Tanker Trailer"),
+		new VehicleType(585, "Emperor"),
+		new VehicleType(586, "Wayfarer"),
+		new VehicleType(587, "Euros"),
+		new VehicleType(588, "Hotdog"),
+		new VehicleType(589, "Club"),
+		new VehicleType(590, "Freight Boxcar"),
+		new VehicleType(591, "Short Box Trailer"),
+		new VehicleType(592, "Andromada"),
+		new VehicleType(593, "Dodo"),
+		new VehicleType(594, "RC Cam"),
+		new VehicleType(595, "Launch"),
+		new VehicleType(596, "Police Car (LSPD)"),
+		new VehicleType(597, "Police Car (SFPD)"),
+		new VehicleType(598, "Police Car (LVPD)"),
+		new VehicleType(599, "Police Ranger"),
+		new VehicleType(600, "Picador"),
+		new VehicleType(601, "S.W.A.T. Van"),
+		new VehicleType(602, "Alpha"),
+		new VehicleType(603, "Phoenix"),
+		new VehicleType(604, "Broken Glendale"),
+		new VehicleType(605, "Broken Sadler"),
+		new VehicleType(606, "Luggage Trailer"),
+		new VehicleType(607, "Luggage Trailer"),
+		new VehicleType(608, "Stair Trailer"),
+		new VehicleType(609, "Boxville"),
+		new VehicleType(610, "Farm Plow"),
+		new VehicleType(611, "Utility Trailer"),
+	],
+	[GAME_GTA_IV]: [ // GTA IV
+		new VehicleType(1264341792, "Admiral"),
+		new VehicleType(1560980623, "Airtug"),
+		new VehicleType(1171614426, "Ambulance"),
+		new VehicleType(-1041692462, "Banshee"),
+		new VehicleType(2053223216, "Benson"),
+		new VehicleType(850991848, "Biff"),
+		new VehicleType(-344943009, "Blista"),
+		new VehicleType(1075851868, "Bobcat"),
+		new VehicleType(-1987130134, "Boxville"),
+		new VehicleType(-682211828, "Buccaneer"),
+		new VehicleType(-1346687836, "Burrito"),
+		new VehicleType(-907477130, "Burrito 2"),
+		new VehicleType(-713569950, "Bus"),
+		new VehicleType(1884962369, "Cabby"),
+		new VehicleType(2006918058, "Cavalcade"),
+		new VehicleType(-67282078, "Chavos"),
+		new VehicleType(-2030171296, "Cognoscenti"),
+		new VehicleType(1063483177, "Comet"),
+		new VehicleType(108773431, "Coquette"),
+		new VehicleType(162883121, "DF8"),
+		new VehicleType(-1130810103, "Dillettante"),
+		new VehicleType(723973206, "Dukes"),
+		new VehicleType(-1971955454, "E109"),
+		new VehicleType(-685276541, "Emperor"),
+		new VehicleType(-1883002148, "Rusty Emperor"),
+		new VehicleType(-276900515, "Esperanto"),
+		new VehicleType(-2119578145, "Faction"),
+		new VehicleType(1127131465, "FIB Car"),
+		new VehicleType(-1097828879, "Feltzer"),
+		new VehicleType(974744810, "Feroci"),
+		new VehicleType(1026055242, "Airport Feroci"),
+		new VehicleType(1938952078, "Firetruck"),
+		new VehicleType(1353720154, "Flatbed"),
+		new VehicleType(627033353, "Fortune"),
+		new VehicleType(1491375716, "Forklift"),
+		new VehicleType(2016857647, "Futo"),
+		new VehicleType(675415136, "FXT"),
+		new VehicleType(884422927, "Habanero"),
+		new VehicleType(-341892653, "Hakumai"),
+		new VehicleType(486987393, "Huntley"),
+		new VehicleType(418536135, "Infernus"),
+		new VehicleType(-1289722222, "Ingot"),
+		new VehicleType(886934177, "Intruder"),
+		new VehicleType(1269098716, "Landstalker"),
+		new VehicleType(-37030056, "Lokus"),
+		new VehicleType(-2124201592, "Manana"),
+		new VehicleType(1304597482, "Marbella"),
+		new VehicleType(-1260881538, "Merit"),
+		new VehicleType(-310465116, "Minivan"),
+		new VehicleType(525509695, "Moonbeam"),
+		new VehicleType(583100975, "Mr. Tasty"),
+		new VehicleType(904750859, "Mule"),
+		new VehicleType(148777611, "Noose Patrol Car"),
+		new VehicleType(1911513875, "Noose Stockade"),
+		new VehicleType(1348744438, "Oracle"),
+		new VehicleType(569305213, "Packer"),
+		new VehicleType(-808457413, "Patriot"),
+		new VehicleType(-2077743597, "Perennial"),
+		new VehicleType(-1590284256, "Airport Perennial"),
+		new VehicleType(1830407356, "Peyote"),
+		new VehicleType(-2137348917, "Phantom"),
+		new VehicleType(131140572, "Pinnacle"),
+		new VehicleType(1376298265, "PMP-600"),
+		new VehicleType(2046537925, "Police Cruiser"),
+		new VehicleType(-1627000575, "Police Patrol"),
+		new VehicleType(-350085182, "Police Patriot"),
+		new VehicleType(-119658072, "Pony"),
+		new VehicleType(-1883869285, "Premier"),
+		new VehicleType(-1962071130, "Presidente"),
+		new VehicleType(-1150599089, "Primo"),
+		new VehicleType(-1900572838, "Police Stockade"),
+		new VehicleType(1390084576, "Rancher"),
+		new VehicleType(83136452, "Rebla"),
+		new VehicleType(-845979911, "Ripley"),
+		new VehicleType(627094268, "Romero"),
+		new VehicleType(-1932515764, "Roman's Taxi"),
+		new VehicleType(-227741703, "Ruiner"),
+		new VehicleType(-449022887, "Sabre"),
+		new VehicleType(1264386590, "Sabre 2"),
+		new VehicleType(-1685021548, "Sabre GT"),
+		new VehicleType(-322343873, "Schafter"),
+		new VehicleType(1349725314, "Sentinel"),
+		new VehicleType(1344573448, "Solair"),
+		new VehicleType(-810318068, "Speedo"),
+		new VehicleType(1923400478, "Stallion"),
+		new VehicleType(1677715180, "Steed"),
+		new VehicleType(1747439474, "Stockade"),
+		new VehicleType(1723137093, "Stratum"),
+		new VehicleType(-1961627517, "Stretch"),
+		new VehicleType(970598228, "Sultan"),
+		new VehicleType(-295689028, "Sultan RS"),
+		new VehicleType(1821991593, "Super GT"),
+		new VehicleType(-956048545, "Taxi 1"),
+		new VehicleType(1208856469, "Taxi 2"),
+		new VehicleType(1917016601, "Trashmaster"),
+		new VehicleType(-1896659641, "Turismo"),
+		new VehicleType(1534326199, "Uranus"),
+		new VehicleType(-825837129, "Vigero"),
+		new VehicleType(-1758379524, "Vigero 2"),
+		new VehicleType(-583281407, "Vincent"),
+		new VehicleType(-498054846, "Virgo"),
+		new VehicleType(2006667053, "Voodoo"),
+		new VehicleType(1777363799, "Washington"),
+		new VehicleType(1937616578, "Willard"),
+		new VehicleType(-1099960214, "Yankee"),
+		new VehicleType(-1830458836, "Bobber"),
+		new VehicleType(-1842748181, "Faggio"),
+		new VehicleType(584879743, "Hellfury"),
+		new VehicleType(1203311498, "NRG-900"),
+		new VehicleType(-909201658, "PCJ-600"),
+		new VehicleType(788045382, "Sanchez"),
+		new VehicleType(-570033273, "Zombie"),
+		new VehicleType(837858166, "Annihilator"),
+		new VehicleType(-1660661558, "Maverick"),
+		new VehicleType(353883353, "Police Maverick"),
+		new VehicleType(2027357303, "Tour Maverick"),
+		new VehicleType(1033245328, "Dinghy"),
+		new VehicleType(861409633, "Jetmax"),
+		new VehicleType(-1043459709, "Marquis"),
+		new VehicleType(-488123221, "Predator"),
+		new VehicleType(1759673526, "Reefer"),
+		new VehicleType(400514754, "Squalo"),
+		new VehicleType(1064455782, "Tuga"),
+		new VehicleType(290013743, "Tropic"),
+		new VehicleType(-960289747, "Cablecar"),
+		new VehicleType(800869680, "Subway"),
+		new VehicleType(-1953988645, "El Train"),
+		new VehicleType(2450678720, "Freeway"),
+		new VehicleType(729783779, "Slamvan", { ivEpisode: 2 }),
+		new VehicleType(1147287684, "Caddy", { ivEpisode: 2 }),
+		new VehicleType(1123216662, "Super-D", { ivEpisode: 2 }),
+		new VehicleType(1638119866, "Super-D 2", { ivEpisode: 2 }),
+		new VehicleType(1337041428, "Serrano", { ivEpisode: 2 }),
+		new VehicleType(1051281622, "Serrano 2", { ivEpisode: 2 }),
+		new VehicleType(-304802106, "Buffalo", { ivEpisode: 2 }),
+		new VehicleType(-1255452397, "Schafter 2", { ivEpisode: 2 }),
+		new VehicleType(-1485523546, "Schafter 3", { ivEpisode: 2 }),
+		new VehicleType(-1696146015, "Bullet", { ivEpisode: 2 }),
+		new VehicleType(972671128, "Tampa", { ivEpisode: 2 }),
+		new VehicleType(-789894171, "Cavalcade 2", { ivEpisode: 2 }),
+		new VehicleType(-591610296, "F620", { ivEpisode: 2 }),
+		new VehicleType(-114627507, "E-Stretch", { ivEpisode: 2 }),
+		new VehicleType(1912215274, "Police Buffalo", { ivEpisode: 2 }),
+		new VehicleType(908697398, "Police Wreck", { ivEpisode: 2 }),
+		new VehicleType(-1973172295, "Police Stinger", { ivEpisode: 2 }),
+		new VehicleType(-34623805, "Police Bike", { ivEpisode: 2 }),
+		new VehicleType(301427732, "Hexer", { ivEpisode: 2 }),
+		new VehicleType(55628203, "Faggio 2", { ivEpisode: 2 }),
+		new VehicleType(-891462355, "Bati Custom", { ivEpisode: 2 }),
+		new VehicleType(-140902153, "Vader", { ivEpisode: 2 }),
+		new VehicleType(1672195559, "Akuma", { ivEpisode: 2 }),
+		new VehicleType(1265391242, "Hakuchou", { ivEpisode: 2 }),
+		new VehicleType(-1670998136, "Double T", { ivEpisode: 2 }),
+		new VehicleType(-339587598, "Swift", { ivEpisode: 2 }),
+		new VehicleType(1044954915, "Skylift", { ivEpisode: 2 }),
+		new VehicleType(944930284, "Smuggler", { ivEpisode: 2 }),
+		new VehicleType(-1731432653, "Floater", { ivEpisode: 2 }),
+		new VehicleType(-1205801634, "Blade", { ivEpisode: 2 }),
+	],
+	[10]: [   // Mafia 1 (GAME_MAFIA_ONE define not available on GTAC yet)
+		new VehicleType("fordtTud00.i3d", "Blue Bolt Ace Tudor"),
+		new VehicleType("fordtTud01.i3d", "Dark Blue Bolt Ace Tudor"),
+		new VehicleType("fordtTud02.i3d", "Brown Bolt Ace Tudor"),
+		new VehicleType("fordtTud03.i3d", "Green Bolt Ace Tudor"),
+		new VehicleType("fordtTud04.i3d", "Red Bolt Ace Tudor"),
+		new VehicleType("fordtto00.i3d", "Blue Bolt Ace Touring"),
+		new VehicleType("fordtto01.i3d", "Dark Blue Bolt Ace Touring"),
+		new VehicleType("fordtto02.i3d", "Brown Bolt Ace Touring"),
+		new VehicleType("fordtto03.i3d", "Green Bolt Ace Touring"),
+		new VehicleType("fordtto04.i3d", "Red Bolt Ace Touring"),
+		new VehicleType("fordtru00.i3d", "Blue Bolt Ace Runabout"),
+		new VehicleType("fordtru01.i3d", "Dark Blue Bolt Ace Runabout"),
+		new VehicleType("fordtru02.i3d", "Brown Bolt Ace Runabout"),
+		new VehicleType("fordtru03.i3d", "Green Bolt Ace Runabout"),
+		new VehicleType("fordtru04.i3d", "Red Bolt Ace Runabout"),
+		new VehicleType("fordtpi00.i3d", "Blue Bolt Ace Pickup"),
+		new VehicleType("fordtpi01.i3d", "Dark Blue Bolt Ace Pickup"),
+		new VehicleType("fordtpi02.i3d", "Brown Bolt Ace Pickup"),
+		new VehicleType("fordtpi03.i3d", "Green Bolt Ace Pickup"),
+		new VehicleType("fordtpi04.i3d", "Red Bolt Ace Pickup"),
+		new VehicleType("fordtFor00.i3d", "Blue Bolt Ace Fordor"),
+		new VehicleType("fordtFor01.i3d", "Dark Blue Bolt Ace Fordor"),
+		new VehicleType("fordtFor02.i3d", "Brown Bolt Ace Fordor"),
+		new VehicleType("fordtFor03.i3d", "Green Bolt Ace Fordor"),
+		new VehicleType("fordtFor04.i3d", "Red Bolt Ace Fordor"),
+		new VehicleType("fordtco00.i3d", "Blue Bolt Ace Coupe"),
+		new VehicleType("fordtco01.i3d", "Dark Blue Bolt Ace Coupe"),
+		new VehicleType("fordtco02.i3d", "Brown Bolt Ace Coupe"),
+		new VehicleType("fordtco03.i3d", "Green Bolt Ace Coupe"),
+		new VehicleType("fordtco04.i3d", "Red Bolt Ace Coupe"),
+		new VehicleType("forAtu00.i3d", "Brown Bolt Model B Tudor"),
+		new VehicleType("ForAtu01.i3d", "Red Bolt Model B Tudor"),
+		new VehicleType("ForAtu02.i3d", "Green Bolt Model B Tudor"),
+		new VehicleType("ForAtu03.i3d", "Dark Blue Bolt Model B Tudor"),
+		new VehicleType("ForAro00.i3d", "Brown Bolt Model B Roadster"),
+		new VehicleType("ForAro01.i3d", "Red Bolt Model B Roadster"),
+		new VehicleType("ForAro02.i3d", "Green Bolt Model B Roadster"),
+		new VehicleType("ForAro03.i3d", "Dark Blue Bolt Model B Roadster"),
+		new VehicleType("ForApic00.i3d", "Brown Bolt Model B Pickup"),
+		new VehicleType("ForApic01.i3d", "Red Bolt Model B Pickup"),
+		new VehicleType("ForApic02.i3d", "Green Bolt Model B Pickup"),
+		new VehicleType("ForApic03.i3d", "Dark Blue Bolt Model B Pickup"),
+		new VehicleType("ForAfo00.i3d", "Brown Bolt Model B Fordor"),
+		new VehicleType("ForAfo01.i3d", "Red Bolt Model B Fordor"),
+		new VehicleType("ForAfo02.i3d", "Green Bolt Model B Fordor"),
+		new VehicleType("ForAfo03.i3d", "Dark Blue Bolt Model B Fordor"),
+		new VehicleType("ForAde00.i3d", "Brown Bolt Model B Delivery"),
+		new VehicleType("ForAde01.i3d", "Red Bolt Model B Delivery"),
+		new VehicleType("ForAde02.i3d", "Green Bolt Model B Delivery"),
+		new VehicleType("ForAde03.i3d", "Dark Blue Bolt Model B Delivery"),
+		new VehicleType("ForAcou00.i3d", "Brown Bolt Model B Coupe"),
+		new VehicleType("ForAcou01.i3d", "Red Bolt Model B Coupe"),
+		new VehicleType("ForAcou02.i3d", "Green Bolt Model B Coupe"),
+		new VehicleType("ForAcou03.i3d", "Dark Blue Bolt Model B Coupe"),
+		new VehicleType("ForAtu00.i3d", "Brown Bolt Model B Tudor"),
+		new VehicleType("ForAtu01.i3d", "Red Bolt Model B Tudor"),
+		new VehicleType("ForAtu02.i3d", "Green Bolt Model B Tudor"),
+		new VehicleType("ForAtu03.i3d", "Dark Blue Bolt Model B Tudor"),
+		new VehicleType("forVco00.i3d", "Green Bolt V8 Coupe"),
+		new VehicleType("forVco01.i3d", "Red Bolt V8 Coupe"),
+		new VehicleType("forVco02.i3d", "Blue Bolt V8 Coupe"),
+		new VehicleType("forVco03.i3d", "Grey Bolt V8 Coupe"),
+		new VehicleType("forVfor00.i3d", "Green Bolt V8 Forder"),
+		new VehicleType("forVfor01.i3d", "Red Bolt V8 Forder"),
+		new VehicleType("forVfor02.i3d", "Blue Bolt V8 Forder"),
+		new VehicleType("forVfor03.i3d", "Grey Bolt V8 Forder"),
+		new VehicleType("forVro00.i3d", "Green Bolt V8 Roadster"),
+		new VehicleType("forVro01.i3d", "Red Bolt V8 Roadster"),
+		new VehicleType("forVro02.i3d", "Blue Bolt V8 Roadster"),
+		new VehicleType("forVro03.i3d", "Grey Bolt V8 Roadster"),
+		new VehicleType("forVto00.i3d", "Green Bolt V8 Touring"),
+		new VehicleType("forVto01.i3d", "Red Bolt V8 Touring"),
+		new VehicleType("forVto02.i3d", "Blue Bolt V8 Touring"),
+		new VehicleType("forVto03.i3d", "Grey Bolt V8 Touring"),
+		new VehicleType("forVtud00.i3d", "Green Bolt V8 Tudor"),
+		new VehicleType("forVtud01.i3d", "Red Bolt V8 Tudor"),
+		new VehicleType("forVtud02.i3d", "Blue Bolt V8 Tudor"),
+		new VehicleType("forVtud03.i3d", "Grey Bolt V8 Tudor"),
+		new VehicleType("miller00.i3d", "Brubaker"),
+		new VehicleType("speedster00.i3d", "Silver Bruno Speedster 851"),
+		new VehicleType("speedster01.i3d", "Red Bruno Speedster 851"),
+		new VehicleType("speedster02.i3d", "Green Bruno Speedster 851"),
+		new VehicleType("alfa00.i3d", "Caesar 8C 2300 Racing"),
+		new VehicleType("alfa8C00.i3d", "Red Caesar 8C Mostro"),
+		new VehicleType("alfa8C01.i3d", "Black Caesar 8C Mostro"),
+		new VehicleType("merced500K00.i3d", "White Celeste Marque 500"),
+		new VehicleType("merced500K01.i3d", "Brown Celeste Marque 500"),
+		new VehicleType("bugatti00.i3d", "Blue Corrozella C-Otto"),
+		new VehicleType("bugatti01.i3d", "Green Corrozella C-Otto"),
+		new VehicleType("pontFor00.i3d", "Blue Crusader Chromium Tudor"),
+		new VehicleType("pontFor01.i3d", "Violet Crusader Chromium Tudor"),
+		new VehicleType("pontTud00.i3d", "Green Crusader Chromium Tudor"),
+		new VehicleType("pontTud01.i3d", "Dark Blue Crusader Chromium Tudor"),
+		new VehicleType("blackha00.i3d", "Blue Falconer"),
+		new VehicleType("blackha01.i3d", "Red Falconer"),
+		new VehicleType("black00.i3d", "Gangster Falconer"),
+		new VehicleType("taxi00.i3d", "Falconer Yellowcar"),
+		new VehicleType("hudcou00.i3d", "Umber Guardian Terraplane Coupe"),
+		new VehicleType("hudcou01.i3d", "Beige Guardian Terraplane Coupe"),
+		new VehicleType("hudcou02.i3d", "Black Guardian Terraplane Coupe"),
+		new VehicleType("hudfor00.i3d", "Umber Guardian Terraplane Fordor"),
+		new VehicleType("hudfor01.i3d", "Beige Guardian Terraplane Fordor"),
+		new VehicleType("hudfor02.i3d", "Black Guardian Terraplane Fordor"),
+		new VehicleType("hudtu00.i3d", "Umber Guardian Terraplane Tudor"),
+		new VehicleType("hudtu01.i3d", "Beige Guardian Terraplane Tudor"),
+		new VehicleType("hudtu02.i3d", "Black Guardian Terraplane Tudor"),
+		new VehicleType("cad_ford00.i3d", "Lassiter Fordor"),
+		new VehicleType("cad_phaeton00.i3d", "Lassiter Phaeton"),
+		new VehicleType("cad_road00.i3d", "Lassiter Roadster"),
+		new VehicleType("hartmann00.i3d", "Lassiter Appolyon"),
+		new VehicleType("hearseCa00.i3d", "Lassiter Charon"),
+		new VehicleType("polCad00.i3d", "Lassiter Police"),
+		new VehicleType("chemaFor00.i3d", "Green Shubert Extra Six Fordor"),
+		new VehicleType("chemaFor01.i3d", "White Shubert Extra Six Fordor"),
+		new VehicleType("chemaFor02.i3d", "Blue Shubert Extra Six Fordor"),
+		new VehicleType("polimFor00.i3d", "Shubert Extra Six Fordor Police"),
+		new VehicleType("chematud00.i3d", "Green Shubert Extra Six Tudor"),
+		new VehicleType("chematud01.i3d", "White Shubert Extra Six Tudor"),
+		new VehicleType("chematud02.i3d", "Blue Shubert Extra Six Tudor"),
+		new VehicleType("polimTud00.i3d", "Shubert Extra Six Tudor Police"),
+		new VehicleType("chev00.i3d", "Red Shubert Six"),
+		new VehicleType("chev01.i3d", "White Shubert Six"),
+		new VehicleType("chev02.i3d", "Black Shubert Six"),
+		new VehicleType("poli00.i3d", "Shubert Six Police"),
+		new VehicleType("arrow00.i3d", "Silver Fletcher"),
+		new VehicleType("cordca00.i3d", "Orange Thor 812 Cabriolet"),
+		new VehicleType("cordca01.i3d", "Black Thor 812 Cabriolet"),
+		new VehicleType("cordph00.i3d", "Orange Thor 810 Phaeton"),
+		new VehicleType("cordph01.i3d", "Black Thor 810 Phaeton"),
+		new VehicleType("cordse00.i3d", "Orange Thor 810 Sedan"),
+		new VehicleType("cordse01.i3d", "Black Thor 810 Sedan"),
+		new VehicleType("deuseJco00.i3d", "Trautenberg Model J"),
+		new VehicleType("duesenberg00.i3d", "Trautenberg Racer 4WD"),
+		new VehicleType("airflFor00.i3d", "Yellow Ulver Airstream Fordor"),
+		new VehicleType("airflFor01.i3d", "Green Ulver Airstream Fordor"),
+		new VehicleType("airfltud00.i3d", "Yellow Ulver Airstream Tudor"),
+		new VehicleType("airfltud01.i3d", "Green Ulver Airstream Tudor"),
+		new VehicleType("buiCou00.i3d", "Blue Wright Coupe"),
+		new VehicleType("buiCou01.i3d", "Red Wright Coupe"),
+		new VehicleType("buiCou02.i3d", "Green Wright Coupe"),
+		new VehicleType("buigang00.i3d", "Gangster Wright Coupe"),
+		new VehicleType("buikFor00.i3d", "Blue Wright Fordor"),
+		new VehicleType("buikFor01.i3d", "Red Wright Fordor"),
+		new VehicleType("buikFor02.i3d", "Green Wright Fordor"),
+		new VehicleType("Ambulance00.i3d", "Bolt Ambulance"),
+		new VehicleType("fire00.i3d", "Bolt Firetruck"),
+		new VehicleType("hearseA00.i3d", "Bolt Hearse"),
+		new VehicleType("truckA00.i3d", "Bolt Truck Flatbed"),
+		new VehicleType("truckB00.i3d", "Bolt Truck Covered"),
+		new VehicleType("TruckBxx00.i3d", "Bolt Truck (Atlantic Import)"),
+		new VehicleType("truckBx00.i3d", "Bolt Truck (Atlantic Export)"),
+		new VehicleType("bus00.i3d", "Bus"),
+		new VehicleType("phantom00.i3d", "Manta Prototype"),
+		new VehicleType("autobuz00.i3d", "Bus 2"),
+		new VehicleType("bus.i3d", "Bus 3"),
+		new VehicleType("bus10.i3d", "Bus 4"),
+		new VehicleType("tow_car00.i3d", "Brown Bolt Model B Wrecker"),
+		new VehicleType("traktor.i3d", "Tractor"),
+		new VehicleType("Bull00.i3d", "Bulldozer"),
+		//new VehicleType("valec.i3d", "Steamroller"),
+		new VehicleType("traktor.i3d", "Tractor"),
+	]
+}
 
 let vehicleNames = [
 	[],
@@ -5970,9 +6693,17 @@ function getPosToLeftOfPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosInFrontOfPos(pos, angle, distance) {
-	let x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
-	let y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	let x = pos.x;
+	let y = pos.y;
 	let z = pos.z;
+
+	if (thisGame != 10) {
+		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+		y = (pos.y + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	} else {
+		x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
+		z = (pos.z + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	}
 
 	return new Vec3(x, y, z);
 }
@@ -5980,9 +6711,17 @@ function getPosInFrontOfPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosBehindPos(pos, angle, distance) {
-	let x = (pos.x + ((Math.cos(angle - (Math.PI / 2))) * distance));
-	let y = (pos.y + ((Math.sin(angle - (Math.PI / 2))) * distance));
+	let x = pos.x;
+	let y = pos.y;
 	let z = pos.z;
+
+	if (thisGame != 10) {
+		x = (pos.x + ((Math.cos(-angle + (Math.PI / 2))) * distance));
+		y = (pos.y + ((Math.sin(-angle + (Math.PI / 2))) * distance));
+	} else {
+		x = (pos.x + ((Math.cos(angle + (Math.PI / 2))) * distance));
+		z = (pos.z + ((Math.sin(angle + (Math.PI / 2))) * distance));
+	}
 
 	return new Vec3(x, y, z);
 }
@@ -5990,17 +6729,21 @@ function getPosBehindPos(pos, angle, distance) {
 // ----------------------------------------------------------------------------
 
 function getPosAbovePos(pos, distance) {
-	let z = pos.z + distance;
-
-	return new Vec3(pos.x, pos.y, z);
+	return new Vec3(
+		pos.x, 
+		(thisGame == 10) ? pos.y + distance : pos.y, 
+		(thisGame == 10) ? pos.z + distance : pos.z
+	);
 }
 
 // ----------------------------------------------------------------------------
 
 function getPosBelowPos(pos, distance) {
-	let z = pos.z - distance;
-
-	return new Vec3(pos.x, pos.y, z);
+	return new Vec3(
+		pos.x, 
+		(thisGame == 10) ? pos.y - distance : pos.y, 
+		(thisGame == 10) ? pos.z - distance : pos.z
+	);
 }
 
 // ----------------------------------------------------------------------------
@@ -6048,19 +6791,19 @@ function getAngleInCircleFromCenter(center, total, current) {
 // ----------------------------------------------------------------------------
 
 function getClosestPlayer(pos) {
-	return getPlayers().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+	return getElementsByType(ELEMENT_PED).reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
 
 function getClosestVehicle(pos) {
-	return getVehicles().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+	return getElementsByType(ELEMENT_VEHICLE).reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
 
 function getClosestCivilian(pos) {
-	return getCivilians().reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
+	return getElementsByType(ELEMENT_PED).filter(ped => !ped.isType(ELEMENT_PLAYER)).reduce((i, j) => ((i.position.distance(pos) <= j.position.distance(pos)) ? i : j));
 }
 
 // ----------------------------------------------------------------------------
@@ -6095,57 +6838,18 @@ function isParamsInvalid(params) {
 
 // ----------------------------------------------------------------------------
 
-function isValidVehicleModel(modelId) {
-	if (thisGame == GAME_GTA_III) {
-		if (modelId < 90 || modelId > 150) {
-			return false;
-		}
-
-		return true;
+function getVehicleModelFromParams(params, gameId = thisGame) {
+	let findFromModel = vehicles[gameId].find(veh => (typeof veh.model == "string") ? veh.model.toLowerCase().indexOf(params.toLowerCase()) != -1 : veh.model == Number(params));
+	if(findFromModel != undefined) {
+		return findFromModel;
+	}
+	
+	let findFromName = vehicles[gameId].find(veh => veh.name.toLowerCase().indexOf(params.toLowerCase()) != -1);
+	if(findFromName != undefined) {
+		return findFromName;
 	}
 
-	if (thisGame == GAME_GTA_VC) {
-		if (modelId < 130 || modelId > 236) {
-			return false;
-		}
-
-		return true;
-	}
-
-	if (thisGame >= GAME_GTA_SA) {
-		return true;
-	}
-	return false;
-}
-
-// ----------------------------------------------------------------------------
-
-function getVehicleModelIdFromParams(params, gameId = thisGame) {
-	if (isNaN(params)) {
-		let modelId = getVehicleModelIdFromName(params);
-
-		if (!modelId) {
-			return vehicleModelIdStart[gameId];
-		}
-
-		if (isValidVehicleModel(Number(modelId))) {
-			return Number(modelId);
-		}
-
-		return modelId;
-	} else {
-		//if(gameId == GAME_GTA_IV) {
-		//	params = Number(params);
-		//	return gtaivVehicleModels[params][1];
-		//}
-
-		if (isValidVehicleModel(Number(params))) {
-			return Number(params);
-		}
-		return vehicleModelIdStart[gameId];
-	}
-
-	return false;
+	return null;
 }
 
 // ----------------------------------------------------------------------------
@@ -6165,17 +6869,18 @@ function getGarageIdFromParams(params, gameId = thisGame) {
 
 // ----------------------------------------------------------------------------
 
-function getSkinIdFromParams(params, gameId = thisGame) {
-	if (isNaN(params)) {
-		return getSkinIdFromName(params, gameId);
-	} else {
-		params = Number(params);
-		if (gameId == GAME_GTA_IV) {
-			return gtaivSkinModels[params][1];
-		} else {
-			return params;
-		}
+function getSkinFromParams(params, gameId = thisGame) {
+	let findFromModel = skins[gameId].find(skin => (typeof skin.model == "string") ? skin.model.toLowerCase().indexOf(params.toLowerCase()) != -1 : skin.model == Number(params));
+	if(findFromModel != undefined) {
+		return findFromModel;
 	}
+	
+	let findFromName = skins[gameId].find(skin => skin.name.toLowerCase().indexOf(params.toLowerCase()) != -1);
+	if(findFromName != undefined) {
+		return findFromName;
+	}
+
+	return null;
 }
 
 // ----------------------------------------------------------------------------
@@ -6644,7 +7349,7 @@ function getPlayersInRange(position, range) {
 // ----------------------------------------------------------------------------
 
 function getCiviliansInRange(position, range) {
-	return getCivilians().filter((civilian) => position.distance(civilian.position) <= range);
+	return getElementsByType(ELEMENT_PED).filter(ped = !ped.isType(ELEMENT_PLAYER)).filter((civilian) => position.distance(civilian.position) <= range);
 }
 
 // ----------------------------------------------------------------------------
@@ -6658,68 +7363,6 @@ function getElementsOfTypeInRange(elementType, position, range) {
 function isValidObjectModel(modelId, gameId = thisGame) {
 	// Will finish later
 	return true;
-}
-
-// ----------------------------------------------------------------------------
-
-function getFileData(filePath) {
-	let file = openFile(filePath, false);
-	if (!file) {
-		return false;
-	}
-	let fileData = file.readBytes(file.length);
-	file.close();
-	return fileData;
-}
-
-// ----------------------------------------------------------------------------
-
-function setFileData(filePath, fileData) {
-	let file = openFile(filePath, true);
-	if (!file) {
-		return false;
-	}
-	file.writeBytes(fileData, fileData.length);
-	file.close();
-	return true;
-}
-
-// ----------------------------------------------------------------------------
-
-// Requires MarkNote!
-function getXMLItems(filePath) {
-	let data = getFileData(filePath);
-
-	let parser = new marknote.Parser;
-	let xml = parser.parse(data);
-	let root = xml.getRootElement();
-	let items = root.getChildElements();
-	return { root: root, items: items };
-}
-
-// ----------------------------------------------------------------------------
-
-// Requires MarkNote!
-function saveXMLItems(filePath, rootNode, itemNode, root) {
-	let fileData = root.toString().substr(1);
-	let result = setFileData(filePath, fileData);
-	return result;
-}
-
-// ----------------------------------------------------------------------------
-
-function updateXMLItem(filePath, rootNode, itemNode, itemAttrName, itemAttrValue, newData, attributeNames) {
-	let data = getXMLItems(filePath);
-	let item = getXMLItemsByAttribute(data.root, itemAttrName, itemAttrValue);
-
-	if (!item) {
-		return;
-	}
-
-	for (let k in newData) {
-		item.setAttribute(k, newData[k] + '');
-	}
-	saveXMLItems(filePath, rootNode, itemNode, data.root);
 }
 
 // ----------------------------------------------------------------------------
@@ -6788,22 +7431,6 @@ function Enum(constantsList) {
 		tempTable[constantsList[i]] = i;
 	}
 	return tempTable;
-}
-
-// ----------------------------------------------------------------------------
-
-function isValidSkin(skin, game = GAME_GTA_III) {
-	if (game == GAME_GTA_III) {
-		return true;
-	} else if (game == GAME_GTA_VC) {
-		switch (skin) {
-			case 111:
-				return false;
-
-			default:
-				return true;
-		}
-	}
 }
 
 // ----------------------------------------------------------------------------

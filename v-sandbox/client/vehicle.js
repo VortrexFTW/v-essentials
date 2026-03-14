@@ -18,117 +18,45 @@ function spawnVehicleCommand(cmdName, params) {
 		return false;
 	}
 
-	//if(getCurrentUnixTimestamp()-lastVehicleSpawn < 15000) {
-	//	message("You must wait before spawning another vehicle!", errorMessageColour);
-	//	return false;
-	//}
-
-	let modelId = getVehicleModelIdFromParams(params, game.game);
-	let position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, 10.0);
+	let model = getVehicleModelFromParams(params, game.game);
 	let heading = localPlayer.heading;
+	let position = localPlayer.position;
 
-	if (game.game < GAME_GTA_IV) {
-		if (!isValidVehicleModel(modelId)) {
-			message("Invalid vehicle model!", errorMessageColour);
-			return false;
-		}
+	if (model == null) {
+		message("Invalid vehicle model!", errorMessageColour);
 	}
 
 	if (game.game == GAME_GTA_III) {
 		// Make sure boats only go in water!
-		if (modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_GHOST || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_SPEEDER) {
+		if (model.isBoat == true) {
 			if (game.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat!", errorMessageColour);
 				return false;
 			}
 		}
-
-		// Make sure it isn't a heli
-		if (modelId == MODELVEHICLE_HELI_CHOPPER || modelId == MODELVEHICLE_HELI_ESCAPE) {
-			if (!onlineHelicoptersEnabled) {
-				message("Helicopters have been disabled on this server!", errorMessageColour);
-				return false;
-			}
-		}
-
-		// Make sure it isn't a train
-		if (modelId == MODELVEHICLE_TRAIN_TRAIN) {
-			message("Use /train to spawn a train!", errorMessageColour);
-			return false;
-		}
-
-		// Make sure it isn't an airtrain or deaddodo
-		if (modelId == MODELVEHICLE_PLANE_AIRTRAIN || modelId == MODELVEHICLE_PLANE_DEADDODO) {
-			message("That vehicle has been been disabled!", errorMessageColour);
-			return false;
-		}
-
-		// Make sure it isn't near the spawn point
-		if (position.distance(new Vec3(1449.19, -197.21, 55.62)) < 75) {
-			if (!localClient.administrator) {
-				message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
-				return false;
-			}
-		}
-
-		// Make sure there aren't too many other vehicles nearby
-		if (getVehiclesInRange(position, 50.0).length >= 15) {
-			if (!localClient.administrator) {
-				message("There are too many vehicles in the area!", errorMessageColour);
-				return false;
-			}
-		}
 	} else if (game.game == GAME_GTA_VC) {
 		// Make sure boats only go in water!
-		if (modelId == MODELVEHICLE_BOAT_COASTG || modelId == MODELVEHICLE_BOAT_DINGHY || modelId == MODELVEHICLE_BOAT_JETMAX || modelId == MODELVEHICLE_BOAT_MARQUIS || modelId == MODELVEHICLE_BOAT_PREDATOR || modelId == MODELVEHICLE_BOAT_REEFER || modelId == MODELVEHICLE_BOAT_RIO || modelId == MODELVEHICLE_BOAT_SKIMMER || modelId == MODELVEHICLE_BOAT_SQUALO || modelId == MODELVEHICLE_BOAT_TROPIC) {
+		if (model.isBoat == true) {
 			if (game.findGroundZForCoord(position.x, position.y) != 20) {
 				message("You need to be next to water to spawn a boat or skimmer!", errorMessageColour);
 				return false;
 			}
 		}
+	}
 
-		// Make sure it isn't near the spawn point
-		if (position.distance(new Vec3(-379.16, -535.27, 17.28)) < 75) {
-			if (!localClient.administrator) {
-				message("You are too close to the spawn area to add a vehicle!", errorMessageColour);
-				return false;
-			}
-		}
+	// Make sure it can be spawned
+	if (!model.canBeSpawned) {
+		message("That vehicle has been been disabled!", errorMessageColour);
+		return false;
+	}
 
-		// Make sure there aren't too many other vehicles nearby
-		if (getVehiclesInRange(position, 50.0).length >= 10) {
-			if (!localClient.administrator) {
-				message("There are too many vehicles in the area!", errorMessageColour);
-				return false;
-			}
-		}
-	} else if (game.game == GAME_GTA_IV) {
-		// Make sure it isn't a train
-		if (modelId == MODEL_SUBWAY_HI || modelId == MODEL_SUBWAY_LO || modelId == MODEL_CABLECAR) {
-			message("Use /train to spawn a train!", errorMessageColour);
+	// Spawn protection
+	getResources().filter(resource => resource.isStarted && typeof resource.exports.vGetSpawns != "undefined").forEach((resource) => {
+		if(resource.exports.vGetSpawns().some(spawn => spawn.noVehicleSpawnRange >= localPlayer.position.distance(spawn.position))) {
+			message("Leave the spawn area first!", errorMessageColour);
 			return false;
 		}
-
-		// Make sure there aren't too many other vehicles nearby
-		if (getVehiclesInRange(position, 50.0).length >= 25) {
-			if (!localClient.administrator) {
-				message("There are too many vehicles in the area!", errorMessageColour);
-				return false;
-			}
-		}
-
-		let spawnProtectionResource = findResourceByName("v-spawnprotect");
-		if (spawnProtectionResource != null) {
-			if (spawnProtectionResource.isStarted) {
-				if (spawnProtectionResource.exports.canSpawnVehiclesInProtectedArea() == true) {
-					if (spawnProtectionResource.exports.isPlayerInSpawnProtectionArea() == true) {
-						message("Leave the spawn area first!", errorMessageColour);
-						return false;
-					}
-				}
-			}
-		}
-	}
+	});
 
 	let thisVeh = false;
 	if (game.game == GAME_GTA_IV) {
@@ -137,10 +65,10 @@ function spawnVehicleCommand(cmdName, params) {
 		lastVehicleSpawn = getCurrentUnixTimestamp();
 	} else {
 		if (isConnected) {
-			triggerNetworkEvent("sb.v.add", modelId, position, heading);
+			triggerNetworkEvent("sb.v.add", model.model, position, heading);
 		} else {
-			thisVeh = game.createVehicle(modelId, position, heading);
-			thisVeh.heading = heading;
+			thisVeh = game.createVehicle(model.model, position, heading);
+			//thisVeh.heading = heading;
 		}
 	}
 
@@ -149,12 +77,8 @@ function spawnVehicleCommand(cmdName, params) {
 		return false;
 	}
 
-	let modelName = getVehicleNameFromModelId(modelId);
-	let outputText = `spawned ${(doesWordStartWithVowel(modelName)) ? "an" : "a"} ${modelName} (using /${cmdName})`;
+	let outputText = `spawned ${(doesWordStartWithVowel(model.name)) ? "an" : "a"} ${model.name} (using /${cmdName})`;
 	outputSandboxMessage(outputText);
-
-	//canSpawnVehicle = false;
-	//setTimeout(function() { canSpawnVehicle = true; }, 15000);
 	return true;
 };
 addCommandHandler("veh", spawnVehicleCommand);

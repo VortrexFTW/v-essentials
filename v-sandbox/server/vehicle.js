@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
 
-addNetworkHandler(`sb.v.add`, function (client, modelID, position, heading) {
-	let tempVehicle = game.createVehicle(Number(modelID), position);
+addNetworkHandler(`sb.v.add`, function (client, model, position, heading) {
+	let tempVehicle = game.createVehicle(model, position, heading);
 	tempVehicle.heading = heading;
-	addToWorld(tempVehicle);
+	triggerNetworkEvent("sb.warpInVehicle", client, tempVehicle.id, 0);
 
 	setTimeout(function () {
 		tempVehicle.setData(`sb.v.addedby`, client, false);

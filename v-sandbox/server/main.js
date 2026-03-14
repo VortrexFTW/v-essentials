@@ -56,8 +56,6 @@ function beginSandboxCleanup() {
 		//console.log(`[Sandbox] Server is empty. Restarting sandbox to clean up.`);
 		thisResource.restart();
 	}
-
-	collectAllGarbage();
 }
 
 // ----------------------------------------------------------------------------

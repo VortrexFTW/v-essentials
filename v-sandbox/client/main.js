@@ -22,12 +22,11 @@ addCommandHandler("clear", function (cmdName, params, client) {
 
 function outputSandboxMessage(messageText) {
 	if (isConnected) {
-		//console.log(`[Sandbox] ${localClient.name} ${messageText}`);
+		console.log(`[${thisResource.name}] ${localClient.name} ${messageText}`);
 		triggerNetworkEvent("sb.msg", messageText);
 	} else {
-		//console.log(`[Sandbox] You ${messageText}`);
+		console.log(`[${thisResource.name}] You ${messageText}`);
 		message(`You ${messageText}`, gameAnnounceColour);
-
 	}
 }
 

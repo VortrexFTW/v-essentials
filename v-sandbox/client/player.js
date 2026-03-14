@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 
 let godMode = false;
-let hudEnabled = true;
+let warpIntoVehicle = -1;
 
 // ----------------------------------------------------------------------------
 
@@ -691,14 +691,6 @@ addCommandHandler("stamina", function (cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("hud", function (cmdName, params) {
-	hudEnabled = !hudEnabled;
-	setHUDEnabled(hudEnabled);
-	return true;
-});
-
-// ----------------------------------------------------------------------------
-
 addCommandHandler("helmet", function (cmdName, params) {
 	if (isParamsInvalid(params)) {
 		message("Syntax: /helmet <state 0/1>", syntaxMessageColour);
@@ -1044,6 +1036,31 @@ addEventHandler("OnProcess", function (event, deltaTime) {
 	if (localPlayer != null) {
 		if (isConnected) {
 			triggerNetworkEvent("v.ivplr", localPlayer.position, localPlayer.heading);
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.warpInVehicle", function(vehicleId, seat) {
+	let vehicle = getElementFromId(vehicleId);
+	if(vehicle != null) {
+		localPlayer.warpIntoVehicle(vehicleId, seat);
+	} else {
+		warpIntoVehicle = vehicleId;
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addEventHandler("OnElementStreamIn", function(event, element) {
+	if(element.type == ELEMENT_VEHICLE) {
+		if(warpIntoVehicle == element.id) {
+			if(localPlayer.vehicle != element) {
+				localPlayer.warpIntoVehicle(element, 0);
+			}
+
+			warpIntoVehicle = -1;
 		}
 	}
 });
