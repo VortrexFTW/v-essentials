@@ -9,47 +9,51 @@ addEventHandler("OnPlayerJoined", function(event, client) {
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStart", thisResource, function(event, resource) {
-	let clients = getClients();
-	for(let i in clients) {
-		let clientIndex = clients[i].index;
-		clients[i].setData("v.colour", getRandomColour(), true);
-		if(clients[i].player != null) {
-			clients[i].player.setData("v.colour", getRandomColour(), true);
+	getClients().forEach(function(client) {
+		let colour = getRandomColour();
+		client.removeData("v.colour");
+		client.setData("v.colour", colour, true);
+		if(client.player != null) {
+			client.player.removeData("v.colour");
+			client.player.setData("v.colour", colour, true);
 		}
+	});
+
+	if(server.game == GAME_GTA_IV) {
+		triggerNetworkEvent("v.colour", null);
 	}
-	triggerNetworkEvent("v.colour", null);
 });
 
 // ----------------------------------------------------------------------------
 
 bindEventHandler("OnResourceStop", thisResource, function(event, resource) {
-	let clients = getClients();
-	for(let i in clients) {
-		clients[i].removeData("v.colour");
-		if(clients[i].player != null) {
-			clients[i].player.removeData("v.colour");
+	getClients().forEach(function(client) {
+		client.removeData("v.colour");
+		if(client.player != null) {
+			client.player.removeData("v.colour");
 		}
+	});
+
+	if(server.game == GAME_GTA_IV) {
+		triggerNetworkEvent("v.colour", null);
 	}
-	triggerNetworkEvent("v.colour", null);
 });
-
-// ----------------------------------------------------------------------------
-
-function setPlayerColour(player) {
-	let client = getPlayerClient(player);
-	if(client != null) {
-		client.setData("v.colour", client.getData("v.colour"), true);
-		if(server.game == GAME_GTA_IV) {
-			triggerNetworkEvent("v.colour", null);
-		}
-	}
-}
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnPedSpawn", function(event, ped) {
 	if(ped.isType(ELEMENT_PLAYER)) {
-		setTimeout(setPlayerColour, 500, ped);
+		setTimeout(function() {
+			let client = getPlayerClient(player);
+			if(client != null) {
+				let colour = client.getData("v.colour");
+				player.setData("v.colour", colour, true);
+				
+				if(server.game == GAME_GTA_IV) {
+					triggerNetworkEvent("v.colour", null);
+				}
+			}
+		}, 500);
 	}
 });
 
