@@ -285,17 +285,15 @@ addCommandHandler("respawn", function (command, params, client) {
 // ----------------------------------------------------------------------------
 
 function spawnPlayerEx(client) {
-	let skinId = (gameIdentifierStrings[server.game].indexOf(-1) != -1) ? getRandomSkin(server.game) : scriptConfig.skins[Math.floor(Math.random() * scriptConfig.skins[gameIdentifierStrings[server.game]].length)];
+	let skinId = (scriptConfig.skins[gameIdentifierStrings[server.game]].indexOf(-1) != -1) ? getRandomSkin(server.game) : scriptConfig.skins[gameIdentifierStrings[server.game]][Math.floor(Math.random() * scriptConfig.skins[gameIdentifierStrings[server.game]].length)];
 	let spawnIndex = Math.floor(Math.random() * scriptConfig.spawns[gameIdentifierStrings[server.game]].length);
 	let spawnData = scriptConfig.spawns[gameIdentifierStrings[server.game]][spawnIndex];
 
 	spawnPlayer(client,
 		new Vec3(spawnData.x, spawnData.y, spawnData.z),
 		Number(spawnData.heading),
-		Number(skinId)
+		skinId
 	);
-
-	console.log(`[${thisResource.name}] ${client.name} spawned as ${getSkinName(skinId)}(${skinId}) at ${spawnData.name}`);
 }
 
 // ----------------------------------------------------------------------------
