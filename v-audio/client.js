@@ -119,6 +119,11 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 function getLocalPlayerPosition() {
 	// In Mafia 1, ped position is bugged if they're in a vehicle
 	// So we use the vehicle position instead
+
+	if(localPlayer == null) {
+		return false;
+	}
+
 	if (game.game == 10) {
 		if (localPlayer.vehicle != null) {
 			return localPlayer.vehicle.position;
@@ -216,6 +221,11 @@ function setElementAudio(element, url) {
 // ===========================================================================
 
 function updateAudioSounds(element) {
+	if(localPlayer == null) {
+		audioSounds[element.id].volume = 0;
+		return false;
+	}
+
 	if (element.getData("v.audio") == null || element.getData("v.audio")[0] == "") {
 		if (typeof audioSounds[element.id] != "undefined") {
 			audioSounds[element.id].stop();
