@@ -11,36 +11,36 @@ addCommandHandler("skin", function (cmdName, params) {
 		return false;
 	}
 
-	let skinId = getSkinIdFromParams(params, game.game);
+	let skin = getSkinFromParams(params, game.game);
 
-	if (!skinId) {
+	if (skin == undefined) {
 		message("That skin is invalid!", errorMessageColour);
 		return false;
 	}
 
 	if (isConnected) {
 		if (game.game == GAME_GTA_IV) {
-			//natives.changePlayerModel(natives.getPlayerId(), skinId);
-			if (natives.isModelInCdimage(skinId)) {
-				natives.requestModel(skinId);
+			//natives.changePlayerModel(natives.getPlayerId(), skin.model);
+			if (natives.isModelInCdimage(skin.model)) {
+				natives.requestModel(skin.model);
 				natives.loadAllObjectsNow();
-				if (natives.hasModelLoaded(skinId)) {
-					natives.changePlayerModel(natives.getPlayerId(), skinId);
+				if (natives.hasModelLoaded(skin.model)) {
+					natives.changePlayerModel(natives.getPlayerId(), skin.model);
 				}
 			}
 		} else {
-			triggerNetworkEvent("sb.p.skin", skinId, localPlayer.position, localPlayer.heading);
+			triggerNetworkEvent("sb.p.skin", skin.model, localPlayer.position, localPlayer.heading);
 		}
 	} else {
 		if (game.game == GAME_GTA_IV) {
-			//natives.changePlayerModel(natives.getPlayerId(), skinId);
-			if (natives.isModelInCdimage(skinId)) {
-				natives.requestModel(skinId);
+			//natives.changePlayerModel(natives.getPlayerId(), skin.model);
+			if (natives.isModelInCdimage(skin.model)) {
+				natives.requestModel(skin.model);
 				natives.loadAllObjectsNow();
-				if (natives.hasModelLoaded(skinId)) {
-					natives.changePlayerModel(natives.getPlayerId(), skinId);
+				if (natives.hasModelLoaded(skin.model)) {
+					natives.changePlayerModel(natives.getPlayerId(), skin.model);
 
-					if (skinId == -183203150 || skinId == -1518937979 || skinId == -370395528 || skinId == -1004762946) {
+					if (skin.isPolice) {
 						natives.setPlayerAsCop(natives.getPlayerId(), true);
 					} else {
 						natives.setPlayerAsCop(natives.getPlayerId(), false);
@@ -48,11 +48,11 @@ addCommandHandler("skin", function (cmdName, params) {
 				}
 			}
 		} else {
-			localPlayer.skin = skinId;
+			localPlayer.skin = skin.model;
 		}
 	}
 
-	let outputText = `set ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} skin to ${getSkinNameFromId(skinId)} (using /skin)`;
+	let outputText = `set their skin to ${skin.name} (using /skin)`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -144,7 +144,7 @@ addCommandHandler("clothes", function (cmdName, params) {
 		natives.setCharPropIndex(localPlayer, bodyPartId, model);
 	}
 
-	let outputText = `changed ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId))} his ${bodyPartName} to model ${model} and texture ${texture} (using /clothes)`;
+	let outputText = `changed their ${bodyPartName} to model ${model} and texture ${texture} (using /clothes)`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -166,9 +166,7 @@ addCommandHandler("lookatveh", function (cmdName, params) {
 		t
 		localPlayer.lookAt(vehicles[0].position);
 	}
-
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.skinId)) + " skin to " + String(getSkinNameFromId(skinId) + " (using /skin)");
-	outputSandboxMessage(outputText);
+	
 	return true;
 });
 
@@ -217,7 +215,7 @@ addCommandHandler("bikegod", function (cmdName, params) {
 
 	localPlayer.canBeKnockedOffBike = !!bikeGod;
 
-	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes (using /bikegod)";
+	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " their bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes (using /bikegod)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -275,7 +273,7 @@ addCommandHandler("endmission", function (cmdName, params) {
 	}
 
 	let missionId = localClient.getData("sb.p.mission");
-	let outputText = `ended ${getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex))} mission (Status: ${(!!failMission) ? "passed" : "failed"})`;
+	let outputText = `ended their mission (Status: ${(!!failMission) ? "passed" : "failed"})`;
 	if (missionId != null) {
 		outputText = `ended mission ${missionNames[game.game][missionId]} (ID: ${missionId}, Status: ${(!!failMission) ? "passed" : "failed"})`;
 		localClient.removeData("sb.p.mission");
@@ -288,25 +286,32 @@ addCommandHandler("endmission", function (cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
-addCommandHandler("gun", function (cmdName, params) {
+function giveWeaponCommand(cmdName, params) {
 	if (!params || params == "") {
 		message("Syntax: /gun <name or id> <ammo>", syntaxMessageColour);
 		return false;
 	}
 
-	let wep = getWeaponIdFromParams(params) || 1;
+	let weapon = getWeaponFromParams(params, thisGame);
 
-	if (wep > weaponNames[game.game].length - 1 || wep < 0) {
-		message("❗ Invalid weapon! Use /guns for weapon ID or use a name instead", errorMessageColour);
+	if (weapon == undefined) {
+		message("❗ Invalid weapon ID or name! Use /guns for a list", errorMessageColour);
 		return false;
 	}
 
-	localPlayer.giveWeapon(wep, 99999, true);
-
-	let outputText = `has been given a ${getWeaponName(wep, game.game)} (using /gun)`;
+	if(thisGame == 10) {
+		localPlayer.giveWeapon(weapon.id, weapon.clipAmmo, 99999, true);
+	} else {
+		localPlayer.giveWeapon(weapon.id, 99999, true);
+	}
+	
+	let outputText = `has been given a ${weapon.name} (using /gun)`;
 	outputSandboxMessage(outputText);
 	return true;
-});
+}
+addCommandHandler("gun", giveWeaponCommand);
+addCommandHandler("wep", giveWeaponCommand);
+addCommandHandler("weapon", giveWeaponCommand);
 
 // ----------------------------------------------------------------------------
 
@@ -322,7 +327,7 @@ addCommandHandler("stat", function (cmdName, params) {
 
 	game.setGameStat(statId, amount);
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " stat to " + String(amount) + " (using /stat)";
+	let outputText = "set their " + String(statId) + " stat to " + String(amount) + " (using /stat)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -344,7 +349,7 @@ addCommandHandler("fatness", function (cmdName, params) {
 		localPlayer.tommyFatness = amount;
 	}
 
-	let outputText = "set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(statId) + " fatness to " + String(localPlayer.tommyFatness) + " (using /tommyfatness)";
+	let outputText = "set their " + String(statId) + " fatness to " + String(localPlayer.tommyFatness) + " (using /tommyfatness)";
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -405,7 +410,7 @@ addCommandHandler("collisions", function (cmdName, params) {
 	}
 
 
-	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " player ped's collisions (using /collisions)";
+	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " their player ped's collisions (using /collisions)";
 	outputSandboxMessage(outputText);
 });
 
@@ -423,7 +428,7 @@ addCommandHandler("health", function (cmdName, params) {
 
 		localPlayer.health = health;
 
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " health to " + String(health) + " (using /health)";
+		let outputText = "has set their health to " + String(health) + " (using /health)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -444,7 +449,7 @@ addCommandHandler("money", function (cmdName, params) {
 		}
 
 		localPlayer.money = cash;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " cash (money) to " + String(cash) + " (using /money)";
+		let outputText = "has set their cash (money) to " + String(cash) + " (using /money)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -465,7 +470,7 @@ addCommandHandler("interior", function (cmdName, params) {
 		let interior = Number(params) || 0;
 		localPlayer.interior = interior;
 		cameraInterior = interior;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " interior to " + String(interior) + " (using /interior)";
+		let outputText = "has set their interior to " + String(interior) + " (using /interior)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -495,7 +500,7 @@ addCommandHandler("armour", function (cmdName, params) {
 
 		localPlayer.armour = armour;
 
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " armour to " + String(armour) + " (using /armour)";
+		let outputText = "has set their armour to " + String(armour) + " (using /armour)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -609,7 +614,7 @@ addCommandHandler("stars", function (cmdName, params) {
 				}
 			}
 
-			let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " wanted level to " + String(params) + " (using /stars)";
+			let outputText = "has set their wanted level to " + String(params) + " (using /stars)";
 			outputSandboxMessage(outputText);
 		}
 	}
@@ -638,7 +643,7 @@ addCommandHandler("limb", function (cmdName, params) {
 
 		triggerNetworkEvent("sb.p.limb", bodyPartId);
 
-		let outputText = "removed " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " " + String(pedComponents[game.game][bodyPartId]) + " (using /limb)";
+		let outputText = "removed their " + String(pedComponents[game.game][bodyPartId]) + " (using /limb)";
 		outputSandboxMessage(outputText);
 	}
 	return true;
@@ -663,7 +668,7 @@ addCommandHandler("walkstyle", function (cmdName, params) {
 			triggerNetworkEvent("sb.p.walkstyle", walkStyle);
 		}
 
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " walk style to " + String(walkStyle) + " (using /walkstyle)";
+		let outputText = "has set their walk style to " + String(walkStyle) + " (using /walkstyle)";
 		outputSandboxMessage(outputText);
 	}
 	return true;
@@ -682,7 +687,7 @@ addCommandHandler("stamina", function (cmdName, params) {
 	} else {
 		let stamina = Number(params) || 0;
 		localPlayer.stamina = stamina;
-		let outputText = "has set " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " stamina to " + String(stamina) + " (using /stamina)";
+		let outputText = "has set their stamina to " + String(stamina) + " (using /stamina)";
 		outputSandboxMessage(outputText);
 	}
 
@@ -712,10 +717,10 @@ addCommandHandler("helmet", function (cmdName, params) {
 	let outputText = "";
 
 	if (!!helmetState) {
-		outputText = "put on " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet (using /helmet)";
+		outputText = "put on their helmet (using /helmet)";
 	} else {
 		t
-		outputText = "took off " + getGenderPossessivePronoun(getGenderForSkin(localPlayer.modelIndex)) + " helmet (using /helmet)";
+		outputText = "took off their helmet (using /helmet)";
 	}
 	outputSandboxMessage(outputText);
 	return true;

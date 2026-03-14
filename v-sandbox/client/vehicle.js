@@ -119,7 +119,7 @@ addCommandHandler("veh_fix", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "repaired " + String(vehicles.length) + " vehicles (using /veh_fix)";
 	} else {
-		outputText = "repaired " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_fix)";
+		outputText = "repaired " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " (using /veh_fix)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -153,7 +153,7 @@ addCommandHandler("veh_explode", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "exploded " + String(vehicles.length) + " vehicles (using /veh_explode)";
 	} else {
-		outputText = "exploded " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_explode)";
+		outputText = "exploded " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " (using /veh_explode)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -182,7 +182,7 @@ addCommandHandler("veh_delete", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "deleted " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "deleted " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_delete)";
+		outputText = "deleted " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " (using /veh_delete)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -224,7 +224,7 @@ addCommandHandler("veh_siren", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's sirens " + String((!!sirenState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s siren " + String((!!sirenState) ? "on" : "off") + " (using /veh_siren)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s siren " + String((!!sirenState) ? "on" : "off") + " (using /veh_siren)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -268,7 +268,7 @@ addCommandHandler("veh_alarm", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's alarms " + String((!!alarmState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s alarm " + String((!!alarmState) ? "on" : "off") + " (using /veh_alarm)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s alarm " + String((!!alarmState) ? "on" : "off") + " (using /veh_alarm)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -310,7 +310,7 @@ addCommandHandler("veh_upgrade", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_upgrade)";
+		outputText = "added " + String(vehicleUpgradeNames[Number(upgradeId)]) + " to " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " (using /veh_upgrade)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -352,7 +352,7 @@ addCommandHandler("veh_downgrade", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + String(vehicles.length) + " vehicles";
 	} else {
-		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " (using /veh_downgrade)";
+		outputText = "removed " + String(vehicleUpgradeNames[upgradeId]) + " from " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " (using /veh_downgrade)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -389,7 +389,7 @@ addCommandHandler("veh_paintjob", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's paintjobs to ID " + String(paintJobId);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s paintjob to ID " + String(paintJobId) + " (using /veh_paintjob)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s paintjob to ID " + String(paintJobId) + " (using /veh_paintjob)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -426,7 +426,7 @@ addCommandHandler("veh_heading", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's heading to " + String(heading);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s heading to " + String(heading) + " (using /veh_heading)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s heading to " + String(heading) + " (using /veh_heading)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -465,7 +465,7 @@ addCommandHandler("veh_pos", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ) + " (using /veh_pos)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s position to " + String(positionX) + ", " + String(positionY) + ", " + String(positionZ) + " (using /veh_pos)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -497,7 +497,7 @@ addCommandHandler("veh_lock", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's door locks to " + String(lockType);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s door locks to " + String(lockType) + " (using /veh_lock)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s door locks to " + String(lockType) + " (using /veh_lock)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -529,7 +529,7 @@ addCommandHandler("veh_engine", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's engines " + String((!!engineState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s engine " + String((!!engineState) ? "on" : "off") + " (using /veh_engine)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s engine " + String((!!engineState) ? "on" : "off") + " (using /veh_engine)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -567,7 +567,7 @@ addCommandHandler("veh_light", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's " + vehicleLightNames[lightId] + " lights " + String((!!lightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleLightNames[lightId] + " light " + String((!!lightState) ? "on" : "off") + " (using /veh_light)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s " + vehicleLightNames[lightId] + " light " + String((!!lightState) ? "on" : "off") + " (using /veh_light)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -605,7 +605,7 @@ addCommandHandler("veh_panel", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's " + vehiclePanelNames[panelId] + " panel states to " + String(panelState);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehiclePanelNames[panelId] + " panel state to " + String(panelState) + " (using /veh_panel)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s " + vehiclePanelNames[panelId] + " panel state to " + String(panelState) + " (using /veh_panel)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -643,7 +643,7 @@ addCommandHandler("veh_door", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleDoorNames[doorId] + " door";
 	} else {
-		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleDoorNames[doorId] + " door (using /veh_door)";
+		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s " + vehicleDoorNames[doorId] + " door (using /veh_door)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -681,7 +681,7 @@ addCommandHandler("veh_wheel", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + String(vehicles.length) + " vehicle's " + vehicleWheelNames[wheelId] + " wheels to " + vehicleWheelStateNames[wheelState].toLowerCase();
 	} else {
-		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s " + vehicleWheelNames[wheelId] + " wheel to " + vehicleWheelStateNames[wheelState].toLowerCase() + " (using /veh_wheel)";
+		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s " + vehicleWheelNames[wheelId] + " wheel to " + vehicleWheelStateNames[wheelState].toLowerCase() + " (using /veh_wheel)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -720,7 +720,7 @@ addCommandHandler("veh_wheels", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + String(vehicles.length) + " vehicle's wheels";
 	} else {
-		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s wheels (using /veh_wheels)";
+		outputText = vehicleWheelStateActionNames[wheelState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s wheels (using /veh_wheels)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -764,7 +764,7 @@ addCommandHandler("veh_doors", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + String(vehicles.length) + " vehicle's doors";
 	} else {
-		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s doors (using /veh_doors)";
+		outputText = vehicleDoorStateActionNames[doorState].toLowerCase() + " " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s doors (using /veh_doors)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -807,7 +807,7 @@ addCommandHandler("veh_god", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "made " + String(vehicles.length) + " vehicle's " + String((!!godMode) ? "invincible" : "not invincible");
 	} else {
-		outputText = "made " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " " + String((!!godMode) ? "invincible" : "not invincible") + " (using /veh_god)";
+		outputText = "made " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " " + String((!!godMode) ? "invincible" : "not invincible") + " (using /veh_god)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -842,7 +842,7 @@ addCommandHandler("veh_syncer", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's syncer to " + String(getClientFromName(clientName).name);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " syncer to " + String(getClientFromName(clientName).name) + " (using /veh_syncer)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " syncer to " + String(getClientFromName(clientName).name) + " (using /veh_syncer)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -879,7 +879,7 @@ addCommandHandler("veh_lights", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's lights " + String((!!lightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s lights " + String((!!lightState) ? "on" : "off") + " (using /veh_lights)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s lights " + String((!!lightState) ? "on" : "off") + " (using /veh_lights)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -916,7 +916,7 @@ addCommandHandler("veh_taxilight", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's taxi lights " + String((!!taxiLightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s taxi light " + String((!!taxiLightState) ? "on" : "off") + " (using /veh_taxilight)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s taxi light " + String((!!taxiLightState) ? "on" : "off") + " (using /veh_taxilight)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -953,7 +953,7 @@ addCommandHandler("veh_hazardlights", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's hazard lights " + String((!!hazardLightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s hazard light " + String((!!hazardLightState) ? "on" : "off") + " (using /veh_hazardlight)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s hazard light " + String((!!hazardLightState) ? "on" : "off") + " (using /veh_hazardlight)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -992,7 +992,7 @@ addCommandHandler("veh_indicator", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's indicator lights " + String((!!indicatorLightState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s indicator light " + String((!!indicatorLightState) ? "on" : "off") + " (using /veh_indicator)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s indicator light " + String((!!indicatorLightState) ? "on" : "off") + " (using /veh_indicator)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1029,7 +1029,7 @@ addCommandHandler("veh_dirtlevel", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's dirt levels to " + String(dirtLevel);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s dirt level to " + String(dirtLevel) + " (using /veh_dirtlevel)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s dirt level to " + String(dirtLevel) + " (using /veh_dirtlevel)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1071,7 +1071,7 @@ addCommandHandler("veh_radio", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's radio stations to " + vehicleRadioStationNames[game.game][radioStation];
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s radio station to " + vehicleRadioStationNames[game.game][radioStation] + " (using /veh_radio)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s radio station to " + vehicleRadioStationNames[game.game][radioStation] + " (using /veh_radio)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1113,7 +1113,7 @@ addCommandHandler("veh_mission", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's missions to " + String(missionNames[game.game][missionId]);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s mission to " + String(missionNames[game.game][missionId]) + " (using /veh_mission)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s mission to " + String(missionNames[game.game][missionId]) + " (using /veh_mission)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1158,7 +1158,7 @@ addCommandHandler("veh_rgb", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha) + + " (using /veh_rgb)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s RGB colours to " + String(red) + ", " + String(green) + ", " + String(blue) + ", " + String(alpha) + + " (using /veh_rgb)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1195,7 +1195,7 @@ addCommandHandler("veh_colour1", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's primary colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s primary colour to " + String(colourId) + " (using /veh_colour1)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s primary colour to " + String(colourId) + " (using /veh_colour1)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1232,7 +1232,7 @@ addCommandHandler("veh_colour2", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's secondary colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s secondary colour to " + String(colourId) + " (using /veh_colour2)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s secondary colour to " + String(colourId) + " (using /veh_colour2)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1274,7 +1274,7 @@ addCommandHandler("veh_colour3", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's tertiary (third) colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s tertiary (third) colour to " + String(colourId) + " (using /veh_colour3)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s tertiary (third) colour to " + String(colourId) + " (using /veh_colour3)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1316,7 +1316,7 @@ addCommandHandler("veh_colour4", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's quaternary (fourth) colours to " + String(colourId);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s quaternary (fourth) colour to " + String(colourId) + " (using /veh_colour4)";
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s quaternary (fourth) colour to " + String(colourId) + " (using /veh_colour4)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1358,7 +1358,7 @@ addCommandHandler("veh_collisions", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "turned " + String(vehicles.length) + " vehicle's collisions " + String((collisionState) ? "on" : "off");
 	} else {
-		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s collisions " + String((collisionState) ? "on" : "off") + " (using /veh_collisions)";
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s collisions " + String((collisionState) ? "on" : "off") + " (using /veh_collisions)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1400,7 +1400,7 @@ addCommandHandler("veh_cruisespeed", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's cruise speed to " + String(cruiseSpeed) + " mph";
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " cruise speed to  " + String(cruiseSpeed) + " mph (using /veh_cruisespeed)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " cruise speed to  " + String(cruiseSpeed) + " mph (using /veh_cruisespeed)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1442,7 +1442,7 @@ addCommandHandler("veh_drivingstyle", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's driving styles to " + String(drivingStyle);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s driving style to " + String(drivingStyle) + " (using /veh_drivingstyle)";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s driving style to " + String(drivingStyle) + " (using /veh_drivingstyle)";
 	}
 
 	outputSandboxMessage(outputText);
@@ -1484,7 +1484,7 @@ addCommandHandler("veh_livery", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's livery designs to " + String(liveryId);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s livery design to " + String(liveryId);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s livery design to " + String(liveryId);
 	}
 
 	outputSandboxMessage(outputText);
@@ -1526,7 +1526,7 @@ addCommandHandler("veh_handling", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicle's handling indexes to " + String(handlingIndex);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s handling index to " + String(handlingIndex);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s handling index to " + String(handlingIndex);
 	}
 
 	outputSandboxMessage(outputText);
@@ -1565,7 +1565,7 @@ addCommandHandler("veh_drivetopos", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicles drive to " + String(x) + ", " + String(y) + ", " + String(z);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " drive to " + String(x) + ", " + String(y) + ", " + String(z);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " drive to " + String(x) + ", " + String(y) + ", " + String(z);
 	}
 
 	outputSandboxMessage(outputText);
@@ -1614,7 +1614,7 @@ addCommandHandler("veh_driveto", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicles to drive to " + String(selectedLocation[0]);
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " to drive to " + String(selectedLocation[0]);
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " to drive to " + String(selectedLocation[0]);
 	}
 
 	outputSandboxMessage(outputText);
@@ -1656,7 +1656,7 @@ addCommandHandler("veh_scale", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "changed " + String(vehicles.length) + " vehicle's scales to " + String(scale);
 	} else {
-		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + "'s scale to " + String(scale)
+		outputText = "changed " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + "'s scale to " + String(scale)
 	}
 
 	outputSandboxMessage(outputText);
@@ -1697,7 +1697,7 @@ addCommandHandler("veh_wander", function (cmdName, params) {
 	if (vehicles.length > 1) {
 		outputText = "set " + String(vehicles.length) + " vehicles to drive around aimlessly when a ped driver is available.";
 	} else {
-		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleNameFromModelId(vehicles[0].modelIndex) + " to drive around aimlessly when a ped driver is available.";
+		outputText = "set " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " to drive around aimlessly when a ped driver is available.";
 	}
 
 	outputSandboxMessage(outputText);
