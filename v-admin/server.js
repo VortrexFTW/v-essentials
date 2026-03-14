@@ -643,7 +643,6 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
 	}
 
-	console.warn(fromClient.ip);
 	if(fromClient.ip == "127.0.0.1") {
 		messageAdmins(`${fromClient.name} is connecting from localhost and has full admin permissions!`);
 		fromClient.setData("v.admin", 9999999, true);
