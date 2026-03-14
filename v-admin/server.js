@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 
 let scriptConfig = null;
-let logMessagePrefix = "ADMIN:";
+let logMessagePrefix = `[${thisResource.name}]`;
 
 let returnScriptsToClient = null;
 
@@ -186,6 +186,13 @@ addCommandHandler("blockscript", (command, params, client) => {
 
 addCommandHandler("makeadmin", (command, params, client) => {
 	let splitParams = params.split(" ");
+
+	if(splitParams.length < 2) {
+		messageClient(`Usage: /makeadmin <name/id> <level>`, COLOUR_YELLOW);
+		messageClient(`Use level 0 to remove admin. Command levels can be customized in config.json.`, COLOUR_AQUA);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(splitParams.slice(0, -2).join(" "));
 	let level = parseInt(splitParams.slice(-1)[0]);
 
