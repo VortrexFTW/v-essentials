@@ -521,16 +521,16 @@ function syncPedProperties(ped) {
 		}
 	}
 
-
-
 	if (ped.getData("v.walkStyle")) {
 		let walkStyle = ped.getData("v.walkStyle");
+		console.log(`[${thisResource.name}] Setting ped walk style to ${walkStyle}`);
 		
+		// For GTA SA
 		if (typeof ped.walkStyle != "undefined") {
-			console.log(`[${thisResource.name}] Setting ped walk style to ${walkStyle}`);
 			ped.walkStyle = walkStyle;
 		}
 
+		// For GTA IV
 		if(game.game == GAME_GTA_IV) {
 			natives.requestAnims(walkStyle);
 			natives.setAnimGroupForChar(ped, walkStyle);
