@@ -264,3 +264,10 @@ addNetworkHandler(`sb.p.veh.enter`, function (client, vehicleID, driver) {
 addNetworkHandler(`sb.p.fatness`, function (client, player, fatness) {
 	triggerNetworkEvent(`sb.p.fatness`, null, player, fatness);
 });
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler(`sb.p.walkStyle`, function (client, walkStyle) {
+	client.player.setData("v.walkStyle", walkStyle, true);
+	triggerNetworkEvent(`sb.p.walkStyle`, null, client, walkStyle);
+});

@@ -653,24 +653,27 @@ addCommandHandler("limb", function (cmdName, params) {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("walkstyle", function (cmdName, params) {
-	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV) {
-	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
-	//	return false;
-	//}
-
 	if (!params || params == "") {
-		message(`Your walk style is ${localPlayer.walkStyle}`, gameAnnounceColour);
-	} else {
-		let walkStyle = Number(params) || 0;
-		if (isConnected && game.game < GAME_GTA_IV) {
-			localPlayer.walkStyle = walkStyle;
-		} else {
-			triggerNetworkEvent("sb.p.walkstyle", walkStyle);
-		}
-
-		let outputText = "has set their walk style to " + String(walkStyle) + " (using /walkstyle)";
-		outputSandboxMessage(outputText);
+		message(`Your walk style is ${(game.game == GAME_GTA_IV) ? natives.getAnimGroupForChar(localPlayer) : localPlayer.walkStyle}`, gameAnnounceColour);
+		return false;
 	}
+	
+	if (!isConnected) {
+		// We're NOT connected to a server, just set the local player's walk style
+		if(game.game <= GAME_GTA_SA) {
+			localPlayer.walkStyle = Number(params);
+		} else if(game.game == GAME_GTA_IV) {
+			natives.requestAnims(params);
+			if(natives.hasAnimsLoaded(params)) {
+				natives.setAnimGroupForChar(ped, params);
+			}
+		}
+	} else {
+		// We're connected to a server, tell the server to handle it
+		triggerNetworkEvent("sb.p.walkstyle", params);
+	}
+
+	outputSandboxMessage(`has set their walk style to ${walkStyle} (using /${cmdName.toLowerCase()})`);
 	return true;
 });
 
@@ -1053,6 +1056,25 @@ addNetworkHandler("sb.warpInVehicle", function(vehicleId, seat) {
 		localPlayer.warpIntoVehicle(vehicleId, seat);
 	} else {
 		warpIntoVehicle = vehicleId;
+	}
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.p.walkStyle", function(otherClient, walkStyle) {
+	// Other player's ped is not streamed in (too far away), or hasn't spawned
+	// Ignore for now. If v-fixes is loaded, it will apply the walk style when their ped streams in
+	if(otherClient.player == null) {
+		return false;
+	}
+
+	if(game.game <= GAME_GTA_SA) {
+		otherClient.player.walkStyle = Number(walkStyle);
+	} else if(game.game == GAME_GTA_IV) {
+		natives.requestAnims(walkStyle);
+		if(natives.hasAnimsLoaded(walkStyle)) {
+			natives.setAnimGroupForChar(otherClient.player, walkStyle);
+		}
 	}
 });
 
