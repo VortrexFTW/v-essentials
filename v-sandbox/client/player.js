@@ -215,7 +215,7 @@ addCommandHandler("bikegod", function (cmdName, params) {
 
 	localPlayer.canBeKnockedOffBike = !!bikeGod;
 
-	let outputText = String((!!bikeGod) ? "disabled" : "enabled") + " their bike fall-off. They can " + String((!!bikeGod) ? "not" : "now") + " be knocked off bikes (using /bikegod)";
+	let outputText = `${(!!bikeGod) ? "disabled" : "enabled"}} their bike fall-off. They can ${(!!bikeGod) ? "not" : "now"} be knocked off bikes (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -224,7 +224,7 @@ addCommandHandler("bikegod", function (cmdName, params) {
 
 addCommandHandler("mission", function (cmdName, params) {
 	if (game.game == GAME_GTA_IV || game.game == GAME_MAFIA_ONE) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
 
@@ -260,7 +260,7 @@ addCommandHandler("lastseen", function (cmdName, params) {
 
 addCommandHandler("endmission", function (cmdName, params) {
 	if (game.game == GAME_GTA_IV) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
 
@@ -327,7 +327,7 @@ addCommandHandler("stat", function (cmdName, params) {
 
 	game.setGameStat(statId, amount);
 
-	let outputText = "set their " + String(statId) + " stat to " + String(amount) + " (using /stat)";
+	let outputText = `set their ${statId} stat to ${amount} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -349,7 +349,7 @@ addCommandHandler("fatness", function (cmdName, params) {
 		localPlayer.tommyFatness = amount;
 	}
 
-	let outputText = "set their " + String(statId) + " fatness to " + String(localPlayer.tommyFatness) + " (using /tommyfatness)";
+	let outputText = `set their ${statId} fatness to ${localPlayer.tommyFatness} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -396,7 +396,7 @@ addCommandHandler("input", function (cmdName, params) {
 
 addCommandHandler("collisions", function (cmdName, params) {
 	if (game.game == GAME_GTA_IV) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
 
@@ -410,7 +410,7 @@ addCommandHandler("collisions", function (cmdName, params) {
 	}
 
 
-	let outputText = "has " + String((!!collisionState) ? "enabled" : "disabled") + " their player ped's collisions (using /collisions)";
+	let outputText = `has ${(!!collisionState) ? "enabled" : "disabled"} their player ped's collisions (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 });
 
@@ -460,7 +460,7 @@ addCommandHandler("money", function (cmdName, params) {
 
 addCommandHandler("interior", function (cmdName, params) {
 	//if(game.game == GAME_GTA_III || game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -470,7 +470,7 @@ addCommandHandler("interior", function (cmdName, params) {
 		let interior = Number(params) || 0;
 		localPlayer.interior = interior;
 		cameraInterior = interior;
-		let outputText = "has set their interior to " + String(interior) + " (using /interior)";
+		let outputText = `has set their interior to ${interior} (using /${cmdName.toLowerCase()})`;
 		outputSandboxMessage(outputText);
 	}
 
@@ -481,7 +481,7 @@ addCommandHandler("interior", function (cmdName, params) {
 
 addCommandHandler("armour", function (cmdName, params) {
 	//if(game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -500,7 +500,7 @@ addCommandHandler("armour", function (cmdName, params) {
 
 		localPlayer.armour = armour;
 
-		let outputText = "has set their armour to " + String(armour) + " (using /armour)";
+		let outputText = `has set their armour to ${armour} (using /${cmdName.toLowerCase()})`;
 		outputSandboxMessage(outputText);
 	}
 
@@ -511,7 +511,7 @@ addCommandHandler("armour", function (cmdName, params) {
 
 addCommandHandler("warpinveh", function (cmdName, params) {
 	//if(game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -539,7 +539,7 @@ addCommandHandler("warpinveh", function (cmdName, params) {
 
 addCommandHandler("warpinveh", function (cmdName, params) {
 	//if(game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -567,7 +567,7 @@ addCommandHandler("warpinveh", function (cmdName, params) {
 
 addCommandHandler("enterveh", function (cmdName, params) {
 	//if(game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -595,7 +595,7 @@ addCommandHandler("enterveh", function (cmdName, params) {
 
 addCommandHandler("stars", function (cmdName, params) {
 	//if(game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
@@ -614,7 +614,7 @@ addCommandHandler("stars", function (cmdName, params) {
 				}
 			}
 
-			let outputText = "has set their wanted level to " + String(params) + " (using /stars)";
+			let outputText = `has set their wanted level to ${params} (using /${cmdName.toLowerCase()})`;
 			outputSandboxMessage(outputText);
 		}
 	}
@@ -625,7 +625,7 @@ addCommandHandler("stars", function (cmdName, params) {
 
 addCommandHandler("limb", function (cmdName, params) {
 	if (game.game == GAME_GTA_IV) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
 
@@ -643,7 +643,7 @@ addCommandHandler("limb", function (cmdName, params) {
 
 		triggerNetworkEvent("sb.p.limb", bodyPartId);
 
-		let outputText = "removed their " + String(pedComponents[game.game][bodyPartId]) + " (using /limb)";
+		let outputText = `removed their ${pedComponents[game.game][bodyPartId]} (using /${cmdName.toLowerCase()})`;
 		outputSandboxMessage(outputText);
 	}
 	return true;
@@ -654,12 +654,12 @@ addCommandHandler("limb", function (cmdName, params) {
 
 addCommandHandler("walkstyle", function (cmdName, params) {
 	//if(game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV) {
-	//	message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+	//	message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 	//	return false;
 	//}
 
 	if (!params || params == "") {
-		message("Your walk style is " + String(localPlayer.walkStyle), gameAnnounceColour);
+		message(`Your walk style is ${localPlayer.walkStyle}`, gameAnnounceColour);
 	} else {
 		let walkStyle = Number(params) || 0;
 		if (isConnected && game.game < GAME_GTA_IV) {
@@ -678,16 +678,16 @@ addCommandHandler("walkstyle", function (cmdName, params) {
 
 addCommandHandler("stamina", function (cmdName, params) {
 	if (game.game == GAME_GTA_III || game.game == GAME_GTA_SA || game.game == GAME_GTA_UG || game.game == GAME_GTA_IV) {
-		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		message(`The /${cmdName} command is not available on this game!`, errorMessageColour);
 		return false;
 	}
 
 	if (!params || params == "") {
-		message("Your stamina is " + String(localPlayer.stamina), gameAnnounceColour);
+		message(`Your stamina is ${localPlayer.stamina}`, gameAnnounceColour);
 	} else {
 		let stamina = Number(params) || 0;
 		localPlayer.stamina = stamina;
-		let outputText = "has set their stamina to " + String(stamina) + " (using /stamina)";
+		let outputText = `has set their stamina to ${stamina} (using /${cmdName.toLowerCase()})`;
 		outputSandboxMessage(outputText);
 	}
 
@@ -731,7 +731,7 @@ addCommandHandler("helmet", function (cmdName, params) {
 addCommandHandler("fr", function (cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosInFrontOfPos(localPlayer.position, localPlayer.heading, distance);
-	let outputText = "teleported forward " + String(distance) + " meters (using /fr)";
+	let outputText = `teleported forward ${distance} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -741,7 +741,7 @@ addCommandHandler("fr", function (cmdName, params) {
 addCommandHandler("ba", function (cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosBehindPos(localPlayer.position, localPlayer.heading, distance);
-	let outputText = "teleported backward " + String(distance) + " meters (using /ba)";
+	let outputText = `teleported backward ${distance} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -751,7 +751,7 @@ addCommandHandler("ba", function (cmdName, params) {
 addCommandHandler("up", function (cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosAbovePos(localPlayer.position, localPlayer.heading, distance);
-	let outputText = "teleported up " + String(distance) + " meters (using /up)";
+	let outputText = `teleported up ${distance} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
@@ -761,7 +761,7 @@ addCommandHandler("up", function (cmdName, params) {
 addCommandHandler("dn", function (cmdName, params) {
 	let distance = Number(params) || 5;
 	localPlayer.position = getPosBelowPos(localPlayer.position, localPlayer.heading, distance);
-	let outputText = "teleported down " + String(distance) + " meters (using /dn)";
+	let outputText = `teleported down ${distance} (using /${cmdName.toLowerCase()})`;
 	outputSandboxMessage(outputText);
 	return true;
 });
