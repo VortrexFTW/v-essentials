@@ -2,7 +2,6 @@
 
 // ===========================================================================
 
-let audioSounds = {};
 let audioVolume = 0.5;
 let startTime = 0;
 let extraContentResources = [];
@@ -14,6 +13,8 @@ let noVolumeWarning = [];
 exportFunction("setVolume", function (volume) {
 	audioVolume = volume;
 });
+
+// ===========================================================================
 
 exportFunction("getVolume", function () {
 	return audioVolume;
@@ -76,31 +77,27 @@ addEventHandler("OnResourceStart", function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
-	for (let i in audioSounds) {
-		if (audioSounds[i] != null) {
-			audioSounds[i].stop();
-			audioSounds[i] = undefined;
-		}
-	}
-
-	audioSounds = {};
+	getElements().filter(element => element.getData("v.audio.obj") != null).forEach((element) => {
+		element.getData("v.audio.obj").stop();
+		element.removeData("v.audio.obj");
+	});
 });
 
 // ===========================================================================
 
 addEventHandler("OnElementStreamOut", function (event, element) {
-	if (audioSounds[element.id] != null) {
-		audioSounds[element.id].stop();
-		audioSounds[element.id] = undefined;
+	if (element.getData("v.audio.obj") != null) {
+		element.getData("v.audio.obj").stop();
+		element.remove("v.audio.obj");
 	}
 });
 
 // ===========================================================================
 
 addEventHandler("OnElementDestroy", function (event, element) {
-	if (audioSounds[element.id] != null) {
-		audioSounds[element.id].stop();
-		audioSounds[element.id] = undefined;
+	if (element.getData("v.audio.obj") != null) {
+		element.getData("v.audio.obj").stop();
+		element.remove("v.audio.obj");
 	}
 });
 
@@ -157,10 +154,10 @@ function setElementAudio(element, url) {
 		return false;
 	}
 
-	if (audioSounds[element.id] != undefined && audioSounds[element.id] != null) {
+	if (element.getData("v.audio.obj") != null) {
 		console.log(`[${thisResource.name}] Stopping existing audio for element ${element.id} before setting new audio.`);
-		audioSounds[element.id].stop();
-		audioSounds[element.id] = undefined;
+		element.getData("v.audio.obj").stop();
+		element.removeData("v.audio.obj");
 	}
 
 	if (url == "" || url == null) {
@@ -194,8 +191,8 @@ function setElementAudio(element, url) {
 		return false;
 	}
 
-	audioSounds[element.id] = soundFile;
-	audioSounds[element.id].volume = 0;
+	element.setData("v.audio.obj", soundFile);
+	element.getData("v.audio.obj").volume = 0;
 
 	if (isInternetAudio == false) {
 		let fileLength = 0;
@@ -211,10 +208,10 @@ function setElementAudio(element, url) {
 		if (fileLength != 0) {
 			let position = (new Date().getTime() / 1000 - startTime) % fileLength;
 			console.log(`[${thisResource.name}] Setting audio seek position for element ${element.id} to ${position}/${fileLength}`);
-			audioSounds[element.id].position = position;
+			element.getData("v.audio.obj").position = position;
 		}
 	}
-	audioSounds[element.id].play();
+	element.getData("v.audio.obj").play();
 	return true;
 }
 
@@ -222,33 +219,35 @@ function setElementAudio(element, url) {
 
 function updateAudioSounds(element) {
 	if(localPlayer == null) {
-		audioSounds[element.id].volume = 0;
+		if (element.getData("v.audio") != null) {
+			element.getData("v.audio.obj").volume = 0;
+		}
 		return false;
 	}
 
 	if (element.getData("v.audio") == null || element.getData("v.audio")[0] == "") {
-		if (typeof audioSounds[element.id] != "undefined") {
-			audioSounds[element.id].stop();
-			audioSounds[element.id] = undefined;
+		if (element.getData("v.audio.obj") != null) {
+			element.getData("v.audio.obj").stop();
+			element.removeData("v.audio.obj");
 		}
 		return false;
 	} else {
-		if (typeof audioSounds[element.id] == "undefined" || audioSounds[element.id] == null) {
+		if (element.getData("v.audio.obj") == null) {
 			if (!setElementAudio(element, element.getData("v.audio")[0])) {
 				return false;
 			}
 		}
 
 		if (element.getData("v.audio")[1] <= 0) {
-			audioSounds[element.id].volume = audioVolume / 100;
+			element.getData("v.audio.obj").volume = audioVolume / 100;
 		} else {
 			if (element.position.distance(getLocalPlayerPosition()) <= element.getData("v.audio")[1]) {
 				let distance = element.position.distance(getLocalPlayerPosition());
 				let distancePercent = (element.getData("v.audio")[1] - distance) / element.getData("v.audio")[1] * 100;
 				//console.log(`[${thisResource.name}] Setting audio volume for element ${element.id} to ${(audioVolume / 100) * distancePercent} (distance: ${distance}, max distance: ${element.getData("v.audio")[1]})`);
-				audioSounds[element.id].volume = (audioVolume / 100) * distancePercent;
+				element.getData("v.audio.obj").volume = (audioVolume / 100) * distancePercent;
 			} else {
-				audioSounds[element.id].volume = 0;
+				element.getData("v.audio.obj").volume = 0;
 			}
 		}
 	}
