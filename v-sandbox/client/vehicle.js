@@ -60,7 +60,7 @@ function spawnVehicleCommand(cmdName, params) {
 
 	let thisVeh = false;
 	if (game.game == GAME_GTA_IV) {
-		thisVeh = createVehicle2(modelId, position, true);
+		thisVeh = createVehicle2(model.model, position, true);
 		thisVeh.heading = heading;
 		lastVehicleSpawn = getCurrentUnixTimestamp();
 	} else {
