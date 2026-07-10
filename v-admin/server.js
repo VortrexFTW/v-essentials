@@ -428,22 +428,21 @@ let errorMessageColour = toColour(237, 67, 55, 255);
 function loadConfig() {
 	let configFile = loadTextFile("config.json");
 	if (configFile == "") {
-		logError("Could not load config.json. Resource stopping ...");
-		thisResource.stop();
-		return false;
+		logError("config.json not found. A new one will be created ...");
+		scriptConfig = {};
+		fixMissingConfigStuff();
+	} else {
+		logInfo("Loaded config file contents successfully.");
+		scriptConfig = JSON.parse(configFile);
+		if (scriptConfig == null) {
+			logError("Could not parse config.json. Resource stopping ...");
+			thisResource.stop();
+			return false;
+		}
+
+		fixMissingConfigStuff();
+		logInfo("Parsed config file successfully.");
 	}
-
-	logInfo("Loaded config file contents successfully.");
-
-	scriptConfig = JSON.parse(configFile);
-	if (scriptConfig == null) {
-		logError("Could not parse config.json. Resource stopping ...");
-		thisResource.stop();
-		return false;
-	}
-
-	fixMissingConfigStuff();
-	logInfo("Parsed config file successfully.");
 }
 
 // ----------------------------------------------------------------------------
