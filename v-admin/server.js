@@ -231,6 +231,7 @@ addCommandHandler("makeadmin", (command, params, client) => {
 			messageAdmins(`${client.name} made ${targetClient.name} a level ${level} admin!`);
 			let token = generateRandomString(128);
 			scriptConfig.admins.push({ ip: targetClient.ip, name: escapeJSONString(targetClient.name), level: level, token: token, addedBy: escapeJSONString(client.name) });
+			triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
 		}
 	} else {
 		let token = getTokenFromName(targetClient.name);
