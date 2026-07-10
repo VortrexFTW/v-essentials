@@ -188,8 +188,8 @@ addCommandHandler("makeadmin", (command, params, client) => {
 	let splitParams = params.split(" ");
 
 	if(splitParams.length < 2) {
-		messageClient(`Usage: /makeadmin <name/id> <level>`, COLOUR_YELLOW);
-		messageClient(`Use level 0 to remove admin. Command levels can be customized in config.json.`, COLOUR_AQUA);
+		messageClient(`Usage: /makeadmin <name/id> <level>`, client, COLOUR_YELLOW);
+		messageClient(`Use level 0 to remove admin. Command levels can be customized in config.json.`, client, COLOUR_AQUA);
 		return false;
 	}
 
@@ -206,7 +206,7 @@ addCommandHandler("makeadmin", (command, params, client) => {
 		return false;
 	}
 
-	if (level > getPlayerAdminLevel(client)) {
+	if (level > getPlayerAdminLevel(client) && client.console == false) {
 		messageAdmins(`${client.name} tried to change admin status for ${targetClient.name} but failed because they tried to set a higher level (${level}) than their own (${getPlayerAdminLevel(client)}).`);
 		return false;
 	}
@@ -219,6 +219,10 @@ addCommandHandler("makeadmin", (command, params, client) => {
 			scriptConfig.admins[index].level = level;
 			scriptConfig.admins[index].addedBy = escapeJSONString(client.name);
 			scriptConfig.admins[index].ip = targetClient.ip; // Update the IP address in the config
+
+			if(level >= scriptConfig.levelToUseBuiltInCommands) {
+				targetClient.administrator = true;
+			}
 
 			messageAdmins(`${client.name} changed ${targetClient.name}'s admin level to ${level}!`);
 			triggerNetworkEvent("v.admin.token.save", targetClient, token, scriptConfig.serverToken);
@@ -650,7 +654,7 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 		fromClient.trainers = matchedTrainers ? true : areTrainersEnabledForEverybody();
 	}
 
-	if(fromClient.ip == "127.0.0.1") {
+	if(isLanIP(fromClient.ip)) {
 		messageAdmins(`${fromClient.name} is connecting from localhost and has full admin permissions!`);
 		fromClient.setData("v.admin", 9999999, true);
 		fromClient.administrator = true;
@@ -669,7 +673,7 @@ addNetworkHandler("v.admin.token", function (fromClient, token) {
 	}
 
 	if (matchedAdmin) {
-		fromClient.setData("v.admin", matchedAdmin.level || 1, true);
+		fromClient.setData("v.admin", matchedAdmin.level, true);
 		if(matchedAdmin.level >= scriptConfig.levelToUseBuiltInCommands) {
 			fromClient.administrator = true;
 		}
@@ -723,6 +727,14 @@ function getPlayerAdminLevel(client) {
 	}
 
 	return client.getData("v.admin");
+}
+
+// ----------------------------------------------------------------------------
+
+function isLanIP(ip) {
+	let lanOctets = ["127", "192", "10"];
+	let ipSplit = ip.split(".");
+	return lanOctets.includes(ipSplit[0]);
 }
 
 // ----------------------------------------------------------------------------
