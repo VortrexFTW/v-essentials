@@ -335,6 +335,53 @@ let gameLocations = [
 
 		// More will be added soon!
 	],
+	[],
+	[],
+	[],
+	[],
+
+	[
+		["Central Island Police Headquarters", [-1257.78, -6.48, -753.12], 0.0, null],
+
+		// Fire Stations
+		["Works Quarter Fire Station", [-1883.96, -4.89, -348.49], 0.0, null],
+
+		// Hospitals
+		["New Ark Hospital", [-759.00, 11.40, 747.31], 0.0, null],
+
+		// Gas Stations
+		["Little Italy Gas Station", [-1781.84, -4.83, -204.96], 0.0, null],
+		["Downtown-Hoboken Gas Station", [-108.68, 8.46, -134.26], 0.0, null],
+
+		// Bars and Clubs
+		["Salieri's Bar", [-1774.59, -5.62, 3.29], 0.0, null],
+		["Palermo Club", [63.31, 3.97, 281.85], 0.0, null],
+		["Pompeii Bar", [346.81, -2.55, 228.43], 0.0, null],
+
+		// Train Stations
+		["Central Hoboken Station", [162.97, 1.25, 207.62], 0.0, null],
+		["Market Avenue Station", [450.86, -4.15, 261.29], 0.0, null],
+		["New Ark Station", [-687.60, 5.20, 309.29], 0.0, null],
+		["Giuliano Street Station", [-1038.06, -1.52, 82.36], 0.0, null],
+		["Little Italy Station", [-1613.12, 0.93, -49.62], 0.0, null],
+		["Winslet Avenue Station", [162.97, 1.25, 207.62], 0.0, null],
+
+		// Misc
+		["Port of Lost Heaven Main Entrance", [-2039.28, -5.57, -767.31], 0.0, null],
+		["Road to Lost Heaven Racing Circuit", [-3049.63, -1.85, -436.09], 0.0, null],
+		["Chinatown Square", [-1709.77, 14.36, 583.77], 0.0, null],
+		["Downtown Bank", [-175.78, 19.06, -399.13], 0.0, null],
+		["Twister", [60.29, 4.73, 109.25], 0.0, null],
+		["Rich Mansion Front Gate", [782.06, 110.10, -202.60], 0.0, null],
+		["Oakwood Tennis Courts", [456.69, 27.70, -685.82], 0.0, null],
+		["Lighthouse", [949.25, 19.97, -821.45], 0.0, null],
+		["Exit From City Northeast", [38.83, 17.51, 996.17], 0.0, null],
+
+		// Country
+		["Random Farm 1", [903.73, 75.99, 3340.40], 0.0, null],
+		["Night Mission Farm", [-842.80, 20.05, 3336.76], 0.0, null],
+		["Clark's Motel", [-6.42, 0.56, 17.47], 0.0, null],
+	]
 ];
 
 // ----------------------------------------------------------------------------
