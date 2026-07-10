@@ -48,11 +48,13 @@ addNetworkHandler("OnPedEnteredVehicleEx", function (client, pedId, vehicleId, s
 
 	ped.setData("v.seat", seat);
 	triggerEvent("OnPedEnteredVehicleEx", ped, ped, vehicle, seat);
+
+	console.log(`[${thisResource.name}] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}`);
 });
 
 // ===========================================================================
 
-addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId, vehicleId, seat) {
+addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId) {
 	let ped = getElementFromId(pedId);
 	if (ped == null) {
 		return;
@@ -62,13 +64,10 @@ addNetworkHandler("OnPedExitedVehicleEx", function (client, pedId, vehicleId, se
 		return;
 	}
 
-	let vehicle = getElementFromId(vehicleId);
-	if (vehicle == null) {
-		return;
-	}
-
 	ped.removeData("v.seat");
-	triggerEvent("OnPedExitedVehicleEx", ped, ped, vehicle, seat);
+	triggerEvent("OnPedExitedVehicleEx", ped, ped);
+
+	console.log(`[${thisResource.name}] Ped ${ped.id} exited vehicle`);
 });
 
 // ===========================================================================
@@ -89,6 +88,7 @@ addNetworkHandler("OnPedEnteringVehicleEx", function (client, pedId, vehicleId, 
 	}
 
 	triggerEvent("OnPedEnteringVehicleEx", ped, ped, vehicle, seat);
+	console.log(`[${thisResource.name}] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}`);
 });
 
 // ===========================================================================
@@ -109,6 +109,7 @@ addNetworkHandler("OnPedExitingVehicleEx", function (client, pedId, vehicleId, s
 	}
 
 	triggerEvent("OnPedExitingVehicleEx", ped, ped, vehicle, seat);
+	console.log(`[${thisResource.name}] Ped ${ped.id} is exiting vehicle ${vehicle.id} in seat ${seat}`);
 });
 
 // ===========================================================================
@@ -252,9 +253,11 @@ addNetworkHandler("OnPickupPickedUp", function (client, pedId, pickupId) {
 
 // ===========================================================================
 
+/*
 addEventHandler("OnAddIVNetworkEvent", function (event, client, type, name, data, data2) {
 	triggerNetworkEvent("ReceiveIVNetworkEvent", null, type, name, data, data2, client.index);
 });
+*/
 
 // ===========================================================================
 
@@ -374,5 +377,3 @@ addNetworkHandler("OnPlayerMapLoaded", function (client, mapName) {
 	console.log(`[${thisResource.name}] OnPlayerMapLoaded: ${client.name} has loaded map: ${mapName}`);
 	triggerEvent("OnPlayerMapLoaded", client, client, mapName);
 });
-
-// ===========================================================================
