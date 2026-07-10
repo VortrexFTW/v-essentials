@@ -437,6 +437,8 @@ function loadConfig() {
 		scriptConfig = JSON.parse(configFile);
 		if (scriptConfig == null) {
 			logError("Could not parse existing config.json. A new one will be created ...");
+			logWarn("The old config.json will be renamed to config.corrupted.json so you don't lose any data");
+			saveTextFile("config.corrupted.json", configFile);
 			scriptConfig = {};
 			fixMissingConfigStuff(false);
 		}
