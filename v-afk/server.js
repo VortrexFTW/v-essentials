@@ -28,14 +28,16 @@ addNetworkHandler("v.afk", (client, state) => {
 	if (state == true) {
 		client.setData("v.afk", 1, true);
 		if (client.player != null) {
+		console.log(`[${thisResource.name}] ${client.name}[${client.index} is now AFK`);
 			client.player.setData("v.afk", 1, true);
-			triggerEvent("OnPlayerGameDefocused", client, client);
+			triggerEvent("OnLostFocus", client, client);
 		}
 	} else {
 		client.setData("v.afk", 0, true);
 		if (client.player != null) {
+			console.log(`[${thisResource.name}] ${client.name}[${client.index} is no longer AFK`);
 			client.player.setData("v.afk", 0, true);
-			triggerEvent("OnPlayerGameFocused", client, client);
+			triggerEvent("OnFocus", client, client);
 		}
 	}
 });
