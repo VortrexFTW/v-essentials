@@ -427,10 +427,11 @@ let errorMessageColour = toColour(237, 67, 55, 255);
 
 function loadConfig() {
 	let configFile = loadTextFile("config.json");
-	if (configFile == "") {
+	logInfo(`Config file: ${typeof configFile}`);
+	if (configFile == "" || configFile == null) {
 		logError("config.json not found. A new one will be created ...");
 		scriptConfig = {};
-		fixMissingConfigStuff();
+		fixMissingConfigStuff(false);
 	} else {
 		logInfo("Loaded config file contents successfully.");
 		scriptConfig = JSON.parse(configFile);
@@ -542,8 +543,12 @@ function sendClientBlockedScripts(client) {
 
 // ----------------------------------------------------------------------------
 
-function fixMissingConfigStuff() {
-	let oldConfig = JSON.stringify(scriptConfig, null, '\t');
+function fixMissingConfigStuff(checkOldConfig = true) {
+	let oldConfig = "";
+
+	if(checkOldConfig) {
+		let oldConfig = JSON.stringify(scriptConfig, null, '\t');	
+	}
 
 	if (typeof scriptConfig.serverToken == "undefined") {
 		scriptConfig.serverToken = generateRandomString(32);
@@ -613,7 +618,7 @@ function fixMissingConfigStuff() {
 	}
 
 	let newConfig = JSON.stringify(scriptConfig, null, '\t');
-	if (oldConfig != newConfig) {
+	if ((oldConfig != newConfig) || !checkOldConfig) {
 		console.log("[V.ADMIN] Fixed missing config stuff");
 		saveConfig();
 	}
