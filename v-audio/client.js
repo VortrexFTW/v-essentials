@@ -77,7 +77,7 @@ addEventHandler("OnResourceStart", function (event, resource) {
 // ===========================================================================
 
 bindEventHandler("OnResourceStop", thisResource, function (event, resource) {
-	getElements().filter(element => element.getData("v.audio.obj") != null).forEach((element) => {
+	getElementsByType(ELEMENT_ELEMENT).filter(element => element.getData("v.audio.obj") != null).forEach((element) => {
 		element.getData("v.audio.obj").stop();
 		element.removeData("v.audio.obj");
 	});
