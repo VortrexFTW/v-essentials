@@ -364,24 +364,28 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 // ===========================================================================
 
 addEventHandler("OnPedEnteredVehicle", function (event, ped, vehicle, seat) {
+	console.log(`[${thisResource.name}] Ped ${ped.id} entered vehicle ${vehicle.id} in seat ${seat}`);
 	triggerNetworkEvent("OnPedEnteredVehicleEx", ped.id, vehicle.id, seat);
 });
 
 // ===========================================================================
 
-addEventHandler("OnPedExitedVehicle", function (event, ped, vehicle, seat) {
-	triggerNetworkEvent("OnPedExitedVehicleEx", ped.id, vehicle.id, seat);
+addEventHandler("OnPedExitedVehicle", function (event, ped) {
+	console.log(`[${thisResource.name}] Ped ${ped.id} exited vehicle`);
+	triggerNetworkEvent("OnPedExitedVehicleEx", ped.id);
 });
 
 // ===========================================================================
 
 addEventHandler("OnPedEnteringVehicle", function (event, ped, vehicle, seat) {
+	console.log(`[${thisResource.name}] Ped ${ped.id} is entering vehicle ${vehicle.id} in seat ${seat}`);
 	triggerNetworkEvent("OnPedEnteringVehicleEx", ped.id, vehicle.id, seat);
 });
 
 // ===========================================================================
 
 addEventHandler("OnPedExitingVehicle", function (event, ped, vehicle, seat) {
+	console.log(`[${thisResource.name}] Ped ${ped.id} is exiting vehicle`);
 	triggerNetworkEvent("OnPedExitingVehicleEx", ped.id, vehicle.id, seat);
 });
 
@@ -398,17 +402,11 @@ function getPedVehicleSeat(ped) {
 
 // ===========================================================================
 
-//addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2) {
-//	console.log(`IV Network event: ${name} with type ${type} dataLength: ${data.byteLength}`);
-//	if (type == 3) {
-//		triggerNetworkEvent("OnAddIVNetworkEvent", type, name, data, data2);
-//	}
-//});
-
-// ===========================================================================
-
-addNetworkHandler("ReceiveIVNetworkEvent", (type, name, data, data2, from) => {
-	game.receiveNetworkEvent(0, from, type, 0, data, data2);
+addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2) {
+	console.log(`IV Network event: ${name} with type ${type} dataLength: ${data.byteLength}`);
+	if (type == 3) {
+		triggerNetworkEvent("OnAddIVNetworkEvent", type, name, data, data2);
+	}
 });
 
 // ===========================================================================
@@ -643,7 +641,7 @@ function syncVehicleProperties(vehicle) {
 		}
 	}
 
-	if (typeof vehicle.siren != "undefined") {
+	if (typeof vehicle.siren != "undefined" && game.game != V_GAME_MAFIA_ONE) {
 		let sirenStatus = vehicle.getData("v.siren");
 		if (sirenStatus != null) {
 			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} siren to ${sirenStatus}`);
@@ -784,26 +782,6 @@ function syncVehicleProperties(vehicle) {
 			natives.detachCar(vehicle);
 		}
 	}
-
-	//if (game.game == V_GAME_MAFIA_ONE) {
-	//	let fuel = vehicle.getData("v.fuel");
-	//	if (fuel != null) {
-	//		console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} fuel to ${fuel} (${typeof fuel})`);
-	//		setTimeout(function () {
-	//			vehicle.fuel = fuel;
-	//		}, 1000);
-	//	}
-	//}
-}
-
-// ===========================================================================
-
-if (game.game == V_GAME_GTA_IV) {
-	addNetworkHandler("ReceiveIVNetworkEvent", function (type, name, data, data2, fromClientIndex) {
-		if (fromClientIndex != localClient.index) {
-			game.receiveNetworkEvent(0, fromClientIndex, type, 0, data, data2);
-		}
-	});
 }
 
 // ===========================================================================
@@ -897,32 +875,13 @@ addNetworkHandler("v.news", function (newsText) {
 
 // ===========================================================================
 
-addNetworkHandler("v.elementInterior", function (element, interior) {
-	console.log(`[${thisResource.name}] Attempting to set element ${element} interior to ${interior}.`);
-
-	if (typeof element == "number") {
-		element = getElementFromId(element);
-	}
-
-	if (element == null) {
-		console.warn(`[${thisResource.name}] Aborting setting element ${element} interior to ${interior} because element is null.`);
+addNetworkHandler("v.interior", function (interior) {
+	if(game.game == V_GAME_MAFIA_ONE) {
 		return false;
 	}
 
-	element.interior = interior;
-});
-
-// ===========================================================================
-
-addNetworkHandler("v.interior", function (interior) {
-	//console.log(`[${thisResource.name}] Attempting to set element ${element} interior to ${interior}.`);
-
 	localPlayer.interior = interior;
 	game.cameraInterior = interior;
-
-	getElementsByType(ELEMENT_VEHICLE).filter(veh => veh.getData("v.interior")).forEach(veh => {
-		veh.interior = veh.getData("v.interior");
-	});
 });
 
 // ===========================================================================
@@ -947,5 +906,125 @@ async function waitUntil(condition) {
 		}, 1);
 	});
 }
+
+// ===========================================================================
+
+addEventHandler("OnElementSetData", function(event, element, key, val) {
+	if(element.type == ELEMENT_PED) {
+		switch(key) {
+			case "v.weapon":
+				if(typeof element.giveWeapon != "undefined") {
+					if (game.game == V_GAME_MAFIA_ONE) {
+						element.giveWeapon(val[0], val[2], val[1]);
+					} else {
+						element.giveWeapon(val[0], val[1] + val[2], val[3]);
+					}
+				}
+				break;
+
+			case "v.heading":
+				if (typeof element.heading != "undefined") {
+					element.heading = val;
+				}
+				break;
+
+			case "v.fightStyle":
+				if (typeof element.setFightStyle != "undefined") {
+					element.setFightStyle(val[0], val[1]);
+				}
+				
+				break;
+
+			case "v.walkStyle":
+				if (typeof element.walkStyle != "undefined") {
+					element.walkStyle = val;
+				}
+
+				// For GTA IV
+				if(game.game == V_GAME_GTA_IV) {
+					natives.requestAnims(val);
+					natives.setAnimGroupForChar(element, val);
+				}
+				break;
+
+			case "v.bodyPartHead":
+				if (typeof element.changeBodyPart != "undefined") {
+					element.changeBodyPart(0, Number(val[0]), Number(val[1]));
+				}
+				break;
+
+			case "v.bodyPartUpper":
+				if (typeof element.changeBodyPart != "undefined") {
+					element.changeBodyPart(1, Number(val[0]), Number(val[1]));
+				}
+				break;
+
+			case "v.bodyPartLower":
+				if (typeof element.changeBodyPart != "undefined") {
+					element.changeBodyPart(2, Number(val[0]), Number(val[1]));
+				}
+				break;
+
+			case "v.bodyPropHat":
+				if (typeof element.setCharPropIndex != "undefined") {
+					natives.setCharPropIndex(element, 0, Number(val));
+				}
+				break;
+
+			case "v.bleeding":
+				if (game.game <= V_GAME_GTA_VC) {
+					element.bleeding = val;
+				} else if (game.game == V_GAME_GTA_IV) {
+					natives.setCharBleeding(element, val);
+				}
+				break;
+
+			case "v.wander":
+				if(game.game == V_GAME_GTA_IV) {
+					natives.taskWanderStandard(element);
+				} else if(game.game <= V_GAME_GTA_SA) {
+					element.wanderRandomly = true
+				}
+				break;
+
+			default:
+				break;				
+		}
+	}
+
+	switch(key) {
+		case "v.interior":
+			if(typeof element.interior != "undefined") {
+				break;
+			}
+
+			element.interior = val;
+			break;
+
+		default:
+			break;
+	}
+});
+
+// ===========================================================================
+
+// Will remove once MafiaC is updated with OnElementSetData
+addNetworkHandler("v.weapon", function(element, weapon, ammo1, ammo2, active) {
+	if (typeof element == "number") {
+		element = getElementFromId(element);
+	}
+
+	if (element == null) {
+		return false;
+	}
+
+	if(typeof element.giveWeapon != "undefined") {
+		if (game.game == V_GAME_MAFIA_ONE) {
+			element.giveWeapon(weapon, ammo1, ammo2);
+		} else {
+			element.giveWeapon(weapon, ammo1, ammo2, active);
+		}
+	}
+});
 
 // ===========================================================================
