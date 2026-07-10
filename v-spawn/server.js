@@ -162,41 +162,41 @@ function fixMissingConfigStuff() {
 
 	if (typeof scriptConfig.spawns == "undefined") {
 		scriptConfig.spawns = {};
+	}
 
-		if (typeof scriptConfig.spawns[gameIdentifierStrings[server.game]] == "undefined") {
-			scriptConfig.spawns[gameIdentifierStrings[server.game]] = [];
-			for (let i in defaultSpawns[gameIdentifierStrings[server.game]]) {
-				scriptConfig.spawns[gameIdentifierStrings[server.game]].push({
-					x: defaultSpawns[gameIdentifierStrings[server.game]][i][0],
-					y: defaultSpawns[gameIdentifierStrings[server.game]][i][1],
-					z: defaultSpawns[gameIdentifierStrings[server.game]][i][2],
-					heading: defaultSpawns[gameIdentifierStrings[server.game]][i][3],
-					name: defaultSpawns[gameIdentifierStrings[server.game]][i][4],
-				});
-			}
-		};
+	if (typeof scriptConfig.spawns[gameIdentifierStrings[server.game]] == "undefined") {
+		scriptConfig.spawns[gameIdentifierStrings[server.game]] = [];
+		for (let i in defaultSpawns[gameIdentifierStrings[server.game]]) {
+			scriptConfig.spawns[gameIdentifierStrings[server.game]].push({
+				x: defaultSpawns[gameIdentifierStrings[server.game]][i][0],
+				y: defaultSpawns[gameIdentifierStrings[server.game]][i][1],
+				z: defaultSpawns[gameIdentifierStrings[server.game]][i][2],
+				heading: defaultSpawns[gameIdentifierStrings[server.game]][i][3],
+				name: defaultSpawns[gameIdentifierStrings[server.game]][i][4],
+			});
+		}
 	}
 
 	if (typeof scriptConfig.skins == "undefined") {
 		scriptConfig.skins = {};
+	}
 
-		if (typeof scriptConfig.skins[gameIdentifierStrings[server.game]] == "undefined") {
-			scriptConfig.skins[gameIdentifierStrings[server.game]] = [];
-			for (let i in defaultSkins[gameIdentifierStrings[server.game]]) {
-				scriptConfig.skins[gameIdentifierStrings[server.game]].push(defaultSkins[gameIdentifierStrings[server.game]][i]);
-			}
-		};
+	if (typeof scriptConfig.skins[gameIdentifierStrings[server.game]] == "undefined") {
+		scriptConfig.skins[gameIdentifierStrings[server.game]] = [];
+		for (let i in defaultSkins[gameIdentifierStrings[server.game]]) {
+			scriptConfig.skins[gameIdentifierStrings[server.game]].push(defaultSkins[gameIdentifierStrings[server.game]][i]);
+		}
 	}
 
 	if (typeof scriptConfig.blockedSkins == "undefined") {
 		scriptConfig.blockedSkins = {};
+	}
 
-		if (typeof scriptConfig.blockedSkins[gameIdentifierStrings[server.game]] == "undefined") {
-			scriptConfig.blockedSkins[gameIdentifierStrings[server.game]] = [];
-			for (let i in defaultBlockedSkins[gameIdentifierStrings[server.game]]) {
-				scriptConfig.blockedSkins[gameIdentifierStrings[server.game]].push(defaultBlockedSkins[gameIdentifierStrings[server.game]][i]);
-			}
-		};
+	if (typeof scriptConfig.blockedSkins[gameIdentifierStrings[server.game]] == "undefined") {
+		scriptConfig.blockedSkins[gameIdentifierStrings[server.game]] = [];
+		for (let i in defaultBlockedSkins[gameIdentifierStrings[server.game]]) {
+			scriptConfig.blockedSkins[gameIdentifierStrings[server.game]].push(defaultBlockedSkins[gameIdentifierStrings[server.game]][i]);
+		}
 	}
 
 	let newConfig = JSON.stringify(scriptConfig, null, '\t');
