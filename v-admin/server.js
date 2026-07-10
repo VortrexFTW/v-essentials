@@ -436,9 +436,9 @@ function loadConfig() {
 		logInfo("Loaded config file contents successfully.");
 		scriptConfig = JSON.parse(configFile);
 		if (scriptConfig == null) {
-			logError("Could not parse config.json. Resource stopping ...");
-			thisResource.stop();
-			return false;
+			logError("Could not parse existing config.json. A new one will be created ...");
+			scriptConfig = {};
+			fixMissingConfigStuff(false);
 		}
 
 		fixMissingConfigStuff();
