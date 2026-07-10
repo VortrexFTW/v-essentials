@@ -85,39 +85,51 @@ addNetworkHandler("receiveConsoleMessage", function (messageText) {
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("v.admin.token", function (serverToken) {
+    console.log(`[${thisResource.name}] Server requested token check ...`);
     let tokenFile = loadTextFile("token.json");
     if (tokenFile == "") {
+        console.log(`[${thisResource.name}] token.json doesn't exist. Initializing new data ...`);
         tokenData = {};
     }
 
     tokenData = JSON.parse(tokenFile);
     if (tokenData == null) {
+        console.log(`[${thisResource.name}] token.json is malformed. Initializing new data ...`);
         tokenData = {};
     }
 
     let token = "";
-    if (typeof tokenData[serverToken] != "undefined") {
+    if (typeof tokenData[serverToken] == "undefined") {
+        console.log(`[${thisResource.name}] Token not added for server ${serverToken}`);
+    } else {
+        console.log(`[${thisResource.name}] Token available for ${serverToken}`);
         token = tokenData[serverToken];
     }
 
+    console.log(`[${thisResource.name}] Sending token to server ${serverToken} ...`);
     triggerNetworkEvent("v.admin.token", token);
 });
 
 // ----------------------------------------------------------------------------
 
 addNetworkHandler("v.admin.token.save", function (token, serverToken) {
+    console.log(`[${thisResource.name}] Server requested token save ...`);
     let tokenFile = loadTextFile("token.json");
-    if (tokenFile == "") {
+    if (tokenFile == "" || tokenFile == null) {
+        console.log(`[${thisResource.name}] token.json doesn't exist. Creating a new one ...`);
         tokenData = {};
     }
 
     tokenData = JSON.parse(tokenFile);
     if (tokenData == null) {
+        console.log(`[${thisResource.name}] token.json is malformed. Initializing new data ...`);
         tokenData = {};
     }
 
+    console.log(`[${thisResource.name}] Saving token.json ...`);
     tokenData[serverToken] = token;
     saveTextFile("token.json", JSON.stringify(tokenData, null, '\t'));
+    console.log(`[${thisResource.name}] token.json saved`);
 });
 
 // ----------------------------------------------------------------------------
