@@ -9,6 +9,10 @@ let listFont = null;
 let updateGTAIVInfo = null;
 
 let listWidth = game.width / 3;
+let listColumns = ["ID", "Name", "Ping"];
+
+// If you want the player to see their own ping/score at the top before everyone else
+let localFirst = true;
 
 // ----------------------------------------------------------------------------
 
@@ -39,34 +43,41 @@ bindEventHandler("OnResourceStart", thisResource, function (event, resource) {
 				triggerNetworkEvent("v.ivinfo.", game.ivEpisode, game.ivGamemode);
 			}, 2500);
 		}
+
+		// Episode
+		text = "Unknown";
+		if (game.game == GAME_GTA_IV) {
+			listColumns = ["ID", "Name", "Ping", "Episode", "Gamemode"];
+		}
 	}
 });
 
 // ----------------------------------------------------------------------------
 
 addEventHandler("OnDrawnHUD", function (event) {
-	if ((isKeyDown(SDLK_TAB) && game.game < 10) || (isKeyDown(SDLK_F5) && game.game == 10)) {
+	if ((isKeyDown(SDLK_TAB) && game.game < 10) || (isKeyDown(SDLK_F5) && game.game == 10)) {		
 		if (listFont != null && titleFont != null) {
+			let clients = getClients();
+
+			if (localFirst) {
+				clients.sort((a, b) => {
+					if (a.index === localClient?.index) return -1;
+					if (b.index === localClient?.index) return 1;
+					return a.index - b.index;
+				});
+			}
+			
 			let playersText = `PLAYERS`;
-			let scoreboardStart = (game.height / 2) - (Math.floor(getClients().length / 2) * 20);
+			let scoreboardStart = (game.height / 2) - (Math.floor(clients.length / 2) * 20);
 			titleFont.measure(playersText, listWidth, 0.0, 1.0, 10, false, false);
 			titleFont.render(playersText, [game.width / 2, scoreboardStart - 85], 0, 0.5, 0.0, titleFont.size, COLOUR_WHITE, false, false, false, true);
 
-			let playerCountText = `${getClients().length} connected`;
+			let playerCountText = `${clients.length} connected`;
 			subTitleFont.measure(playerCountText, listWidth, 0.0, 1.0, 10, false, false);
 			subTitleFont.render(playerCountText, [game.width / 2, scoreboardStart - 55], 0, 0.5, 0.0, subTitleFont.size, COLOUR_WHITE, false, false, false, true);
 
 			let text = "";
 			let size = null;
-
-			let listColumns = ["ID", "Name", "Ping"];
-			if (typeof gta != "undefined") {
-				// Episode
-				text = "Unknown";
-				if (game.game == GAME_GTA_IV) {
-					listColumns = ["ID", "Name", "Ping", "Episode", "Gamemode"];
-				}
-			}
 
 			let columnWidth = Math.round(listWidth / listColumns.length);
 			let listLeft = Math.round(game.width / 2) - (listWidth / 2);
@@ -79,7 +90,6 @@ addEventHandler("OnDrawnHUD", function (event) {
 				listFont.render(listColumns[i], [columnLeft, scoreboardStart - 30], columnWidth, 0.5, 1.0, listFont.size, COLOUR_WHITE, false, false, false, true);
 			}
 
-			let clients = getClients();
 			for (let i in clients) {
 				let colour = COLOUR_WHITE;
 				if (clients[i].getData("v.colour") != null) {
