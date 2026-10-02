@@ -3,10 +3,12 @@
 addNetworkHandler(`sb.v.add`, function (client, model, position, heading) {
 	let tempVehicle = game.createVehicle(model, position, heading);
 	tempVehicle.heading = heading;
-	triggerNetworkEvent("sb.warpInVehicle", client, tempVehicle.id, 0);
+	//triggerNetworkEvent("sb.warpInVehicle", client, tempVehicle.id, 0);
 
 	setTimeout(function () {
-		tempVehicle.setData(`sb.v.addedby`, client, false);
+		// Element data must be serializable - a client object serializes to nothing and makes the receiving machine
+		// reject the vehicle's whole create packet, so store the name instead.
+		tempVehicle.setData(`sb.v.addedby`, client.name, false);
 	}, 500);
 });
 
@@ -299,3 +301,13 @@ addNetworkHandler(`sb.v.wander`, function (client, vehicles) {
 });
 
 // ----------------------------------------------------------------------------
+
+addNetworkHandler(`sb.v.indicatorLeft`, function (client, vehicleIds, state) {
+	triggerNetworkEvent(`sb.v.indicatorLeft`, null, vehicleIds, state);
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler(`sb.v.indicatorRight`, function (client, vehicleIds, state) {
+	triggerNetworkEvent(`sb.v.indicatorRight`, null, vehicleIds, state);
+});
