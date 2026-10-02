@@ -1706,8 +1706,139 @@ addCommandHandler("veh_wander", function (cmdName, params) {
 
 // ----------------------------------------------------------------------------
 
+addCommandHandler("veh_left", function (cmdName, params) {
+	if (game.game != 10) {
+		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+
+	if (isParamsInvalid(params)) {
+		message("Command: /" + String(cmdName) + " <vehicle> <1/0>", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let vehicles = getVehiclesFromParams(splitParams[0]);
+	let state = Number(splitParams[1]) || 0;
+
+	let outputText = "";
+
+	if (vehicles.length == 0) {
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
+		return false;
+	}
+
+	if (isConnected) {
+		triggerNetworkEvent("sb.v.indicatorLeft", getVehicleIdsArray(vehicles), !!state);
+	} else {
+		vehicles.forEach(function (vehicle) {
+			vehicle.indicatorsEnabled = true;
+			vehicle.indicatorLeft = !!state;
+		});
+	}
+
+	if (vehicles.length > 1) {
+		outputText = "turned " + String(vehicles.length) + " vehicles left indicator " + String((!!state) ? "on" : "off");
+	} else {
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " vehicles left indicator " + String((!!state) ? "on" : "off");
+	}
+
+	outputSandboxMessage(outputText);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+addCommandHandler("veh_right", function (cmdName, params) {
+	if (game.game != 10) {
+		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+
+	if (isParamsInvalid(params)) {
+		message("Command: /" + String(cmdName) + " <vehicle> <1/0>", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let vehicles = getVehiclesFromParams(splitParams[0]);
+	let state = Number(splitParams[1]) || 0;
+
+	let outputText = "";
+
+	if (vehicles.length == 0) {
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
+		return false;
+	}
+
+	if (isConnected) {
+		triggerNetworkEvent("sb.v.indicatorRight", getVehicleIdsArray(vehicles), !!state);
+	} else {
+		vehicles.forEach(function (vehicle) {
+			vehicle.indicatorsEnabled = true;
+			vehicle.indicatorRight = !!state;
+		});
+	}
+
+	if (vehicles.length > 1) {
+		outputText = "turned " + String(vehicles.length) + " vehicles right indicator " + String((!!state) ? "on" : "off");
+	} else {
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " vehicle's right indicator " + String((!!state) ? "on" : "off");
+	}
+
+	outputSandboxMessage(outputText);
+	return true;
+});
+
+// ----------------------------------------------------------------------------
+
+/*
+addCommandHandler("veh_lightflag", function (cmdName, params) {
+	if (game.game != 10) {
+		message("The /" + cmdName + " command is not available on this game!", errorMessageColour);
+		return false;
+	}
+
+	if (isParamsInvalid(params)) {
+		message("Command: /" + String(cmdName) + " <vehicle> <1/0>", syntaxMessageColour);
+		return false;
+	}
+
+	let splitParams = params.split(" ");
+	let vehicles = getVehiclesFromParams(splitParams[0]);
+	let flag = Number(splitParams[1]) || 20;
+	let state = Number(splitParams[2]) || 0;
+
+	let outputText = "";
+
+	if (vehicles.length == 0) {
+		message("No vehicles found! Use '/help vehicle' for information.", errorMessageColour);
+		return false;
+	}
+
+	if (isConnected) {
+		triggerNetworkEvent("sb.v.lightFlag", getVehicleIdsArray(vehicles), flag, state);
+	} else {
+		vehicles.forEach(function (vehicle) {
+			vehicle.setLightFlags(vehicle.getLightsFlag())
+		});
+	}
+
+	if (vehicles.length > 1) {
+		outputText = "turned " + String(vehicles.length) + " vehicles light flag " + String(flag) + " + String((!!state) ? "on" : "off");
+	} else {
+		outputText = "turned " + getProperVehiclePossessionText(splitParams[0]) + " " + getVehicleModelFromParams(vehicles[0].modelIndex).name + " vehicle's light flag " + String(flag) + " +  + String((!!state) ? "on" : "off");
+	}
+
+	outputSandboxMessage(outputText);
+	return true;
+});
+*/
+
+// ----------------------------------------------------------------------------
+
 function getVehiclesFromParams(params) {
-	let vehicles = getVehicles();
+	let vehicles = getElementsByType(ELEMENT_VEHICLE);
 
 	switch (params.toLowerCase()) {
 		case "m":
@@ -2256,3 +2387,27 @@ function getVehicleFromId(vehicleId) {
 }
 
 // ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.indicatorLeft", function (vehicleIds, state) {
+	vehicleIds.forEach(function (vehicleId) {
+		getVehicleFromId(vehicleId).indicatorsEnabled = true;
+		getVehicleFromId(vehicleId).indicatorLeft = state;
+	})
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.indicatorRight", function (vehicleIds, state) {
+	vehicleIds.forEach(function (vehicleId) {
+		getVehicleFromId(vehicleId).indicatorsEnabled = true;
+		getVehicleFromId(vehicleId).indicatorRight = state;
+	})
+});
+
+// ----------------------------------------------------------------------------
+
+addNetworkHandler("sb.v.beacon", function (vehicleIds, state) {
+	vehicleIds.forEach(function (vehicleId) {
+		getVehicleFromId(vehicleId).beaconEnabled = state;
+	})
+});
