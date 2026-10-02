@@ -48,6 +48,11 @@ addEventHandler("onPlayerJoined", (event, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("kick", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /kick <name/id>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
@@ -77,6 +82,11 @@ addCommandHandler("scripts", (command, params, client) => {
 		return false;
 	}
 
+	if(params == "") {
+		messageClient(`Usage: /ban <name/id> <reason>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
@@ -96,6 +106,11 @@ addCommandHandler("scripts", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ban", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /ban <name/id> <reason>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	let splitParams = params.split(" ");
 	let targetParams = splitParams[0];
 	let reasonParams = splitParams.slice(1).join(" ");
@@ -123,8 +138,8 @@ addCommandHandler("ban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("unban", (command, params, client) => {
-	if(params.length === 0) {
-		messageAdmin(`You must input an ip or a username.`, client, errorMessageColour);
+	if(params == "") {
+		messageClient(`Usage: /unban <name/id>`, client, COLOUR_YELLOW);
 		return false;
 	}
 
@@ -153,6 +168,11 @@ addCommandHandler("unban", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("a", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /a <message>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	if (client.getData("v.admin") >= getLevelForCommand(command)) {
 		messageAdmins(`${client.name}: ${params}`);
 	}
@@ -161,9 +181,16 @@ addCommandHandler("a", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("announce", (command, params, client) => {
-	if (client.getData("v.admin") >= getLevelForCommand(command)) {
-		messageAnnounce(params);
+	if(params == "") {
+		messageClient(`Usage: /announce <message>`, client, COLOUR_YELLOW);
+		return false;
 	}
+
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to use announce but failed because they aren't high enough level.`);
+	}
+
+	messageAnnounce(params);
 });
 
 // ----------------------------------------------------------------------------
@@ -171,6 +198,11 @@ addCommandHandler("announce", (command, params, client) => {
 addCommandHandler("blockscript", (command, params, client) => {
 	if (typeof gta == "undefined") {
 		messageClient(`This command is only available on GTA Connected`, client, errorMessageColour);
+		return false;
+	}
+
+	if(params == "") {
+		messageClient(`Usage: /blockscript <script name>`, client, COLOUR_YELLOW);
 		return false;
 	}
 
@@ -185,6 +217,11 @@ addCommandHandler("blockscript", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("makeadmin", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /makeadmin <id/name> <level>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	let splitParams = params.split(" ");
 
 	if(splitParams.length < 2) {
@@ -251,6 +288,11 @@ addCommandHandler("trainers", (command, params, client) => {
 		return false;
 	}
 
+	if(params == "") {
+		messageClient(`Usage: /trainers <id/name>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
@@ -284,15 +326,20 @@ addCommandHandler("trainers", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("ip", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /ip <id/name>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to get IP address for ${targetClient.name} but failed because they aren't high enough admin.`);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
 		messageAdmins(`${client.name} tried to get IP address for '${params}' but failed because no player is connected with that name/ID.`);
-		return false;
-	}
-
-	if (client.getData("v.admin") <= getLevelForCommand(command)) {
-		messageAdmins(`${client.name} tried to get IP address for ${targetClient.name} but failed because they aren't an admin.`);
 		return false;
 	}
 
@@ -302,15 +349,20 @@ addCommandHandler("ip", (command, params, client) => {
 // ----------------------------------------------------------------------------
 
 addCommandHandler("geoip", (command, params, client) => {
+	if(params == "") {
+		messageClient(`Usage: /ip <id/name>`, client, COLOUR_YELLOW);
+		return false;
+	}
+
+	if (client.getData("v.admin") < getLevelForCommand(command)) {
+		messageAdmins(`${client.name} tried to get GeoIP (location) information for ${targetClient.name} but failed because they aren't high enough admin.`);
+		return false;
+	}
+
 	let targetClient = getClientFromParams(params);
 
 	if (targetClient == null) {
 		messageAdmins(`${client.name} tried to get GeoIP (location) information for '${params}' but failed because no player is connected with that name/ID.`);
-		return false;
-	}
-
-	if (client.getData("v.admin") <= getLevelForCommand(command)) {
-		messageAdmins(`${client.name} tried to get GeoIP (location) information for ${targetClient.name} but failed because they aren't an admin.`);
 		return false;
 	}
 
