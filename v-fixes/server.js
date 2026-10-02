@@ -21,6 +21,8 @@ addEvent("OnVehicleSirenChanged", 2); // Called when vehicle siren is toggled
 addEvent("OnVehicleLockChanged", 2); // Called when vehicle locked status is toggled
 addEvent("OnVehicleTaxiLightChanged", 2); // Called when vehicle taxi light is toggled
 addEvent("OnVehicleHealthChanged", 2); // Called when vehicle health changes
+addEvent("OnVehicleRoofChanged", 2); // Called when a vehicle's roof is put up or down (Mafia 1)
+addEvent("OnVehicleDamageChanged", 2); // Called when a vehicle's damage changes, with the new damage as base64 (Mafia 1)
 addEvent("OnPlayerMapLoaded", 2); // Called when a map is loaded, used for Mafia 1
 
 // ===========================================================================
@@ -369,6 +371,51 @@ addNetworkHandler("OnVehicleInteriorLightChanged", function (client, vehicleId, 
 
 	vehicle.setData("v.interiorLight", state, true);
 	triggerEvent("OnVehicleInteriorLightChanged", vehicle, vehicle, state);
+});
+
+// ===========================================================================
+
+addNetworkHandler("OnVehicleRoofChanged", function (client, vehicleId, state) {
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	if (typeof state != "boolean") {
+		return false;
+	}
+
+	vehicle.setData("v.roof", state, true);
+	triggerEvent("OnVehicleRoofChanged", vehicle, vehicle, state);
+});
+
+// ===========================================================================
+
+// Damage blobs are at most 65536 bytes (VEHICLEDAMAGE_MAX_SIZE), so this much base64
+const maxVehicleDamageLength = 87384;
+
+addNetworkHandler("OnVehicleDamageChanged", function (client, vehicleId, damage) {
+	let vehicle = getElementFromId(vehicleId);
+	if (vehicle == null) {
+		return false;
+	}
+
+	if (vehicle.syncer != client) {
+		return false;
+	}
+
+	// It comes from a client and usually ends up in a database, so only plain base64 gets through
+	if (typeof damage != "string" || damage.length == 0 || damage.length > maxVehicleDamageLength || !/^[A-Za-z0-9+/]+={0,2}$/.test(damage)) {
+		console.warn(`[${thisResource.name}] Ignoring invalid damage for vehicle ${vehicle.id} from ${client.name}`);
+		return false;
+	}
+
+	vehicle.setData("v.damage", damage, true);
+	triggerEvent("OnVehicleDamageChanged", vehicle, vehicle, damage);
 });
 
 // ===========================================================================
