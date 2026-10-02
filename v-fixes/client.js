@@ -245,6 +245,10 @@ addEventHandler("OnEntityProcess", function (event, entity) {
 
 	if (entity.type == ELEMENT_VEHICLE) {
 		if (entity.isSyncer) {
+			if (game.game == V_GAME_MAFIA_ONE) {
+				reportVehicleStateChanges(entity);
+			}
+
 			// Tell server about some vehicle properties that are not synced by default
 			/*
 			if (typeof entity.lights != "undefined") {
@@ -412,10 +416,6 @@ addEventHandler("OnAddIVNetworkEvent", function (event, type, name, data, data2)
 // ===========================================================================
 
 addEventHandler("OnElementStreamIn", function (event, element) {
-	//if (element == null) {
-	//	return false;
-	//}
-
 	console.log(`[${thisResource.name}] OnElementStreamIn for element ${element.id}`);
 
 	syncElementProperties(element);
@@ -423,366 +423,570 @@ addEventHandler("OnElementStreamIn", function (event, element) {
 
 // ===========================================================================
 
+// Element data keys that get applied again when an element streams in
+const syncedElementDataKeys = {
+	generic: [
+		"v.interior",
+		"v.collisions",
+	],
+	ped: [
+		"v.heading",
+		"v.fightStyle",
+		"v.walkStyle",
+		"v.bodyPartHead",
+		"v.bodyPartUpper",
+		"v.bodyPartLower",
+		"v.bodyPropHat",
+		"v.bleeding",
+		"v.weapon",
+		"v.wander",
+	],
+	vehicle: [
+		"v.colour",
+		"v.colour.rgb",
+		"v.engine",
+		"v.lights",
+		"v.siren",
+		"v.sirenLight",
+		"v.indicatorLeft",
+		"v.indicatorRight",
+		"v.locked",
+		"v.hazardLights",
+		"v.interiorLight",
+		"v.taxiLight",
+		"v.trunk",
+		"v.upgrades",
+		"v.livery",
+		"v.dirtLevel",
+		"v.engineDamage",
+		"v.alarm",
+		"v.tow",
+		"v.roof",
+		"v.damage",
+		"v.beacons",
+		"v.headlightScale",
+	],
+	object: [
+		"v.scale",
+	],
+};
+
+// These are applied even when not set, since having no value means something (i.e. stop wandering, detach from tow)
+const nullableElementDataKeys = [
+	"v.wander",
+	"v.tow",
+];
+
+// ===========================================================================
+
+function getElementDataCategory(element) {
+	switch (element.type) {
+		case ELEMENT_PED:
+		case ELEMENT_PLAYER:
+			return "ped";
+
+		case ELEMENT_VEHICLE:
+			return "vehicle";
+
+		default:
+			if (typeof ELEMENT_OBJECT != "undefined" && element.type == ELEMENT_OBJECT) {
+				return "object";
+			}
+			return null;
+	}
+}
+
+// ===========================================================================
+
 function syncElementProperties(element) {
-	//if (element == null) {
-	//	return false;
-	//}
-
-	// Check if element is a server element
-	//if (element.id == -1) {
-	//	return false;
-	//}
-
-	if (typeof element.interior != "undefined") {
-		if (element.getData("v.interior")) {
-			if (typeof element.interior != "undefined") {
-				element.interior = element.getData("v.interior");
-			}
-		}
+	if (typeof element == "number") {
+		element = getElementFromId(element);
 	}
 
-	if (typeof element.collisionsEnabled != "undefined") {
-		if (element.getData("v.collisions")) {
-			element.collisionsEnabled = element.getData("v.collisions")
-		}
+	if (element == null) {
+		return false;
 	}
 
-	if (game.game == V_GAME_MAFIA_ONE) {
-		switch (element.type) {
-			case ELEMENT_VEHICLE:
-				syncVehicleProperties(element);
-				break;
+	let keys = syncedElementDataKeys.generic;
+	let category = getElementDataCategory(element);
+	if (category != null) {
+		keys = keys.concat(syncedElementDataKeys[category]);
+	}
 
-			case ELEMENT_PED:
-			case ELEMENT_PLAYER:
-				syncPedProperties(element);
-				break;
-
-			default:
-				break;
+	keys.forEach(key => {
+		let value = element.getData(key);
+		if (value != null || nullableElementDataKeys.indexOf(key) != -1) {
+			applyElementData(element, key, value);
 		}
-	} else if (game.game == V_GAME_GTA_IV) {
-		switch (element.type) {
-			case ELEMENT_VEHICLE:
-				syncVehicleProperties(element);
-				break;
+	});
 
-			case ELEMENT_PED:
-			case ELEMENT_PLAYER:
-				syncPedProperties(element);
-				break;
-
-			default:
-				break;
-		}
-	} else {
-		switch (element.type) {
-			case ELEMENT_VEHICLE:
-				syncVehicleProperties(element);
-				break;
-
-			case ELEMENT_PED:
-			case ELEMENT_PLAYER:
-				syncPedProperties(element);
-				break;
-
-			case ELEMENT_OBJECT:
-				syncObjectProperties(element);
-				break;
-
-			default:
-				break;
+	if (game.game == V_GAME_GTA_IV && element.type == ELEMENT_PLAYER) {
+		let playerClient = getClientFromPlayerElement(element);
+		if (playerClient != null) {
+			natives.setDisplayPlayerNameAndIcon(playerClient.index, false);
 		}
 	}
 }
 
 // ===========================================================================
 
-function syncPedProperties(ped) {
-	if (typeof ped == "number") {
-		ped = getElementFromId(ped);
+function applyElementData(element, key, value) {
+	switch (key) {
+		case "v.interior":
+			if (typeof element.interior != "undefined" && value != null) {
+				element.interior = value;
+			}
+			return;
+
+		case "v.collisions":
+			if (typeof element.collisionsEnabled != "undefined" && value != null) {
+				element.collisionsEnabled = value;
+			}
+			return;
+
+		case "v.position":
+			if (element.isSyncer && value != null) {
+				element.position = value;
+			}
+			return;
+
+		case "v.velocity":
+			if (typeof element.velocity != "undefined" && value != null) {
+				element.velocity = value;
+			}
+			return;
+
+		case "v.heading":
+			if (typeof element.heading != "undefined" && value != null) {
+				element.heading = value;
+			}
+			return;
+
+		default:
+			break;
 	}
 
-	if (ped == null) {
-		return false;
+	switch (getElementDataCategory(element)) {
+		case "ped":
+			applyPedData(element, key, value);
+			break;
+
+		case "vehicle":
+			applyVehicleData(element, key, value);
+			break;
+
+		case "object":
+			applyObjectData(element, key, value);
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+function applyPedData(ped, key, value) {
+	// Only v.wander does anything with an empty value
+	if (value == null && key != "v.wander") {
+		return;
 	}
 
-	if (ped.getData("v.heading")) {
-		let heading = ped.getData("v.heading");
-		ped.heading = heading;
-	}
+	switch (key) {
+		case "v.fightStyle":
+			if (typeof ped.setFightStyle != "undefined") {
+				ped.setFightStyle(value[0], value[1]);
+			}
+			break;
 
-	if (typeof ped.setFightStyle != "undefined") {
-		if (ped.getData("v.fightStyle")) {
-			let fightStyle = ped.getData("v.fightStyle");
-			ped.setFightStyle(fightStyle[0], fightStyle[1]);
-		}
-	}
+		case "v.walkStyle":
+			// For GTA SA
+			if (typeof ped.walkStyle != "undefined") {
+				ped.walkStyle = value;
+			}
 
-	if (ped.getData("v.walkStyle")) {
-		let walkStyle = ped.getData("v.walkStyle");
-		console.log(`[${thisResource.name}] Setting ped walk style to ${walkStyle}`);
-		
-		// For GTA SA
-		if (typeof ped.walkStyle != "undefined") {
-			ped.walkStyle = walkStyle;
-		}
+			// For GTA IV
+			if (game.game == V_GAME_GTA_IV) {
+				natives.requestAnims(value);
+				natives.setAnimGroupForChar(ped, value);
+			}
+			break;
 
-		// For GTA IV
-		if(game.game == GAME_GTA_IV) {
-			natives.requestAnims(walkStyle);
-			natives.setAnimGroupForChar(ped, walkStyle);
-		}
-	}
+		case "v.bodyPartHead":
+			if (typeof ped.changeBodyPart != "undefined") {
+				ped.changeBodyPart(0, Number(value[0]), Number(value[1]));
+			}
+			break;
 
-	if (typeof ped.changeBodyPart != "undefined") {
-		if (ped.getData("v.bodyPartHead") != null) {
-			let bodyPartHead = ped.getData("v.bodyPartHead");
-			//console.log(`[${thisResource.name}] Setting ped ${ped.id} head to ${bodyPartHead[0]}, ${bodyPartHead[1]}`);
-			ped.changeBodyPart(0, Number(bodyPartHead[0]), Number(bodyPartHead[1]));
-		}
+		case "v.bodyPartUpper":
+			if (typeof ped.changeBodyPart != "undefined") {
+				ped.changeBodyPart(1, Number(value[0]), Number(value[1]));
+			}
+			break;
 
-		if (ped.getData("v.bodyPartUpper") != null) {
-			let bodyPartUpper = ped.getData("v.bodyPartUpper");
-			//console.log(`[${thisResource.name}] Setting ped ${ped.id} upper body to ${bodyPartUpper[0]}, ${bodyPartUpper[1]}`);
-			ped.changeBodyPart(1, Number(bodyPartUpper[0]), Number(bodyPartUpper[1]));
-		}
+		case "v.bodyPartLower":
+			if (typeof ped.changeBodyPart != "undefined") {
+				ped.changeBodyPart(2, Number(value[0]), Number(value[1]));
+			}
+			break;
 
-		if (ped.getData("v.bodyPartLower") != null) {
-			let bodyPartLower = ped.getData("v.bodyPartLower");
-			//console.log(`[${thisResource.name}] Setting ped ${ped.id} lower body to ${bodyPartLower[0]}, ${bodyPartLower[1]}`);
-			ped.changeBodyPart(2, Number(bodyPartLower[0]), Number(bodyPartLower[1]));
-		}
+		case "v.bodyPropHat":
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setCharPropIndex(ped, 0, Number(value));
+			}
+			break;
 
-		if (ped.getData("v.bodyPropHat") != null) {
-			let bodyPropHat = ped.getData("v.bodyPropHat");
-			//console.log(`[${thisResource.name}] Setting ped ${ped.id} hat to ${bodyPropHat}`);
-			natives.setCharPropIndex(ped, 0, Number(bodyPropHat));
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_VC || game.game == V_GAME_GTA_IV) {
-		if (ped.getData("v.bleeding")) {
-			let bleedingState = ped.getData("v.bleeding");
+		case "v.bleeding":
 			if (game.game <= V_GAME_GTA_VC) {
-				//console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
-				ped.bleeding = bleedingState;
+				ped.bleeding = value;
 			} else if (game.game == V_GAME_GTA_IV) {
-				//console.log(`[${thisResource.name}] Setting ped bleeding to ${bleedingState}`);
-				natives.setCharBleeding(ped, bleedingState);
+				natives.setCharBleeding(ped, value);
 			}
-		}
-	}
+			break;
 
-	if (ped.getData("v.weapon")) {
-		let weapon = ped.getData("v.weapon");
-		if (game.game == V_GAME_MAFIA_ONE) {
-			//console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[2]}, ${weapon[1]}`);
-			ped.giveWeapon(weapon[0], weapon[2], weapon[1]);
-		} else {
-			//console.log(`[${thisResource.name}] Giving ped weapon ${weapon[0]} with ammo ${weapon[1]}, ${weapon[2]}`);
-			ped.giveWeapon(weapon[0], weapon[1] + weapon[2], weapon[3]);
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV) {
-		if (ped.type != ELEMENT_PLAYER) {
-			if (ped.getData("v.wander") == null) {
-				//console.log(`[${thisResource.name}] Setting ped to wander`);
-				natives.taskStandStill(ped, 9999999);
-			} else {
-				natives.taskWanderStandard(ped);
-			}
-		} else {
-			let playerClient = getClientFromPlayerElement(ped);
-			if (playerClient != null) {
-				natives.setDisplayPlayerNameAndIcon(playerClient.index, false);
-			}
-		}
-	}
-}
-
-// ===========================================================================
-
-function syncVehicleProperties(vehicle) {
-	if (vehicle == null) {
-		return false;
-	}
-
-	// Check if ped is a server element
-	if (vehicle.id == -1) {
-		return false;
-	}
-
-	if (game.game <= V_GAME_GTA_IV) {
-		let colours = vehicle.getData("v.colour");
-		if (colours != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} colour to ${colours.join(", ")}`);
-			vehicle.colour1 = colours[0];
-			vehicle.colour2 = colours[1];
-			vehicle.colour3 = colours[2];
-			vehicle.colour4 = colours[3];
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_VC) {
-		let colours = vehicle.getData("v.colour.rgb");
-		if (colours != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} RGB colours to ${colours[0]}, ${colours[1]}`);
-			vehicle.setRGBColours(colours[0], colours[1]);
-		}
-	}
-
-	if (typeof vehicle.light != "undefined") {
-		let lightStatus = vehicle.getData("v.lights");
-		if (lightStatus != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} lights to ${lightStatus}`);
-			vehicle.lights = lightStatus;
-		}
-	}
-
-	if (typeof vehicle.siren != "undefined" && game.game != V_GAME_MAFIA_ONE) {
-		let sirenStatus = vehicle.getData("v.siren");
-		if (sirenStatus != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} siren to ${sirenStatus}`);
-			vehicle.siren = sirenStatus;
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_SA) {
-		let lockStatus = vehicle.getData("v.locked");
-		if (lockStatus != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} locked to ${lockStatus}`);
-			if (lockStatus == 2) {
-				lockStatus = false;
-			}
-			vehicle.locked = (typeof lockStatus == "number") ? !!lockStatus : lockStatus;
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV) {
-		let lockStatus = vehicle.getData("v.locked");
-		if (lockStatus != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} lock status to ${lockStatus}`);
-			vehicle.lockedStatus = (lockStatus == true) ? 2 : 1;
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV) {
-		let hazardLightsState = vehicle.getData("v.hazardLights");
-		if (hazardLightsState != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} hazard lights to ${hazardLightsState}`);
-			natives.setVehHazardlights(vehicle, !!hazardLightsState);
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV) {
-		let interiorLightState = vehicle.getData("v.interiorLight");
-		if (interiorLightState != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} interior light to ${interiorLightState}`);
-			natives.setVehInteriorlight(vehicle, !!interiorLightState);
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_IV) {
-		let taxiLightState = vehicle.getData("v.taxiLight");
-		if (taxiLightState != null) {
-			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi light to ${taxiLightState}`);
-				natives.SET_TAXI_LIGHTS(vehicle.ref, (taxiLightState) ? 1 : 0);
-			} else if (game.game == V_GAME_GTA_IV) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} taxi light to ${taxiLightState}`);
-				natives.setTaxiLights(vehicle, taxiLightState);
-			}
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_IV) {
-		let trunkState = vehicle.getData("v.trunk");
-		if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
-			if (trunkState == true) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
-				natives.POP_CAR_BOOT(vehicle.ref);
-			}
-		} else if (game.game == V_GAME_GTA_IV) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} trunk to ${trunkState}`);
-			if (trunkState == true) {
-				natives.openCarDoor(vehicle, 5);
-			} else {
-				natives.shutCarDoor(vehicle, 5);
-			}
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV || game.game == V_GAME_GTA_SA) {
-		let upgrades = vehicle.getData("v.upgrades");
-		console.log(`[${thisResource.name}] Vehicle ${vehicle.id} upgrades`);
-		if (game.game == V_GAME_GTA_SA) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} upgrades to ${upgrades.join(", ")}`);
-			for (let i in upgrades) {
-				if (upgrades[i] != 0) {
-					vehicle.addUpgrade(upgrades[i]);
+		case "v.weapon":
+			if (typeof ped.giveWeapon != "undefined") {
+				if (game.game == V_GAME_MAFIA_ONE) {
+					ped.giveWeapon(value[0], value[2], value[1]);
+				} else {
+					ped.giveWeapon(value[0], value[1] + value[2], value[3]);
 				}
 			}
-		} else if (game.game == V_GAME_GTA_IV) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} upgrades to ${upgrades.join(", ")}`);
-			for (let i = 0; i < upgrades.length; i++) {
-				natives.turnOffVehicleExtra(vehicle, i, (upgrades[i] == 1) ? false : true);
+			break;
+
+		case "v.wander":
+			if (ped.type == ELEMENT_PLAYER) {
+				break;
 			}
-		}
-	}
 
-	if (game.game == V_GAME_GTA_IV || game.game == V_GAME_GTA_SA) {
-		let livery = vehicle.getData("v.livery");
-		if (livery != null) {
-			if (game.game == V_GAME_GTA_SA) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} livery to ${livery}`);
-				vehicle.setPaintJob(livery);
-			} else if (game.game == V_GAME_GTA_IV) {
-				console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} livery to ${livery}`);
-				natives.setCarLivery(vehicle, livery);
-			}
-		}
-	}
-
-	if (game.game == V_GAME_GTA_IV) {
-		let dirtLevel = vehicle.getData("v.dirtLevel");
-		if (dirtLevel != null) {
-			console.log(`[${thisResource.name}] Setting vehicle ${vehicle.id} dirt level to ${dirtLevel}`);
-			natives.setVehicleDirtLevel(vehicle, dirtLevel);
-		}
-	}
-
-	if (game.game <= V_GAME_GTA_IV) {
-		let alarm = vehicle.getData("v.alarm");
-		if (alarm != null) {
 			if (game.game == V_GAME_GTA_IV) {
-				console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
-				natives.setVehAlarmDuration(vehicle, alarm);
-				natives.setVehAlarm(vehicle, (alarm > 0) ? true : false);
-			} else if (game.game <= V_GAME_GTA_VC) {
-				console.log(`[${thisResource.name}] Setting vehicle alarm to ${alarm}`);
-				vehicle.alarm = alarm;
+				if (value == null) {
+					natives.taskStandStill(ped, 9999999);
+				} else {
+					natives.taskWanderStandard(ped);
+				}
+			} else if (game.game <= V_GAME_GTA_SA && value != null) {
+				ped.wanderRandomly = true;
 			}
-		}
-	}
+			break;
 
-	if (game.game == V_GAME_GTA_IV) {
-		let towedByVehicleId = vehicle.getData("v.tow");
-		if (towedByVehicleId != null) {
-			let towedByVehicle = getElementFromId(towedByVehicleId);
-			if (towedByVehicle != null) {
-				let towOffsets = natives.getOffsetsForAttachCarToCar(vehicle, towedByVehicle);
-				let dimensions = natives.getModelDimensions(natives.getCarModel(vehicle));
-				natives.attachCarToCar(vehicle, towedByVehicle, 0, new Vec3(0.0, (dimensions[0].y / 2), 0.7), towOffsets[1]);
-			} else {
-				natives.detachCar(vehicle);
-			}
-		} else {
-			natives.detachCar(vehicle);
-		}
+		default:
+			break;
 	}
 }
+
+// ===========================================================================
+
+function applyVehicleData(vehicle, key, value) {
+	// Only v.tow does anything with an empty value
+	if (value == null && key != "v.tow") {
+		return;
+	}
+
+	switch (key) {
+		case "v.colour":
+			if (game.game <= V_GAME_GTA_IV) {
+				vehicle.colour1 = value[0];
+				vehicle.colour2 = value[1];
+
+				if (value[2] != -1) {
+					vehicle.colour3 = value[2];
+				}
+
+				if (value[3] != -1) {
+					vehicle.colour4 = value[3];
+				}
+			}
+			break;
+
+		case "v.colour.rgb":
+			if (game.game <= V_GAME_GTA_VC) {
+				vehicle.setRGBColours(value[0], value[1]);
+			}
+			break;
+
+		case "v.engine":
+			if (game.game != V_GAME_MAFIA_ONE) {
+				vehicle.engine = value;
+			}
+			break;
+
+		case "v.lights":
+			if (typeof vehicle.lights != "undefined") {
+				vehicle.lights = value;
+			}
+			break;
+
+		case "v.siren":
+			if (typeof vehicle.siren != "undefined" && game.game != V_GAME_MAFIA_ONE) {
+				vehicle.siren = value;
+			}
+			break;
+
+		case "v.sirenLight":
+			if (game.game <= V_GAME_GTA_VC) {
+				vehicle.sirenLight = value;
+			}
+			break;
+
+		case "v.indicatorLeft":
+			vehicle.indicatorsEnabled = true;
+			vehicle.indicatorLeft = value;
+			break;
+
+		case "v.indicatorRight":
+			vehicle.indicatorsEnabled = true;
+			vehicle.indicatorRight = value;
+			break;
+
+		case "v.locked":
+			if (game.game <= V_GAME_GTA_SA) {
+				let lockStatus = (value == 2) ? false : value;
+				vehicle.locked = (typeof lockStatus == "number") ? !!lockStatus : lockStatus;
+			} else if (game.game == V_GAME_GTA_IV) {
+				vehicle.lockedStatus = (value == true) ? 2 : 1;
+			}
+			break;
+
+		case "v.hazardLights":
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setVehHazardlights(vehicle, !!value);
+			}
+			break;
+
+		case "v.interiorLight":
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setVehInteriorlight(vehicle, !!value);
+			}
+			break;
+
+		case "v.taxiLight":
+			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+				natives.SET_TAXI_LIGHTS(vehicle.ref, (value) ? 1 : 0);
+			} else if (game.game == V_GAME_GTA_IV) {
+				natives.setTaxiLights(vehicle, value);
+			}
+			break;
+
+		case "v.trunk":
+			if (game.game == V_GAME_GTA_III || game.game == V_GAME_GTA_VC) {
+				if (value == true) {
+					natives.POP_CAR_BOOT(vehicle.ref);
+				}
+			} else if (game.game == V_GAME_GTA_IV) {
+				if (value == true) {
+					natives.openCarDoor(vehicle, 5);
+				} else {
+					natives.shutCarDoor(vehicle, 5);
+				}
+			}
+			break;
+
+		case "v.upgrades":
+			if (game.game == V_GAME_GTA_SA) {
+				for (let i in value) {
+					if (value[i] != 0) {
+						vehicle.addUpgrade(value[i]);
+					}
+				}
+			} else if (game.game == V_GAME_GTA_IV) {
+				for (let i = 0; i < value.length; i++) {
+					natives.turnOffVehicleExtra(vehicle, i, (value[i] == 1) ? false : true);
+				}
+			}
+			break;
+
+		case "v.livery":
+			if (game.game == V_GAME_GTA_SA) {
+				vehicle.setPaintJob(value);
+			} else if (game.game == V_GAME_GTA_IV) {
+				natives.setCarLivery(vehicle, value);
+			}
+			break;
+
+		case "v.dirtLevel":
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setVehicleDirtLevel(vehicle, value);
+			}
+			break;
+
+		case "v.engineDamage":
+			// Engine damage is the inverse of engine health (0 = no damage, 1000 = dead)
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setEngineHealth(vehicle, 1000 - value);
+			} else if (typeof vehicle.engineHealth != "undefined") {
+				vehicle.engineHealth = 1000 - value;
+			}
+			break;
+
+		case "v.alarm":
+			if (game.game == V_GAME_GTA_IV) {
+				natives.setVehAlarmDuration(vehicle, value);
+				natives.setVehAlarm(vehicle, (value > 0) ? true : false);
+			} else if (game.game <= V_GAME_GTA_VC) {
+				vehicle.alarm = value;
+			}
+			break;
+
+		case "v.tow":
+			if (game.game == V_GAME_GTA_IV) {
+				let towedByVehicle = (value != null) ? getElementFromId(value) : null;
+				if (towedByVehicle != null) {
+					let towOffsets = natives.getOffsetsForAttachCarToCar(vehicle, towedByVehicle);
+					let dimensions = natives.getModelDimensions(natives.getCarModel(vehicle));
+					natives.attachCarToCar(vehicle, towedByVehicle, 0, new Vec3(0.0, (dimensions[0].y / 2), 0.7), towOffsets[1]);
+				} else {
+					natives.detachCar(vehicle);
+				}
+			}
+			break;
+
+		// Mafia 1 vehicle state added after MafiaC 2.2.0. The getters/setters throw when the car isn't spawned (and
+		// damage throws when the data is invalid or from another model), so they're all guarded.
+		case "v.roof":
+			if (game.game == V_GAME_MAFIA_ONE) {
+				try {
+					if (vehicle.roof != value) {
+						vehicle.roof = value;
+					}
+					setReportedVehicleState(vehicle, "roof", value);
+				} catch (error) {
+					console.warn(`[${thisResource.name}] Couldn't set roof on vehicle ${vehicle.id}: ${error.message}`);
+				}
+			}
+			break;
+
+		case "v.damage":
+			if (game.game == V_GAME_MAFIA_ONE) {
+				try {
+					if (vehicle.damage != value) {
+						vehicle.damage = value;
+					}
+					setReportedVehicleState(vehicle, "damage", value);
+				} catch (error) {
+					console.warn(`[${thisResource.name}] Couldn't set damage on vehicle ${vehicle.id}: ${error.message}`);
+				}
+			}
+			break;
+
+		case "v.beacons":
+			if (game.game == V_GAME_MAFIA_ONE) {
+				try {
+					vehicle.beacons = value;
+				} catch (error) {
+					console.warn(`[${thisResource.name}] Couldn't set beacons on vehicle ${vehicle.id}: ${error.message}`);
+				}
+			}
+			break;
+
+		case "v.headlightScale":
+			if (game.game == V_GAME_MAFIA_ONE) {
+				try {
+					vehicle.headlightScale = new Vec3(value.x, value.y, value.z);
+				} catch (error) {
+					console.warn(`[${thisResource.name}] Couldn't set headlight scale on vehicle ${vehicle.id}: ${error.message}`);
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+// Mafia 1: roof and damage can change on the syncer's side (roof toggled, car crashed), so the syncer tells the
+// server, which keeps v.roof/v.damage current. Otherwise a stream-in would put old data back on the car.
+// Per vehicle id: the last roof/damage the server knows about, and when the damage was last checked.
+let reportedVehicleState = {};
+
+// Reading the damage builds the whole blob, so it's only checked this often (ms)
+const vehicleDamageCheckInterval = 2000;
+
+// Damage blobs are at most 65536 bytes (VEHICLEDAMAGE_MAX_SIZE), so this much base64
+const maxVehicleDamageLength = 87384;
+
+function setReportedVehicleState(vehicle, key, value) {
+	if (typeof reportedVehicleState[vehicle.id] != "undefined") {
+		reportedVehicleState[vehicle.id][key] = value;
+	}
+}
+
+function reportVehicleStateChanges(vehicle) {
+	try {
+		let state = reportedVehicleState[vehicle.id];
+		if (typeof state == "undefined") {
+			// Nothing stored yet means the car is as it spawned, so that's the starting point rather than a change
+			let roof = vehicle.getData("v.roof");
+			let damage = vehicle.getData("v.damage");
+			state = {
+				roof: (roof != null) ? roof : vehicle.roof,
+				damage: (damage != null) ? damage : vehicle.damage,
+				lastDamageCheck: Date.now(),
+			};
+			reportedVehicleState[vehicle.id] = state;
+		}
+
+		let roof = vehicle.roof;
+		if (roof != state.roof) {
+			state.roof = roof;
+			triggerNetworkEvent("OnVehicleRoofChanged", vehicle.id, roof);
+		}
+
+		if (Date.now() - state.lastDamageCheck >= vehicleDamageCheckInterval) {
+			state.lastDamageCheck = Date.now();
+
+			let damage = vehicle.damage;
+			if (damage != state.damage && damage.length <= maxVehicleDamageLength) {
+				state.damage = damage;
+				triggerNetworkEvent("OnVehicleDamageChanged", vehicle.id, damage);
+			}
+		}
+	} catch (error) {
+		// Not spawned yet
+	}
+}
+
+addEventHandler("OnElementStreamOut", function (event, element) {
+	if (element != null) {
+		delete reportedVehicleState[element.id];
+	}
+});
+
+// ===========================================================================
+
+function applyObjectData(element, key, value) {
+	if (value == null) {
+		return;
+	}
+
+	switch (key) {
+		case "v.scale":
+			if (typeof element.matrix != "undefined" && game.game < V_GAME_GTA_IV) {
+				let tempMatrix = element.matrix;
+				tempMatrix.setScale(new Vec3(value.x, value.y, value.z));
+				let tempPosition = element.position;
+				element.matrix = tempMatrix;
+				tempPosition.z += value.z;
+				element.position = tempPosition;
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// ===========================================================================
+
+addEventHandler("OnElementSetData", function (event, element, key, value) {
+	if (element == null) {
+		return false;
+	}
+
+	applyElementData(element, key, value);
+});
 
 // ===========================================================================
 
@@ -797,48 +1001,7 @@ if (game.game == V_GAME_MAFIA_ONE) {
 // ===========================================================================
 
 addNetworkHandler("v.sync", function (elementId) {
-	let element = getElementFromId(elementId);
-	if (element == null) {
-		return false;
-	}
-
-	syncElementProperties(element);
-});
-
-// ===========================================================================
-
-function syncObjectProperties(element) {
-	if (typeof element.matrix != "undefined" && game.game < V_GAME_GTA_IV) {
-		if (element.getData("v.scale")) {
-			let scaleFactor = element.getData("v.scale");
-			let tempMatrix = element.matrix;
-			tempMatrix.setScale(new Vec3(scaleFactor.x, scaleFactor.y, scaleFactor.z));
-			let tempPosition = element.position;
-			element.matrix = tempMatrix;
-			tempPosition.z += scaleFactor.z;
-			element.position = tempPosition;
-		}
-	}
-
-	if (typeof element.collisionsEnabled != "undefined" && game < V_GAME_GTA_IV) {
-		if (element.getData("v.scale")) {
-			element.collisionsEnabled = element.getData("v.scale");
-		}
-	}
-}
-
-// ===========================================================================
-
-addNetworkHandler("v.heading", function (element, heading) {
-	if (typeof element == "number") {
-		element = getElementFromId(element);
-	}
-
-	if (element == null) {
-		return false;
-	}
-
-	element.heading = heading;
+	syncElementProperties(elementId);
 });
 
 // ===========================================================================
@@ -865,6 +1028,21 @@ addNetworkHandler("v.holsterWeapon", function (element) {
 
 // ===========================================================================
 
+// Repairing is a one-off action rather than a property, so it stays a network event
+addNetworkHandler("v.veh.repair", function (vehicle) {
+	if (typeof vehicle == "number") {
+		vehicle = getElementFromId(vehicle);
+	}
+
+	if (vehicle == null) {
+		return false;
+	}
+
+	vehicle.fix();
+});
+
+// ===========================================================================
+
 // This is for GTA IV only. Changes the ticker text display in Star Junction (IRL Times Square)
 addNetworkHandler("v.news", function (newsText) {
 	if (game.game == V_GAME_GTA_IV) {
@@ -876,7 +1054,7 @@ addNetworkHandler("v.news", function (newsText) {
 // ===========================================================================
 
 addNetworkHandler("v.interior", function (interior) {
-	if(game.game == V_GAME_MAFIA_ONE) {
+	if (game.game == V_GAME_MAFIA_ONE) {
 		return false;
 	}
 
@@ -888,7 +1066,7 @@ addNetworkHandler("v.interior", function (interior) {
 
 addEventHandler("OnPedSpawn", function (event, ped) {
 	waitUntil(localPlayer != null).then(function () {
-		syncPedProperties(localPlayer);
+		syncElementProperties(localPlayer);
 	});
 });
 
@@ -906,125 +1084,5 @@ async function waitUntil(condition) {
 		}, 1);
 	});
 }
-
-// ===========================================================================
-
-addEventHandler("OnElementSetData", function(event, element, key, val) {
-	if(element.type == ELEMENT_PED) {
-		switch(key) {
-			case "v.weapon":
-				if(typeof element.giveWeapon != "undefined") {
-					if (game.game == V_GAME_MAFIA_ONE) {
-						element.giveWeapon(val[0], val[2], val[1]);
-					} else {
-						element.giveWeapon(val[0], val[1] + val[2], val[3]);
-					}
-				}
-				break;
-
-			case "v.heading":
-				if (typeof element.heading != "undefined") {
-					element.heading = val;
-				}
-				break;
-
-			case "v.fightStyle":
-				if (typeof element.setFightStyle != "undefined") {
-					element.setFightStyle(val[0], val[1]);
-				}
-				
-				break;
-
-			case "v.walkStyle":
-				if (typeof element.walkStyle != "undefined") {
-					element.walkStyle = val;
-				}
-
-				// For GTA IV
-				if(game.game == V_GAME_GTA_IV) {
-					natives.requestAnims(val);
-					natives.setAnimGroupForChar(element, val);
-				}
-				break;
-
-			case "v.bodyPartHead":
-				if (typeof element.changeBodyPart != "undefined") {
-					element.changeBodyPart(0, Number(val[0]), Number(val[1]));
-				}
-				break;
-
-			case "v.bodyPartUpper":
-				if (typeof element.changeBodyPart != "undefined") {
-					element.changeBodyPart(1, Number(val[0]), Number(val[1]));
-				}
-				break;
-
-			case "v.bodyPartLower":
-				if (typeof element.changeBodyPart != "undefined") {
-					element.changeBodyPart(2, Number(val[0]), Number(val[1]));
-				}
-				break;
-
-			case "v.bodyPropHat":
-				if (typeof element.setCharPropIndex != "undefined") {
-					natives.setCharPropIndex(element, 0, Number(val));
-				}
-				break;
-
-			case "v.bleeding":
-				if (game.game <= V_GAME_GTA_VC) {
-					element.bleeding = val;
-				} else if (game.game == V_GAME_GTA_IV) {
-					natives.setCharBleeding(element, val);
-				}
-				break;
-
-			case "v.wander":
-				if(game.game == V_GAME_GTA_IV) {
-					natives.taskWanderStandard(element);
-				} else if(game.game <= V_GAME_GTA_SA) {
-					element.wanderRandomly = true
-				}
-				break;
-
-			default:
-				break;				
-		}
-	}
-
-	switch(key) {
-		case "v.interior":
-			if(typeof element.interior != "undefined") {
-				break;
-			}
-
-			element.interior = val;
-			break;
-
-		default:
-			break;
-	}
-});
-
-// ===========================================================================
-
-// Will remove once MafiaC is updated with OnElementSetData
-addNetworkHandler("v.weapon", function(element, weapon, ammo1, ammo2, active) {
-	if (typeof element == "number") {
-		element = getElementFromId(element);
-	}
-
-	if (element == null) {
-		return false;
-	}
-
-	if(typeof element.giveWeapon != "undefined") {
-		if (game.game == V_GAME_MAFIA_ONE) {
-			element.giveWeapon(weapon, ammo1, ammo2);
-		} else {
-			element.giveWeapon(weapon, ammo1, ammo2, active);
-		}
-	}
-});
 
 // ===========================================================================
